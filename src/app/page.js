@@ -46,7 +46,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [effectsReady, setEffectsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [allowMotion, setAllowMotion] = useState(true);
   const reducedMotionQuery = useRef(null);
 
@@ -123,7 +123,11 @@ export default function Home() {
     );
   }
 
-  const shouldRenderFx = mounted && allowMotion && effectsReady && isDesktop;
+  // The particle field and glow orbs are built for a dark ground; on white they
+  // wash out to nothing. Gate them on the resolved theme as well as motion,
+  // idle-readiness and viewport.
+  const shouldRenderFx =
+    mounted && allowMotion && effectsReady && isDesktop && resolvedTheme === "dark";
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background">
@@ -142,9 +146,16 @@ export default function Home() {
         <div className="w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4">
           <Link
             href="/"
+            aria-label={`${t("header.logo")} — home`}
             className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
           >
-            {shouldRenderFx && <ParticleText text={t("header.logo")} />}
+            {shouldRenderFx ? (
+              <ParticleText text={t("header.logo")} />
+            ) : (
+              <span className="text-xl font-semibold tracking-tight text-foreground">
+                {t("header.logo")}
+              </span>
+            )}
             <span className="hidden sm:inline-block px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
               v2.8.5
             </span>
