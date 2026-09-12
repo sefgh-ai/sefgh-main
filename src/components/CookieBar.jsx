@@ -23,9 +23,9 @@ export default function CookieBar() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-1.5rem)] sm:w-auto">
-      <div className="mx-auto max-w-4xl rounded-2xl border border-slate-800 bg-slate-950/90 backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex-1 text-sm text-slate-200">
+    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-auto">
+      <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-background/90 backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex-1 text-sm text-foreground">
           We use cookies to improve your experience. Review our policies any time.
         </div>
         <div className="flex items-center gap-2">

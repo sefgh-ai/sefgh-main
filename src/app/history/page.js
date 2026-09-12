@@ -119,7 +119,7 @@ export default function HistoryPage() {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
                     <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-slate-500/20">
-                      <HistoryIcon className="h-6 w-6 text-blue-400" />
+                      <HistoryIcon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h1 className="text-2xl font-bold">Search History</h1>
@@ -228,7 +228,7 @@ export default function HistoryPage() {
                               <div
                                 className={`p-2 rounded-lg ${
                                   item.source === "search"
-                                    ? "bg-blue-500/10 text-blue-400"
+                                    ? "bg-primary/10 text-primary"
                                     : "bg-purple-500/10 text-purple-400"
                                 }`}
                               >

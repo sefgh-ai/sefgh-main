@@ -11,7 +11,7 @@ export default function FaqAccordion({ items }) {
       {items.map((item, index) => {
         const open = openIndex === index;
         return (
-          <div key={item.q} className="rounded-xl border border-slate-800 bg-slate-900/60">
+          <div key={item.q} className="rounded-xl border border-border bg-card/60">
             <button
               type="button"
               aria-expanded={open}
@@ -19,14 +19,14 @@ export default function FaqAccordion({ items }) {
               className="w-full px-4 py-4 flex items-center justify-between text-left"
               onClick={() => setOpenIndex(open ? null : index)}
             >
-              <span className="font-medium text-white">{item.q}</span>
+              <span className="font-medium text-foreground">{item.q}</span>
               <ChevronDown
                 aria-hidden="true"
-                className={`w-5 h-5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+                className={`w-5 h-5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
               />
             </button>
             {open && (
-              <div id={`faq-answer-${index}`} className="px-4 pb-4 text-slate-300 text-sm">
+              <div id={`faq-answer-${index}`} className="px-4 pb-4 text-muted-foreground text-sm">
                 {item.a}
               </div>
             )}

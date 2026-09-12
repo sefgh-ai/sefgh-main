@@ -34,19 +34,19 @@ const ListItem = React.forwardRef(
           <a
             ref={ref}
             className={cn(
-              "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-800/50 hover:text-white focus:bg-slate-800/50 focus:text-white",
+              "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted/50 hover:text-white focus:bg-muted/50 focus:text-white",
               className
             )}
             {...props}
           >
             <div className="flex items-center gap-2">
-              {Icon && <Icon className="h-4 w-4 text-blue-400" />}
-              <div className="text-sm font-medium leading-none text-white">
+              {Icon && <Icon className="h-4 w-4 text-primary" />}
+              <div className="text-sm font-medium leading-none text-foreground">
                 {title}
               </div>
             </div>
             {children && (
-              <p className="line-clamp-2 text-sm leading-snug text-slate-400 mt-1.5 ml-6">
+              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground mt-1.5 ml-6">
                 {children}
               </p>
             )}
@@ -62,7 +62,7 @@ const ProductCard = ({ title, description, href, src }) => {
   return (
     <Link
       href={href}
-      className="flex space-x-3 group p-2 rounded-lg hover:bg-slate-800/50 transition-colors"
+      className="flex space-x-3 group p-2 rounded-lg hover:bg-muted/50 transition-colors"
     >
       <Image
         src={src}
@@ -72,10 +72,10 @@ const ProductCard = ({ title, description, href, src }) => {
         className="flex-shrink-0 rounded-lg object-cover"
       />
       <div>
-        <h4 className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">
+        <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
           {title}
         </h4>
-        <p className="text-slate-400 text-xs mt-1 max-w-[140px]">
+        <p className="text-muted-foreground text-xs mt-1 max-w-[140px]">
           {description}
         </p>
       </div>
@@ -89,14 +89,14 @@ export function AnimatedNavbar({ className }) {
   return (
     <div className={cn("w-auto", className)}>
       <NavigationMenu className="z-50">
-        <NavigationMenuList className="rounded-lg border border-white/10 bg-slate-900/80 backdrop-blur-lg px-2 py-1">
+        <NavigationMenuList className="rounded-lg border border-white/10 bg-card/80 backdrop-blur-lg px-2 py-1">
           {/* Platform */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Platform
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ListItem
                   href="/search"
                   title="Repository Search"
@@ -123,11 +123,11 @@ export function AnimatedNavbar({ className }) {
 
           {/* Solutions */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Solutions
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ProductCard
                   title="For Developers"
                   href="/search"
@@ -158,11 +158,11 @@ export function AnimatedNavbar({ className }) {
 
           {/* Open Source */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Open Source
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ListItem
                   href="/trending"
                   title="Trending Projects"
@@ -185,11 +185,11 @@ export function AnimatedNavbar({ className }) {
 
           {/* Features */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Features
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ListItem href="/search" title="GitHub Search" icon={Search} />
                 <ListItem
                   href="/chat"
@@ -214,11 +214,11 @@ export function AnimatedNavbar({ className }) {
 
           {/* Resources */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Resources
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ProductCard
                   title="AI-Powered Search"
                   href="/search"
@@ -261,11 +261,11 @@ export function AnimatedNavbar({ className }) {
 
           {/* Community */}
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent text-white/90 hover:text-white hover:bg-slate-800/50 data-[state=open]:bg-slate-800/50">
+            <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Community
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
                 <ListItem
                   href="/submissions"
                   title="Submit Your Project"

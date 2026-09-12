@@ -5,7 +5,7 @@ import FooterNewsletter from "./footer-newsletter";
 
 export default function AppFooter() {
   return (
-    <footer className="w-full bg-slate-950">
+    <footer className="w-full bg-background">
       <FooterNewsletter />
     </footer>
   );

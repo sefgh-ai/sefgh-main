@@ -80,7 +80,7 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
                     "h-5 w-5",
                     star <= Math.round(ratings.average)
                       ? "fill-yellow-500 text-yellow-500"
-                      : "text-gray-300"
+                      : "text-muted-foreground"
                   )}
                 />
               ))}
@@ -111,7 +111,7 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
                     "h-8 w-8 cursor-pointer transition-colors",
                     star <= (hoverRating || myRating)
                       ? "fill-yellow-500 text-yellow-500"
-                      : "text-gray-300"
+                      : "text-muted-foreground"
                   )}
                 />
               </button>

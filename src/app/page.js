@@ -117,7 +117,7 @@ export default function Home() {
 
   if (!messages || !mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-blue-400">Loading...</div>
       </div>
     );
@@ -126,7 +126,7 @@ export default function Home() {
   const shouldRenderFx = mounted && allowMotion && effectsReady && isDesktop;
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="relative min-h-screen overflow-x-hidden bg-background">
       {/* Skip to content for accessibility */}
       <a
         href="#main-content"
@@ -247,12 +247,12 @@ export default function Home() {
       <LogoMarquee />
 
       {/* CTA Section */}
-      <section className="relative px-3 sm:px-6 lg:px-8 py-16 sm:py-32 border-t border-slate-800/50">
+      <section className="relative px-3 sm:px-6 lg:px-8 py-16 sm:py-32 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
             {t("cta.title")}
           </h2>
-          <p className="text-base sm:text-xl text-slate-400 mb-6 sm:mb-10 px-2">
+          <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-10 px-2">
             {t("cta.subtitle")}
           </p>
           {!user && (

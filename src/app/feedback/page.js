@@ -48,7 +48,7 @@ export default function FeedbackPage() {
       id: "other",
       label: "Other",
       icon: MessageSquare,
-      color: "text-blue-500",
+      color: "text-primary",
     },
   ];
 

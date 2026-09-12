@@ -225,7 +225,7 @@ function ChatPageContent() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden">
+    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-background dark:via-card dark:to-background overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Sidebar */}
         <ChatSidebar

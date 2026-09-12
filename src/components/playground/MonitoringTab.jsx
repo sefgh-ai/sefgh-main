@@ -112,7 +112,7 @@ export default function MonitoringTab({ userId }) {
       DELETE: 'text-red-500',
       PATCH: 'text-purple-500',
     };
-    return colors[method] || 'text-gray-500';
+    return colors[method] || 'text-muted-foreground';
   };
 
   const formatTimestamp = (timestamp) => {

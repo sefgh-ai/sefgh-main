@@ -29,15 +29,15 @@ const faqItems = [
 
 export default function FAQPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
         <header className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-200 text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
             <HelpCircle className="w-4 h-4" />
             FAQ
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">Frequently Asked Questions</h1>
-          <p className="text-slate-400">Quick answers. Replace or extend this list anytime.</p>
+          <p className="text-muted-foreground">Quick answers. Replace or extend this list anytime.</p>
         </header>
 
         <FaqAccordion items={faqItems} />

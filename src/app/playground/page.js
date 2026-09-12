@@ -26,15 +26,15 @@ export default function PlaygroundPage() {
 
   if (!user || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <div className="max-w-4xl mx-auto flex-1 w-full px-4 sm:px-6 lg:px-8 py-16 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-200 text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
             Playground Preview
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white">
             Explore the Playground
           </h1>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Sign in to access interactive experiments, API key management, and advanced search tools tailored for SEFGH users.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -49,7 +49,7 @@ export default function PlaygroundPage() {
             {["Run queries with saved prompts", "Manage personal API keys", "Try beta features early"].map((item) => (
               <div
                 key={item}
-                className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-200"
+                className="p-4 rounded-xl border border-border bg-card/60 text-slate-200"
               >
                 {item}
               </div>

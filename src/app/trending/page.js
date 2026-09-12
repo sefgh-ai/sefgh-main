@@ -146,12 +146,12 @@ export default function TrendingPage() {
                       Array.from({ length: 5 }).map((_, i) => (
                         <Card
                           key={i}
-                          className="bg-slate-900/50 border-slate-800 backdrop-blur-sm animate-pulse"
+                          className="bg-card/50 border-border backdrop-blur-sm animate-pulse"
                         >
                           <CardContent className="p-6">
-                            <div className="h-6 bg-slate-800 rounded w-3/4 mb-4"></div>
-                            <div className="h-4 bg-slate-800 rounded w-full mb-2"></div>
-                            <div className="h-4 bg-slate-800 rounded w-2/3"></div>
+                            <div className="h-6 bg-muted rounded w-3/4 mb-4"></div>
+                            <div className="h-4 bg-muted rounded w-full mb-2"></div>
+                            <div className="h-4 bg-muted rounded w-2/3"></div>
                           </CardContent>
                         </Card>
                       ))

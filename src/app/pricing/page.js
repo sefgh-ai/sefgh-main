@@ -100,38 +100,38 @@ export default function PricingPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-y-auto">
+    <main className="min-h-screen bg-background overflow-y-auto">
       {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
-            SEFGH<span className="text-blue-500">-AI</span>
+          <Link href="/" className="text-2xl font-bold text-foreground">
+            SEFGH<span className="text-primary">-AI</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/search"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </Link>
-            <Link href="/pricing" className="text-white transition-colors">
+            <Link href="/pricing" className="text-foreground transition-colors">
               Pricing
             </Link>
             <Link
               href="/about"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Contact
             </Link>
@@ -142,21 +142,21 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Simple, Transparent Pricing
           </h1>
-          <p className="text-xl text-slate-400 mb-8">
+          <p className="text-xl text-muted-foreground mb-8">
             Start free, upgrade when you need more. Cancel anytime.
           </p>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-4 bg-slate-800/50 rounded-full p-1.5">
+          <div className="inline-flex items-center gap-4 bg-muted/50 rounded-full p-1.5">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 billingCycle === "monthly"
                   ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  : "text-muted-foreground hover:text-white"
               }`}
             >
               Monthly
@@ -166,7 +166,7 @@ export default function PricingPage() {
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 billingCycle === "annual"
                   ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  : "text-muted-foreground hover:text-white"
               }`}
             >
               Annual <span className="text-emerald-400 ml-1">Save 20%</span>
@@ -181,10 +181,10 @@ export default function PricingPage() {
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`relative bg-slate-800/50 border rounded-2xl p-8 ${
+              className={`relative bg-muted/50 border rounded-2xl p-8 ${
                 plan.popular
                   ? "border-blue-500 shadow-lg shadow-blue-500/20"
-                  : "border-slate-700"
+                  : "border-border"
               }`}
             >
               {plan.popular && (
@@ -200,30 +200,30 @@ export default function PricingPage() {
                       ? "bg-blue-600/20"
                       : plan.color === "teal"
                       ? "bg-teal-600/20"
-                      : "bg-slate-700/50"
+                      : "bg-muted/50"
                   }`}
                 >
                   <plan.icon
                     className={`w-6 h-6 ${
                       plan.color === "blue"
-                        ? "text-blue-400"
+                        ? "text-primary"
                         : plan.color === "teal"
                         ? "text-teal-400"
-                        : "text-slate-400"
+                        : "text-muted-foreground"
                     }`}
                   />
                 </div>
-                <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
-                <p className="text-slate-400 mt-1">{plan.description}</p>
+                <h3 className="text-2xl font-bold text-foreground">{plan.name}</h3>
+                <p className="text-muted-foreground mt-1">{plan.description}</p>
               </div>
 
               <div className="mb-6">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
+                  <span className="text-4xl font-bold text-foreground">
                     ${plan.price[billingCycle]}
                   </span>
                   {plan.price[billingCycle] > 0 && (
-                    <span className="text-slate-400">/month</span>
+                    <span className="text-muted-foreground">/month</span>
                   )}
                 </div>
                 {billingCycle === "annual" && plan.price.monthly > 0 && (
@@ -238,7 +238,7 @@ export default function PricingPage() {
                 className={`block w-full py-3 px-6 rounded-lg font-semibold text-center transition-all mb-8 ${
                   plan.popular
                     ? "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg"
-                    : "bg-slate-700 hover:bg-slate-600 text-white"
+                    : "bg-muted hover:bg-slate-600 text-white"
                 }`}
               >
                 {plan.cta}
@@ -248,15 +248,15 @@ export default function PricingPage() {
                 {plan.features.map((feature, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300 text-sm">{feature}</span>
+                    <span className="text-muted-foreground text-sm">{feature}</span>
                   </div>
                 ))}
                 {plan.limitations.map((limitation, i) => (
                   <div key={i} className="flex items-start gap-3 opacity-50">
-                    <span className="w-5 h-5 text-slate-500 shrink-0 mt-0.5 text-center">
+                    <span className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5 text-center">
                       —
                     </span>
-                    <span className="text-slate-500 text-sm">{limitation}</span>
+                    <span className="text-muted-foreground text-sm">{limitation}</span>
                   </div>
                 ))}
               </div>
@@ -266,19 +266,19 @@ export default function PricingPage() {
       </section>
 
       {/* Enterprise CTA */}
-      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border/50">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-blue-950/50 to-teal-950/50 border border-slate-700 rounded-2xl p-8 md:p-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          <div className="bg-gradient-to-r from-blue-950/50 to-teal-950/50 border border-border rounded-2xl p-8 md:p-12 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               Need a custom Enterprise solution?
             </h2>
-            <p className="text-slate-400 mb-6 max-w-2xl mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Get unlimited everything, dedicated support, custom integrations,
               SLA guarantees, and on-premise deployment options.
             </p>
             <Link
               href="/contact?subject=enterprise"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
             >
               Contact Sales
             </Link>
@@ -287,22 +287,22 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-800/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-16 border-t border-border/50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-12">
             Frequently Asked Questions
           </h2>
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-slate-800/50 border border-slate-700 rounded-lg p-6"
+                className="bg-muted/50 border border-border rounded-lg p-6"
               >
                 <div className="flex items-start gap-4">
-                  <HelpCircle className="w-6 h-6 text-blue-400 shrink-0 mt-0.5" />
+                  <HelpCircle className="w-6 h-6 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-white font-semibold mb-2">{faq.q}</h3>
-                    <p className="text-slate-400">{faq.a}</p>
+                    <h3 className="text-foreground font-semibold mb-2">{faq.q}</h3>
+                    <p className="text-muted-foreground">{faq.a}</p>
                   </div>
                 </div>
               </div>
@@ -312,13 +312,13 @@ export default function PricingPage() {
       </section>
 
       {/* Money Back Guarantee */}
-      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-950/50 border border-emerald-900/50 rounded-full text-emerald-400 text-sm mb-4">
             <Check className="w-4 h-4" />
             30-Day Money-Back Guarantee
           </div>
-          <p className="text-slate-400">
+          <p className="text-muted-foreground">
             Not satisfied? Get a full refund within 30 days, no questions asked.
           </p>
         </div>

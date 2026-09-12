@@ -138,20 +138,20 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="border-b p-4 bg-slate-900 dark:bg-slate-950">
+      <div className="border-b p-4 bg-card dark:bg-background">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="flex-shrink-0 text-slate-300 hover:text-white"
+              className="flex-shrink-0 text-muted-foreground hover:text-foreground"
             >
               <X className="h-5 w-5" />
             </Button>
             <div>
-              <h2 className="text-xl font-bold text-white">Canvas</h2>
-              <p className="text-sm text-slate-400">
+              <h2 className="text-xl font-bold text-foreground">Canvas</h2>
+              <p className="text-sm text-muted-foreground">
                 Write, edit, and visualize code
               </p>
             </div>
@@ -159,10 +159,10 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
           
           <div className="flex gap-2">
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-[140px] bg-slate-800 border-slate-700 text-slate-200">
+              <SelectTrigger className="w-[140px] bg-muted border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectContent className="bg-muted border-border">
                 <SelectItem value="javascript">JavaScript</SelectItem>
                 <SelectItem value="typescript">TypeScript</SelectItem>
                 <SelectItem value="python">Python</SelectItem>
@@ -181,11 +181,11 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
                 <SelectItem value="markdown">Markdown</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" onClick={handleCopy} className="bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700">
+            <Button variant="outline" size="sm" onClick={handleCopy} className="bg-muted border-border text-foreground hover:bg-muted">
               <Copy className="h-3 w-3 mr-1.5" />
               Copy
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDownload} className="bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700">
+            <Button variant="outline" size="sm" onClick={handleDownload} className="bg-muted border-border text-foreground hover:bg-muted">
               <Download className="h-3 w-3 mr-1.5" />
               Download
             </Button>
@@ -194,18 +194,18 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col bg-slate-900 dark:bg-slate-950">
-        <div className="border-b border-slate-800 px-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col bg-card dark:bg-background">
+        <div className="border-b border-border px-4">
           <TabsList className="w-full justify-start h-12 bg-transparent">
-            <TabsTrigger value="code" className="gap-2 data-[state=active]:bg-slate-800 data-[state=active]:text-white text-slate-400">
+            <TabsTrigger value="code" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
               <Code className="h-4 w-4" />
               Editor
             </TabsTrigger>
-            <TabsTrigger value="preview" className="gap-2 data-[state=active]:bg-slate-800 data-[state=active]:text-white text-slate-400">
+            <TabsTrigger value="preview" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
               <Paintbrush className="h-4 w-4" />
               Preview
             </TabsTrigger>
-            <TabsTrigger value="notes" className="gap-2 data-[state=active]:bg-slate-800 data-[state=active]:text-white text-slate-400">
+            <TabsTrigger value="notes" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
               <FileText className="h-4 w-4" />
               Notes
             </TabsTrigger>
@@ -217,11 +217,11 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
             {/* Code Editor Tab */}
             <TabsContent value="code" className="mt-0">
               <div className="space-y-4">
-                <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+                <div className="relative rounded-xl overflow-hidden border border-border bg-background">
                   {/* Code Editor with Line Numbers */}
                   <div className="flex">
                     {/* Line Numbers */}
-                    <div className="select-none bg-slate-900 text-slate-500 text-xs font-mono py-4 px-3 border-r border-slate-800">
+                    <div className="select-none bg-card text-muted-foreground text-xs font-mono py-4 px-3 border-r border-border">
                       {code.split('\n').map((_, i) => (
                         <div key={i} className="leading-6 text-right">
                           {i + 1}
@@ -233,7 +233,7 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
                     <Textarea
                       value={code}
                       onChange={(e) => handleCodeChange(e.target.value)}
-                      className="flex-1 min-h-[600px] font-mono text-sm bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-slate-100 leading-6 p-4"
+                      className="flex-1 min-h-[600px] font-mono text-sm bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-foreground leading-6 p-4"
                       placeholder="// Start coding here..."
                       spellCheck={false}
                     />
@@ -244,9 +244,9 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
 
             {/* Preview Tab */}
             <TabsContent value="preview" className="mt-0">
-              <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
-                <div className="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center gap-2">
-                  <span className="text-xs font-medium text-slate-400">
+              <div className="rounded-xl overflow-hidden border border-border bg-background">
+                <div className="bg-card px-4 py-2 border-b border-border flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground">
                     {language}
                   </span>
                 </div>
@@ -264,14 +264,14 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
             {/* Notes Tab */}
             <TabsContent value="notes" className="mt-0">
               <div className="space-y-4">
-                <div className="text-sm text-slate-400 bg-slate-900 p-3 rounded-lg border border-slate-800">
+                <div className="text-sm text-muted-foreground bg-card p-3 rounded-lg border border-border">
                   Take notes, add documentation, or write explanations about your code.
                 </div>
-                <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+                <div className="rounded-xl overflow-hidden border border-border bg-background">
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="min-h-[600px] bg-transparent border-0 text-slate-100 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="min-h-[600px] bg-transparent border-0 text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                     placeholder="Write your notes here..."
                   />
                 </div>

@@ -42,7 +42,7 @@ const FEATURED_ORGS = [
     type: "Team",
     badge: "team",
     stats: "456 repos • 67k followers",
-    bgColor: "bg-gradient-to-br from-slate-700 to-slate-900",
+    bgColor: "bg-gradient-to-br from-slate-700 to-card",
   },
   {
     name: "Netflix",
@@ -82,7 +82,7 @@ const FEATURED_ORGS = [
     type: "Enterprise",
     badge: "enterprise",
     stats: "567 repos • 41k followers",
-    bgColor: "bg-gradient-to-br from-slate-800 to-slate-900",
+    bgColor: "bg-gradient-to-br from-slate-800 to-card",
   },
   {
     name: "Discord",
@@ -104,10 +104,10 @@ const FEATURED_ORGS = [
 
 function OrgCard({ org }) {
   return (
-    <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-xl hover:border-slate-600 hover:bg-slate-800/80 transition-all duration-300 cursor-pointer group min-w-[260px]">
+    <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-muted/60 backdrop-blur-sm border border-border/50 rounded-xl hover:border-border hover:bg-muted/80 transition-all duration-300 cursor-pointer group min-w-[260px]">
       {/* Logo */}
       <div
-        className={`w-10 h-10 ${org.bgColor} rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-105 transition-transform`}
+        className={`w-10 h-10 ${org.bgColor} rounded-lg flex items-center justify-center text-foreground font-bold text-lg shadow-lg group-hover:scale-105 transition-transform`}
       >
         {org.logo}
       </div>
@@ -115,20 +115,20 @@ function OrgCard({ org }) {
       {/* Info */}
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-white text-sm group-hover:text-blue-400 transition-colors">
+          <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">
             {org.name}
           </span>
           <span
             className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
               org.badge === "enterprise"
-                ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                : "bg-slate-600/50 text-slate-300 border border-slate-500/30"
+                ? "bg-primary/20 text-primary border border-primary/30"
+                : "bg-slate-600/50 text-muted-foreground border border-slate-500/30"
             }`}
           >
             {org.type}
           </span>
         </div>
-        <span className="text-xs text-slate-400">{org.stats}</span>
+        <span className="text-xs text-muted-foreground">{org.stats}</span>
       </div>
     </div>
   );
@@ -141,17 +141,17 @@ export default function LogoMarquee() {
     <section className="relative py-12 sm:py-16 overflow-hidden">
       {/* Section Header */}
       <div className="text-center mb-8 sm:mb-10 px-4">
-        <p className="text-sm uppercase tracking-widest text-slate-500 mb-2">
+        <p className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
           Trusted by developers at
         </p>
-        <h3 className="text-xl sm:text-2xl font-semibold text-white">
+        <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
           World&apos;s Leading Tech Companies
         </h3>
       </div>
 
       {/* Gradient Overlays for fade effect */}
-      <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
       {/* Scrolling Container */}
       <div className="overflow-hidden">
@@ -178,28 +178,28 @@ export default function LogoMarquee() {
 
       {/* Stats Row */}
       <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mt-10 sm:mt-12 px-4">
-        <div className="flex items-center gap-2 text-slate-400">
-          <Building2 className="w-4 h-4 text-blue-400" />
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Building2 className="w-4 h-4 text-primary" />
           <span className="text-sm">
-            <span className="text-white font-semibold">500+</span> Organizations
+            <span className="text-foreground font-semibold">500+</span> Organizations
           </span>
         </div>
-        <div className="flex items-center gap-2 text-slate-400">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <Code2 className="w-4 h-4 text-green-400" />
           <span className="text-sm">
-            <span className="text-white font-semibold">50K+</span> Projects
+            <span className="text-foreground font-semibold">50K+</span> Projects
           </span>
         </div>
-        <div className="flex items-center gap-2 text-slate-400">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <Users className="w-4 h-4 text-purple-400" />
           <span className="text-sm">
-            <span className="text-white font-semibold">1M+</span> Developers
+            <span className="text-foreground font-semibold">1M+</span> Developers
           </span>
         </div>
-        <div className="flex items-center gap-2 text-slate-400">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <Boxes className="w-4 h-4 text-orange-400" />
           <span className="text-sm">
-            <span className="text-white font-semibold">10B+</span> Lines of Code
+            <span className="text-foreground font-semibold">10B+</span> Lines of Code
           </span>
         </div>
       </div>

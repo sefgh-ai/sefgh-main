@@ -67,39 +67,39 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-y-auto">
+    <main className="min-h-screen bg-background overflow-y-auto">
       {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
-            SEFGH<span className="text-blue-500">-AI</span>
+          <Link href="/" className="text-2xl font-bold text-foreground">
+            SEFGH<span className="text-primary">-AI</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/search"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </Link>
             <Link
               href="/pricing"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Pricing
             </Link>
             <Link
               href="/about"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </Link>
-            <Link href="/contact" className="text-white transition-colors">
+            <Link href="/contact" className="text-foreground transition-colors">
               Contact
             </Link>
           </nav>
@@ -109,10 +109,10 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Get in Touch
           </h1>
-          <p className="text-xl text-slate-400">
+          <p className="text-xl text-muted-foreground">
             Have questions? We&apos;d love to hear from you. Send us a message and
             we&apos;ll respond as soon as possible.
           </p>
@@ -122,53 +122,53 @@ export default function ContactPage() {
       {/* Contact Info Cards */}
       <section className="px-4 sm:px-6 lg:px-8 mb-12">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
+          <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-6 h-6 text-blue-400" />
+              <Mail className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-white font-semibold mb-2">Email Us</h3>
+            <h3 className="text-foreground font-semibold mb-2">Email Us</h3>
             <a
               href="mailto:support@sefgh.org"
-              className="text-blue-400 hover:underline"
+              className="text-primary hover:underline"
             >
               support@sefgh.org
             </a>
-            <p className="text-slate-500 text-sm mt-1">For general inquiries</p>
+            <p className="text-muted-foreground text-sm mt-1">For general inquiries</p>
           </div>
 
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
+          <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-teal-600/20 flex items-center justify-center mx-auto mb-4">
               <Clock className="w-6 h-6 text-teal-400" />
             </div>
-            <h3 className="text-white font-semibold mb-2">Support Hours</h3>
-            <p className="text-slate-300">Monday - Friday</p>
-            <p className="text-slate-500 text-sm mt-1">9:00 AM - 6:00 PM EST</p>
+            <h3 className="text-foreground font-semibold mb-2">Support Hours</h3>
+            <p className="text-muted-foreground">Monday - Friday</p>
+            <p className="text-muted-foreground text-sm mt-1">9:00 AM - 6:00 PM EST</p>
           </div>
 
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
+          <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-6 h-6 text-purple-400" />
             </div>
-            <h3 className="text-white font-semibold mb-2">Response Time</h3>
-            <p className="text-slate-300">Within 24-48 hours</p>
-            <p className="text-slate-500 text-sm mt-1">Usually faster!</p>
+            <h3 className="text-foreground font-semibold mb-2">Response Time</h3>
+            <p className="text-muted-foreground">Within 24-48 hours</p>
+            <p className="text-muted-foreground text-sm mt-1">Usually faster!</p>
           </div>
         </div>
       </section>
 
       {/* Contact Form & FAQ */}
-      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border/50">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-6">
               Send us a Message
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-slate-300 mb-2"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
                 >
                   Your Name <span className="text-red-400">*</span>
                 </label>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                   placeholder="John Doe"
                 />
               </div>
@@ -188,7 +188,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-slate-300 mb-2"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
                 >
                   Email Address <span className="text-red-400">*</span>
                 </label>
@@ -200,7 +200,7 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                   placeholder="you@example.com"
                 />
               </div>
@@ -208,7 +208,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium text-slate-300 mb-2"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
                 >
                   Subject
                 </label>
@@ -218,7 +218,7 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, subject: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                 >
                   <option value="general">General Inquiry</option>
                   <option value="support">Technical Support</option>
@@ -232,7 +232,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium text-slate-300 mb-2"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
                 >
                   Message <span className="text-red-400">*</span>
                 </label>
@@ -244,7 +244,7 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, message: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none"
                   placeholder="How can we help you?"
                 />
               </div>
@@ -268,33 +268,33 @@ export default function ContactPage() {
 
           {/* FAQ Section */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">
               {faqs.map((faq, index) => (
                 <div
                   key={faq.question}
-                  className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden"
+                  className="bg-muted/50 border border-border rounded-lg overflow-hidden"
                 >
                   <button
                     onClick={() =>
                       setExpandedFaq(expandedFaq === index ? null : index)
                     }
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-800/80 transition-colors"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-muted/80 transition-colors"
                   >
-                    <span className="text-white font-medium">
+                    <span className="text-foreground font-medium">
                       {faq.question}
                     </span>
                     <ChevronDown
-                      className={`w-5 h-5 text-slate-400 transition-transform ${
+                      className={`w-5 h-5 text-muted-foreground transition-transform ${
                         expandedFaq === index ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                   {expandedFaq === index && (
                     <div className="px-6 pb-4">
-                      <p className="text-slate-400">{faq.answer}</p>
+                      <p className="text-muted-foreground">{faq.answer}</p>
                     </div>
                   )}
                 </div>
@@ -302,16 +302,16 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-8 p-6 bg-blue-950/30 border border-blue-900/50 rounded-lg">
-              <h3 className="text-white font-semibold mb-2">
+              <h3 className="text-foreground font-semibold mb-2">
                 Need immediate help?
               </h3>
-              <p className="text-slate-400 text-sm mb-4">
+              <p className="text-muted-foreground text-sm mb-4">
                 Check out our documentation for guides, tutorials, and API
                 references.
               </p>
               <Link
                 href="/about"
-                className="text-blue-400 hover:underline text-sm font-medium"
+                className="text-primary hover:underline text-sm font-medium"
               >
                 Browse Documentation →
               </Link>

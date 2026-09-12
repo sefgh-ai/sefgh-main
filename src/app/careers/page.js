@@ -151,41 +151,41 @@ export default function CareersPage() {
       : openings.filter((job) => job.department === selectedDepartment);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-y-auto">
+    <main className="min-h-screen bg-background overflow-y-auto">
       {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
-            SEFGH<span className="text-blue-500">-AI</span>
+          <Link href="/" className="text-2xl font-bold text-foreground">
+            SEFGH<span className="text-primary">-AI</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/search"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </Link>
             <Link
               href="/pricing"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Pricing
             </Link>
             <Link
               href="/about"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Contact
             </Link>
@@ -196,11 +196,11 @@ export default function CareersPage() {
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Build the Future of{" "}
-            <span className="text-blue-500">Code Discovery</span>
+            <span className="text-primary">Code Discovery</span>
           </h1>
-          <p className="text-xl text-slate-400 leading-relaxed max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto mb-8">
             Join a small, talented team working on AI-powered tools that help
             developers find and understand code. Remote-first, impact-driven,
             and developer-focused.
@@ -216,13 +216,13 @@ export default function CareersPage() {
       </section>
 
       {/* Culture Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Why Work at SEFGH?
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               We&apos;re building something meaningful and we want you to be part of
               it.
             </p>
@@ -231,12 +231,12 @@ export default function CareersPage() {
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-blue-400" />
+                <Sparkles className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 High Impact
               </h3>
-              <p className="text-slate-400">
+              <p className="text-muted-foreground">
                 Small team = big ownership. Your work directly shapes the
                 product used by thousands of developers.
               </p>
@@ -245,10 +245,10 @@ export default function CareersPage() {
               <div className="w-16 h-16 rounded-2xl bg-teal-600/20 flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-teal-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Great Team
               </h3>
-              <p className="text-slate-400">
+              <p className="text-muted-foreground">
                 Work with talented, kind people who value collaboration over
                 ego. No brilliant jerks allowed.
               </p>
@@ -257,10 +257,10 @@ export default function CareersPage() {
               <div className="w-16 h-16 rounded-2xl bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
                 <Building2 className="w-8 h-8 text-purple-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Sustainable Pace
               </h3>
-              <p className="text-slate-400">
+              <p className="text-muted-foreground">
                 We believe in sustainable work. No crunch culture, no burnout.
                 Life comes first.
               </p>
@@ -270,26 +270,26 @@ export default function CareersPage() {
       </section>
 
       {/* Benefits */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-12">
             Benefits & Perks
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-slate-600 transition-colors"
+                className="bg-muted/50 border border-border rounded-xl p-6 hover:border-border transition-colors"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-slate-700/50 flex items-center justify-center shrink-0">
-                    <benefit.icon className="w-6 h-6 text-blue-400" />
+                  <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                    <benefit.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold mb-1">
+                    <h3 className="text-foreground font-semibold mb-1">
                       {benefit.title}
                     </h3>
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-muted-foreground text-sm">
                       {benefit.description}
                     </p>
                   </div>
@@ -303,13 +303,13 @@ export default function CareersPage() {
       {/* Open Positions */}
       <section
         id="openings"
-        className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50"
+        className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50"
       >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-4">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-4">
             Open Positions
           </h2>
-          <p className="text-slate-400 text-center mb-8">
+          <p className="text-muted-foreground text-center mb-8">
             {openings.length} open roles across {departments.length - 1} teams
           </p>
 
@@ -322,7 +322,7 @@ export default function CareersPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   selectedDepartment === dept
                     ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700"
+                    : "bg-muted text-muted-foreground hover:text-white hover:bg-muted"
                 }`}
               >
                 {dept === "all" ? "All Roles" : dept}
@@ -335,21 +335,21 @@ export default function CareersPage() {
             {filteredOpenings.map((job) => (
               <div
                 key={job.id}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 md:p-8 hover:border-slate-600 transition-colors"
+                className="bg-muted/50 border border-border rounded-xl p-6 md:p-8 hover:border-border transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="text-xl font-bold text-foreground mb-2">
                       {job.title}
                     </h3>
                     <div className="flex flex-wrap gap-3 text-sm">
-                      <span className="flex items-center gap-1 text-slate-400">
+                      <span className="flex items-center gap-1 text-muted-foreground">
                         <Briefcase className="w-4 h-4" /> {job.department}
                       </span>
-                      <span className="flex items-center gap-1 text-slate-400">
+                      <span className="flex items-center gap-1 text-muted-foreground">
                         <MapPin className="w-4 h-4" /> {job.location}
                       </span>
-                      <span className="flex items-center gap-1 text-slate-400">
+                      <span className="flex items-center gap-1 text-muted-foreground">
                         <Clock className="w-4 h-4" /> {job.type}
                       </span>
                       <span className="flex items-center gap-1 text-emerald-400">
@@ -365,13 +365,13 @@ export default function CareersPage() {
                   </Link>
                 </div>
 
-                <p className="text-slate-300 mb-4">{job.description}</p>
+                <p className="text-muted-foreground mb-4">{job.description}</p>
 
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-2">
+                  <h4 className="text-sm font-semibold text-foreground mb-2">
                     Requirements:
                   </h4>
-                  <ul className="list-disc list-inside text-slate-400 text-sm space-y-1">
+                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1">
                     {job.requirements.map((req, i) => (
                       <li key={i}>{req}</li>
                     ))}
@@ -383,14 +383,14 @@ export default function CareersPage() {
 
           {filteredOpenings.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-400">
+              <p className="text-muted-foreground">
                 No open positions in this department right now.
               </p>
-              <p className="text-slate-500 text-sm mt-2">
+              <p className="text-muted-foreground text-sm mt-2">
                 Check back soon or send a general application to{" "}
                 <a
                   href="mailto:careers@sefgh.org"
-                  className="text-blue-400 hover:underline"
+                  className="text-primary hover:underline"
                 >
                   careers@sefgh.org
                 </a>
@@ -401,22 +401,22 @@ export default function CareersPage() {
       </section>
 
       {/* Diversity Statement */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
             Diversity & Inclusion
           </h2>
-          <p className="text-slate-400 leading-relaxed">
+          <p className="text-muted-foreground leading-relaxed">
             SEFGH is committed to building a diverse and inclusive team. We
             welcome applicants of all backgrounds regardless of race, gender,
             sexual orientation, religion, national origin, disability, or age.
             We believe diverse perspectives make better products.
           </p>
-          <p className="text-slate-500 text-sm mt-4">
+          <p className="text-muted-foreground text-sm mt-4">
             Don&apos;t see a perfect fit? Send your resume to{" "}
             <a
               href="mailto:careers@sefgh.org"
-              className="text-blue-400 hover:underline"
+              className="text-primary hover:underline"
             >
               careers@sefgh.org
             </a>{" "}

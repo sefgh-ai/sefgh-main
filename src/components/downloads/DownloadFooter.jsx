@@ -9,13 +9,13 @@ import Link from "next/link"
 const DownloadFooter = React.memo(() => {
   return (
     <div className="text-center mt-12 sm:mt-20 space-y-4">
-      <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-full border border-gray-200 dark:border-gray-800 shadow-lg">
+      <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/50 dark:bg-card/50 backdrop-blur-sm rounded-full border border-border dark:border-border shadow-lg">
         <div className="w-2 h-2 bg-gradient-to-r from-soft-cyan to-soft-violet rounded-full animate-pulse"></div>
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
           Desktop apps coming soon • Stay tuned!
         </p>
       </div>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
+      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
         In the meantime, use SEFGH on the web at{" "}
         <Link
           href="/"

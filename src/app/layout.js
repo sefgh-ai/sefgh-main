@@ -273,24 +273,25 @@ export default function RootLayout({ children }) {
                     toastOptions={{
                       classNames: {
                         toast:
-                          "group toast group-[.toaster]:bg-card group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-                        description:
-                          "group-[.toast]:text-slate-500 dark:group-[.toast]:text-slate-400",
+                          "group toast group-[.toaster]:bg-popover group-[.toaster]:text-popover-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+                        description: "group-[.toast]:text-muted-foreground",
+                        // Primary fill with its paired foreground, so the label
+                        // stays legible in both themes.
                         actionButton:
-                          "group-[.toast]:bg-slate-900 dark:group-[.toast]:bg-slate-50 group-[.toast]:text-slate-50 dark:group-[.toast]:text-slate-900",
+                          "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
                         cancelButton:
-                          "group-[.toast]:bg-slate-100 dark:group-[.toast]:bg-slate-800 group-[.toast]:text-slate-500 dark:group-[.toast]:text-slate-400",
+                          "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
                         closeButton:
-                          "group-[.toast]:bg-slate-100 dark:group-[.toast]:bg-slate-800 group-[.toast]:text-slate-500 dark:group-[.toast]:text-slate-400 group-[.toast]:border-slate-200 dark:group-[.toast]:border-slate-700",
+                          "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:border-border",
                         success:
-                          "group toast-success group-[.toaster]:bg-emerald-50 dark:group-[.toaster]:bg-emerald-950 group-[.toaster]:text-emerald-900 dark:group-[.toaster]:text-emerald-50 group-[.toaster]:border-emerald-200 dark:group-[.toaster]:border-emerald-800",
+                          "group toast-success group-[.toaster]:border-success/30 [&_[data-icon]]:text-success",
                         error:
-                          "group toast-error group-[.toaster]:bg-red-50 dark:group-[.toaster]:bg-red-950 group-[.toaster]:text-red-900 dark:group-[.toaster]:text-red-50 group-[.toaster]:border-red-200 dark:group-[.toaster]:border-red-800",
+                          "group toast-error group-[.toaster]:border-destructive/30 [&_[data-icon]]:text-destructive",
                         warning:
-                          "group toast-warning group-[.toaster]:bg-yellow-50 dark:group-[.toaster]:bg-yellow-950 group-[.toaster]:text-yellow-900 dark:group-[.toaster]:text-yellow-50 group-[.toaster]:border-yellow-200 dark:group-[.toaster]:border-yellow-800",
-                        info: "group toast-info group-[.toaster]:bg-blue-50 dark:group-[.toaster]:bg-blue-950 group-[.toaster]:text-blue-900 dark:group-[.toaster]:text-blue-50 group-[.toaster]:border-blue-200 dark:group-[.toaster]:border-blue-800",
-                        loading:
-                          "group toast-loading group-[.toaster]:bg-slate-50 dark:group-[.toaster]:bg-slate-900 group-[.toaster]:text-slate-900 dark:group-[.toaster]:text-slate-50 group-[.toaster]:border-slate-200 dark:group-[.toaster]:border-slate-700",
+                          "group toast-warning group-[.toaster]:border-warning/30 [&_[data-icon]]:text-warning",
+                        info:
+                          "group toast-info group-[.toaster]:border-info/30 [&_[data-icon]]:text-info",
+                        loading: "group toast-loading",
                       },
                     }}
                   />

@@ -56,8 +56,8 @@ export default function SitemapList() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-3 text-slate-300">
-        <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin text-blue-300" />
+      <div className="flex items-center gap-3 text-muted-foreground">
+        <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin text-primary" />
         Loading sitemap…
       </div>
     );
@@ -67,16 +67,16 @@ export default function SitemapList() {
     return (
       <div
         role="alert"
-        className="flex items-start gap-3 text-amber-200 bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl"
+        className="flex items-start gap-3 text-warning bg-warning/10 border border-warning/30 p-4 rounded-xl"
       >
         <AlertTriangle aria-hidden="true" className="w-5 h-5 mt-0.5" />
         <div className="space-y-2">
           <div className="font-semibold">Could not load sitemap</div>
-          <p className="text-sm text-amber-100/80">{error}</p>
+          <p className="text-sm text-warning/80">{error}</p>
           <button
             type="button"
             onClick={() => load()}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-amber-500/30 hover:border-amber-400/50 text-amber-100"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-warning/30 hover:border-warning/60 text-warning"
           >
             <RefreshCw aria-hidden="true" className="w-4 h-4" /> Try again
           </button>
@@ -87,31 +87,31 @@ export default function SitemapList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-slate-300">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          Found <span className="font-semibold text-white">{urls.length}</span> entries
+          Found <span className="font-semibold text-foreground">{urls.length}</span> entries
           {domain ? ` for ${domain}` : ""}.
         </span>
         <button
           type="button"
           onClick={() => load()}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 hover:border-slate-700 text-slate-200"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card hover:border-border text-foreground"
         >
           <RefreshCw aria-hidden="true" className="w-4 h-4" /> Refresh
         </button>
       </div>
 
-      <div className="divide-y divide-slate-800 rounded-xl border border-slate-800 bg-slate-950/40">
+      <div className="divide-y divide-border rounded-xl border border-border bg-background/40">
         {urls.map((url) => (
-          <div key={url} className="px-4 py-3 text-sm text-slate-200 flex items-start gap-3">
-            <span aria-hidden="true" className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-400" />
-            <a href={url} className="hover:text-blue-200 break-all" target="_blank" rel="noreferrer">
+          <div key={url} className="px-4 py-3 text-sm text-foreground flex items-start gap-3">
+            <span aria-hidden="true" className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+            <a href={url} className="hover:text-primary break-all" target="_blank" rel="noreferrer">
               {url}
             </a>
           </div>
         ))}
         {!urls.length && (
-          <div className="px-4 py-6 text-center text-slate-400">No entries found in sitemap.</div>
+          <div className="px-4 py-6 text-center text-muted-foreground">No entries found in sitemap.</div>
         )}
       </div>
     </div>

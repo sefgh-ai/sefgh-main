@@ -112,7 +112,7 @@ export default function VersionsPage() {
   const getStatusBadge = (status) => {
     const styles = {
       current: "bg-green-500/10 text-green-400 border-green-500/20",
-      stable: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      stable: "bg-primary/10 text-primary border-primary/20",
       legacy: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
       deprecated: "bg-red-500/10 text-red-400 border-red-500/20",
     };
@@ -120,33 +120,33 @@ export default function VersionsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-y-auto">
+    <main className="min-h-screen bg-background overflow-y-auto">
       {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
-            SEFGH<span className="text-blue-500">-AI</span>
+          <Link href="/" className="text-2xl font-bold text-foreground">
+            SEFGH<span className="text-primary">-AI</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/search"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Search
             </Link>
             <Link
               href="/about"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </Link>
-            <Link href="/versions" className="text-white transition-colors">
+            <Link href="/versions" className="text-foreground transition-colors">
               Versions
             </Link>
           </nav>
@@ -156,10 +156,10 @@ export default function VersionsPage() {
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Version <span className="text-blue-500">History</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            Version <span className="text-primary">History</span>
           </h1>
-          <p className="text-xl text-slate-400 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             Track our journey of continuous improvement. See what&apos;s new,
             what&apos;s changed, and what&apos;s coming next to SEFGH-AI.
           </p>
@@ -169,19 +169,19 @@ export default function VersionsPage() {
       {/* Current Version Highlight */}
       <section className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-8">
+          <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-primary/20 rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-6 h-6 text-foreground" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-foreground">
                   Version 3.0.0 &ldquo;Nova&rdquo;
                 </h2>
-                <p className="text-slate-400">Current Release • January 2026</p>
+                <p className="text-muted-foreground">Current Release • January 2026</p>
               </div>
             </div>
-            <p className="text-slate-300 mb-6">
+            <p className="text-muted-foreground mb-6">
               Our most powerful release yet, featuring AI-powered semantic
               search that understands developer intent and surfaces the most
               relevant repositories instantly.
@@ -195,7 +195,7 @@ export default function VersionsPage() {
               </Link>
               <a
                 href="#changelog"
-                className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-all border border-slate-700"
+                className="px-6 py-2 bg-muted hover:bg-muted text-foreground font-medium rounded-lg transition-all border border-border"
               >
                 View Changelog
               </a>
@@ -207,10 +207,10 @@ export default function VersionsPage() {
       {/* Version Timeline */}
       <section
         id="changelog"
-        className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50"
+        className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50"
       >
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-12 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             Release History
           </h2>
 
@@ -218,7 +218,7 @@ export default function VersionsPage() {
             {versions.map((release, index) => (
               <div
                 key={release.version}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-blue-500/30 transition-colors"
+                className="bg-muted/50 border border-border rounded-xl p-6 hover:border-primary/30 transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                   <div className="flex items-center gap-4">
@@ -226,19 +226,19 @@ export default function VersionsPage() {
                       className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                         release.status === "current"
                           ? "bg-gradient-to-br from-blue-500 to-purple-600"
-                          : "bg-slate-700"
+                          : "bg-muted"
                       }`}
                     >
-                      <release.icon className="w-5 h-5 text-white" />
+                      <release.icon className="w-5 h-5 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-white">
+                      <h3 className="text-xl font-semibold text-foreground">
                         Version {release.version}
-                        <span className="text-slate-400 font-normal ml-2">
+                        <span className="text-muted-foreground font-normal ml-2">
                           &ldquo;{release.codename}&rdquo;
                         </span>
                       </h3>
-                      <p className="text-slate-400 text-sm">{release.date}</p>
+                      <p className="text-muted-foreground text-sm">{release.date}</p>
                     </div>
                   </div>
                   <span
@@ -254,7 +254,7 @@ export default function VersionsPage() {
                   {release.highlights.map((highlight, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-slate-300 text-sm"
+                      className="flex items-start gap-2 text-muted-foreground text-sm"
                     >
                       <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                       {highlight}
@@ -268,12 +268,12 @@ export default function VersionsPage() {
       </section>
 
       {/* Roadmap Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-4 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-4 text-center">
             What&apos;s Next
           </h2>
-          <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
             Our roadmap is shaped by community feedback. Here&apos;s what
             we&apos;re working on.
           </p>
@@ -282,11 +282,11 @@ export default function VersionsPage() {
             {roadmap.map((quarter) => (
               <div
                 key={quarter.quarter}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl p-6"
+                className="bg-muted/50 border border-border rounded-xl p-6"
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock className="w-5 h-5 text-blue-400" />
-                  <h3 className="text-lg font-semibold text-white">
+                  <Clock className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg font-semibold text-foreground">
                     {quarter.quarter}
                   </h3>
                 </div>
@@ -294,9 +294,9 @@ export default function VersionsPage() {
                   {quarter.features.map((feature, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-slate-400 text-sm"
+                      className="flex items-start gap-2 text-muted-foreground text-sm"
                     >
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                       {feature}
                     </li>
                   ))}
@@ -308,33 +308,33 @@ export default function VersionsPage() {
       </section>
 
       {/* API Version Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
             API Versions
           </h2>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium">
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                     Version
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium">
+                  <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium">
+                  <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                     Sunset Date
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium">
+                  <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                     Documentation
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-800">
-                  <td className="py-3 px-4 text-white font-medium">
+                <tr className="border-b border-border">
+                  <td className="py-3 px-4 text-foreground font-medium">
                     v3 (latest)
                   </td>
                   <td className="py-3 px-4">
@@ -342,42 +342,42 @@ export default function VersionsPage() {
                       Active
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">-</td>
+                  <td className="py-3 px-4 text-muted-foreground">-</td>
                   <td className="py-3 px-4">
                     <Link
                       href="/playground"
-                      className="text-blue-400 hover:text-blue-300"
+                      className="text-primary hover:text-primary"
                     >
                       View Docs →
                     </Link>
                   </td>
                 </tr>
-                <tr className="border-b border-slate-800">
-                  <td className="py-3 px-4 text-white font-medium">v2</td>
+                <tr className="border-b border-border">
+                  <td className="py-3 px-4 text-foreground font-medium">v2</td>
                   <td className="py-3 px-4">
                     <span className="px-2 py-1 text-xs bg-yellow-500/10 text-yellow-400 rounded-full">
                       Maintenance
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">June 2026</td>
+                  <td className="py-3 px-4 text-muted-foreground">June 2026</td>
                   <td className="py-3 px-4">
                     <Link
                       href="/playground"
-                      className="text-blue-400 hover:text-blue-300"
+                      className="text-primary hover:text-primary"
                     >
                       View Docs →
                     </Link>
                   </td>
                 </tr>
-                <tr className="border-b border-slate-800">
-                  <td className="py-3 px-4 text-white font-medium">v1</td>
+                <tr className="border-b border-border">
+                  <td className="py-3 px-4 text-foreground font-medium">v1</td>
                   <td className="py-3 px-4">
                     <span className="px-2 py-1 text-xs bg-red-500/10 text-red-400 rounded-full">
                       Deprecated
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">March 2025</td>
-                  <td className="py-3 px-4 text-slate-500">Archived</td>
+                  <td className="py-3 px-4 text-muted-foreground">March 2025</td>
+                  <td className="py-3 px-4 text-muted-foreground">Archived</td>
                 </tr>
               </tbody>
             </table>
@@ -386,12 +386,12 @@ export default function VersionsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
             Stay Updated
           </h2>
-          <p className="text-xl text-slate-400 mb-8">
+          <p className="text-xl text-muted-foreground mb-8">
             Subscribe to our newsletter to get notified about new releases and
             features.
           </p>
@@ -399,7 +399,7 @@ export default function VersionsPage() {
             <input
               type="email"
               placeholder="your@email.com"
-              className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="flex-1 px-4 py-3 bg-muted border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             />
             <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all">
               Subscribe

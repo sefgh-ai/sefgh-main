@@ -37,18 +37,18 @@ const sections = [
 
 export default function DocsPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
         <header className="space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-200 text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
             <BookOpen className="w-4 h-4" />
             Documentation
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">SEFGH Docs</h1>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Quick links to guides and API references. Replace this stub content with your real docs source when ready.
           </p>
-          <div className="flex items-center justify-center gap-3 text-sm text-blue-200">
+          <div className="flex items-center justify-center gap-3 text-sm text-primary">
             <CheckCircle2 className="w-4 h-4" /> Updated for 2026 release
           </div>
         </header>
@@ -57,15 +57,15 @@ export default function DocsPage() {
           {sections.map((section) => (
             <div
               key={section.title}
-              className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3"
+              className="rounded-2xl border border-border bg-card/60 p-5 space-y-3"
             >
               <h2 className="text-lg font-semibold">{section.title}</h2>
-              <ul className="space-y-2 text-sm text-slate-300">
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 {section.items.map((item) => (
                   <li key={item.label} className="flex items-center justify-between">
                     <Link
                       href={item.href}
-                      className="inline-flex items-center gap-2 hover:text-blue-200"
+                      className="inline-flex items-center gap-2 hover:text-primary"
                     >
                       <ArrowRight className="w-3.5 h-3.5" />
                       {item.label}
@@ -77,17 +77,17 @@ export default function DocsPage() {
           ))}
         </section>
 
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-3 text-slate-200">
-            <Sparkles className="w-5 h-5 text-blue-300" />
+        <section className="rounded-2xl border border-border bg-card/60 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-3 text-foreground">
+            <Sparkles className="w-5 h-5 text-primary" />
             <div>
               <div className="font-semibold">Prefer API examples?</div>
-              <p className="text-slate-400 text-sm">Jump to the API reference with curl and JavaScript snippets.</p>
+              <p className="text-muted-foreground text-sm">Jump to the API reference with curl and JavaScript snippets.</p>
             </div>
           </div>
           <Link
             href="/api-reference"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-primary text-white text-sm font-medium"
           >
             View API Reference <ArrowRight className="w-4 h-4" />
           </Link>

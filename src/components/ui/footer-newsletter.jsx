@@ -7,9 +7,9 @@ import { Instagram, Twitter } from "lucide-react";
 
 export default function FooterNewsletter() {
   return (
-    <div className="relative w-full bg-slate-950 text-slate-200 overflow-hidden pt-16 pb-8 px-4 sm:px-6 lg:px-8">
+    <div className="relative w-full bg-background text-foreground overflow-hidden pt-16 pb-8 px-4 sm:px-6 lg:px-8">
       {/* Ambient Glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl translate-y-1/2 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -26,28 +26,28 @@ export default function FooterNewsletter() {
           {/* Ambient Glow */}
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 z-[-2]"></div>
 
-          <div className="relative bg-slate-900 rounded-2xl p-8 md:p-12 overflow-hidden">
+          <div className="relative bg-card rounded-2xl p-8 md:p-12 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Column */}
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight">
                   Subscribe to The SEFGH Insider
                 </h2>
-                <p className="text-slate-400 text-lg leading-relaxed max-w-lg">
+                <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">
                   A newsletter for developers, covering techniques, technical
                   guides, and the latest product innovations from SEFGH.
                 </p>
               </div>
               {/* Right Column */}
               <div className="flex flex-col gap-4 w-full max-w-md ml-auto">
-                <label className="text-sm text-slate-400 font-medium">
+                <label className="text-sm text-muted-foreground font-medium">
                   Email Address <span className="text-emerald-500">*</span>
                 </label>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
                     placeholder="you@company.com"
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                    className="flex-1 bg-background border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                   />
                   <button className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition-all shadow-lg shadow-blue-900/20 whitespace-nowrap hover:shadow-blue-900/40 hover:-translate-y-0.5">
                     Subscribe &gt;
@@ -58,18 +58,18 @@ export default function FooterNewsletter() {
                     <input
                       id="newsletter-consent"
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer"
+                      className="w-4 h-4 rounded border-border bg-background text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer"
                     />
                   </div>
                   <label
                     htmlFor="newsletter-consent"
-                    className="text-xs text-slate-500 leading-relaxed cursor-pointer select-none"
+                    className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
                   >
                     I agree to receive personalized communications, targeted
                     advertising, and campaign updates related to SEFGH.
                     <Link
                       href="#"
-                      className="text-blue-400 hover:text-blue-300 hover:underline transition-colors ml-1"
+                      className="text-primary hover:text-primary hover:underline transition-colors ml-1"
                     >
                       SEFGH Privacy Statement
                     </Link>
@@ -87,7 +87,7 @@ export default function FooterNewsletter() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 flex-1">
             {/* Column 1: Company */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold text-white">Company</h3>
+              <h3 className="text-lg font-semibold text-foreground">Company</h3>
               <ul className="flex flex-col gap-3">
                 {[
                   { name: "About", href: "/about" },
@@ -100,7 +100,7 @@ export default function FooterNewsletter() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-slate-400 hover:text-white transition-colors text-sm"
+                      className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {item.name}
                     </Link>
@@ -111,7 +111,7 @@ export default function FooterNewsletter() {
 
             {/* Column 2: Resources */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold text-white">Resources</h3>
+              <h3 className="text-lg font-semibold text-foreground">Resources</h3>
               <ul className="flex flex-col gap-3">
                 {[
                   { name: "Home Page", href: "/" },
@@ -127,7 +127,7 @@ export default function FooterNewsletter() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-slate-400 hover:text-white transition-colors text-sm"
+                      className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {item.name}
                     </Link>
@@ -138,7 +138,7 @@ export default function FooterNewsletter() {
 
             {/* Column 3: Legal */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold text-white">Legal</h3>
+              <h3 className="text-lg font-semibold text-foreground">Legal</h3>
               <ul className="flex flex-col gap-3">
                 {[
                   { name: "Cookie Policy", href: "/cookie-policy" },
@@ -151,7 +151,7 @@ export default function FooterNewsletter() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-slate-400 hover:text-white transition-colors text-sm"
+                      className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {item.name}
                     </Link>
@@ -162,7 +162,7 @@ export default function FooterNewsletter() {
 
             {/* Column 4: Platform */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold text-white">Platform</h3>
+              <h3 className="text-lg font-semibold text-foreground">Platform</h3>
               <ul className="flex flex-col gap-3">
                 {[
                   { name: "Playground", href: "/playground" },
@@ -182,7 +182,7 @@ export default function FooterNewsletter() {
                       {...(item.external
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
-                      className="text-slate-400 hover:text-white transition-colors text-sm"
+                      className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {item.name}
                     </Link>
@@ -202,9 +202,9 @@ export default function FooterNewsletter() {
                 height={40}
                 className="w-10 h-10 rounded-full object-cover"
               />
-              <span className="text-2xl font-semibold text-white">SEFGH</span>
+              <span className="text-2xl font-semibold text-foreground">SEFGH</span>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
               Discover hidden GitHub gems with intelligent search. Go beyond
               keywords with natural language queries.
             </p>
@@ -213,7 +213,7 @@ export default function FooterNewsletter() {
                 href="https://huggingface.co/sefgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-yellow-500 transition-all duration-300"
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-yellow-500 transition-all duration-300"
               >
                 <Image
                   src="/hf-logo.svg"
@@ -227,7 +227,7 @@ export default function FooterNewsletter() {
                 href="https://instagram.com/sefgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-blue-500 hover:bg-pink-600 hover:text-white transition-all duration-300"
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-primary hover:bg-pink-600 hover:text-foreground transition-all duration-300"
               >
                 <Instagram className="w-5 h-5" />
               </Link>
@@ -235,7 +235,7 @@ export default function FooterNewsletter() {
                 href="https://twitter.com/sefghai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-blue-500 hover:bg-blue-600 hover:text-white transition-all duration-300"
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-primary hover:bg-blue-600 hover:text-white transition-all duration-300"
               >
                 <Twitter className="w-5 h-5" />
               </Link>
@@ -243,7 +243,7 @@ export default function FooterNewsletter() {
                 href="https://github.com/sefgh-ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-gray-800 transition-all duration-300"
+                className="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-muted transition-all duration-300"
               >
                 <Image
                   src="/github-mark.svg"

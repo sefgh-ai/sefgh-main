@@ -12,7 +12,7 @@ import { Star, GitFork, Code } from "lucide-react";
  */
 export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard({ repo, index, onNavigate, getHeatIndicator }) {
   return (
-    <Card className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/50 backdrop-blur-sm group">
+    <Card className="bg-card/50 border-border hover:border-border transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/50 backdrop-blur-sm group">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           {/* Rank */}

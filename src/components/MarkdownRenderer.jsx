@@ -35,12 +35,12 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
   }
 
   return (
-    <div className="group relative my-4 rounded-xl overflow-hidden border border-border bg-slate-950 dark:bg-slate-950">
+    <div className="group relative my-4 rounded-xl overflow-hidden border border-border bg-background dark:bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-900 dark:bg-slate-900 border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 py-2 bg-card dark:bg-card border-b border-border">
         <div className="flex items-center gap-2">
           {language && (
-            <span className="text-xs font-medium text-slate-400">
+            <span className="text-xs font-medium text-muted-foreground">
               {language}
             </span>
           )}
@@ -49,7 +49,7 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+            className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
             onClick={handleCopy}
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -58,7 +58,7 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
               onClick={handleOpenInCanvas}
               title="Open in Canvas"
             >
