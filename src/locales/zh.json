@@ -1,0 +1,72 @@
+{
+  "header": {
+    "logo": "SEFGH",
+    "cta": "开始搜索"
+  },
+  "hero": {
+    "title": "智能查找GitHub项目",
+    "subtitle": "超越关键词。使用自然语言发现真正符合您愿景的仓库。",
+    "searchPlaceholders": [
+      "用Rust编写的3D渲染引擎...",
+      "实时数据可视化库...",
+      "用Swift编写的轻量级移动操作系统...",
+      "用C++和Lua构建的游戏引擎...",
+      "带身份验证的全栈Next.js样板..."
+    ]
+  },
+  "features": {
+    "title": "SEFGH的不同之处",
+    "subtitle": "我们构建了一个像开发者一样思考的搜索引擎，而不是数据库。",
+    "items": [
+      {
+        "title": "语义搜索",
+        "description": "理解查询背后的意图，而不仅仅是关键词。通过仓库的功能来查找。"
+      },
+      {
+        "title": "发现隐藏的宝石",
+        "description": "我们的排名算法展示相关项目，而不仅仅是最受欢迎的项目。发掘真正的创新。"
+      },
+      {
+        "title": "代码感知分析",
+        "description": "SEFGH分析仓库结构和README，提供更深入、更准确的匹配分数。"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "简单、强大、快速",
+    "steps": [
+      {
+        "number": "1",
+        "title": "提问",
+        "description": "用简单的中文描述您要查找的项目。细节越多越好。"
+      },
+      {
+        "number": "2",
+        "title": "分析",
+        "description": "我们的AI代理搜索GitHub，分析代码、README和元数据以找到最佳匹配。"
+      },
+      {
+        "number": "3",
+        "title": "发现",
+        "description": "获取按清晰相似度分数排名的相关仓库精选列表。"
+      }
+    ]
+  },
+  "cta": {
+    "title": "准备好找到您的下一个项目了吗？",
+    "subtitle": "停止滚动，开始构建。您的完美仓库只需一次搜索。",
+    "button": "立即开始搜索"
+  },
+  "footer": {
+    "copyright": "© 2025 SEFGH. 保留所有权利。",
+    "links": {
+      "about": "关于",
+      "privacy": "隐私",
+      "terms": "条款"
+    },
+    "social": {
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}

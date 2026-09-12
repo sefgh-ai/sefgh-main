@@ -1,0 +1,72 @@
+{
+  "header": {
+    "logo": "SEFGH",
+    "cta": "Start Searching"
+  },
+  "hero": {
+    "title": "Find GitHub projects. Intelligently.",
+    "subtitle": "Go beyond keywords. Use natural language to discover repositories that truly match your vision.",
+    "searchPlaceholders": [
+      "a 3D rendering engine in Rust...",
+      "a real-time data visualization library...",
+      "a lightweight mobile OS in Swift...",
+      "a game engine built with C++ and Lua...",
+      "a full-stack Next.js boilerplate with auth..."
+    ]
+  },
+  "features": {
+    "title": "Why SEFGH is Different",
+    "subtitle": "We built a search engine that thinks like a developer, not a database.",
+    "items": [
+      {
+        "title": "Semantic Search",
+        "description": "Understand the intent behind your query, not just the keywords. Find repositories by what they do."
+      },
+      {
+        "title": "Discover Hidden Gems",
+        "description": "Our ranking algorithm surfaces relevant projects, not just the most popular ones. Uncover true innovation."
+      },
+      {
+        "title": "Code-Aware Analysis",
+        "description": "SEFGH analyzes repository structure and READMEs to provide a deeper, more accurate match score."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Simple, Powerful, Fast.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Ask",
+        "description": "Describe the project you're looking for in plain English. The more detail, the better."
+      },
+      {
+        "number": "2",
+        "title": "Analyze",
+        "description": "Our AI agents scour GitHub, analyzing code, READMEs and metadata to find the best matches."
+      },
+      {
+        "number": "3",
+        "title": "Discover",
+        "description": "Get a curated list of relevant repositories, ranked by a clear similarity score."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to find your next project?",
+    "subtitle": "Stop scrolling, start building. Your perfect repository is just a search away.",
+    "button": "Start Your Search Now"
+  },
+  "footer": {
+    "copyright": "© 2025 SEFGH. All rights reserved.",
+    "links": {
+      "about": "About",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    },
+    "social": {
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}

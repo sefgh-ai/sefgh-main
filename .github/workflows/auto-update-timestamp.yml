@@ -1,0 +1,35 @@
+name: Auto Update Repo Timestamp
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write   # 👈 THIS IS THE FIX
+
+jobs:
+  update-timestamp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update timestamp file
+        run: |
+          echo "Last updated on: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" > LAST_UPDATED.txt
+          echo "Commit: $GITHUB_SHA" >> LAST_UPDATED.txt
+          echo "Author: $GITHUB_ACTOR" >> LAST_UPDATED.txt
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add LAST_UPDATED.txt
+          git commit -m "chore: auto update repo timestamp" || echo "No changes to commit"
+
+      - name: Push changes
+        run: git push

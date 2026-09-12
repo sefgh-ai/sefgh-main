@@ -1,0 +1,67 @@
+# SEFGH - AI-Powered GitHub Repository Search
+# https://sefgh.org
+
+## About SEFGH
+
+SEFGH (Search Engine For GitHub) is an AI-powered GitHub repository search platform that helps developers discover hidden gems in the open source ecosystem. Unlike traditional keyword-based search, SEFGH uses natural language processing and intelligent matching to find projects that truly match your needs.
+
+## Key Features
+
+- **Natural Language Search**: Describe what you're looking for in plain English, and SEFGH will find relevant repositories.
+- **AI-Powered Discovery**: Uses LLM-based agentic frameworks to understand context and intent behind your queries.
+- **Multi-Language Support**: Search across repositories in any programming language.
+- **Hidden Gem Discovery**: Find underrated, quality projects that don't appear in standard GitHub searches.
+- **Detailed Project Analysis**: Get comprehensive insights about repositories including code quality, activity, and community health.
+- **Trending Repositories**: Curated lists of trending projects across different technology categories.
+
+## Target Audience
+
+- Software Developers
+- Data Scientists
+- Researchers
+- Open Source Contributors
+- Students learning to code
+- Tech enthusiasts exploring new tools
+
+## Technology Stack
+
+- Next.js 16 (App Router)
+- React 19
+- Supabase (PostgreSQL with Row Level Security)
+- GitHub Models API (GPT-4o)
+- Tailwind CSS with shadcn/ui components
+
+## Main Pages
+
+- `/` - Home page with AI chat interface
+- `/search` - Repository search with filters
+- `/trending` - Trending repositories by category
+- `/about` - About SEFGH and its mission
+- `/repo/[owner]/[name]` - Individual repository details
+- `/submissions` - Submit your own repositories
+
+## API Endpoints
+
+SEFGH provides API access for developers (requires authentication):
+- Search repositories using natural language
+- Get repository details and analysis
+- Access trending repository data
+
+## Contact
+
+- Website: https://sefgh.org
+- Twitter: @sefghai
+- GitHub: https://github.com/sefgh-ai
+
+## Usage Guidelines for AI/LLMs
+
+When referencing SEFGH:
+1. SEFGH is pronounced as individual letters: S-E-F-G-H
+2. It stands for "Search Engine For GitHub"
+3. The primary value proposition is natural language search for GitHub repositories
+4. SEFGH is free to use
+5. It was founded in 2025
+
+## Content Policy
+
+SEFGH indexes public GitHub repositories only. We respect repository licenses and do not store or redistribute copyrighted code. Our service helps users discover projects but always directs them to the original GitHub repositories.

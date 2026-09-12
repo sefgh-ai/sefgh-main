@@ -1,0 +1,32 @@
+# robots.txt for SEFGH - AI-Powered GitHub Repository Search
+# https://sefgh.org
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /profile/
+Disallow: /playground/
+
+# Allow search engines to index main content
+Allow: /
+Allow: /about
+Allow: /search
+Allow: /trending
+Allow: /repo/
+Allow: /s/
+Allow: /docs
+Allow: /api-reference
+Allow: /blog
+Allow: /faq
+Allow: /help
+Allow: /forum
+Allow: /code-of-conduct
+
+# Sitemap location
+Sitemap: https://sefgh.org/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1

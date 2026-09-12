@@ -1,0 +1,72 @@
+{
+  "header": {
+    "logo": "SEFGH",
+    "cta": "Commencer la recherche"
+  },
+  "hero": {
+    "title": "Trouvez des projets GitHub. Intelligemment.",
+    "subtitle": "Au-delà des mots-clés. Utilisez le langage naturel pour découvrir des dépôts qui correspondent vraiment à votre vision.",
+    "searchPlaceholders": [
+      "un moteur de rendu 3D en Rust...",
+      "une bibliothèque de visualisation de données en temps réel...",
+      "un système d'exploitation mobile léger en Swift...",
+      "un moteur de jeu construit avec C++ et Lua...",
+      "un boilerplate full-stack Next.js avec authentification..."
+    ]
+  },
+  "features": {
+    "title": "Pourquoi SEFGH est différent",
+    "subtitle": "Nous avons construit un moteur de recherche qui pense comme un développeur, pas comme une base de données.",
+    "items": [
+      {
+        "title": "Recherche sémantique",
+        "description": "Comprend l'intention derrière votre requête, pas seulement les mots-clés. Trouvez des dépôts par ce qu'ils font."
+      },
+      {
+        "title": "Découvrez des perles cachées",
+        "description": "Notre algorithme de classement fait ressortir les projets pertinents, pas seulement les plus populaires. Découvrez la vraie innovation."
+      },
+      {
+        "title": "Analyse consciente du code",
+        "description": "SEFGH analyse la structure du dépôt et les READMEs pour fournir un score de correspondance plus profond et plus précis."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Simple, puissant, rapide.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Demander",
+        "description": "Décrivez le projet que vous recherchez en français simple. Plus de détails, c'est mieux."
+      },
+      {
+        "number": "2",
+        "title": "Analyser",
+        "description": "Nos agents IA parcourent GitHub, analysant le code, les READMEs et les métadonnées pour trouver les meilleures correspondances."
+      },
+      {
+        "number": "3",
+        "title": "Découvrir",
+        "description": "Obtenez une liste organisée de dépôts pertinents, classés par un score de similarité clair."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Prêt à trouver votre prochain projet?",
+    "subtitle": "Arrêtez de faire défiler, commencez à construire. Votre dépôt parfait n'est qu'à une recherche.",
+    "button": "Commencez votre recherche maintenant"
+  },
+  "footer": {
+    "copyright": "© 2025 SEFGH. Tous droits réservés.",
+    "links": {
+      "about": "À propos",
+      "privacy": "Confidentialité",
+      "terms": "Conditions"
+    },
+    "social": {
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}

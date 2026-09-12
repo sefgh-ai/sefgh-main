@@ -1,0 +1,72 @@
+{
+  "header": {
+    "logo": "SEFGH",
+    "cta": "Comenzar a buscar"
+  },
+  "hero": {
+    "title": "Encuentra proyectos de GitHub. Inteligentemente.",
+    "subtitle": "Más allá de las palabras clave. Usa lenguaje natural para descubrir repositorios que realmente coincidan con tu visión.",
+    "searchPlaceholders": [
+      "un motor de renderizado 3D en Rust...",
+      "una biblioteca de visualización de datos en tiempo real...",
+      "un sistema operativo móvil ligero en Swift...",
+      "un motor de juegos construido con C++ y Lua...",
+      "un boilerplate full-stack de Next.js con autenticación..."
+    ]
+  },
+  "features": {
+    "title": "Por qué SEFGH es diferente",
+    "subtitle": "Construimos un motor de búsqueda que piensa como un desarrollador, no como una base de datos.",
+    "items": [
+      {
+        "title": "Búsqueda semántica",
+        "description": "Comprende la intención detrás de tu consulta, no solo las palabras clave. Encuentra repositorios por lo que hacen."
+      },
+      {
+        "title": "Descubre joyas ocultas",
+        "description": "Nuestro algoritmo de clasificación muestra proyectos relevantes, no solo los más populares. Descubre la verdadera innovación."
+      },
+      {
+        "title": "Análisis consciente del código",
+        "description": "SEFGH analiza la estructura del repositorio y los READMEs para proporcionar una puntuación de coincidencia más profunda y precisa."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Simple, poderoso, rápido.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Pregunta",
+        "description": "Describe el proyecto que buscas en español simple. Cuanto más detalle, mejor."
+      },
+      {
+        "number": "2",
+        "title": "Analiza",
+        "description": "Nuestros agentes de IA exploran GitHub, analizando código, READMEs y metadatos para encontrar las mejores coincidencias."
+      },
+      {
+        "number": "3",
+        "title": "Descubre",
+        "description": "Obtén una lista seleccionada de repositorios relevantes, clasificados por una puntuación de similitud clara."
+      }
+    ]
+  },
+  "cta": {
+    "title": "¿Listo para encontrar tu próximo proyecto?",
+    "subtitle": "Deja de desplazarte, comienza a construir. Tu repositorio perfecto está a solo una búsqueda de distancia.",
+    "button": "Comienza tu búsqueda ahora"
+  },
+  "footer": {
+    "copyright": "© 2025 SEFGH. Todos los derechos reservados.",
+    "links": {
+      "about": "Acerca de",
+      "privacy": "Privacidad",
+      "terms": "Términos"
+    },
+    "social": {
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}
