@@ -41,7 +41,7 @@ export function UpgradeDialog({ open, onOpenChange }) {
           <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                <Zap className="h-5 w-5 text-white" />
+                <Zap className="h-5 w-5 text-foreground" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">

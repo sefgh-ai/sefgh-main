@@ -80,11 +80,11 @@ export default function StarredPage() {
         <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-1 sm:gap-2 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
+          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-border overflow-hidden flex-1 min-h-0">
             {/* Top Navbar */}
-            <div className="sticky top-0 z-50 border-b border-white/10 backdrop-blur-sm">
+            <div className="sticky top-0 z-50 border-b border-border backdrop-blur-sm">
               <div className="flex h-14 items-center px-4 gap-3">
-                <SidebarTrigger className="hover:bg-white/10 rounded-xl transition-smooth" />
+                <SidebarTrigger className="hover:bg-accent rounded-xl transition-smooth" />
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-yellow-500" />
                   <span className="font-semibold">Starred Repositories</span>

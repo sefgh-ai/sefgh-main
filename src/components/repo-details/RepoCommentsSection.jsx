@@ -65,7 +65,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
   const netVotes = comment.upvotes - comment.downvotes
 
   return (
-    <div className={cn("space-y-2", depth > 0 && "ml-8 pl-4 border-l-2 border-white/10")}>
+    <div className={cn("space-y-2", depth > 0 && "ml-8 pl-4 border-l-2 border-border")}>
       <Card className="p-4 bg-card/30">
         {/* Comment Header */}
         <div className="flex items-start gap-3 mb-3">

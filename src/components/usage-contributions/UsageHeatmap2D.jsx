@@ -79,7 +79,7 @@ export default function UsageHeatmap2D({ weeks, maxCount }) {
 
                   {/* Tooltip */}
                   {isHovered && (
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap pointer-events-none z-20 border border-white/10">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-background/90 text-foreground text-xs rounded whitespace-nowrap pointer-events-none z-20 border border-border">
                       <div className="font-semibold">{day.count} actions</div>
                       <div className="text-muted-foreground text-[10px]">
                         {day.date.toLocaleDateString('en-US', { 
@@ -89,7 +89,7 @@ export default function UsageHeatmap2D({ weeks, maxCount }) {
                         })}
                       </div>
                       <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
-                        <div className="w-2 h-2 bg-black/90 border-b border-r border-white/10 transform rotate-45"></div>
+                        <div className="w-2 h-2 bg-background/90 border-b border-r border-border transform rotate-45"></div>
                       </div>
                     </div>
                   )}

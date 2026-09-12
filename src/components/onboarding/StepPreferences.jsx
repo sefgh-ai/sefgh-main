@@ -61,12 +61,12 @@ export function StepPreferences({ userId, onComplete, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3 sm:p-4">
-            <p className="text-white text-xs sm:text-sm">
+            <p className="text-foreground text-xs sm:text-sm">
               Almost done! 🎉 Let&apos;s set up your preferences
             </p>
             <p className="text-[#8b949e] text-[10px] sm:text-xs mt-1">
@@ -78,7 +78,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
 
       {/* Notification preferences */}
       <div className="space-y-2 sm:space-y-3">
-        <label className="text-xs sm:text-sm font-medium text-white">
+        <label className="text-xs sm:text-sm font-medium text-foreground">
           Notification Preferences
         </label>
         <div className="space-y-1.5 sm:space-y-2 max-h-[160px] sm:max-h-none overflow-y-auto">
@@ -105,7 +105,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
                   <div className="flex-1 min-w-0">
                     <div
                       className={`font-medium text-xs sm:text-sm ${
-                        isSelected ? "text-[#238636]" : "text-white"
+                        isSelected ? "text-[#238636]" : "text-foreground"
                       }`}
                     >
                       {option.label}
@@ -117,7 +117,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
                   {isSelected && (
                     <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full bg-[#238636] flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-white"
+                        className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-foreground"
                         fill="none"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -138,7 +138,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
 
       {/* Language preference */}
       <div className="space-y-2 sm:space-y-3">
-        <label className="text-xs sm:text-sm font-medium text-white">
+        <label className="text-xs sm:text-sm font-medium text-foreground">
           Preferred Language
         </label>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
@@ -163,7 +163,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
                 className={`text-[10px] sm:text-xs font-medium truncate ${
                   selectedLanguage === lang.code
                     ? "text-[#58a6ff]"
-                    : "text-white"
+                    : "text-foreground"
                 }`}
               >
                 {lang.name}
@@ -178,11 +178,11 @@ export function StepPreferences({ userId, onComplete, onBack }) {
         <div className="flex items-start gap-2 sm:gap-3">
           <div className="flex-shrink-0">
             <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-[#238636] flex items-center justify-center">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
             </div>
           </div>
           <div className="min-w-0">
-            <h4 className="text-white font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">
+            <h4 className="text-foreground font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1">
               You&apos;re all set! 🚀
             </h4>
             <p className="text-[#8b949e] text-[10px] sm:text-xs">
@@ -198,7 +198,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
         <Button
           onClick={onBack}
           variant="ghost"
-          className="text-[#8b949e] hover:text-white hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
           <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back

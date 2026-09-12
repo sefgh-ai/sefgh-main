@@ -43,9 +43,9 @@ export function SearchFilters({
               <ChevronDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-xl glass-premium border-white/10 shadow-premium">
+          <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
             <DropdownMenuLabel>Filter</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator className="bg-accent" />
             {filterOptions.map((option) => (
               <DropdownMenuItem
                 key={option.value}
@@ -69,9 +69,9 @@ export function SearchFilters({
               <ChevronDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-xl glass-premium border-white/10 shadow-premium">
+          <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
             <DropdownMenuLabel>Select Language</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator className="bg-accent" />
             <DropdownMenuItem
               onClick={() => setLanguage("")}
               className="rounded-lg"
@@ -134,9 +134,9 @@ export function SearchFilters({
               <ChevronDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-xl glass-premium border-white/10 shadow-premium">
+          <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
             <DropdownMenuLabel>Minimum Stars</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator className="bg-accent" />
             <DropdownMenuItem
               onClick={() => setStars("")}
               className="rounded-lg"

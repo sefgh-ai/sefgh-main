@@ -143,7 +143,7 @@ function SettingsPageContent() {
         <div className="flex flex-1 min-h-0 p-1 sm:p-4 gap-1 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-lg sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
+          <SidebarInset className="flex flex-col glass-premium rounded-lg sm:rounded-2xl shadow-premium border border-border overflow-hidden flex-1 min-h-0">
             <SearchNavbar showFilters={false} />
 
             <div className="w-full px-2 sm:px-6 lg:px-8 py-2 sm:py-6 pb-4 overflow-y-auto flex-1 min-h-0">
@@ -152,7 +152,7 @@ function SettingsPageContent() {
                 <div className="mb-6 sm:mb-8">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                      <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                      <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
                     </div>
                     <div>
                       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">

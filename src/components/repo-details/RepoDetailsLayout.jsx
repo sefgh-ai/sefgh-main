@@ -74,7 +74,7 @@ export default function RepoDetailsLayout({
         </Button>
 
         {/* Main Card */}
-        <Card className="glass-premium shadow-premium border-white/10 p-6 md:p-8">
+        <Card className="glass-premium shadow-premium border-border p-6 md:p-8">
           {/* Repository Header */}
           <div className="flex flex-col md:flex-row gap-6 mb-6">
             {/* Avatar */}
@@ -82,7 +82,7 @@ export default function RepoDetailsLayout({
               <img
                 src={repoData.owner.avatar_url}
                 alt={repoData.owner.login}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-xl border-2 border-white/10"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-xl border-2 border-border"
               />
             </div>
 

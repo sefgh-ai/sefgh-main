@@ -34,7 +34,7 @@ export function DynamicIslandNav() {
     <>
       {/* Desktop floating island */}
       <div className="fixed top-3 left-1/2 -translate-x-1/2 z-30 hidden sm:flex">
-        <div className="flex items-center gap-1 rounded-full border border-white/10 bg-background/80 backdrop-blur-xl shadow-lg shadow-black/30 px-2 py-1">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-background/80 backdrop-blur-xl shadow-lg shadow-black/30 px-2 py-1">
           {links.map(({ href, label, icon: Icon }) => {
             const active = pathname.startsWith(href);
             return (
@@ -45,7 +45,7 @@ export function DynamicIslandNav() {
                   "group inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-all",
                   active
                     ? "bg-primary/20 text-white border border-blue-500/40 shadow-inner shadow-blue-900/40"
-                    : "hover:bg-white/5 hover:text-white"
+                    : "hover:bg-accent hover:text-foreground"
                 )}
               >
                 <Icon className="w-4 h-4" />

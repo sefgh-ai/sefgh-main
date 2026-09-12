@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Token-based input. The previous version used `border-white/10 glass-premium`,
+ * Token-based input. The previous version used `border-border glass-premium`,
  * which renders as an invisible border on a light background, and replaced the
  * focus ring with a custom blue glow.
  */

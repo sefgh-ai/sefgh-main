@@ -123,7 +123,7 @@ export function OnboardingModal({
               variant="ghost"
               size="sm"
               onClick={handleSkip}
-              className="text-[#8b949e] hover:text-white hover:bg-[#21262d] text-xs sm:text-sm h-8 px-2 sm:px-3"
+              className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 px-2 sm:px-3"
             >
               Skip for now
             </Button>

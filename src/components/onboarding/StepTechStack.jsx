@@ -107,12 +107,12 @@ export function StepTechStack({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3 sm:p-4">
-            <p className="text-white text-xs sm:text-sm">
+            <p className="text-foreground text-xs sm:text-sm">
               Awesome! 🚀 Now, what technologies are you interested in?
             </p>
             <p className="text-[#8b949e] text-[10px] sm:text-xs mt-1">
@@ -137,7 +137,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
                   variant={selectedTech.includes(tech) ? "default" : "outline"}
                   className={`cursor-pointer transition-all text-[10px] sm:text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 ${
                     selectedTech.includes(tech)
-                      ? "bg-[#238636] hover:bg-[#2ea043] text-white border-[#238636]"
+                      ? "bg-[#238636] hover:bg-[#2ea043] text-foreground border-[#238636]"
                       : "bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] border-[#30363d] hover:border-[#8b949e]"
                   }`}
                   onClick={() => toggleTech(tech)}
@@ -152,7 +152,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
 
       {/* Primary language */}
       <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 border-t border-[#21262d]">
-        <label className="text-xs sm:text-sm font-medium text-white">
+        <label className="text-xs sm:text-sm font-medium text-foreground">
           Primary programming language?
         </label>
         <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -162,7 +162,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
               variant={primaryLanguage === lang ? "default" : "outline"}
               className={`cursor-pointer transition-all text-[10px] sm:text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 ${
                 primaryLanguage === lang
-                  ? "bg-[#58a6ff] hover:bg-[#79c0ff] text-white border-[#58a6ff]"
+                  ? "bg-[#58a6ff] hover:bg-[#79c0ff] text-foreground border-[#58a6ff]"
                   : "bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] border-[#30363d] hover:border-[#8b949e]"
               }`}
               onClick={() => setPrimaryLanguage(lang)}
@@ -188,7 +188,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
         <Button
           onClick={onBack}
           variant="ghost"
-          className="text-[#8b949e] hover:text-white hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
           <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
@@ -196,7 +196,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
         <Button
           onClick={handleContinue}
           disabled={selectedTech.length === 0 || !primaryLanguage || loading}
-          className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
+          className="bg-[#238636] hover:bg-[#2ea043] text-foreground text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
         >
           {loading ? "Saving..." : "Continue"}
         </Button>

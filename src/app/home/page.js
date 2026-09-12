@@ -59,7 +59,7 @@ export default function HomePage() {
         <div className="flex flex-1 min-h-0 p-1 sm:p-4 gap-1 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-lg sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
+          <SidebarInset className="flex flex-col glass-premium rounded-lg sm:rounded-2xl shadow-premium border border-border overflow-hidden flex-1 min-h-0">
             <SearchNavbar
               showFilters={false}
               selectedTab={selectedTab}

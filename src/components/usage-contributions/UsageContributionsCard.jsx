@@ -78,7 +78,7 @@ export default function UsageContributionsCard({ title, year, data }) {
   if (!isClient) {
     // SSR fallback
     return (
-      <Card className="glass-premium border-white/10">
+      <Card className="glass-premium border-border">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -92,7 +92,7 @@ export default function UsageContributionsCard({ title, year, data }) {
   }
 
   return (
-    <Card className="glass-premium border-white/10 shadow-premium">
+    <Card className="glass-premium border-border shadow-premium">
       <CardHeader>
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -107,7 +107,7 @@ export default function UsageContributionsCard({ title, year, data }) {
       
       <CardContent className="space-y-6">
         {/* Main Chart */}
-        <div className="w-full rounded-xl border border-white/5 bg-black/20 overflow-hidden">
+        <div className="w-full rounded-xl border border-border/60 bg-background/20 overflow-hidden">
           {view === '3d' ? (
             <UsageIsometricChart weeks={weeks} maxCount={maxCount} />
           ) : (
@@ -133,7 +133,7 @@ export default function UsageContributionsCard({ title, year, data }) {
         </div>
 
         {/* Additional Info */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border/60">
           <div>
             {stats.activeDays} active days out of {stats.totalDays} total days
           </div>

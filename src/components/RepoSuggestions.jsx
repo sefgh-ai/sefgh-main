@@ -23,7 +23,7 @@ export function RepoSuggestions({ repos, onSelect }) {
       >
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-blue-600 dark:bg-blue-500">
-            <Github className="h-4 w-4 text-white" />
+            <Github className="h-4 w-4 text-foreground" />
           </div>
           <div>
             <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">

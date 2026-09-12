@@ -19,7 +19,7 @@ const SearchComponent = ({ placeholder, onSearch }) => {
 
       <form
         onSubmit={handleSubmit}
-        className="relative w-full bg-background rounded-xl border border-white/10 shadow-lg"
+        className="relative w-full bg-background rounded-xl border border-border shadow-lg"
       >
         <input
           placeholder={placeholder || "Search..."}

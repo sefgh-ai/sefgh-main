@@ -18,7 +18,7 @@ export function ViewToggle({ view, setView }) {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-1 p-1 rounded-xl glass-premium border border-white/10">
+      <div className="flex items-center gap-1 p-1 rounded-xl glass-premium border border-border">
         {views.map(({ value, icon: Icon, label }) => (
           <Tooltip key={value}>
             <TooltipTrigger asChild>
@@ -28,7 +28,7 @@ export function ViewToggle({ view, setView }) {
                 className={`h-8 w-8 p-0 rounded-lg transition-all ${
                   view === value
                     ? "bg-blue-500/20 text-blue-400 shadow-glow-blue"
-                    : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => setView(value)}
               >

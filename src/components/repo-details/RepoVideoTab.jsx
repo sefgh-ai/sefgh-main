@@ -211,7 +211,7 @@ export function RepoVideoTab({ repoFullName }) {
                   href={selectedVideo.video_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white hover:text-primary flex items-center gap-2"
+                  className="text-foreground hover:text-primary flex items-center gap-2"
                 >
                   <ExternalLink className="h-6 w-6" />
                   Open Video in New Tab

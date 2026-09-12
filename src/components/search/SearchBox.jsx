@@ -163,9 +163,9 @@ export function SearchBox({
                   <ChevronDownIcon className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="rounded-xl glass-premium border-white/10 shadow-premium">
+              <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
                 <DropdownMenuLabel>Search Mode</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSeparator className="bg-accent" />
                 {modeOptions.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
@@ -259,7 +259,7 @@ export function SearchBox({
                       setShowSuggestions(false);
                       setShowHistory(true);
                     }}
-                    className="p-1.5 rounded-lg hover:bg-white/10 transition-all"
+                    className="p-1.5 rounded-lg hover:bg-accent transition-all"
                   >
                     <XMarkIcon className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </button>

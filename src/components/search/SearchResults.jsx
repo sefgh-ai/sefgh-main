@@ -34,7 +34,7 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
   if (compact) {
     return (
       <div
-        className="flex items-center gap-4 px-4 py-3 rounded-lg glass-premium border border-white/5 hover:border-blue-500/30 hover:bg-white/5 transition-all cursor-pointer group"
+        className="flex items-center gap-4 px-4 py-3 rounded-lg glass-premium border border-border/60 hover:border-blue-500/30 hover:bg-accent transition-all cursor-pointer group"
         onClick={() => onSelect?.(repo)}
       >
         <div className="flex-1 min-w-0">
@@ -43,7 +43,7 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
               {repo.full_name}
             </span>
             {repo.language && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-muted-foreground">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-accent text-muted-foreground">
                 {repo.language}
               </span>
             )}
@@ -69,7 +69,7 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
 
   return (
     <div
-      className="flex flex-col sm:flex-row sm:items-start gap-4 p-4 rounded-xl glass-premium border border-white/5 hover:border-blue-500/30 hover:shadow-glow-blue transition-all cursor-pointer group"
+      className="flex flex-col sm:flex-row sm:items-start gap-4 p-4 rounded-xl glass-premium border border-border/60 hover:border-blue-500/30 hover:shadow-glow-blue transition-all cursor-pointer group"
       onClick={() => onSelect?.(repo)}
     >
       <div className="flex-1 min-w-0">
@@ -263,7 +263,7 @@ export function SearchResults({
               size="sm"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1 || loadingMore}
-              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -274,7 +274,7 @@ export function SearchResults({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1 || loadingMore}
-              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -299,7 +299,7 @@ export function SearchResults({
                     className={`h-9 w-9 p-0 rounded-lg ${
                       currentPage === page
                         ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                        : "glass-premium border-white/10 hover:border-blue-500/30"
+                        : "glass-premium border-border hover:border-blue-500/30"
                     }`}
                   >
                     {page}
@@ -314,7 +314,7 @@ export function SearchResults({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages || loadingMore}
-              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -325,7 +325,7 @@ export function SearchResults({
               size="sm"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages || loadingMore}
-              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>

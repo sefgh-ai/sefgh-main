@@ -15,7 +15,7 @@ const DownloadHeader = React.memo(() => {
           Coming Soon
         </span>
       </div>
-      <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground dark:text-white mb-4 sm:mb-6 tracking-tight leading-tight mt-0 px-2">
+      <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground dark:text-foreground mb-4 sm:mb-6 tracking-tight leading-tight mt-0 px-2">
         Download SEFGH
         <br />
         <span className="bg-gradient-to-r from-soft-cyan via-soft-violet to-soft-blue bg-clip-text text-transparent">

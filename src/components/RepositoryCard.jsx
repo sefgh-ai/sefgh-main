@@ -217,7 +217,7 @@ export function RepositoryCard({ repo, onSelect }) {
           variant={isStarred ? "default" : "outline"}
           size="sm"
           className={`flex-1 ${
-            isStarred ? "bg-yellow-500 hover:bg-yellow-600 text-white" : ""
+            isStarred ? "bg-yellow-500 hover:bg-yellow-600 text-foreground" : ""
           }`}
           onClick={handleStar}
           disabled={isStarring}

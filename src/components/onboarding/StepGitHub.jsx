@@ -49,12 +49,12 @@ export function StepGitHub({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3 sm:p-4">
-            <p className="text-white text-xs sm:text-sm">
+            <p className="text-foreground text-xs sm:text-sm">
               Great choices! 🌟 Want to connect your GitHub account?
             </p>
             <p className="text-[#8b949e] text-[10px] sm:text-xs mt-1">
@@ -69,10 +69,10 @@ export function StepGitHub({ userId, onNext, onBack }) {
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="p-2 sm:p-3 rounded-lg bg-[#21262d] flex-shrink-0">
-            <Github className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            <Github className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-white font-semibold text-sm sm:text-base mb-1 sm:mb-2">
+            <h3 className="text-foreground font-semibold text-sm sm:text-base mb-1 sm:mb-2">
               Connect GitHub Account
             </h3>
             <p className="text-[#8b949e] text-xs sm:text-sm">
@@ -97,7 +97,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
 
         {/* GitHub username input */}
         <div className="space-y-2 sm:space-y-3">
-          <label className="text-xs sm:text-sm font-medium text-white">
+          <label className="text-xs sm:text-sm font-medium text-foreground">
             GitHub Username
           </label>
           <div className="flex gap-2">
@@ -106,7 +106,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
                 placeholder="Enter your username"
                 value={githubUsername}
                 onChange={(e) => setGithubUsername(e.target.value)}
-                className="bg-[#0d1117] border-[#30363d] text-white placeholder-[#8b949e] focus:border-[#58a6ff] text-xs sm:text-sm h-8 sm:h-9"
+                className="bg-[#0d1117] border-[#30363d] text-foreground placeholder-[#8b949e] focus:border-[#58a6ff] text-xs sm:text-sm h-8 sm:h-9"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleConnect();
@@ -117,7 +117,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
             <Button
               onClick={handleConnect}
               disabled={!githubUsername.trim() || loading}
-              className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
+              className="bg-[#238636] hover:bg-[#2ea043] text-foreground text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
             >
               Connect
             </Button>
@@ -133,7 +133,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
         <button
           onClick={handleSkipGitHub}
           disabled={loading}
-          className="text-[10px] sm:text-sm text-[#8b949e] hover:text-white transition-colors"
+          className="text-[10px] sm:text-sm text-[#8b949e] hover:text-foreground transition-colors"
         >
           Skip this step
         </button>
@@ -144,7 +144,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
         <Button
           onClick={onBack}
           variant="ghost"
-          className="text-[#8b949e] hover:text-white hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
           <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back

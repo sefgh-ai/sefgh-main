@@ -13,7 +13,7 @@ import { formatSubmissionDate } from "@/lib/utils/submissions/submissionHelpers"
  */
 const SubmissionCard = React.memo(({ submission, onDelete }) => {
   return (
-    <div className="group glass-premium border border-white/10 rounded-xl p-6 hover:shadow-premium-lg transition-all duration-300 hover:border-blue-500/30">
+    <div className="group glass-premium border border-border rounded-xl p-6 hover:shadow-premium-lg transition-all duration-300 hover:border-blue-500/30">
       {/* Header with Delete Button */}
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-semibold text-primary flex-1 line-clamp-2">

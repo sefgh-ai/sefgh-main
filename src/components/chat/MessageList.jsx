@@ -53,7 +53,7 @@ export function MessageList({
   // Empty state when no conversation
   if (!currentConversation) {
     return (
-      <div className="glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 overflow-hidden">
+      <div className="glass-premium rounded-2xl shadow-premium border border-border flex-1 overflow-hidden">
         <ScrollArea className="h-full p-6">
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
             <div className="p-8 rounded-full bg-blue-100 dark:bg-blue-950/30 mb-6">
@@ -81,7 +81,7 @@ export function MessageList({
   // Empty state when no messages
   if (messages.length === 0) {
     return (
-      <div className="glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 overflow-hidden">
+      <div className="glass-premium rounded-2xl shadow-premium border border-border flex-1 overflow-hidden">
         <ScrollArea className="h-full p-6">
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
             <div className="p-6 rounded-full bg-muted mb-4">
@@ -98,7 +98,7 @@ export function MessageList({
   }
 
   return (
-    <div className="glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 overflow-hidden">
+    <div className="glass-premium rounded-2xl shadow-premium border border-border flex-1 overflow-hidden">
       <ScrollArea className="h-full p-6">
         <div className="max-w-6xl mx-auto space-y-6">
           <TooltipProvider>
@@ -204,7 +204,7 @@ export function MessageList({
                         className={`px-4 py-3 rounded-2xl ${
                           message.role === "user"
                             ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-glow-blue"
-                            : "glass-premium border border-white/10"
+                            : "glass-premium border border-border"
                         }`}
                       >
                         {/* Render with AIMessageRenderer for AI, markdown for user */}

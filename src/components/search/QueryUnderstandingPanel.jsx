@@ -254,11 +254,11 @@ export function QueryUnderstandingPanel({ query, className = "" }) {
 
   return (
     <div className={`mb-4 ${className}`}>
-      <div className="glass-premium rounded-xl border border-white/10 overflow-hidden">
+      <div className="glass-premium rounded-xl border border-border overflow-hidden">
         {/* Header */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors"
         >
           <div className="flex items-center gap-2 text-sm">
             <Sparkles className="h-4 w-4 text-blue-400" />

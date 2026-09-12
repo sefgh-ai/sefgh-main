@@ -28,7 +28,7 @@ export function ChatHeader({
   router,
 }) {
   return (
-    <div className="glass-premium rounded-2xl shadow-premium border border-white/10 h-14 px-4 flex items-center justify-between mb-4">
+    <div className="glass-premium rounded-2xl shadow-premium border border-border h-14 px-4 flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
         {/* Back Button */}
         <Button

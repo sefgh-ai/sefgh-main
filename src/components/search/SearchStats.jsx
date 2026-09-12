@@ -87,7 +87,7 @@ export function SearchStats() {
       {statItems.map((stat, index) => (
         <div
           key={stat.label}
-          className={`flex items-center gap-3 px-4 py-2 rounded-xl glass-premium border border-white/5 transition-all duration-500 ${
+          className={`flex items-center gap-3 px-4 py-2 rounded-xl glass-premium border border-border/60 transition-all duration-500 ${
             animated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
           style={{ transitionDelay: `${index * 100}ms` }}

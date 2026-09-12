@@ -99,10 +99,10 @@ export function SearchNavbar({
   };
 
   return (
-    <div className="sticky top-0 z-50 border-b border-white/10 backdrop-blur-sm">
+    <div className="sticky top-0 z-50 border-b border-border backdrop-blur-sm">
       <div className="flex h-12 sm:h-14 items-center px-2 sm:px-4 gap-2 sm:gap-3">
         {/* Hide hamburger on mobile - we have bottom nav */}
-        <SidebarTrigger className="hidden md:flex hover:bg-white/10 rounded-xl transition-smooth shrink-0" />
+        <SidebarTrigger className="hidden md:flex hover:bg-accent rounded-xl transition-smooth shrink-0" />
 
         {/* Unified Filters Navigation Menu - Only shown when showFilters is true */}
         {showFilters && (
@@ -121,7 +121,7 @@ export function SearchNavbar({
                     </span>
                   )}
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="glass-premium border-white/10 shadow-premium rounded-xl">
+                <NavigationMenuContent className="glass-premium border-border shadow-premium rounded-xl">
                   <div className="grid gap-3 p-4 w-[500px] md:w-[600px] lg:grid-cols-[1fr_1fr_1fr]">
                     {/* Sort Column */}
                     <div className="space-y-2">
@@ -209,7 +209,7 @@ export function SearchNavbar({
                   </div>
 
                   {/* Advanced Filters Row */}
-                  <div className="border-t border-white/10 p-4">
+                  <div className="border-t border-border p-4">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-muted-foreground mb-2">
                       <Filter className="h-4 w-4" />
                       Advanced Filters
@@ -233,7 +233,7 @@ export function SearchNavbar({
                               license: e.target.value,
                             })
                           }
-                          className="w-full h-8 px-2 text-sm rounded-lg border border-white/10 dark:border-white/10 bg-background dark:bg-zinc-900 text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500/50 [&>option]:bg-background dark:[&>option]:bg-zinc-900 [&>option]:text-foreground"
+                          className="w-full h-8 px-2 text-sm rounded-lg border border-border dark:border-border bg-background dark:bg-zinc-900 text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500/50 [&>option]:bg-background dark:[&>option]:bg-zinc-900 [&>option]:text-foreground"
                         >
                           {licenseOptions.map((opt) => (
                             <option key={opt.value} value={opt.value}>
@@ -256,7 +256,7 @@ export function SearchNavbar({
                               dateRange: e.target.value,
                             })
                           }
-                          className="w-full h-8 px-2 text-sm rounded-lg border border-white/10 dark:border-white/10 bg-background dark:bg-zinc-900 text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500/50 [&>option]:bg-background dark:[&>option]:bg-zinc-900 [&>option]:text-foreground"
+                          className="w-full h-8 px-2 text-sm rounded-lg border border-border dark:border-border bg-background dark:bg-zinc-900 text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500/50 [&>option]:bg-background dark:[&>option]:bg-zinc-900 [&>option]:text-foreground"
                         >
                           {dateOptions.map((opt) => (
                             <option key={opt.value} value={opt.value}>
@@ -282,7 +282,7 @@ export function SearchNavbar({
                                   hasWiki: e.target.checked,
                                 })
                               }
-                              className="rounded border-white/20 bg-white/5"
+                              className="rounded border-border bg-accent/60"
                             />
                             Has Wiki
                           </label>
@@ -296,7 +296,7 @@ export function SearchNavbar({
                                   hasIssues: e.target.checked,
                                 })
                               }
-                              className="rounded border-white/20 bg-white/5"
+                              className="rounded border-border bg-accent/60"
                             />
                             Has Issues
                           </label>
@@ -306,7 +306,7 @@ export function SearchNavbar({
 
                     {/* Clear All Button */}
                     {totalActiveFilters > 0 && (
-                      <div className="mt-3 pt-3 border-t border-white/10">
+                      <div className="mt-3 pt-3 border-t border-border">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -340,17 +340,17 @@ export function SearchNavbar({
         {showFilters && totalActiveFilters > 0 && (
           <div className="hidden md:flex items-center gap-2">
             {sort && sort !== "all" && (
-              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-white/10">
+              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-border">
                 {sortOptions.find((o) => o.value === sort)?.label}
               </span>
             )}
             {language && (
-              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-white/10">
+              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-border">
                 {language}
               </span>
             )}
             {stars && (
-              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-white/10">
+              <span className="px-2 py-1 text-xs rounded-full glass-premium border border-border">
                 {stars} ⭐
               </span>
             )}
@@ -363,7 +363,7 @@ export function SearchNavbar({
             <Button
               variant="outline"
               size="sm"
-              className="glass-premium border border-white/10 rounded-xl hover:glow-border-blue transition-smooth shadow-soft hover:shadow-soft-lg h-8 px-2 sm:px-3"
+              className="glass-premium border border-border rounded-xl hover:glow-border-blue transition-smooth shadow-soft hover:shadow-soft-lg h-8 px-2 sm:px-3"
             >
               <CodeBracketIcon className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Submit</span>

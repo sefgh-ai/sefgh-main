@@ -130,7 +130,7 @@ export default function Home() {
       {/* Skip to content for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-black/80 text-white px-4 py-2 rounded"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-background/80 text-foreground px-4 py-2 rounded"
       >
         Skip to content
       </a>
@@ -163,7 +163,7 @@ export default function Home() {
             {user ? (
               <button
                 onClick={() => router.push("/profile")}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 glass-premium text-white rounded-md transition-colors hover:shadow-glow-blue"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 glass-premium text-foreground rounded-md transition-colors hover:shadow-glow-blue"
               >
                 {user?.user_metadata?.avatar_url ? (
                   <Image
@@ -225,14 +225,14 @@ export default function Home() {
               <>
                 <button
                   onClick={() => router.push("/home")}
-                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-foreground font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <HomeIcon className="w-4 h-4 inline-block mr-2" />
                   Home
                 </button>
                 <button
                   onClick={() => router.push("/search")}
-                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-foreground font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <Search className="w-4 h-4 inline-block mr-2" />
                   Explore Search
@@ -249,7 +249,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="relative px-3 sm:px-6 lg:px-8 py-16 sm:py-32 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
             {t("cta.title")}
           </h2>
           <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-10 px-2">

@@ -80,10 +80,10 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
   return (
     <div
       ref={dropdownRef}
-      className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-premium overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+      className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-border rounded-xl shadow-premium overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-medium">
           <Clock className="h-4 w-4 text-muted-foreground" />
           Recent Searches
@@ -115,7 +115,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
             <div
               key={item.id}
               onClick={() => onSelect(item.query)}
-              className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-white/5 cursor-pointer group transition-colors"
+              className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-accent cursor-pointer group transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -149,7 +149,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
 
       {/* Footer with trending */}
       {history.length > 0 && (
-        <div className="px-4 py-2 border-t border-white/10 bg-white/5">
+        <div className="px-4 py-2 border-t border-border bg-accent/60">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <TrendingUp className="h-3 w-3" />
             <span>Tip: Press ↑↓ to navigate, Enter to select</span>

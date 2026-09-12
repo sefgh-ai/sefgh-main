@@ -74,12 +74,12 @@ export function StepGoals({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3 sm:p-4">
-            <p className="text-white text-xs sm:text-sm">
+            <p className="text-foreground text-xs sm:text-sm">
               Perfect! 🎯 What are your main goals with SEFGH?
             </p>
             <p className="text-[#8b949e] text-[10px] sm:text-xs mt-1">
@@ -113,14 +113,14 @@ export function StepGoals({ userId, onNext, onBack }) {
                 >
                   <Icon
                     className={`h-4 w-4 sm:h-5 sm:w-5 ${
-                      isSelected ? "text-white" : "text-[#8b949e]"
+                      isSelected ? "text-foreground" : "text-[#8b949e]"
                     }`}
                   />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div
                     className={`font-medium text-xs sm:text-sm mb-0.5 sm:mb-1 ${
-                      isSelected ? "text-[#238636]" : "text-white"
+                      isSelected ? "text-[#238636]" : "text-foreground"
                     }`}
                   >
                     {goal.label}
@@ -133,7 +133,7 @@ export function StepGoals({ userId, onNext, onBack }) {
                   <div className="flex-shrink-0">
                     <div className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#238636] flex items-center justify-center">
                       <svg
-                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white"
+                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-foreground"
                         fill="none"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -167,7 +167,7 @@ export function StepGoals({ userId, onNext, onBack }) {
         <Button
           onClick={onBack}
           variant="ghost"
-          className="text-[#8b949e] hover:text-white hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
           <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
@@ -175,7 +175,7 @@ export function StepGoals({ userId, onNext, onBack }) {
         <Button
           onClick={handleContinue}
           disabled={selectedGoals.length === 0 || loading}
-          className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
+          className="bg-[#238636] hover:bg-[#2ea043] text-foreground text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
         >
           {loading ? "Saving..." : "Continue"}
         </Button>

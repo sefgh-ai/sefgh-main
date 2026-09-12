@@ -136,9 +136,9 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
           >
-            <Camera className="h-8 w-8 text-white" />
+            <Camera className="h-8 w-8 text-foreground" />
           </button>
         )}
       </div>

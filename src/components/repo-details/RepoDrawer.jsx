@@ -10,11 +10,11 @@ export function RepoDrawer({ open, onOpenChange, repository }) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
         side="right" 
-        className="w-full sm:max-w-2xl lg:max-w-4xl p-0 border-l border-white/10"
+        className="w-full sm:max-w-2xl lg:max-w-4xl p-0 border-l border-border"
       >
         <div className="h-full flex flex-col bg-card">
           {/* Header */}
-          <SheetHeader className="px-6 py-4 border-b border-white/10 flex-shrink-0">
+          <SheetHeader className="px-6 py-4 border-b border-border flex-shrink-0">
             <SheetTitle className="text-xl font-bold">
               Repository Canvas
             </SheetTitle>

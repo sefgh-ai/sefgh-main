@@ -22,7 +22,7 @@ export default function UsageStreaksStats({ longestStreak, currentStreak }) {
   }
 
   return (
-    <Card className="glass-premium border-white/10">
+    <Card className="glass-premium border-border">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <Flame className="h-4 w-4 text-orange-500" />
@@ -33,7 +33,7 @@ export default function UsageStreaksStats({ longestStreak, currentStreak }) {
         <div className="grid grid-cols-2 gap-4">
           {/* Longest Streak */}
           <div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-foreground">
               {longestStreak.length}
               <span className="text-sm font-normal text-muted-foreground ml-1">
                 {longestStreak.length === 1 ? 'day' : 'days'}
@@ -50,7 +50,7 @@ export default function UsageStreaksStats({ longestStreak, currentStreak }) {
           {/* Current Streak */}
           <div>
             <div className="flex items-center gap-1">
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-foreground">
                 {currentStreak.length}
                 <span className="text-sm font-normal text-muted-foreground ml-1">
                   {currentStreak.length === 1 ? 'day' : 'days'}

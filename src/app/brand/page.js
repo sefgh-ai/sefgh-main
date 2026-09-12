@@ -152,7 +152,7 @@ export default function BrandPage() {
                   style={{ backgroundColor: color.hex }}
                   onClick={() => copyToClipboard(color.hex, color.name)}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/30">
                     {copiedColor === color.name ? (
                       <Check className="w-6 h-6 text-foreground" />
                     ) : (

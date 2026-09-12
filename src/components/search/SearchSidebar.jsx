@@ -216,7 +216,7 @@ export function SearchSidebar({ user }) {
             <div className="mx-1 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                  <Zap className="h-3.5 w-3.5 text-white" />
+                  <Zap className="h-3.5 w-3.5 text-foreground" />
                 </div>
                 <span className="font-semibold text-sm text-foreground">
                   Upgrade to Pro

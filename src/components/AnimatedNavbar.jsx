@@ -34,7 +34,7 @@ const ListItem = React.forwardRef(
           <a
             ref={ref}
             className={cn(
-              "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted/50 hover:text-white focus:bg-muted/50 focus:text-white",
+              "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted/50 hover:text-foreground focus:bg-muted/50 focus:text-white",
               className
             )}
             {...props}
@@ -89,14 +89,14 @@ export function AnimatedNavbar({ className }) {
   return (
     <div className={cn("w-auto", className)}>
       <NavigationMenu className="z-50">
-        <NavigationMenuList className="rounded-lg border border-white/10 bg-card/80 backdrop-blur-lg px-2 py-1">
+        <NavigationMenuList className="rounded-lg border border-border bg-card/80 backdrop-blur-lg px-2 py-1">
           {/* Platform */}
           <NavigationMenuItem>
             <NavigationMenuTrigger className="bg-transparent text-foreground/90 hover:text-foreground hover:bg-muted/50 data-[state=open]:bg-muted/50">
               Platform
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ListItem
                   href="/search"
                   title="Repository Search"
@@ -127,7 +127,7 @@ export function AnimatedNavbar({ className }) {
               Solutions
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ProductCard
                   title="For Developers"
                   href="/search"
@@ -162,7 +162,7 @@ export function AnimatedNavbar({ className }) {
               Open Source
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ListItem
                   href="/trending"
                   title="Trending Projects"
@@ -189,7 +189,7 @@ export function AnimatedNavbar({ className }) {
               Features
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ListItem href="/search" title="GitHub Search" icon={Search} />
                 <ListItem
                   href="/chat"
@@ -218,7 +218,7 @@ export function AnimatedNavbar({ className }) {
               Resources
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 p-3 w-[520px] bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ProductCard
                   title="AI-Powered Search"
                   href="/search"
@@ -265,7 +265,7 @@ export function AnimatedNavbar({ className }) {
               Community
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-white/10 rounded-lg">
+              <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-border rounded-lg">
                 <ListItem
                   href="/submissions"
                   title="Submit Your Project"

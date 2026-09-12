@@ -9,7 +9,7 @@ import Link from "next/link"
 const DownloadFooter = React.memo(() => {
   return (
     <div className="text-center mt-12 sm:mt-20 space-y-4">
-      <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/50 dark:bg-card/50 backdrop-blur-sm rounded-full border border-border dark:border-border shadow-lg">
+      <div className="inline-flex items-center gap-2 px-6 py-3 bg-accent/600 dark:bg-card/50 backdrop-blur-sm rounded-full border border-border dark:border-border shadow-lg">
         <div className="w-2 h-2 bg-gradient-to-r from-soft-cyan to-soft-violet rounded-full animate-pulse"></div>
         <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
           Desktop apps coming soon • Stay tuned!

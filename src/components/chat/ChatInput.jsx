@@ -44,7 +44,7 @@ export function ChatInput({
   handleVoiceInput,
 }) {
   return (
-    <div className="glass-premium rounded-2xl shadow-premium border border-white/10 p-4 mt-4">
+    <div className="glass-premium rounded-2xl shadow-premium border border-border p-4 mt-4">
       <div className="flex gap-2">
         {/* + Actions Dropdown */}
         <DropdownMenu>
@@ -60,7 +60,7 @@ export function ChatInput({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="w-56 glass-premium border-white/10"
+            className="w-56 glass-premium border-border"
           >
             <DropdownMenuItem
               onClick={() =>

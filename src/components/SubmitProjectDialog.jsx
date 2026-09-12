@@ -179,7 +179,7 @@ export function SubmitProjectDialog({ children }) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="glass-premium border-white/10 shadow-premium-lg rounded-2xl max-w-2xl">
+      <DialogContent className="glass-premium border-border shadow-premium-lg rounded-2xl max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Recommend or Submit an Project
@@ -197,7 +197,7 @@ export function SubmitProjectDialog({ children }) {
               placeholder="Project URL"
               value={projectUrl}
               onChange={(e) => setProjectUrl(e.target.value)}
-              className="glass-premium border-white/10 rounded-xl focus:glow-border-blue transition-smooth"
+              className="glass-premium border-border rounded-xl focus:glow-border-blue transition-smooth"
               required
             />
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -213,7 +213,7 @@ export function SubmitProjectDialog({ children }) {
               placeholder="Title: Briefly introduce the project"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="glass-premium border-white/10 rounded-xl focus:glow-border-blue transition-smooth"
+              className="glass-premium border-border rounded-xl focus:glow-border-blue transition-smooth"
               required
             />
           </div>
@@ -224,7 +224,7 @@ export function SubmitProjectDialog({ children }) {
               placeholder="Description: Explain what the project is, the problems it solves, the technologies used, supported features, and use cases. (A clear description improves approval chances!)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="glass-premium border-white/10 rounded-xl focus:glow-border-blue transition-smooth min-h-[160px] resize-none"
+              className="glass-premium border-border rounded-xl focus:glow-border-blue transition-smooth min-h-[160px] resize-none"
               required
             />
             <div className="flex items-center justify-between text-sm">

@@ -19,7 +19,7 @@ export default function UsageContributionsStats({
   dateRange 
 }) {
   return (
-    <Card className="glass-premium border-white/10">
+    <Card className="glass-premium border-border">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           Usage
@@ -28,7 +28,7 @@ export default function UsageContributionsStats({
       <CardContent className="space-y-4">
         {/* Total Count */}
         <div>
-          <div className="text-3xl font-bold text-white">
+          <div className="text-3xl font-bold text-foreground">
             {formatNumber(totalCount)}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
@@ -42,10 +42,10 @@ export default function UsageContributionsStats({
         </div>
 
         {/* Best Day */}
-        <div className="pt-3 border-t border-white/5">
+        <div className="pt-3 border-t border-border/60">
           <div className="flex items-end justify-between">
             <div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-foreground">
                 {formatNumber(bestDay.count)}
               </div>
               <div className="text-xs text-muted-foreground mt-1">
@@ -61,9 +61,9 @@ export default function UsageContributionsStats({
         </div>
 
         {/* Average */}
-        <div className="pt-3 border-t border-white/5">
+        <div className="pt-3 border-t border-border/60">
           <div className="text-sm text-muted-foreground">
-            Average: <span className="text-white font-semibold">{averagePerDay}</span> / day
+            Average: <span className="text-foreground font-semibold">{averagePerDay}</span> / day
           </div>
         </div>
       </CardContent>

@@ -107,7 +107,7 @@ export default function TrendingPage() {
         <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
+          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-border overflow-hidden flex-1 min-h-0">
             <SearchNavbar showFilters={false} />
 
             <main className="flex-1 py-6 px-4 pb-4 overflow-y-auto min-h-0">

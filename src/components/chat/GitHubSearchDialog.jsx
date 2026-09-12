@@ -25,7 +25,7 @@ export function GitHubSearchDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] glass-premium border-white/10">
+      <DialogContent className="max-w-4xl max-h-[80vh] glass-premium border-border">
         <DialogHeader>
           <DialogTitle className="text-blue-900 dark:text-blue-100">
             Search GitHub Repositories

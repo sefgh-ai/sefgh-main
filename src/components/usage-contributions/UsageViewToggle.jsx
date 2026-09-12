@@ -37,7 +37,7 @@ export default function UsageViewToggle({ view, onChange }) {
   }
 
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-white/10 p-1 bg-black/20">
+    <div className="flex items-center gap-1 rounded-lg border border-border p-1 bg-background/20">
       <Button
         variant="ghost"
         size="sm"
@@ -45,8 +45,8 @@ export default function UsageViewToggle({ view, onChange }) {
         className={cn(
           "h-7 px-3 text-xs font-medium transition-all",
           view === '2d'
-            ? "bg-white/10 text-white shadow-sm"
-            : "text-muted-foreground hover:text-white hover:bg-white/5"
+            ? "bg-accent text-white shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-accent"
         )}
       >
         2D
@@ -59,8 +59,8 @@ export default function UsageViewToggle({ view, onChange }) {
         className={cn(
           "h-7 px-3 text-xs font-medium transition-all",
           view === '3d'
-            ? "bg-white/10 text-white shadow-sm"
-            : "text-muted-foreground hover:text-white hover:bg-white/5"
+            ? "bg-accent text-white shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-accent"
         )}
         disabled={isMobile}
         title={isMobile ? "3D view is not recommended on mobile devices" : "Switch to 3D view"}

@@ -144,15 +144,15 @@
   }
 
   .glass {
-    @apply bg-white/10 dark:bg-white/10 backdrop-blur-lg border border-white/20 dark:border-white/20;
+    @apply bg-accent dark:bg-accent backdrop-blur-lg border border-border dark:border-border;
   }
 
   .glass-dark {
-    @apply bg-black/20 dark:bg-black/20 backdrop-blur-lg border border-white/10;
+    @apply bg-background/20 dark:bg-background/20 backdrop-blur-lg border border-border;
   }
 
   .glass-premium {
-    @apply bg-card/80 dark:bg-black/15 backdrop-blur-md border border-border shadow-premium;
+    @apply bg-card/80 dark:bg-background/15 backdrop-blur-md border border-border shadow-premium;
     will-change: transform;
   }
 

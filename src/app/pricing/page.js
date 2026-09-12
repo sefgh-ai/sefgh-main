@@ -156,7 +156,7 @@ export default function PricingPage() {
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 billingCycle === "monthly"
                   ? "bg-blue-600 text-white"
-                  : "text-muted-foreground hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Monthly
@@ -166,7 +166,7 @@ export default function PricingPage() {
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 billingCycle === "annual"
                   ? "bg-blue-600 text-white"
-                  : "text-muted-foreground hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Annual <span className="text-emerald-400 ml-1">Save 20%</span>
@@ -238,7 +238,7 @@ export default function PricingPage() {
                 className={`block w-full py-3 px-6 rounded-lg font-semibold text-center transition-all mb-8 ${
                   plan.popular
                     ? "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg"
-                    : "bg-muted hover:bg-slate-600 text-white"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                 }`}
               >
                 {plan.cta}
@@ -278,7 +278,7 @@ export default function PricingPage() {
             </p>
             <Link
               href="/contact?subject=enterprise"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
             >
               Contact Sales
             </Link>

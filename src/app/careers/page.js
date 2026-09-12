@@ -322,7 +322,7 @@ export default function CareersPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   selectedDepartment === dept
                     ? "bg-blue-600 text-white"
-                    : "bg-muted text-muted-foreground hover:text-white hover:bg-muted"
+                    : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 {dept === "all" ? "All Roles" : dept}

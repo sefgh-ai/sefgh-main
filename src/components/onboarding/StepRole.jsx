@@ -68,12 +68,12 @@ export function StepRole({ userId, onNext }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3 sm:p-4">
-            <p className="text-white text-xs sm:text-sm mb-1 sm:mb-2">
+            <p className="text-foreground text-xs sm:text-sm mb-1 sm:mb-2">
               Hey there! 👋 I&apos;m{" "}
               <span className="font-semibold text-[#238636]">
                 SEFGH AI Assistant
@@ -89,7 +89,7 @@ export function StepRole({ userId, onNext }) {
 
       {/* Role selection */}
       <div className="space-y-2 sm:space-y-3">
-        <label className="text-xs sm:text-sm font-medium text-white">
+        <label className="text-xs sm:text-sm font-medium text-foreground">
           What best describes you?
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
@@ -114,7 +114,7 @@ export function StepRole({ userId, onNext }) {
                     }`}
                   />
                   <div className="flex-1 sm:block">
-                    <div className="font-medium text-white text-xs sm:text-sm">
+                    <div className="font-medium text-foreground text-xs sm:text-sm">
                       {role.label}
                     </div>
                     <div className="text-[10px] sm:text-xs text-[#8b949e] hidden sm:block">
@@ -130,7 +130,7 @@ export function StepRole({ userId, onNext }) {
 
       {/* Experience level */}
       <div className="space-y-2 sm:space-y-3">
-        <label className="text-xs sm:text-sm font-medium text-white">
+        <label className="text-xs sm:text-sm font-medium text-foreground">
           Experience level?
         </label>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -148,7 +148,7 @@ export function StepRole({ userId, onNext }) {
                 className={`font-medium text-[10px] sm:text-sm mb-0.5 sm:mb-1 ${
                   selectedExperience === level.value
                     ? "text-[#238636]"
-                    : "text-white"
+                    : "text-foreground"
                 }`}
               >
                 {level.label}
@@ -166,7 +166,7 @@ export function StepRole({ userId, onNext }) {
         <Button
           onClick={handleContinue}
           disabled={!selectedRole || !selectedExperience || loading}
-          className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
+          className="bg-[#238636] hover:bg-[#2ea043] text-foreground text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
         >
           {loading ? "Saving..." : "Continue"}
         </Button>

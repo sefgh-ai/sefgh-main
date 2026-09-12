@@ -17,7 +17,7 @@ const SubmissionsEmptyState = React.memo(() => {
       description="Start by submitting your first GitHub repository!"
       actionLabel="Submit a Project"
       onAction={() => router.push('/search')}
-      className="glass-premium rounded-2xl border border-white/10"
+      className="glass-premium rounded-2xl border border-border"
     />
   )
 })

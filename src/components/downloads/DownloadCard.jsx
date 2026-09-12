@@ -44,7 +44,7 @@ export default function DownloadCard({
             <a
               key={index}
               href={download.url || "#"}
-              className={`flex items-center justify-between w-full px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-background to-muted dark:from-card dark:to-muted hover:${gradientFrom} hover:${gradientTo} text-muted-foreground dark:text-foreground hover:text-white rounded-xl sm:rounded-2xl transition-all duration-300 group/btn shadow-md hover:shadow-xl transform hover:-translate-y-1`}
+              className={`flex items-center justify-between w-full px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-background to-muted dark:from-card dark:to-muted hover:${gradientFrom} hover:${gradientTo} text-muted-foreground dark:text-foreground hover:text-foreground rounded-xl sm:rounded-2xl transition-all duration-300 group/btn shadow-md hover:shadow-xl transform hover:-translate-y-1`}
             >
               <span className="text-xs sm:text-sm font-semibold">
                 {download.label}

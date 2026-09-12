@@ -48,7 +48,7 @@ function ModelSelectorDropdown({ model, onModelChange, onClose }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-56 glass-premium border-white/10"
+        className="w-56 glass-premium border-border"
       >
         <DropdownMenuLabel>Select Version</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -258,7 +258,7 @@ function SidebarContentLayout({
         className={
           isMobile
             ? "p-4 border-b flex items-center gap-2"
-            : "glass-premium rounded-2xl shadow-premium border border-white/10 p-4 flex items-center gap-2"
+            : "glass-premium rounded-2xl shadow-premium border border-border p-4 flex items-center gap-2"
         }
       >
         <ModelSelectorDropdown
@@ -273,12 +273,12 @@ function SidebarContentLayout({
         className={
           isMobile
             ? "flex-1 flex flex-col overflow-hidden"
-            : "glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 flex flex-col overflow-hidden"
+            : "glass-premium rounded-2xl shadow-premium border border-border flex-1 flex flex-col overflow-hidden"
         }
       >
         {/* New Chat Button */}
         <div
-          className={isMobile ? "p-4 border-b" : "p-4 border-b border-white/10"}
+          className={isMobile ? "p-4 border-b" : "p-4 border-b border-border"}
         >
           <Button
             onClick={() => {
@@ -307,14 +307,14 @@ function SidebarContentLayout({
         {/* Bottom Section */}
         <div
           className={
-            isMobile ? "border-t mt-auto" : "border-t border-white/10 mt-auto"
+            isMobile ? "border-t mt-auto" : "border-t border-border mt-auto"
           }
         >
           {/* Clear All Button */}
           {conversations.length > 0 && (
             <div
               className={
-                isMobile ? "p-3 border-b" : "p-3 border-b border-white/10"
+                isMobile ? "p-3 border-b" : "p-3 border-b border-border"
               }
             >
               <Button

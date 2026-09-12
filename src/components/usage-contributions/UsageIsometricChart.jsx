@@ -214,7 +214,7 @@ export default function UsageIsometricChart({ weeks, maxCount }) {
       {/* Hover tooltip */}
       {hoveredCube && (
         <div
-          className="absolute px-3 py-2 bg-black/90 text-white text-sm rounded border border-white/10 pointer-events-none z-10"
+          className="absolute px-3 py-2 bg-background/90 text-foreground text-sm rounded border border-border pointer-events-none z-10"
           style={{
             left: hoveredCube.mouseX + 10,
             top: hoveredCube.mouseY + 10,
