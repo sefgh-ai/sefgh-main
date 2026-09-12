@@ -1,3 +1,5 @@
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 const config = {
   darkMode: ["class"],
@@ -11,14 +13,27 @@ const config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        orbitron: ["var(--font-orbitron)", "sans-serif"],
-        space: ["var(--font-space-grotesk)", "sans-serif"],
+        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        // There was no `mono` key at all, so JetBrains Mono was downloaded on
+        // every page load and never applied to anything.
+        mono: ["var(--font-geist-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
@@ -60,16 +75,20 @@ const config = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      /*
+       * Derived from --radius so the token actually controls something. The
+       * previous scale hard-overrode every step (rounded-md was 12px, not 6px),
+       * which silently made every shadcn primitive far rounder than designed.
+       */
       borderRadius: {
         none: "0",
-        sm: "0.375rem",
-        DEFAULT: "0.5rem",
-        md: "0.75rem",
-        lg: "1rem",
-        xl: "1.25rem",
-        "2xl": "1.5rem",
-        "3xl": "1.75rem",
-        "4xl": "2rem",
+        sm: "calc(var(--radius) - 4px)",
+        DEFAULT: "calc(var(--radius) - 2px)",
+        md: "calc(var(--radius) - 2px)",
+        lg: "var(--radius)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "calc(var(--radius) + 14px)",
         full: "9999px",
       },
       boxShadow: {
@@ -161,7 +180,7 @@ const config = {
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 };
 
 export default config;

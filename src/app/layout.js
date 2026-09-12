@@ -1,4 +1,5 @@
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -13,21 +14,6 @@ import { DynamicIslandNav } from "@/components/navigation/DynamicIslandNav";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  preload: true,
-  fallback: ["system-ui", "arial"],
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "600"],
-  display: "swap",
-  preload: false,
-});
 
 export const viewport = {
   themeColor: "#2563eb",
@@ -85,7 +71,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Prevent flash of light theme */}
         <script
@@ -93,19 +83,20 @@ export default function RootLayout({ children }) {
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('sefgh-theme') || 'dark';
-                  document.documentElement.classList.add(theme);
-                  document.documentElement.style.colorScheme = theme;
+                  var root = document.documentElement;
+                  var stored = localStorage.getItem('sefgh-theme');
+                  var theme = stored;
+                  if (!theme || theme === 'system') {
+                    theme = window.matchMedia('(prefers-color-scheme: light)').matches
+                      ? (stored === 'system' ? 'light' : 'dark')
+                      : 'dark';
+                  }
+                  root.classList.remove('light', 'dark');
+                  root.classList.add(theme);
                 } catch (e) {}
               })();
             `,
           }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
         />
         <link
           rel="sitemap"
@@ -205,8 +196,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
-        style={{ fontFamily: "var(--font-inter)" }}
+        className="font-sans antialiased"
       >
         {/* Google Analytics */}
         <Script
@@ -265,12 +255,8 @@ export default function RootLayout({ children }) {
             })();
           `}
         </Script>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+        {/* Configuration lives in ThemeProvider; dark is the default. */}
+        <ThemeProvider>
           <AuthProvider>
             <NotificationProvider>
               <SettingsProvider>

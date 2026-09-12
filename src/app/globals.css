@@ -3,67 +3,116 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * Zinc neutral ramp + a single blue accent.
+   * Light is the complete definition; .dark overrides only what changes.
+   * `color-scheme` is set per theme so native controls (scrollbars, form
+   * widgets, autofill) follow the theme instead of being pinned to dark.
+   */
   :root {
-    color-scheme: dark;
-    --font-inter: 'Inter', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --background: 240 5% 96%;
-    --foreground: 222 47% 11%;
-    --card: 240 5% 98%;
-    --card-foreground: 222 47% 11%;
+    color-scheme: light;
+
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 217 91% 50%;
+    --popover-foreground: 240 10% 4%;
+
+    /* blue-600 — the one accent */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 91%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 220 13% 91%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 40%;
-    --destructive: 0 84% 60%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+
+    /* red-600: 4.8:1 against white with white text on top */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 88%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 50%;
-    --radius: 1rem;
+
+    --success: 142 71% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 44%;
+    --warning-foreground: 0 0% 100%;
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.625rem;
+
     --sidebar-background: 240 5% 98%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 217 91% 50%;
+    --sidebar-foreground: 240 10% 4%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 13% 93%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 220 13% 88%;
-    --sidebar-ring: 217 91% 50%;
+    --sidebar-accent: 240 5% 94%;
+    --sidebar-accent-foreground: 240 6% 10%;
+    --sidebar-border: 240 6% 90%;
+    --sidebar-ring: 221 83% 53%;
   }
 
   .dark {
-    --background: 220 18% 8%;
-    --foreground: 210 40% 98%;
-    --card: 222 20% 12%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 20% 10%;
-    --popover-foreground: 210 40% 98%;
+    color-scheme: dark;
+
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 6% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    /* blue-500: brighter, so it holds up against a near-black ground */
     --primary: 217 91% 60%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    /* White, not the near-navy shadcn default that used to sit here — that
+       was dark text on a blue fill and failed contrast. */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 4% 65%;
+
+    /* Distinct from --muted so `accent` is actually visible; previously the
+       two were identical and hover states did nothing. */
+    --accent: 240 4% 20%;
+    --accent-foreground: 0 0% 98%;
+
+    /* red-500: reads at ~4.3:1 on the card/popover ground. The previous
+       value (0 62.8% 30.6%) rendered "Log out" at roughly 1.8:1. */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 69% 58%;
+    --success-foreground: 240 10% 4%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 240 10% 4%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
     --ring: 217 91% 60%;
-    --sidebar-background: 222 24% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
+
+    --sidebar-background: 240 8% 6%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 20% 14%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-accent: 240 4% 14%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 4% 16%;
     --sidebar-ring: 217 91% 60%;
   }
 
@@ -73,7 +122,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-inter);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
 }
 
@@ -253,23 +302,11 @@
   background-size: 200% 100%;
 }
 
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse {
-  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+/*
+ * Tailwind's own `animate-pulse` is used here. A local override previously
+ * redefined it to 4s with transform: scale(1.05), so every <Skeleton> in the
+ * app grew and shrank instead of fading.
+ */
 
 .delay-1000 {
   animation-delay: 1s;
@@ -675,5 +712,25 @@
 
   [data-sonner-toast][data-type="info"] [data-progress] {
     background: rgba(59, 130, 246, 0.2);
+  }
+}
+
+/*
+ * Global reduced-motion guard. The app previously honoured this preference in
+ * exactly two places, while a 45s infinite gradient animation, a 24s marquee
+ * and every pulse ran regardless.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .gradient-mesh {
+    animation: none !important;
   }
 }
