@@ -1,6 +1,8 @@
 # ADR-0001: Staged migration of SEFGH application backend to Rust
 
-Status: **Proposed**. Date: 2026-10-11. Decision owner: project owner. Reviewers: Codex and local Claude Code.
+Status: **Superseded** by [ADR-0002](0002-go-backend.md) on 2026-10-11. The owner chose Go. This Rust proposal was never accepted and must not be implemented. The text below is kept unchanged as a record of what was proposed; its task names and "next task" section are historical.
+
+Originally: Proposed. Date: 2026-10-11. Decision owner: project owner. Reviewers: Codex and local Claude Code.
 
 ## Context
 

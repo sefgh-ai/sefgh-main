@@ -54,13 +54,13 @@ SEFGH_GO_ROUTES=github-search
 
 `SEFGH_GO_ROUTES` is a comma-separated list of route names from `goBackendRoutes` in `../next.config.mjs`. To roll back, remove the route's name, or unset `SEFGH_GO_API_URL`, and rebuild. The Next.js handler stays in place until its route is retired.
 
-To see which backend answered a request:
+To see which backend answered a request, send a blank query, which is answered with a 400 without contacting GitHub, and read the headers:
 
 ```
-curl -s -D - -o /dev/null "http://localhost:3000/api/github/search?q=react" | grep -i x-sefgh-backend
+curl.exe -i "http://localhost:3000/api/github/search?q=%20"
 ```
 
-A line `x-sefgh-backend: go` means Go answered. No line means Next.js did.
+A header `x-sefgh-backend: go` means Go answered. Without it, Next.js did. In PowerShell type `curl.exe`; plain `curl` is a different command there.
 
 ## Where it differs from the Next.js handler on purpose
 

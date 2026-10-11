@@ -1,5 +1,7 @@
 # Claude Code review and reconciliation
 
+> Later decision, 2026-10-11: the owner chose Go instead of Rust (`adr/0002-go-backend.md`). This file records a review of the Rust proposal as it happened and is not rewritten. Its findings about the application do not depend on the language. Where it says Rust or SQLx, the current plan says Go and `pgx`.
+
 Date: 2026-10-11. Source baseline: `42759dd`. Reviewer: installed local Claude Code 2.1.286, invoked by Codex at the user's request. This is a curated summary of its actual review, not a claim that Claude shares Codex's chat history.
 
 ## Review method
