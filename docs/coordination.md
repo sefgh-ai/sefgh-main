@@ -4,17 +4,50 @@ Last updated: 2026-10-11 (Asia/Calcutta).
 
 ## Current scope and state
 
-User request: understand the codebase, assess a move of all backend work to Rust, and coordinate with Claude Code in this same local repository.
+User request: understand the codebase, assess a move of all backend work to Rust, and coordinate with Claude Code in this same local repository. On 2026-10-11 the user asked Claude Code to continue as writer while Codex was rate limited, and to commit the work.
 
-- **Stage:** architecture assessment and shared documentation. Rust proposal is not yet accepted.
-- **Baseline:** `42759dd`; clean working tree before this documentation pass.
-- **Active writer:** none; Codex completed this documentation pass and released it.
-- **Reviewer:** local Claude Code; independent architecture review and shared-document readback both completed successfully.
-- **Application changes:** none. No Rust crate, deployment, database mutation, package/toolchain install, or production benchmark performed.
-- **New files:** root `AGENTS.md`, root `CLAUDE.md`, this file, `backend-map.md`, `claude-review.md`, and `adr/0001-rust-backend.md` under `docs`.
-- **Git state:** all six files are new and untracked; no commit was made. Include them in the shared branch before creating worktrees that must inherit this context.
-- **Verification:** documentation reference/whitespace checks passed; all 25 inventory paths exist and all 38 documented methods match source; tracked application diff is empty. No app lint/build/test baseline was run.
-- **Readback result:** Claude agrees with the proposed boundaries. Its sort-edge-case finding, contract clarifications, worktree caveat, and task split were incorporated; see `claude-review.md`.
+- **Stage:** contract preparation complete for the first read path. Rust proposal is still not accepted; no Rust code exists.
+- **Branch:** `rust-migration-prep`, created from `main` at `42759dd`. Run `git log --oneline main..rust-migration-prep` for the commits. Create worktrees from this branch, not from `main`, so they inherit these documents.
+- **Active writer:** none. Claude Code completed `RUST-001a` and released it.
+- **Reviewer:** Codex, on return. **No peer review of `RUST-001a` has run.** Claude verified its own work only.
+- **Application changes:** one line in `package.json` adding the `test:contracts` script. No handler, component, dependency, database, or deployment change. No Rust crate or toolchain install.
+- **Push state:** check with `git status -sb`. The branch is not merged into `main` and no pull request has been opened.
+
+## Handoff: RUST-001a
+
+```text
+Task / scope: RUST-001a, GitHub search contract fixtures and lint/build baseline
+Owner / reviewer: Claude Code / Codex (review not yet run)
+Status: review
+Base commit / branch / worktree: 42759dd / rust-migration-prep / main checkout
+Allowed files / interfaces: contracts/, scripts/contracts/, package.json scripts, shared docs
+Changes made:
+  - Committed Codex's six shared documents unchanged as the first commit.
+  - contracts/github-search/cases.json: 53 cases, 13 marked defect.
+  - contracts/github-search/README.md: fixture format and matching rules.
+  - scripts/contracts/github-search.test.mjs and route-loader.mjs: runner.
+  - package.json: test:contracts script.
+  - AGENTS.md, backend-map.md, ADR next-task section, this file: updated facts.
+Contract or decision changes: none. Fixtures record current behavior, including defects.
+Checks run and exact outcome:
+  - npm run test:contracts: 54 tests pass (53 cases plus an id-uniqueness check).
+  - Corrupting two expectations made exactly those two cases fail; restored.
+  - npx eslint scripts/contracts: clean.
+  - npm run lint: FAILS on baseline, 10 errors and 16 warnings, all in UI files
+    that this task did not touch. Detail in backend-map.md.
+  - npm run build: passes, exit 0.
+Unverified dependencies / blockers:
+  - Owner has not chosen the Rust direction; RUST-001b stays blocked on that.
+  - cargo and rustc are not on PATH in this environment.
+  - Owner decision needed on which of the 13 defect cases a port should fix.
+  - The runner depends on Node module hooks and on next/server.js resolving;
+    verified on Node 21.7.1 only.
+  - Timeouts, caching and live GitHub behavior are not covered by fixtures.
+  - Deployed topology, live RLS, Python service lineage: still unverified.
+Next bounded action: Codex reviews the fixtures against route.js, then either
+  RUST-001b (after owner approval and toolchain) or RUST-002a below.
+Writer released: yes
+```
 
 ## Shared reading order
 
@@ -32,15 +65,15 @@ Codex coordinates the current assessment; Claude supplies independent review. Fu
 
 Before an implementation task, the current writer records its scope and base commit here. The reviewer reads the same files and reviews the bounded diff. Record disagreements in the ADR/review notes and resolve them before changing affected contracts. Release ownership before another agent edits. Concurrent feature work requires separate worktrees and explicit allocation; merely using different terminals does not isolate edits.
 
-## Proposed next task, not started
+## Proposed next tasks, not started
 
-`RUST-001a`: capture existing GitHub search fixture contracts and lint/build baseline, using controlled upstream fixtures. Useful regardless of the final language decision.
+`RUST-001b`: implement an opt-in Rust search read path that passes `contracts/github-search/cases.json`, after the user chooses the Rust direction and the toolchain is available. Blocked on both.
 
-`RUST-001b`: implement an opt-in Rust search read path after the user chooses the Rust direction and required tooling is available.
+`RUST-002a`: record the same style of fixtures for `github/repo`, `github/repo/[owner]/[repo]`, and `github/contents/[owner]/[repo]`, the remaining Phase 1 routes. Not blocked; useful whichever language is chosen. Reuse `scripts/contracts/route-loader.mjs`; routes that import through the `@/` alias will need the loader extended.
 
-Suggested ownership: Codex implements the bounded fixtures/service/adapter; Claude reviews response compatibility, failure handling, token boundaries, and rollback. This allocation is a proposal; neither agent has a running implementation task.
+Suggested ownership: whichever agent is available takes the writer role for one task and records it above; the other reviews. This allocation is a proposal.
 
-Pending evidence: current lint/build baseline, deployed topology, live database/RLS definitions for later stateful phases, active Python service lineage/corpus, and meaningful latency/cost measurements.
+Pending evidence: deployed topology, live database/RLS definitions for later stateful phases, active Python service lineage/corpus, and meaningful latency/cost measurements.
 
 ## Handoff format for future tasks
 

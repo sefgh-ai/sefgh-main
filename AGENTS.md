@@ -16,7 +16,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - Next.js App Router, JavaScript/JSX, React, Tailwind, Supabase.
 - API handlers: `src/app/api/**/route.js`. Auth callback: `src/app/auth/callback/route.js`. Session refresh: `src/proxy.js`.
 - Browser data access is substantial: `src/lib/supabase`, hooks, contexts, and playground components. Migrating API routes alone is not a full backend migration.
-- `npm run dev`, `npm run lint`, `npm run build`, and `npm start` exist. There is currently no `npm test` script or Rust crate.
+- `npm run dev`, `npm run lint`, `npm run build`, and `npm start` exist. `npm run test:contracts` runs the recorded API contract fixtures under `contracts/` against the current handlers. There is no general `npm test` script or Rust crate. `npm run lint` already fails on the baseline; see `docs/backend-map.md`.
 - Local secrets live outside shared documentation. Never copy `.env.local`, tokens, cookie values, or private agent transcripts into handoffs.
 
 ## Cooperation

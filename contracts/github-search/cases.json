@@ -1,0 +1,564 @@
+{
+  "contract": "GET /api/github/search",
+  "source": "src/app/api/github/search/route.js",
+  "captured_from_commit": "42759dd",
+  "upstream_url_prefix": "https://api.github.com/search/repositories?",
+  "upstream_request_headers": {
+    "without_token": {
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "SEFGH-NextJS-App"
+    },
+    "with_token": {
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "SEFGH-NextJS-App",
+      "Authorization": "Bearer test-token"
+    }
+  },
+  "upstream_responses": {
+    "one_repo": {
+      "status": 200,
+      "headers": { "x-ratelimit-remaining": "9", "x-ratelimit-reset": "1760000000" },
+      "body": {
+        "total_count": 1,
+        "incomplete_results": false,
+        "items": [
+          {
+            "id": 10270250,
+            "full_name": "facebook/react",
+            "html_url": "https://github.com/facebook/react",
+            "description": "The library for web and native user interfaces.",
+            "stargazers_count": 230000,
+            "language": "JavaScript",
+            "topics": ["react", "ui"],
+            "license": null,
+            "owner": { "login": "facebook", "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4" }
+          }
+        ]
+      }
+    },
+    "empty": {
+      "status": 200,
+      "headers": { "x-ratelimit-remaining": "8", "x-ratelimit-reset": "1760000000" },
+      "body": { "total_count": 0, "incomplete_results": false, "items": [] }
+    },
+    "no_rate_limit_headers": {
+      "status": 200,
+      "headers": {},
+      "body": { "total_count": 0, "incomplete_results": false, "items": [] }
+    },
+    "body_without_expected_fields": {
+      "status": 200,
+      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
+      "body": {}
+    },
+    "invalid_json": {
+      "status": 200,
+      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
+      "raw_body": "<html>bad gateway</html>"
+    },
+    "forbidden_403": {
+      "status": 403,
+      "headers": { "x-ratelimit-remaining": "0", "x-ratelimit-reset": "1760000000" },
+      "body": { "message": "API rate limit exceeded" }
+    },
+    "unprocessable_422": {
+      "status": 422,
+      "headers": { "x-ratelimit-remaining": "6", "x-ratelimit-reset": "1760000000" },
+      "body": { "message": "Validation Failed" }
+    },
+    "too_many_429": {
+      "status": 429,
+      "headers": { "retry-after": "60" },
+      "body": { "message": "You have exceeded a secondary rate limit" }
+    },
+    "server_error_500": {
+      "status": 500,
+      "headers": {},
+      "body": { "message": "Server Error" }
+    },
+    "network_error": { "network_error": true }
+  },
+  "responses": {
+    "one_repo_ok": {
+      "status": 200,
+      "body": {
+        "total_count": 1,
+        "items": [
+          {
+            "id": 10270250,
+            "full_name": "facebook/react",
+            "html_url": "https://github.com/facebook/react",
+            "description": "The library for web and native user interfaces.",
+            "stargazers_count": 230000,
+            "language": "JavaScript",
+            "topics": ["react", "ui"],
+            "license": null,
+            "owner": { "login": "facebook", "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4" }
+          }
+        ],
+        "rate_limit": { "remaining": "9", "reset": "1760000000" }
+      }
+    },
+    "empty_ok": {
+      "status": 200,
+      "body": { "total_count": 0, "items": [], "rate_limit": { "remaining": "8", "reset": "1760000000" } }
+    },
+    "empty_ok_null_rate_limit": {
+      "status": 200,
+      "body": { "total_count": 0, "items": [], "rate_limit": { "remaining": null, "reset": null } }
+    },
+    "rate_limit_only_ok": {
+      "status": 200,
+      "body": { "rate_limit": { "remaining": "7", "reset": "1760000000" } }
+    },
+    "missing_query": { "status": 400, "body": { "error": "Search query is required" } },
+    "invalid_parameters": { "status": 400, "body": { "error": "Invalid search parameters" } },
+    "upstream_failure": { "status": 500, "body": { "error": "Failed to search repositories" } }
+  },
+  "cases": [
+    {
+      "id": "defaults",
+      "disposition": "preserve",
+      "note": "Only q supplied: empty sort, desc order, page 1, 30 per page. incomplete_results is dropped; items pass through unmodified.",
+      "request": "q=react",
+      "upstream": "one_repo",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "one_repo_ok"
+    },
+    {
+      "id": "server-token-adds-authorization",
+      "disposition": "preserve",
+      "note": "A configured server GITHUB_TOKEN is sent as a bearer token; the browser response is unchanged.",
+      "request": "q=react",
+      "github_token": "test-token",
+      "upstream": "one_repo",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "one_repo_ok"
+    },
+    {
+      "id": "empty-results",
+      "disposition": "preserve",
+      "request": "q=zzzznotarepo",
+      "upstream": "empty",
+      "expect_upstream_url": "q=zzzznotarepo&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "rate-limit-headers-absent",
+      "disposition": "preserve",
+      "note": "rate_limit values are header strings, or null when the header is absent. They are never numbers.",
+      "request": "q=react",
+      "upstream": "no_rate_limit_headers",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok_null_rate_limit"
+    },
+    {
+      "id": "sort-all",
+      "disposition": "preserve",
+      "request": "q=react&sort=all",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-latest",
+      "disposition": "preserve",
+      "request": "q=react&sort=latest",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-monthly",
+      "disposition": "preserve",
+      "note": "monthly and yearly map to the same upstream request as latest; no date filter is added.",
+      "request": "q=react&sort=monthly",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-yearly",
+      "disposition": "preserve",
+      "request": "q=react&sort=yearly",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-featured",
+      "disposition": "preserve",
+      "request": "q=react&sort=featured",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=stars&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-unknown-falls-back",
+      "disposition": "preserve",
+      "request": "q=react&sort=bogus",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-empty-falls-back",
+      "disposition": "preserve",
+      "request": "q=react&sort=",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-inherited-key-constructor",
+      "disposition": "defect",
+      "note": "Inherited object keys bypass the fallback, so the literal text 'undefined' is sent upstream for sort and order.",
+      "request": "q=react&sort=constructor",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=undefined&order=undefined&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "sort-inherited-key-proto",
+      "disposition": "defect",
+      "request": "q=react&sort=__proto__",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=undefined&order=undefined&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "language-and-stars-filters",
+      "disposition": "preserve",
+      "note": "Filters are appended to q as GitHub qualifiers, then the whole query is percent-encoded once.",
+      "request": "q=react&language=TypeScript&stars=%3E100",
+      "upstream": "one_repo",
+      "expect_upstream_url": "q=react%20language%3ATypeScript%20stars%3A%3E100&sort=&order=desc&page=1&per_page=30",
+      "expect": "one_repo_ok"
+    },
+    {
+      "id": "language-with-plus",
+      "disposition": "preserve",
+      "request": "q=parser&language=C%2B%2B",
+      "upstream": "empty",
+      "expect_upstream_url": "q=parser%20language%3AC%2B%2B&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "stars-range",
+      "disposition": "preserve",
+      "request": "q=react&stars=100..500",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20stars%3A100..500&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "stars-greater-or-equal",
+      "disposition": "preserve",
+      "request": "q=react&stars=%3E%3D50",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20stars%3A%3E%3D50&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "stars-less-than",
+      "disposition": "preserve",
+      "request": "q=react&stars=%3C10",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20stars%3A%3C10&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "stars-bare-asterisk",
+      "disposition": "preserve",
+      "note": "The asterisk is not percent-encoded by encodeURIComponent.",
+      "request": "q=react&stars=*",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20stars%3A*&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "query-reserved-characters",
+      "disposition": "preserve",
+      "request": "q=c%2B%2B%20%26%20rust",
+      "upstream": "empty",
+      "expect_upstream_url": "q=c%2B%2B%20%26%20rust&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "query-plus-decodes-to-space",
+      "disposition": "preserve",
+      "note": "A plus sign in the incoming query string is a space, re-encoded upstream as %20.",
+      "request": "q=machine+learning",
+      "upstream": "empty",
+      "expect_upstream_url": "q=machine%20learning&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "query-characters-left-unescaped",
+      "disposition": "preserve",
+      "note": "encodeURIComponent leaves ! ' ( ) * unescaped. A port must match byte for byte or record a deliberate relaxation.",
+      "request": "q=it%27s%20(fun)!*",
+      "upstream": "empty",
+      "expect_upstream_url": "q=it's%20(fun)!*&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "query-unicode",
+      "disposition": "preserve",
+      "request": "q=%E6%97%A5%E6%9C%AC",
+      "upstream": "empty",
+      "expect_upstream_url": "q=%E6%97%A5%E6%9C%AC&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "duplicate-parameter-uses-first",
+      "disposition": "preserve",
+      "request": "q=first&q=second",
+      "upstream": "empty",
+      "expect_upstream_url": "q=first&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "pagination-explicit",
+      "disposition": "preserve",
+      "note": "per_page=12 is what the chat page sends.",
+      "request": "q=react&page=2&per_page=12",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=2&per_page=12",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-zero-raised-to-one",
+      "disposition": "preserve",
+      "request": "q=react&page=0",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-negative-raised-to-one",
+      "disposition": "preserve",
+      "request": "q=react&page=-3",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "per-page-capped-at-100",
+      "disposition": "preserve",
+      "request": "q=react&per_page=500",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=100",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "per-page-zero-raised-to-one",
+      "disposition": "preserve",
+      "request": "q=react&per_page=0",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=1",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "empty-page-values-use-defaults",
+      "disposition": "preserve",
+      "request": "q=react&page=&per_page=",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-fraction-survives",
+      "disposition": "defect",
+      "note": "Numbers are not required to be integers, so fractions reach GitHub.",
+      "request": "q=react&page=2.5&per_page=7.5",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=2.5&per_page=7.5",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-infinity-survives",
+      "disposition": "defect",
+      "note": "Infinity is not NaN and has no upper clamp for page; per_page clamps to 100.",
+      "request": "q=react&page=Infinity&per_page=Infinity",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=Infinity&per_page=100",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-exponent-and-hex-accepted",
+      "disposition": "defect",
+      "note": "JavaScript Number() accepts exponent and hexadecimal text: 1e2 is 100 and 0x10 is 16.",
+      "request": "q=react&page=1e2&per_page=0x10",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=100&per_page=16",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "page-whitespace-becomes-one",
+      "disposition": "defect",
+      "note": "A whitespace-only value converts to 0 and is raised to 1 instead of being rejected.",
+      "request": "q=react&page=%20",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "missing-query",
+      "disposition": "preserve",
+      "request": "sort=latest",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "missing_query"
+    },
+    {
+      "id": "empty-query",
+      "disposition": "preserve",
+      "request": "q=",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "missing_query"
+    },
+    {
+      "id": "missing-query-reported-before-invalid-filters",
+      "disposition": "preserve",
+      "request": "language=C%23&page=abc",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "missing_query"
+    },
+    {
+      "id": "whitespace-query-reaches-upstream",
+      "disposition": "defect",
+      "note": "A whitespace-only q is not treated as missing; GitHub rejects it and the caller sees a 500.",
+      "request": "q=%20",
+      "upstream": "unprocessable_422",
+      "expect_upstream_url": "q=%20&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "invalid-language-hash",
+      "disposition": "defect",
+      "note": "The language allowlist rejects real GitHub language names such as C#.",
+      "request": "q=react&language=C%23",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-language-space",
+      "disposition": "defect",
+      "note": "Language names containing a space, such as Jupyter Notebook, are rejected.",
+      "request": "q=react&language=Jupyter%20Notebook",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-language-qualifier-injection",
+      "disposition": "preserve",
+      "request": "q=react&language=js%20user%3Aadmin",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-language-too-long",
+      "disposition": "preserve",
+      "request": "q=react&language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-stars-text",
+      "disposition": "preserve",
+      "request": "q=react&stars=many",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-stars-open-range",
+      "disposition": "preserve",
+      "request": "q=react&stars=10..",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-page-text",
+      "disposition": "preserve",
+      "request": "q=react&page=abc",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "invalid-per-page-text",
+      "disposition": "preserve",
+      "request": "q=react&per_page=lots",
+      "upstream": null,
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters"
+    },
+    {
+      "id": "upstream-body-without-expected-fields",
+      "disposition": "defect",
+      "note": "A 200 from upstream without total_count or items yields a 200 whose body omits both keys.",
+      "request": "q=react",
+      "upstream": "body_without_expected_fields",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "rate_limit_only_ok"
+    },
+    {
+      "id": "upstream-invalid-json",
+      "disposition": "preserve",
+      "request": "q=react",
+      "upstream": "invalid_json",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "upstream-403-rate-limited",
+      "disposition": "defect",
+      "note": "Every non-OK upstream status collapses to a generic 500; rate-limit state and Retry-After are not surfaced.",
+      "request": "q=react",
+      "upstream": "forbidden_403",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "upstream-429-secondary-limit",
+      "disposition": "defect",
+      "request": "q=react",
+      "upstream": "too_many_429",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "upstream-422-validation",
+      "disposition": "defect",
+      "request": "q=react",
+      "upstream": "unprocessable_422",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "upstream-500",
+      "disposition": "preserve",
+      "request": "q=react",
+      "upstream": "server_error_500",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    },
+    {
+      "id": "upstream-network-error",
+      "disposition": "preserve",
+      "request": "q=react",
+      "upstream": "network_error",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "upstream_failure"
+    }
+  ]
+}

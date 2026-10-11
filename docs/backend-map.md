@@ -72,7 +72,8 @@ Source: `src/app/api/github/search/route.js`; consumers include `src/hooks/searc
 - Success: `{total_count, items, rate_limit: {remaining, reset}}`. Rate-limit fields come from HTTP headers and are strings or null, not numbers. Preserve GitHub repository fields used by cards.
 - Missing query: 400 `{error: "Search query is required"}`. Invalid parameters: 400 `{error: "Invalid search parameters"}`. Upstream/network failure currently becomes 500 `{error: "Failed to search repositories"}`, including non-OK 403/429/422 upstream responses. The fetch sets no explicit timeout or cache option.
 - Optional server-side `GITHUB_TOKEN`; no user authentication requirement in this handler.
-- Record fixtures for success, empty results, filters, pagination, missing inputs, upstream limits and failure before writing the Rust replacement. Explicitly record any improved error/status behavior instead of silently changing it.
+- Fixtures are recorded in `../contracts/github-search/cases.json` and pass against the current handler (`npm run test:contracts`, 53 cases). Cases marked `defect` capture current behavior that needs an owner decision before it changes; see the README beside the fixtures. Explicitly record any improved error/status behavior instead of silently changing it.
+- Found while capturing fixtures: the language allowlist rejects real GitHub language names containing `#` or a space (`C#`, `Jupyter Notebook`) with a 400; a whitespace-only `q` is not treated as missing and reaches GitHub; `Number()` parsing accepts exponent and hexadecimal text (`page=1e2`, `per_page=0x10`); an upstream 200 lacking `total_count`/`items` produces a 200 whose body omits both keys; the response sets no `cache-control`.
 
 ## Data access outside API routes
 
@@ -121,4 +122,10 @@ The two vector-search implementations have different model families, vector colu
 
 ## Validation performed
 
-Source enumeration, route/method counting, table/RPC call-site extraction, selected source tracing, and independent Claude Code review. No build, lint baseline, endpoint integration test, live Supabase query, corpus benchmark, or production deployment check was run for this documentation-only change. There is no `test` script in `package.json`; this is a test-coverage gap, not proof of passing behavior.
+Source enumeration, route/method counting, table/RPC call-site extraction, selected source tracing, and independent Claude Code review. No endpoint integration test, live Supabase query, corpus benchmark, or production deployment check was run. The only automated test is the GitHub search contract suite (`npm run test:contracts`); every other handler remains untested.
+
+Baseline recorded on 2026-10-11 by Claude Code at `42759dd` application source, Node 21.7.1, npm 10.5.0, Windows, with the local environment file present:
+
+- `npm run lint`: **fails**, exit 1, 10 errors and 16 warnings. All 10 errors are `react-hooks/set-state-in-effect` in UI files: `src/app/page.js`, `src/components/3d/ThreeBackground.jsx`, `src/components/Canvas.jsx` (2), `src/components/CookieBar.jsx`, `src/components/settings/AccountTab.jsx`, `src/components/settings/SessionsTab.jsx`, `src/components/usage-contributions/UsageContributionsCard.jsx`, `src/contexts/LanguageContext.js` (2). Warnings: 13 `react-hooks/exhaustive-deps`, 2 `@next/next/no-img-element`, 1 `react-hooks/unsupported-syntax`. None is in an API handler.
+- `npm run build`: **passes**, exit 0.
+- No latency, resource, or cost measurement was taken.

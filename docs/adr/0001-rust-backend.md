@@ -76,6 +76,6 @@ Capture p50/p95 response time, upstream time, error rate, process CPU/memory, ca
 
 ## Next bounded task
 
-`RUST-001a`: capture fixture contracts for GitHub search and the current lint/build baseline. Use controlled upstream fixtures; live GitHub traffic is not necessary for deterministic contract tests. This preparation is useful even if the existing Next.js backend is retained.
+`RUST-001a` (complete, pending Codex review): fixture contracts for GitHub search are in `../../contracts/github-search/` and the lint/build baseline is in `../backend-map.md`. The fixtures use controlled upstream stubs and no live GitHub traffic. Thirteen cases are marked `defect`; the owner has not yet decided which of them a port should fix rather than reproduce.
 
 `RUST-001b`: after the owner selects the Rust direction, record the task owner and base commit, verify/install the required toolchain within the authorized scope, and create a small Rust service implementing that one read path behind an opt-in adapter. The other agent reviews the contract and diff. No production routing or data migration is part of this first implementation task.
