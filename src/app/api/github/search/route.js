@@ -1,5 +1,20 @@
 import { NextResponse } from "next/server";
 
+// GitHub serves only the first 1000 results, so no later page can succeed.
+const MAX_PAGE = 1000;
+const MAX_PER_PAGE = 100;
+
+// A primary limit reports zero remaining requests and a secondary limit
+// sends Retry-After. A 403 with neither is treated as an ordinary failure.
+function isRateLimited(response) {
+  if (response.status === 429) return true;
+  return (
+    response.status === 403 &&
+    (Boolean(response.headers.get("retry-after")) ||
+      response.headers.get("x-ratelimit-remaining") === "0")
+  );
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -10,35 +25,42 @@ export async function GET(request) {
     const page = searchParams.get("page") || "1";
     const per_page = searchParams.get("per_page") || "30";
 
-    if (!query) {
+    // A query made only of whitespace counts as missing.
+    if (!query || !/\P{White_Space}/u.test(query)) {
       return NextResponse.json(
         { error: "Search query is required" },
         { status: 400 }
       );
     }
 
+    // Words separated by single spaces, so "C#" and "Jupyter Notebook" pass.
     const isValidLanguage =
-      !language || /^[A-Za-z0-9._+-]{1,50}$/.test(language);
+      !language ||
+      (language.length <= 50 &&
+        /^[A-Za-z0-9._+#-]+( [A-Za-z0-9._+#-]+)*$/.test(language));
     const isValidStars =
       !stars || /^(\*|[0-9]+|[0-9]+\.\.[0-9]+|[<>]=?[0-9]+)$/.test(stars);
+    // Whole numbers only. Number() alone also accepts "2.5", "1e2", "0x10",
+    // "Infinity" and blank strings.
+    const isInteger = (value) => /^-?[0-9]+$/.test(value);
 
-    const pageNumber = Number(page);
-    const perPageNumber = Number(per_page);
-
-    if (!isValidLanguage || !isValidStars || Number.isNaN(pageNumber) || Number.isNaN(perPageNumber)) {
+    if (!isValidLanguage || !isValidStars || !isInteger(page) || !isInteger(per_page)) {
       return NextResponse.json(
         { error: "Invalid search parameters" },
         { status: 400 }
       );
     }
 
-    const safePage = Math.max(1, pageNumber);
-    const safePerPage = Math.min(100, Math.max(1, perPageNumber));
+    const safePage = Math.min(MAX_PAGE, Math.max(1, Number(page)));
+    const safePerPage = Math.min(MAX_PER_PAGE, Math.max(1, Number(per_page)));
 
     // Build GitHub search query
     let githubQuery = query;
     if (language) {
-      githubQuery += ` language:${language}`;
+      // GitHub needs quotes around a qualifier value that contains a space.
+      githubQuery += language.includes(" ")
+        ? ` language:"${language}"`
+        : ` language:${language}`;
     }
     if (stars) {
       githubQuery += ` stars:${stars}`;
@@ -53,7 +75,10 @@ export async function GET(request) {
       featured: { sort: "stars", order: "desc" },
     };
 
-    const filterConfig = filterMap[sort] || filterMap["all"];
+    // Object.hasOwn keeps inherited keys such as "constructor" from matching.
+    const filterConfig = Object.hasOwn(filterMap, sort)
+      ? filterMap[sort]
+      : filterMap["all"];
     const githubSort = filterConfig.sort;
     const order = filterConfig.order;
 
@@ -74,19 +99,48 @@ export async function GET(request) {
       },
     });
 
+    const rateLimit = {
+      remaining: response.headers.get("x-ratelimit-remaining"),
+      reset: response.headers.get("x-ratelimit-reset"),
+    };
+
     if (!response.ok) {
+      if (isRateLimited(response)) {
+        const retryAfter = response.headers.get("retry-after");
+        return NextResponse.json(
+          {
+            error: "GitHub rate limit reached, please try again shortly",
+            rate_limit: rateLimit,
+          },
+          {
+            status: 429,
+            headers: retryAfter ? { "Retry-After": retryAfter } : {},
+          }
+        );
+      }
+
+      // GitHub rejected the search itself: a query it cannot parse, or a
+      // page beyond its 1000-result cap.
+      if (response.status === 422) {
+        return NextResponse.json(
+          { error: "GitHub could not process this search" },
+          { status: 400 }
+        );
+      }
+
       throw new Error(`GitHub API error: ${response.status}`);
     }
 
     const data = await response.json();
 
+    if (typeof data?.total_count !== "number" || !Array.isArray(data.items)) {
+      throw new Error("GitHub API returned an unexpected body");
+    }
+
     return NextResponse.json({
       total_count: data.total_count,
       items: data.items,
-      rate_limit: {
-        remaining: response.headers.get("x-ratelimit-remaining"),
-        reset: response.headers.get("x-ratelimit-reset"),
-      },
+      rate_limit: rateLimit,
     });
   } catch (error) {
     console.error("GitHub search error:", error);

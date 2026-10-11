@@ -103,8 +103,15 @@ for (const c of contract.cases) {
     }
 
     assert.equal(response.status, expected.status);
-    assert.equal(response.headers.get("content-type"), "application/json");
-    assert.equal(response.headers.get("cache-control"), null);
+    const expectedHeaders = {
+      "content-type": "application/json",
+      "cache-control": null,
+      "retry-after": null,
+      ...expected.headers,
+    };
+    for (const [name, value] of Object.entries(expectedHeaders)) {
+      assert.equal(response.headers.get(name), value, `header ${name}`);
+    }
     assert.deepEqual(await response.json(), expected.body);
   });
 }

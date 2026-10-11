@@ -64,16 +64,18 @@ Paths below are relative to `/api`; corresponding source is `src/app/api/<path>/
 
 ### First-port contract: GitHub search
 
-Source: `src/app/api/github/search/route.js`; consumers include `src/hooks/search/useGitHubSearch.js` and `src/app/chat/page.js`.
+Source: `src/app/api/github/search/route.js`; consumers are `src/hooks/search/useGitHubSearch.js` and `src/app/chat/page.js`. The contract is recorded as data in `../contracts/github-search/cases.json`. The README beside it is the single description of the rules, so they are not repeated here.
 
-- Inputs: required `q`; `sort` defaults to `all`; optional `language`, `stars`; `page` defaults to 1 and `per_page` to 30.
-- Sort mapping: `all` -> empty GitHub sort; `latest`, `monthly`, `yearly` -> `updated`; `featured` -> `stars`. These labels do not currently add date filters. Ordinary unknown values fall back to `all`, but inherited object keys such as `constructor` and `__proto__` bypass the fallback and produce undefined sort/order fields. Add fixtures and explicitly fix this during validation work.
-- Language uses an allowlist regex. Stars supports a bare `*` and integer/range/comparison syntax. Page is lower-bounded at 1; page size is clamped to 1..100. Current parsing does not enforce finite integers: positive infinite `page` survives, positive infinite `per_page` clamps to 100, and fractions can survive either clamp. Capture stricter parsing as an intentional validation change.
-- Success: `{total_count, items, rate_limit: {remaining, reset}}`. Rate-limit fields come from HTTP headers and are strings or null, not numbers. Preserve GitHub repository fields used by cards.
-- Missing query: 400 `{error: "Search query is required"}`. Invalid parameters: 400 `{error: "Invalid search parameters"}`. Upstream/network failure currently becomes 500 `{error: "Failed to search repositories"}`, including non-OK 403/429/422 upstream responses. The fetch sets no explicit timeout or cache option.
-- Optional server-side `GITHUB_TOKEN`; no user authentication requirement in this handler.
-- Fixtures are recorded in `../contracts/github-search/cases.json` and pass against the current handler (`npm run test:contracts`, 53 cases). Cases marked `defect` capture current behavior that needs an owner decision before it changes; see the README beside the fixtures. Explicitly record any improved error/status behavior instead of silently changing it.
-- Found while capturing fixtures: the language allowlist rejects real GitHub language names containing `#` or a space (`C#`, `Jupyter Notebook`) with a 400; a whitespace-only `q` is not treated as missing and reaches GitHub; `Number()` parsing accepts exponent and hexadecimal text (`page=1e2`, `per_page=0x10`); an upstream 200 lacking `total_count`/`items` produces a 200 whose body omits both keys; the response sets no `cache-control`.
+- Contract version 2 (2026-10-11): the owner approved fixing all 13 defects recorded in version 1. The handler and the fixtures changed in the same commit.
+- Optional server-side `GITHUB_TOKEN`; no user authentication requirement. The Next.js handler sets no timeout or cache option on its fetch.
+- The search page shows the API's `error` text to the user in a toast, so error wording is part of the UI.
+
+Open findings, recorded and not fixed:
+
+- The search navbar sends `sort=stars` and `sort=updated`, names the API does not know, so "Most Stars" and "Recently Updated" silently behave as `all`. Pinned as `defect` cases awaiting an owner decision. The `SearchFilters` panel uses the API's own names and works.
+- `monthly` and `yearly` add no date filter; they behave exactly like `latest`.
+- The navbar's advanced filters (license, date range, topics, forks, wiki, issues) are held in UI state and never sent to the API.
+- The UI offers "load more" while it holds fewer results than `total_count`, but GitHub serves only the first 1000. Requests past that now answer 400 where they used to answer 500.
 
 ## Data access outside API routes
 
