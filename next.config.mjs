@@ -17,6 +17,25 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
+// API routes the Go backend can serve instead of their Next.js handlers.
+// Nothing is forwarded unless SEFGH_GO_API_URL is set and the route's name
+// is listed in SEFGH_GO_ROUTES (comma-separated). Both are read at build
+// time. Unsetting them is the rollback. See backend/README.md.
+const goBackendRoutes = {
+  "github-search": "/api/github/search",
+};
+
+function goBackendRewrites() {
+  const origin = (process.env.SEFGH_GO_API_URL || "").replace(/\/+$/, "");
+  if (!origin) return [];
+  const enabled = (process.env.SEFGH_GO_ROUTES || "")
+    .split(",")
+    .map((name) => name.trim());
+  return Object.entries(goBackendRoutes)
+    .filter(([name]) => enabled.includes(name))
+    .map(([, path]) => ({ source: path, destination: `${origin}${path}` }));
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: false, // Disabled - causing 50s+ compile times
@@ -36,6 +55,12 @@ const nextConfig = {
         headers: securityHeaders,
       },
     ];
+  },
+
+  // beforeFiles rewrites run before route handlers, so an enabled route is
+  // served by Go even though its route.js still exists.
+  async rewrites() {
+    return { beforeFiles: goBackendRewrites() };
   },
 
   images: {

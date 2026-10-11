@@ -5,8 +5,9 @@
 | Implementation | Check it with |
 |---|---|
 | Next.js handler, `src/app/api/github/search/route.js` | `npm run test:contracts` |
+| Go handler, `backend/internal/githubsearch` | `go test ./...` inside `backend/` |
 
-The Next.js runner (`scripts/contracts/github-search.test.mjs`) calls the handler directly and replaces `fetch` with a stub. It makes no network request, needs no dev server, and ignores any real `GITHUB_TOKEN`.
+The Next.js runner (`scripts/contracts/github-search.test.mjs`) calls the handler directly and replaces `fetch` with a stub. It makes no network request, needs no dev server, and ignores any real `GITHUB_TOKEN`. The Go test (`contract_test.go`) runs each case twice: in memory, and over real sockets against a fake GitHub.
 
 ## File layout
 
@@ -66,7 +67,7 @@ The error text reaches end users: the search page shows it in a toast.
 
 `preserve` cases are the intended contract.
 
-`defect` cases record behaviour that is probably wrong and is waiting for an owner decision. Every implementation matches them until then. To change one, edit its expectation in the same commit as the fix to **every** implementation, raise `contract_version`, and note the decision in the current ADR. Two implementations must never disagree silently.
+`defect` cases record behaviour that is probably wrong and is waiting for an owner decision. Every implementation matches them until then. To change one, edit its expectation in the same commit as the fix to **every** implementation, raise `contract_version`, and note the decision in `docs/adr/0002-go-backend.md`. Two implementations must never disagree silently.
 
 Open `defect` cases: the search navbar sends `sort=stars` and `sort=updated`, names the API does not know, so "Most Stars" and "Recently Updated" have no effect.
 

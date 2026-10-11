@@ -45,3 +45,8 @@ next-env.d.ts
 /.vscode/
 # Quarantined dead code (pending deletion)
 .deadcode/
+
+# Go build output
+/backend/bin/
+*.exe
+*.test

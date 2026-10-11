@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Go sources must use LF: gofmt reports CRLF files as unformatted.
+*.go text eol=lf
+go.mod text eol=lf
+go.sum text eol=lf
