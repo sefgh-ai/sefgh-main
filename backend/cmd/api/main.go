@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 )
@@ -29,6 +30,7 @@ func run(logger *slog.Logger) error {
 	addr := envOr("SEFGH_API_ADDR", "127.0.0.1:8787")
 
 	mux := http.NewServeMux()
+	githublanguages.Register(mux)
 	repositories := githubrepos.New(&http.Client{Timeout: githubsearch.DefaultTimeout},
 		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), os.Getenv("GITHUB_TOKEN"))
 	repositories.Logger = logger

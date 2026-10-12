@@ -23,6 +23,7 @@ const securityHeaders = [
 // time. Unsetting them is the rollback. See backend/README.md.
 const goBackendRoutes = {
   "github-search": "/api/github/search",
+  "github-languages": "/api/github/languages",
   "github-repo": "/api/github/repo",
   "github-repo-details": "/api/github/repo/:owner/:repo",
   "github-contents": "/api/github/contents/:owner/:repo",

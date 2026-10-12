@@ -61,6 +61,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [09 Path parameters](09-path-parameters/README.md) | Named URL segments, router tests, URL compatibility | `backend/internal/githubrepos/handler.go`, `backend/internal/jscompat/fetchurl.go` |
 | [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels and background refresh | `backend/internal/githubrepos/cache.go` |
 | [11 Shared results](11-shared-results/README.md) | Waiting with `select`, cancellation, and preserving errors | `cacheFlight` in `cache.go`, upstream errors in `handler.go` |
+| [12 Embedded data](12-embedded-data/README.md) | `go:embed`, blank imports and serving static JSON | `backend/internal/githublanguages/handler.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

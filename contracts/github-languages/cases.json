@@ -1,0 +1,23 @@
+{
+  "contract_version": 1,
+  "cases": [
+    {
+      "id": "full-ordered-catalog",
+      "request": "/api/github/languages",
+      "disposition": "preserve",
+      "expect": { "status": 200, "body_file": "response.json", "headers": { "content-type": "application/json", "cache-control": null, "retry-after": null } }
+    },
+    {
+      "id": "query-does-not-filter-or-page",
+      "request": "/api/github/languages?q=Rust&limit=1&page=2",
+      "disposition": "preserve",
+      "expect": { "status": 200, "body_file": "response.json", "headers": { "content-type": "application/json", "cache-control": null, "retry-after": null } }
+    },
+    {
+      "id": "reserved-and-repeated-query-values-ignored",
+      "request": "/api/github/languages?language=C%23&language=C%2B%2B&q=%E6%97%A5%E6%9C%AC%E8%AA%9E",
+      "disposition": "preserve",
+      "expect": { "status": 200, "body_file": "response.json", "headers": { "content-type": "application/json", "cache-control": null, "retry-after": null } }
+    }
+  ]
+}

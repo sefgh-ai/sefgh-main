@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Codex (GO-003 implementation handoff; owner low-capacity rule).
+Last updated: 2026-10-12 (Asia/Calcutta), by Codex (GO-004 language catalog handoff).
 
 ## Start here
 
@@ -11,9 +11,69 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed GO-003 implementation and released the role. Changes are uncommitted at handoff, based on `1e5d87f` on `main`. Claude Code is the intended read-only reviewer; GO-003 peer review has not run. Routes remain off by default; no deployment or cutover.
+- **Active writer:** none. Codex completed GO-004 implementation and released the role. Base `cd8906c` on `main`; changes are uncommitted at handoff. GO-003 is committed at `cd8906c`. GO-003 and GO-004 peer review remain pending; no deployment or cutover.
 - **Reviewer:** Claude Code reviewed GO-002a/GO-002b on 2026-10-12. Verdict: acceptable as merged with routing off, not ready to switch on. Eleven findings are in `claude-review.md`; the handoff is below. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Phase 1 of the ADR. Search, repository summary, repository detail, and contents exist in Go behind opt-in switches that are off by default. Nothing is deployed and no traffic has moved.
+- **Stage:** Phase 1 implementation plus the first Phase 2 slice (static languages). Search, repository summary, repository detail, contents and languages exist in Go behind off-by-default switches. Earlier review/cutover gates remain open. Nothing is deployed and no traffic has moved.
+
+## Handoff: GO-004 (Codex, 2026-10-12)
+
+```text
+Task / scope: GO-004, first Phase 2 slice: GET /api/github/languages.
+Owner / reviewer: Codex / independent reviewer pending; no agent was contacted.
+Status: implementation complete, review pending, not deployed.
+Base / branch / worktree: cd8906c / main / main checkout; clean at start.
+Resulting commit: uncommitted at handoff; Git Agent owns synchronization.
+Changed files:
+  contracts/github-languages/{cases.json,response.json,README.md}
+  scripts/contracts/{github-languages.test.mjs,route-loader.mjs,go-rewrites.test.mjs}
+  backend/internal/githublanguages/{handler.go,catalog.json,contract_test.go}
+  backend/cmd/api/main.go, backend/README.md, next.config.mjs
+  learn-go/12-embedded-data/{README.md,lesson.go,sample.json,exercise.go,
+    exercise_test.go,solution.go}, learn-go/README.md
+  docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}
+Behavior / decisions:
+  - Captured version-1 fixtures against the unchanged Next.js handler BEFORE
+    porting. Pins all 565 language strings in order, JSON array shape, status
+    and headers; query parameters ignored, no upstream HTTP call.
+  - Go embeds a separate production JSON artifact as an immutable string.
+    Both implementations must match the independent approved snapshot.
+  - Added github-languages opt-in rewrite; no route enabled by default.
+  - Lesson 12 teaches go:embed and serving JSON text. Its exercise is unfinished;
+    no existing owner exercise changed. Standard library only.
+Actual checks (Codex):
+  - Initial Node language characterization: 4 checks passed before Go code.
+  - npm run test:contracts: 178 passed, 0 failed (173 cases plus integrity and
+    rewrite checks). Existing search/repository contracts remain unchanged.
+  - backend: go test -count=1 ./... passed all five packages; new fixture cases
+    pass in memory and over local sockets.
+  - Compiled api.exe smoke from an unrelated temporary working directory:
+    catalog response, marker/security headers, HEAD, POST 405 all passed.
+    The harness stopped only the Go server it started; no live GitHub call.
+  - learn-go: all 13 solution packages pass; both vet modes clean; formatting
+    clean. Default exercise tests were not run.
+  - npm run build with SEFGH_GO_ROUTES and SEFGH_GO_API_URL empty: passed.
+    Only existing browser-data/punycode warnings; no production deployment.
+  - Targeted ESLint on next.config.mjs and the three changed contract scripts:
+    passed. Full-project lint was not rerun; GO-003 recorded the baseline
+    10 errors and 16 warnings in unchanged UI files.
+  - Markdown link checks, git diff --check and existing-exercise preservation
+    checks passed.
+Release validation: npm run handoff is run after release; inspect its emitted
+  .agent-signal.json for result. This text does not claim a Git commit or push.
+Remaining gates:
+  - GO-003 and GO-004 independent peer review. No self-review is labeled peer review.
+  - Earlier Phase 1 URL-input/token-policy, race-detector, encoded-segment rewrite,
+    production cache, hosting, measurement and rollback gates remain open.
+  - New route opt-in config behavior is unit-tested, but an actual Next-to-Go
+    language rewrite has not been exercised in staging. No traffic moved.
+  - AI policy and user-data schema/RLS gates remain; FIX-002 stays owner-reserved.
+Next bounded implementation: GO-005a, characterize GET /api/github/contributions
+  with deterministic GraphQL stubs and fixtures before its Go port (GO-005b).
+  Read the current source/callers, claim writer, preserve existing behavior,
+  and record defects for owner decisions. No live credentials are needed.
+Next review: Claude reviews GO-003 (cd8906c versus 1e5d87f) and GO-004 separately.
+Writer released: yes.
+```
 
 ## Owner instruction: low-capacity checkpoints
 
@@ -303,6 +363,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]` | Implemented and reviewed in REVIEW-002 | Cutover gates remain |
 | `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
 | `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implementation complete, uncommitted at handoff | Claude peer review; cutover gates remain |
+| `GO-004` | Phase 2 static languages contract, embedded Go handler and lesson 12 | Implementation complete, uncommitted at handoff | Peer review and cutover gates |
+| `GO-005a / GO-005b` | Contributions GraphQL contracts, then opt-in Go port and lesson | Next bounded implementation; unassigned | Fixtures before port; record defects and await approval for behavior changes |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
 | `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |

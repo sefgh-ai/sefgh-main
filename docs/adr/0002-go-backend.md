@@ -134,5 +134,16 @@ See `../coordination.md` for owners and state. In order:
 4. Phase 2 is a separate bounded task with its own public/guest and AI policy
    decisions; work on it does not waive any earlier route's cutover gates.
 
+Phase 2 implementation update (2026-10-12): GO-004 starts with the public static
+`github/languages` read, selected because it uses no identity, network or state.
+Its version-1 fixtures pin the full existing catalog and headers before its Go
+port. Go embeds the catalog with the standard `embed` package and the route
+stays off unless `github-languages` is explicitly enabled. No existing contract
+was changed. GO-003/GO-004 peer reviews and all cutover gates remain open.
+Next bounded Phase 2 implementation: characterize `github/contributions`
+against a stub GitHub GraphQL response before porting it; no token inspection
+or live call is required for fixtures. Keep AI and stateful domains behind
+their existing policy/schema gates.
+
 Progress records and test outcomes belong in `../coordination.md`. The earlier
 phase table is dated 2026-10-11; it is not a claim that later work is absent.

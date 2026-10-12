@@ -14,6 +14,7 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
     assert.deepEqual(await config.rewrites(), {beforeFiles: []});
     const routes = {
       'github-search': '/api/github/search',
+      'github-languages': '/api/github/languages',
       'github-repo': '/api/github/repo',
       'github-repo-details': '/api/github/repo/:owner/:repo',
       'github-contents': '/api/github/contents/:owner/:repo',

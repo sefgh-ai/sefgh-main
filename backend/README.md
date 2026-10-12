@@ -9,6 +9,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | Route | Package | Contract |
 |---|---|---|
 | `GET /api/github/search` | `internal/githubsearch` | `../contracts/github-search/` |
+| `GET /api/github/languages` | `internal/githublanguages` | `../contracts/github-languages/` |
 | `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/repo/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
@@ -70,6 +71,8 @@ SEFGH_GO_ROUTES=github-search
 `SEFGH_GO_ROUTES` is a comma-separated list of route names from `goBackendRoutes` in `../next.config.mjs`. To roll back, remove the route's name, or unset `SEFGH_GO_API_URL`, and rebuild. The Next.js handler stays in place until its route is retired.
 
 The new names are `github-repo`, `github-repo-details`, and `github-contents`.
+GO-004 adds `github-languages`, a static embedded catalog with no upstream
+calls, credentials or runtime data file. It also stays disabled by default.
 They remain off by default and await peer review and ADR cutover gates. The
 summary cache is local to one Go process: one-hour freshness, stale background
 refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
