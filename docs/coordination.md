@@ -10,7 +10,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Current state
 
-- **Branch:** `go-backend`. It was called `rust-migration-prep` until the plan changed; the old name no longer exists locally or on origin. Based on `main` at `42759dd`. Pushed. Not merged into `main`, and no pull request is open. Create worktrees from this branch so they inherit these documents.
+- **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
 - **Active writer:** none. Codex completed GO-002a and GO-002b implementation, verified all local test gates, and released the writer role. Routing remains off by default; no deployment or cutover.
 - **Reviewer:** Claude Code. Peer review pending for GO-002a/GO-002b diff and SYNC-001 documentation changes.
 - **Stage:** Phase 1 of the ADR. Search, repository summary, repository detail, and contents exist in Go behind opt-in switches that are off by default. Nothing is deployed and no traffic has moved.

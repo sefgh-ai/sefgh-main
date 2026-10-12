@@ -74,11 +74,15 @@ console.log('\n4. Inspecting docs/coordination.md...');
 const coordPath = resolve(ROOT, 'docs/coordination.md');
 const coordContent = readFileSync(coordPath, 'utf-8');
 
-const isReleased = coordContent.includes('Writer released: yes') || coordContent.includes('Active writer: none');
+// Strictly match the current state bullet: "- **Active writer:** none"
+const activeWriterMatch = coordContent.match(/^-\s+\*\*Active writer:\*\*\s*(.+)$/m);
+const activeWriter = activeWriterMatch ? activeWriterMatch[1].trim() : 'unknown';
+const isReleased = /^none\b/i.test(activeWriter);
+
 if (!isReleased) {
-  console.warn('⚠️ Warning: docs/coordination.md does not currently record "Writer released: yes" or "Active writer: none".');
+  console.warn(`⚠️ Warning: Current active writer is: "${activeWriter}". Writer role has NOT been released to "none".`);
 } else {
-  console.log('✅ docs/coordination.md records writer release.');
+  console.log('✅ docs/coordination.md records: Active writer is "none" (writer released).');
 }
 
 // 5. Emit status file for background watcher / Antigravity agent
@@ -95,3 +99,4 @@ const signal = {
 writeFileSync(resolve(ROOT, '.agent-signal.json'), JSON.stringify(signal, null, 2), 'utf-8');
 console.log('\n✅ Verification complete. Emitted .agent-signal.json');
 console.log('Ready for Git Agent commit, synchronization, and merge.');
+
