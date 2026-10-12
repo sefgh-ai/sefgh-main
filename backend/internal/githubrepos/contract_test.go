@@ -1,6 +1,7 @@
 package githubrepos
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"io"
@@ -19,6 +20,7 @@ type fixtureCall struct {
 	ResponseHeaders map[string]string `json:"response_headers"`
 	Body            json.RawMessage   `json:"body"`
 	RawBody         *string           `json:"raw_body"`
+	RawBodyBase64   *string           `json:"raw_body_base64"`
 	NetworkError    bool              `json:"network_error"`
 }
 type fixture struct {
@@ -32,6 +34,24 @@ type fixture struct {
 		Body   json.RawMessage `json:"body"`
 	} `json:"expect"`
 }
+
+// replyBody returns the stub reply's bytes. raw_body_base64 carries bytes
+// that are not valid UTF-8 and so cannot be written as a JSON string.
+func (c fixtureCall) replyBody(t *testing.T) string {
+	t.Helper()
+	switch {
+	case c.RawBodyBase64 != nil:
+		decoded, err := base64.StdEncoding.DecodeString(*c.RawBodyBase64)
+		if err != nil {
+			t.Fatalf("raw_body_base64: %v", err)
+		}
+		return string(decoded)
+	case c.RawBody != nil:
+		return *c.RawBody
+	}
+	return string(c.Body)
+}
+
 type roundTripFunc func(*http.Request) (*http.Response, error)
 
 func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
@@ -84,10 +104,7 @@ func TestContracts(t *testing.T) {
 				for k, v := range want.ResponseHeaders {
 					header.Set(k, v)
 				}
-				body := string(want.Body)
-				if want.RawBody != nil {
-					body = *want.RawBody
-				}
+				body := want.replyBody(t)
 				return &http.Response{StatusCode: want.Status, Header: header, Body: io.NopCloser(strings.NewReader(body)), Request: req}, nil
 			})
 			h := New(&http.Client{Transport: transport}, "https://api.github.com", tc.Token)

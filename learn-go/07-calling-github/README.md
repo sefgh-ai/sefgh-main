@@ -41,6 +41,21 @@ The Next.js handler has no timeout either. Adding one is a deliberate improvemen
 
 `r.Context()` belongs to the browser's request. Handing it to `NewRequestWithContext` ties the two requests together: if the user closes the tab, Go notices and abandons the call to GitHub instead of finishing work nobody will see.
 
+### One deadline for several calls
+
+A context can also carry a deadline. The repository details route makes three calls to GitHub, one after another. Each has its own 10-second limit, so on a bad day the route could take 30 seconds, which is as long as the server allows itself to write a reply. The caller would get a dropped connection.
+
+So the route sets one limit for all three:
+
+```go
+ctx, cancel := context.WithTimeout(r.Context(), h.detailTimeout)
+defer cancel()
+```
+
+`ctx` is the browser's context with a 25-second deadline added. Every call made with `ctx` stops when the browser leaves **or** when the 25 seconds run out, whichever comes first. `defer cancel()` releases the timer when the function ends.
+
+A deadline passes down but never extends: a call given `ctx` cannot outlive it, however long its own timeout is. That is `DetailTimeout` in `backend/internal/githubrepos/handler.go`, and a test in `backend/cmd/api` fails if it is ever set longer than the server's write timeout.
+
 ## Habit 3: close the body
 
 ```go

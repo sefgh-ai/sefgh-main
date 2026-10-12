@@ -82,6 +82,24 @@ Never dual-write to compare stateful implementations. Compare read fixtures or s
 
 A read-only Phase 1 route does not wait for unrelated schema work. No database mutation moves before its own schema and policy gate passes.
 
+### Phase 1 gates on 2026-10-12
+
+The table above is dated 2026-10-11. This is where Phase 1 stood after `VERIFY-001`. Evidence for each line is in `../coordination.md`.
+
+| Gate | State | Who can close it |
+|---|---|---|
+| Fixture parity, old and new, for search, summary, detail and contents | Met locally: every case passes against both | Done; repeat on each change |
+| Invalid-input and upstream-failure tests | Met. Input rules approved by the owner and applied in `FIX-003` | Done |
+| Explicit timeout and cache behaviour | Met in code. Production cache behaviour is not chosen | Owner, with hosting |
+| Review findings (REVIEW-002) | 1 to 10 fixed. 11, no token on detail and contents, is open | Owner |
+| Who may see private repositories | **Open.** No token-bearing route is to be cut over until decided | Owner |
+| Rewrite forwards requests unchanged | Met for `next dev`, 46 of 46 paths. Not checked on Vercel | An agent, once a preview deployment exists |
+| Race detector | **Not run.** Needs a C compiler; none on the owner's machine | `CI-001`, which needs the owner's approval |
+| Hosting for the Go service | **Open.** Proposal below | Owner |
+| Staging latency and resource comparison | Not started. Needs hosting | Owner, then an agent |
+| Tested rollback | Met locally. Not tested under real traffic | Needs hosting |
+| Peer review | GO-005a, GO-005b, FIX-003, FIX-004 and VERIFY-001 not yet reviewed | Codex |
+
 ## Recorded differences between Go and Next.js
 
 Anything the fixtures cover is identical. These are deliberate and outside the fixtures:
@@ -89,11 +107,11 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Difference | Reason |
 |---|---|
 | Go abandons a GitHub call after 10 seconds; Next.js has no timeout | A backend must bound upstream waits. Both answer the same generic failure |
+| Go bounds the whole repository detail route, which makes three calls, to 25 seconds | The server allows 30 seconds to write a reply. Without one deadline a slow GitHub could push the route past that and drop the connection |
 | Go treats a GitHub reply over 16 MB as a failure | Bounds memory. A full page of results is under 2 MB |
 | Go adds `X-Sefgh-Backend: go` | Shows which backend answered during rollout and rollback |
 | Go sends the six security headers itself | Next.js adds them to its own responses but not to responses it forwards. A Go test fails if the two lists drift |
 | Methods other than GET and HEAD get Go's standard 405 | The registered GET pattern also accepts HEAD; method parity is outside the current fixtures |
-| Query bytes that are not valid UTF-8 may decode to a different number of replacement characters | Left unspecified by the contract |
 | Contributions: a count or total from GitHub that is not a JSON number is passed through, not converted as JavaScript would | No fixture pins JavaScript's conversion, and reproducing it for every JSON type is not worth the risk |
 | Contributions: a GitHub status that cannot carry a body, such as 304, answers 500 | The Next.js handler reaches the same 500 through its catch block |
 
@@ -113,8 +131,37 @@ Open, for the owner:
 
 - The search navbar sends `sort=stars` and `sort=updated`, which the API ignores. Recorded as `defect` cases. Either teach the API those names or change the navbar to send the names the API knows.
 - **Who may see private repositories.** The summary and search routes send the server token for any caller. With a token that can read private repositories, their details reach anyone, in the Next.js routes in production today as well as in the Go ports. Until this is decided, no token-bearing route should be cut over.
-- How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected.
+- How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected. See the hosting proposal below.
 - Public and guest policy for the AI endpoints, and playground key semantics, before Phase 2 and 3.
+
+## Hosting proposal (not decided, nothing deployed)
+
+Written by Claude Code on 2026-10-12 for the owner to choose from. The facts about Vercel are from its documentation as read that day. **None of this has been tried in this project**, and the owner's Vercel account has not been inspected.
+
+What the documentation says:
+
+- Vercel runs Go servers. The Go runtime and "Services" (several services in one project) are both marked Beta and are listed as available on every plan, including the free one.
+- A Go service must be a `main` package that listens on the port in the `PORT` environment variable. `backend/cmd/api` reads `PORT` since `OPS-001a` (2026-10-12): `SEFGH_API_ADDR` still wins when set, and with neither set the server stays on `127.0.0.1:8787`. Whether Vercel's Go runtime is satisfied by exactly this has not been tried.
+- Vercel's Go preset looks for `go.mod` at the service root and an entry point such as `cmd/api/main.go`. `backend/` already has that shape.
+- A function is stateless. An instance may be reused, but nothing in memory is promised to survive. The summary route's in-process cache would therefore work only some of the time. Production cache behaviour is already a cutover gate.
+- On the free plan a function may run for up to 300 seconds, and a request or response body may be at most 4.5 MB. The Go handlers finish within 30 seconds. A GitHub reply above 4.5 MB would fail there, as it would for the Next.js handlers today.
+
+| Option | How it works | For | Against |
+|---|---|---|---|
+| A. A second Vercel project with its root set to `backend/` | The Next.js project sets `SEFGH_GO_API_URL` to that project's address and names routes in `SEFGH_GO_ROUTES`: the switch that already exists | Uses the switch and the rollback already tested locally. A route is turned off by removing its name and redeploying Next.js. No new routing file | The Go service has its own public address, so it can be called without going through Next.js. Two projects to keep in step. One more network hop per request |
+| B. One project using Vercel Services | A `vercel.json` names two services and sends chosen `/api/github/...` paths to the Go one | One deployment and one rollback for both. Same address for everything | Beta. A layout where one service's folder sits inside the other's is not documented. Routes would be switched in `vercel.json`, a second mechanism beside the tested one. Once a path is sent to a service, a 404 from it does not fall back to Next.js |
+
+Recommendation: **A, on a preview deployment first**, because it changes nothing that has been tested. B is the tidier end state and can be revisited when Services leaves Beta.
+
+Either way, in this order. Step 1 is done; every later step waits for the owner's go-ahead:
+
+1. Make `backend/cmd/api` honour `PORT`. Done in `OPS-001a`, with no deployment.
+2. The owner creates the project or preview on the free plan and sets `GITHUB_TOKEN` there. Agents do not handle the token.
+3. Run `scripts/contracts/go-forwarding-probe.mjs`'s path list against the preview, with routes still off in production.
+4. Take the measurements in the next section.
+5. Switch on one route that sends no token, `github-languages`, and practise the rollback.
+
+Nothing here needs a paid resource according to the documentation. That is a reading of the pricing pages, not a measurement; check the usage page after the first preview.
 
 ## Measurements
 
@@ -156,6 +203,11 @@ date range depends on the server's time zone. The owner then chose to port it. G
 enabled, reproducing all 18 `defect` cases as recorded, with lesson 13. Next
 bounded Phase 2 implementation: `GO-006a`, characterize `github/trending`.
 Keep AI and stateful domains behind their existing policy/schema gates.
+
+VERIFY-001 (2026-10-12) checked rewrite forwarding in `next dev` and could not
+run the race detector; see "Phase 1 gates on 2026-10-12" above. OPS-001a
+(2026-10-12) made `backend/cmd/api` read `PORT`, with lesson 15; it deployed
+nothing.
 
 Progress records and test outcomes belong in `../coordination.md`. The earlier
 phase table is dated 2026-10-11; it is not a claim that later work is absent.

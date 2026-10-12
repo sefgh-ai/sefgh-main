@@ -21,6 +21,13 @@ const defaultBaseURL = "https://api.github.com"
 const maxBodyBytes = 16 << 20
 const upstreamTimeout = 10 * time.Second
 
+// DetailTimeout bounds the whole detail route, which makes three calls to
+// GitHub one after another. Each call has its own upstreamTimeout, so without
+// this the route could take 30 seconds. It must stay below the server's
+// write timeout, or a slow GitHub would get the caller a dropped connection
+// in place of a JSON reply. A test in cmd/api checks that.
+const DetailTimeout = 25 * time.Second
+
 // Handler owns immutable upstream settings. Construct it once per server.
 type Handler struct {
 	// Logger is configured before serving; nil uses slog.Default().
@@ -29,6 +36,8 @@ type Handler struct {
 	baseURL string
 	token   string
 	cache   *repoCache
+	// detailTimeout is DetailTimeout, shortened in tests.
+	detailTimeout time.Duration
 }
 
 func New(client *http.Client, baseURL, token string) *Handler {
@@ -38,7 +47,7 @@ func New(client *http.Client, baseURL, token string) *Handler {
 	if baseURL == "" {
 		baseURL = defaultBaseURL
 	}
-	h := &Handler{client: client, baseURL: strings.TrimRight(baseURL, "/"), token: token, cache: newCache(256, 64<<20)}
+	h := &Handler{client: client, baseURL: strings.TrimRight(baseURL, "/"), token: token, cache: newCache(256, 64<<20), detailTimeout: DetailTimeout}
 	h.cache.logPanic = func() { h.logger().Error("repository cache loader panicked") }
 	return h
 }
@@ -211,8 +220,12 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, 400, msgInvalidRepository)
 		return
 	}
+	// One deadline for all three calls below.
+	ctx, cancel := context.WithTimeout(r.Context(), h.detailTimeout)
+	defer cancel()
+
 	target := h.baseURL + "/repos/" + owner + "/" + repoName
-	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
+	up, err := h.fetch(ctx, target, "application/vnd.github.v3+json", false)
 	const message = "Failed to fetch repository details"
 	if err != nil || !up.ok() {
 		h.fail(w, 500, message)
@@ -233,7 +246,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, 500, message)
 		return
 	}
-	languagesReply, err := h.fetch(r.Context(), languagesURL, "application/vnd.github.v3+json", false)
+	languagesReply, err := h.fetch(ctx, languagesURL, "application/vnd.github.v3+json", false)
 	if err != nil {
 		h.fail(w, 500, message)
 		return
@@ -247,9 +260,11 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var readme any
-	readmeReply, err := h.fetch(r.Context(), target+"/readme", "application/vnd.github.v3.raw", false)
+	readmeReply, err := h.fetch(ctx, target+"/readme", "application/vnd.github.v3.raw", false)
 	if err == nil && readmeReply.ok() {
-		readme = strings.TrimPrefix(strings.ToValidUTF8(string(readmeReply.body), "\uFFFD"), "\uFEFF")
+		// README files are not always UTF-8. Decode them as JavaScript's
+		// Response.text() does, so both backends return the same string.
+		readme = jscompat.DecodeUTF8(readmeReply.body)
 	}
 	replyJSON(w, 200, map[string]any{"repository": repo, "languages": languages, "readme": readme, "rate_limit": rateLimit(up.header)})
 }

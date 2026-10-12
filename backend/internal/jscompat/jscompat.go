@@ -22,9 +22,8 @@ type Query []Pair
 // does not start a valid escape stays a literal "%", and only "&" separates
 // pairs. Go's url.ParseQuery differs on all three points.
 //
-// Bytes that are not valid UTF-8 after decoding are replaced with U+FFFD.
-// A browser may produce a different number of replacement characters; the
-// contract leaves such input unspecified.
+// Bytes that are not valid UTF-8 after decoding become U+FFFD, one for each
+// ill-formed sequence, exactly as a browser does it. See decodeUTF8.
 func ParseQuery(raw string) Query {
 	var q Query
 	for _, part := range strings.Split(raw, "&") {
@@ -61,7 +60,7 @@ func decode(s string) string {
 		}
 		b.WriteByte(s[i])
 	}
-	return strings.ToValidUTF8(b.String(), "\uFFFD")
+	return decodeUTF8([]byte(b.String()))
 }
 
 // EncodeURIComponent percent-encodes s like JavaScript's encodeURIComponent:

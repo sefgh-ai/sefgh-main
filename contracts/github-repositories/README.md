@@ -1,7 +1,7 @@
 # GitHub repository read contracts
 
 `cases.json` records the three existing Next.js routes and their Go ports.
-The 120 cases run against Next.js with `npm run test:contracts`, and against
+The 124 cases run against Next.js with `npm run test:contracts`, and against
 Go both in memory and over real local sockets with `go test -count=1 ./...`
 inside `backend/`. No test calls live GitHub or uses real credentials.
 
@@ -49,6 +49,8 @@ therefore contain `#`, `?`, `%` or a space and still reach that file. The text
   literal `|`/`^` and adjacent percent-encoded slashes in filenames.
 - `headers`: exact application request headers, excluding transport-added ones.
   `next` pins Next's fetch options, not an HTTP response header.
+- `raw_body_base64`: a stub reply given as base64, for bytes that are not valid
+  UTF-8 and so cannot be written as a JSON string. Four README cases use it.
 - `body`, `raw_body`, `network_error`: the stub response. Raw text covers parse
   failures, README text and UTF-8 byte-order marks.
 - `expect`: exact status and structural JSON, including missing versus null.
@@ -98,7 +100,9 @@ the summary route. Local cache tests are not a production parity claim.
 - Rate-limit statuses here still become 500; search has a different contract.
 - Go bounds each upstream call to 10 seconds and each reply to 16 MiB.
   Redirects, missing dynamic segments, methods other than GET/HEAD, arbitrary
-  malformed UTF-8 and all possible URL authorities are outside the fixtures.
+  URL authorities are outside the fixtures. A README that is not valid UTF-8 is
+  covered: each ill-formed sequence becomes one replacement character in both
+  implementations. Go bounds the whole detail route to 25 seconds.
 
 ## Versions
 
@@ -123,3 +127,19 @@ It starts a fake GitHub on localhost, the compiled Go server, Next dev with
 the three routes selected, and the off-switch production server. It checks
 forwarding, security headers, an unrelated Next route, and retained Next
 handlers. It stops only processes it spawned. It does not deploy anything.
+
+## Optional forwarding probe
+
+The fixtures call each handler directly. They cannot show whether the Next.js
+rewrite passes a request to Go unchanged. This does, for all six routes that
+have a Go port:
+
+```text
+node scripts/contracts/go-forwarding-probe.mjs <path-to-api-executable>
+```
+
+It sends 46 awkward paths twice, once through `next dev` and once straight to
+Go, and compares the replies and what a fake GitHub received. It exits 1 on
+any difference. `PROBE_SHOW=1` lists every path. It checks `next dev` only: a
+Vercel deployment forwards through Vercel's own routing and must be checked
+there. Last recorded result: 46 of 46 identical (`VERIFY-001`, 2026-10-12).

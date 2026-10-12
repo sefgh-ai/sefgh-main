@@ -29,11 +29,14 @@ go run ./cmd/api
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `SEFGH_API_ADDR` | `127.0.0.1:8787` | Address to listen on |
+| `SEFGH_API_ADDR` | `127.0.0.1:8787` | Address to listen on. Wins over `PORT` |
+| `PORT` | none | Set by a hosting platform. When `SEFGH_API_ADDR` is not set, the server listens on this port on every network interface. A value that is not a number from 1 to 65535 stops the server at start-up |
 | `GITHUB_TOKEN` | none | Optional GitHub token. The same variable the Next.js handler reads. Without it GitHub allows about 10 searches a minute |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
 
 Go does not read `.env.local`. Set variables in the shell that starts the server.
+
+With neither address variable set, the server is reachable from this machine only. Nothing is deployed anywhere; `PORT` support is preparation for hosting, described in `../docs/adr/0002-go-backend.md`.
 
 ## Test it
 
@@ -94,7 +97,7 @@ A header `x-sefgh-backend: go` means Go answered. Without it, Next.js did. In Po
 
 ## Where it differs from the Next.js handler on purpose
 
-- **Timeout.** A call to GitHub is abandoned after 10 seconds and answered as a generic failure. The Next.js handler has no timeout.
+- **Timeout.** A call to GitHub is abandoned after 10 seconds and answered as a generic failure. The repository detail route, which makes three calls, is bounded to 25 seconds in total. The Next.js handlers have no timeout.
 - **Body limit.** A GitHub reply over 16 MB is treated as a failure.
 - **Marker header.** `X-Sefgh-Backend: go`.
 - **Other methods.** Anything but GET or HEAD gets Go's standard 405.

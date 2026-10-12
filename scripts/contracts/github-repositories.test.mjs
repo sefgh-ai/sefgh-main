@@ -43,7 +43,11 @@ for (const c of contract.cases) {
       calls.push({ url, headers: init?.headers, next: init?.next ?? null });
       if (!reply) throw new Error('unexpected upstream request');
       if (reply.network_error) throw new TypeError('fetch failed');
-      return new Response(reply.raw_body ?? JSON.stringify(reply.body), {
+      // raw_body_base64 carries reply bytes that are not valid UTF-8.
+      const body = reply.raw_body_base64 !== undefined
+        ? Buffer.from(reply.raw_body_base64, 'base64')
+        : reply.raw_body ?? JSON.stringify(reply.body);
+      return new Response(body, {
         status: reply.status, headers: reply.response_headers,
       });
     };

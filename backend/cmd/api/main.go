@@ -5,11 +5,13 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -19,6 +21,10 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 )
 
+// writeTimeout is how long the server allows for writing one response. Every
+// handler must finish inside it; githubrepos.DetailTimeout is the longest.
+const writeTimeout = 30 * time.Second
+
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
 	if err := run(logger); err != nil {
@@ -27,8 +33,34 @@ func main() {
 	}
 }
 
+// defaultAddr keeps the server reachable from this machine only. Whoever
+// runs it for the public says so through SEFGH_API_ADDR or PORT.
+const defaultAddr = "127.0.0.1:8787"
+
+// listenAddr decides where the server listens. SEFGH_API_ADDR wins when it
+// is set. Otherwise a hosting platform that hands the process a port in PORT
+// gets that port on every network interface, which is what platforms expect.
+// getenv is os.Getenv in the server and a stand-in in tests.
+func listenAddr(getenv func(string) string) (string, error) {
+	if addr := getenv("SEFGH_API_ADDR"); addr != "" {
+		return addr, nil
+	}
+	port := getenv("PORT")
+	if port == "" {
+		return defaultAddr, nil
+	}
+	n, err := strconv.Atoi(port)
+	if err != nil || n < 1 || n > 65535 {
+		return "", fmt.Errorf("PORT must be a number from 1 to 65535, got %q", port)
+	}
+	return ":" + strconv.Itoa(n), nil
+}
+
 func run(logger *slog.Logger) error {
-	addr := envOr("SEFGH_API_ADDR", "127.0.0.1:8787")
+	addr, err := listenAddr(os.Getenv)
+	if err != nil {
+		return err
+	}
 
 	mux := http.NewServeMux()
 	githublanguages.Register(mux)
@@ -57,7 +89,7 @@ func run(logger *slog.Logger) error {
 		Addr:              addr,
 		Handler:           markBackend(mux),
 		ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout:      30 * time.Second,
+		WriteTimeout:      writeTimeout,
 		IdleTimeout:       60 * time.Second,
 	}
 

@@ -48,10 +48,7 @@ func TestContractsOverHTTP(t *testing.T) {
 				for k, v := range want.ResponseHeaders {
 					responseHeaders.Set(k, v)
 				}
-				body := string(want.Body)
-				if want.RawBody != nil {
-					body = *want.RawBody
-				}
+				body := want.replyBody(t)
 				return &http.Response{StatusCode: want.Status, Header: responseHeaders, Body: io.NopCloser(strings.NewReader(body)), ContentLength: int64(len(body)), ProtoMajor: 1, ProtoMinor: 1, Close: true}, nil
 			})
 			defer closeUpstream()

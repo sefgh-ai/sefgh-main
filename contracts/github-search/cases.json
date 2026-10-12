@@ -896,6 +896,24 @@
       "upstream": "network_error",
       "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
       "expect": "upstream_failure"
+    },
+    {
+      "id": "query-bytes-that-are-not-utf8",
+      "disposition": "preserve",
+      "note": "Bytes that are not valid UTF-8 become the replacement character, one per ill-formed sequence, as in a browser.",
+      "request": "q=a%FF%FFb",
+      "upstream": "empty",
+      "expect_upstream_url": "q=a%EF%BF%BD%EF%BF%BDb&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "query-unfinished-utf8-sequence",
+      "disposition": "preserve",
+      "note": "An unfinished sequence is one replacement character, and the character after it is kept.",
+      "request": "q=%E3%80A",
+      "upstream": "empty",
+      "expect_upstream_url": "q=%EF%BF%BDA&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
     }
   ]
 }

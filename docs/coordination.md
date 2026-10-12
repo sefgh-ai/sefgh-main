@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (FIX-003 handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (VERIFY-001 and OPS-001a handoff).
 
 ## Start here
 
@@ -11,9 +11,212 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `FIX-003` (input validation for the repository routes, contract version 3, lesson 14) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
+- **Active writer:** none. Claude Code completed `VERIFY-001` and `OPS-001a` and released the role. `FIX-004`, `VERIFY-001` and `OPS-001a` are all uncommitted in the working tree: the Git Agent had not acted on the FIX-004 signal when this was written. No deployment or cutover.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Phase 2 of the ADR is under way; Phase 1 is built but none of its gates is closed. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1), languages and contributions (Phase 2). Left in Phase 2: trending, trending-developers and the three AI routes. Nothing is deployed and no traffic has moved.
+- **Stage:** Phase 2 of the ADR is under way. Phase 1 is built and its review findings 1 to 10 are fixed, but no route is cut over: the gates left need the owner (private-repository access, CI approval, hosting) or a deployment. See "Phase 1 gates on 2026-10-12" in `adr/0002-go-backend.md`. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1), languages and contributions (Phase 2). Left in Phase 2: trending, trending-developers and the three AI routes. Nothing is deployed and no traffic has moved.
+
+## Handoff: OPS-001a (Claude Code, 2026-10-12)
+
+```text
+Task / scope: OPS-001a, the one step of the hosting proposal that needs no
+  owner decision: backend/cmd/api reads the PORT variable a hosting platform
+  sets. With lesson 15.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: implementation complete; review pending; not deployed. No hosting
+  account was touched and nothing was created anywhere.
+Base commit / branch / worktree: 3f4c7dd / main / main checkout, on top of
+  the uncommitted FIX-004 and VERIFY-001 changes.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files:
+  backend/cmd/api/main.go: listenAddr(getenv) chooses the address.
+    SEFGH_API_ADDR wins; else PORT, on every interface; else 127.0.0.1:8787.
+    A PORT that is not a number from 1 to 65535 stops the server at start-up.
+  backend/cmd/api/main_test.go: TestListenAddr, 14 cases.
+  backend/README.md: the PORT row.
+  learn-go/15-settings-from-the-environment/: new lesson (README, lesson.go,
+    exercise.go, solution.go, exercise_test.go). learn-go/README.md: index row.
+  docs/{coordination.md,adr/0002-go-backend.md}.
+  No existing exercise.go changed. No handler, fixture, contract or Next.js
+  change. The default address is unchanged, so local use is unchanged.
+Contract or decision changes: none.
+Judgment calls, for review:
+  - SEFGH_API_ADDR wins over PORT, so an explicit setting is never overridden
+    by a platform default, and the local scripts that set it are unaffected.
+  - A bad PORT is an error, not a fall back to 8787. A quiet fall back would
+    look like a deployment that hangs.
+  - PORT means every network interface (":3000"). That is what a platform
+    needs. It also applies on a developer's machine if PORT happens to be set
+    in the shell that starts the server.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - npm run test:contracts: 317 passed, 0 failed.
+  - backend: go test -count=1 ./... passes all six packages; go vet clean;
+    gofmt -l empty.
+  - learn-go: go test -count=1 -tags solution ./... passes all 16 packages;
+    go vet clean with and without the solution tag; gofmt -l empty. Lesson 15
+    as shipped fails its four tests without panicking, as intended.
+  - 9 deliberate breaks of listenAddr in a scratch copy: 9 caught.
+  - The built server with PORT=abc and no SEFGH_API_ADDR: logs "PORT must be
+    a number from 1 to 65535" and exits with status 1.
+  - Forwarding probe against the new build, with a bad PORT in the
+    environment and SEFGH_API_ADDR set by the probe: 46 of 46, exit 0.
+  - npx eslint scripts/contracts: clean.
+  - npm run handoff: run once after this record was saved, covering
+    VERIFY-001 as well. Claude Code reports its outcome to the owner; a
+    failure would be recorded here by a further edit.
+Not verified:
+  - The built server actually listening on a PORT. That binds every network
+    interface, which makes Windows show a firewall prompt on the owner's
+    screen, so it was left to the unit test and the standard library.
+  - That this is all Vercel's Go runtime needs. Only a deployment shows that.
+  - go test -race, as before.
+Remaining Phase 1 gates: unchanged from the VERIFY-001 record below. All of
+  them now need the owner, a deployment, or Codex.
+Next bounded action: owner decisions (private-repository access, CI-001,
+  hosting option). Meanwhile Phase 2 can continue with GO-006a.
+Writer released: yes
+```
+
+## Handoff: VERIFY-001 (Claude Code, 2026-10-12)
+
+```text
+Task / scope: VERIFY-001, the two Phase 1 verification gates that could be
+  attempted on this machine: how the Next.js rewrite forwards awkward URLs to
+  Go, and the race detector. Plus a hosting proposal for the owner, in the ADR.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: forwarding check complete for `next dev`. Race detector NOT run.
+  Nothing deployed. No route switched on.
+Base commit / branch / worktree: 3f4c7dd / main / main checkout. Started while
+  FIX-004 was still uncommitted, so both tasks' files are in the working tree.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files:
+  scripts/contracts/go-forwarding-probe.mjs: new. Optional; it starts servers,
+    so it is not part of npm run test:contracts.
+  contracts/github-repositories/README.md: how to run it.
+  docs/{coordination.md,claude-review.md,adr/0002-go-backend.md}.
+  No handler, fixture, Go or lesson change.
+Contract or decision changes: none. The ADR gains a gate table for Phase 1 and
+  a hosting proposal; the proposal is not a decision.
+What the probe does: starts a stand-in GitHub, the compiled Go server, and
+  `next dev` with all six routes forwarded to Go. It sends 46 paths as raw
+  HTTP, each once through Next.js and once straight to Go, and compares the
+  status, the body, the X-Sefgh-Backend marker and the requests the stand-in
+  GitHub received. The paths include %2F, %20, %23, %3F and %25 inside a path
+  segment, repeated and reordered parameters, "+", ";", a lone "%", "%zz",
+  bytes that are not valid UTF-8, and a percent-encoded parameter name.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2,
+    Next 16.1.1, a Go build of the current working tree):
+  - Probe: identical 46 of 46, exit 0. Every reply carried X-Sefgh-Backend: go.
+  - The listing (PROBE_SHOW=1) was read by eye. Examples of what reached the
+    stand-in GitHub through Next.js: path=src%2Fmain.go -> contents/src/main.go;
+    path=docs/C%23/readme.md -> contents/docs/C%23/readme.md;
+    path=%252e%252e%2Fprivate -> contents/%252e%252e/private; q=a%FF%FFb ->
+    q=a%EF%BF%BD%EF%BF%BDb; q=first&q=second -> q=first; %71=react -> q=react.
+    An owner of a%2Fb answered 400 with no upstream call.
+  - Two faults in the probe itself were found and fixed before this handoff:
+    1. An inserted line split an if from its else, so every path was listed as
+       DIFFERENT while the count said 46 of 46. The count was right.
+    2. The stand-in GitHub answered every repository with the same body, so on
+       the cached summary route a changed owner or name compared as identical.
+       It now repeats the requested path in full_name.
+  - The probe was then tested against planted differences, in scratch copies:
+    a different search term on one path -> 45 of 46, that path named, exit 1;
+    a different repository name on one summary path -> missed by the probe as
+    it was before fix 2 (46 of 46, exit 0), caught after it (45 of 46, exit 1).
+  - npx eslint scripts/contracts: clean.
+  - npm run handoff: see the last line of this record.
+Not done, and why:
+  - go test -race. It needs cgo and a C compiler. This machine has neither gcc
+    nor clang, Docker Desktop was not running, and the only WSL distributions
+    are Docker's own. A 108 MB portable compiler download ran at about 30 KB/s
+    and was stopped at 29 MB; the partial file is outside the repository.
+    The practical route is CI-001 on Linux, which needs the owner's approval.
+  - The same forwarding check on Vercel. A deployment forwards through
+    Vercel's routing layer, not through `next dev`. Run the probe's path list
+    against a preview deployment before any route is switched on there.
+  - `next start` with the switch on. Rewrites are fixed when Next.js is built,
+    so this needs a production build with the switch set; not attempted.
+Phase 1, where it stands:
+  Closed in code: REVIEW-002 findings 1 to 10 (FIX-003, GO-003, FIX-004).
+  Checked locally: fixture parity for all four routes; switch and rollback;
+    forwarding through `next dev`.
+  Open, needs the owner:
+    - Who may see private repositories. Finding 11 depends on it.
+    - Approval for CI-001, which is how the race detector gets run.
+    - A hosting choice. Proposal in adr/0002-go-backend.md.
+  Open, needs a deployment: forwarding on Vercel, staging measurements,
+    rollback under real traffic, production cache behaviour.
+  Open, needs Codex: peer review of GO-005a, GO-005b, FIX-003, FIX-004 and
+    this task.
+Next bounded action: none of the remaining Phase 1 gates can be closed without
+  the owner. Phase 2 can continue meanwhile with GO-006a (github/trending).
+Writer released: yes
+npm run handoff: not run separately. Claude Code went straight on to OPS-001a
+  in the same working tree and ran it once for both; see that record.
+```
+
+## Handoff: FIX-004 (Claude Code, 2026-10-12)
+
+```text
+Task / scope: FIX-004, REVIEW-002 findings 7 (text that is not valid UTF-8 was
+  decoded differently from JavaScript) and 8 (no overall deadline on the
+  detail route), in Go.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: implementation complete; review pending; not deployed.
+History: paused on the owner's instruction part-way through and resumed the
+  same day from a checkpoint in this file. Nothing was committed in between.
+Base commit / branch / worktree: 3f4c7dd / main / main checkout.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files:
+  backend/internal/jscompat/{utf8.go,utf8_test.go}: new. DecodeUTF8 is a
+    step-for-step port of the WHATWG UTF-8 decoder.
+  backend/internal/jscompat/jscompat.go: ParseQuery decodes with it.
+  backend/internal/githubrepos/handler.go: README decoded with DecodeUTF8;
+    DetailTimeout (25 s) is one deadline for the detail route's three calls.
+  backend/internal/githubrepos/deadline_test.go: new.
+  backend/internal/githubrepos/{contract_test.go,http_test.go} and
+    scripts/contracts/github-repositories.test.mjs: accept raw_body_base64.
+  backend/cmd/api/{main.go,main_test.go}: the 30 s write timeout is a named
+    constant, and a test requires DetailTimeout to be below it.
+  contracts/github-repositories/cases.json: +4 README cases, 124 total, v3.
+  contracts/github-search/cases.json: +2 query cases, 89 total, v2.
+  contracts/*/README.md, backend/README.md, learn-go/03-strings-and-bytes/README.md,
+    learn-go/07-calling-github/README.md,
+    docs/{coordination.md,backend-map.md,claude-review.md,adr/0002-go-backend.md}.
+  No exercise.go changed. No Next.js handler changed.
+Contract or decision changes: none. The six new cases record what the Next.js
+  handlers already did; Go changed to match them. No version was raised.
+  One recorded difference is removed from the ADR: query bytes that are not
+  valid UTF-8 now decode identically in both backends.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - npm run test:contracts: 317 passed, 0 failed.
+  - backend: go test -count=1 ./... passes all six packages; go vet clean;
+    gofmt -l empty (the formatting failure recorded at the pause is fixed).
+  - DecodeUTF8 against JavaScript's TextDecoder on 200,000 random byte strings,
+    173,581 of them not valid UTF-8, in a scratch copy: 0 differ. The
+    strings.ToValidUTF8 call it replaces differed on 127,952.
+  - 17 deliberate breaks of the decoder, the deadline and their wiring, in a
+    scratch copy: 16 caught at first. The miss (overlong four-byte forms) led
+    to three more values in the decoder's table, after which it was caught.
+    A test for a hang on the second of the three detail calls was also added.
+  - npx eslint scripts/contracts: clean.
+  - learn-go: checked by npm run handoff; only two README files changed there.
+Unverified: go test -race (no C compiler here; this task adds no shared
+  state); a real slow GitHub; a production deployment.
+REVIEW-002 findings now: 1 fixed (FIX-003); 2, 3, 4, 5, 6, 10 fixed (GO-003);
+  7 and 8 fixed here; 9 addressed (GO-003). Finding 11, no token on detail and
+  contents, is an owner decision tied to the private-repository question.
+Remaining Phase 1 gates:
+  - OWNER: who may see private repositories.
+  - go test -race on a machine with a C compiler.
+  - How the Next.js rewrite forwards percent-encoded path segments.
+  - Hosting the Go service on Vercel's free tier; staging measurements;
+    rollback under real traffic; production cache behaviour.
+  - Codex peer review of GO-005a, GO-005b, FIX-003 and FIX-004.
+Next bounded action: VERIFY-001, the two verification gates that can be
+  attempted locally (race detector, rewrite forwarding). Then a hosting
+  proposal for the owner.
+Writer released: yes
+```
 
 ## Handoff: FIX-003 (Claude Code, 2026-10-12)
 
@@ -606,22 +809,25 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
 | `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implemented at `cd6ad67` | Codex peer review |
 | `GO-005b` | Go port of `github/contributions` against those fixtures, with lesson 13, routing off | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
-| `FIX-003` | Input validation for the three repository routes, Next.js and Go, repository contract version 3, lesson 14 | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
-| `FIX-004` | REVIEW-002 findings 7 (non-UTF-8 README) and 8 (one deadline for the detail route), in Go | Not started | Nothing |
+| `FIX-003` | Input validation for the three repository routes, Next.js and Go, repository contract version 3, lesson 14 | Implemented at `3f4c7dd` | Codex peer review; cutover gates |
+| `FIX-004` | REVIEW-002 findings 7 (non-UTF-8 text) and 8 (one deadline for the detail route), in Go | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
+| `VERIFY-001` | The two Phase 1 verification gates that can be tried locally: `go test -race`, and how the Next.js rewrite forwards awkward URLs | Forwarding checked for `next dev`, 46 of 46, uncommitted at handoff. Race detector not run | `CI-001` for the race detector; a preview deployment for the same check on Vercel; Codex peer review |
 | `GO-006a` | Contract fixtures for `github/trending`, fixing its random `starsToday` source | Not started; unassigned | Nothing |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
-| `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
-| `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |
+| `CI-001` | A workflow that runs `npm run test:contracts`, and `go test -race`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/`. It is the only planned way to run the race detector | Ready to implement | Owner approval |
+| `OPS-001a` | `backend/cmd/api` reads the `PORT` variable a hosting platform sets, with lesson 15 | Implementation complete, uncommitted at handoff | Codex peer review |
+| `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
 ## Owner decisions pending
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
-- How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval.
+- How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval. Two options and a recommendation are in "Hosting proposal" in `adr/0002-go-backend.md`.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Who may see private repositories.** The owner approved input validation (done in `FIX-003`) and said the server token is not to be limited to public data. Until an access rule exists, the summary and search routes return whatever that token can read to any caller, in production on Next.js today as well as in Go.
+- Approval for `CI-001`. It adds a GitHub Actions workflow file and uses GitHub's free minutes. Without it the race detector has no machine to run on.
 
 ## State of the owner's machine
 

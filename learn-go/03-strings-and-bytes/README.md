@@ -84,6 +84,21 @@ hex[c%16]   // second digit
 
 The real code writes `c>>4` and `c&0x0F`. Those are the same two calculations, done with bit operations.
 
+## When the bytes are not text at all
+
+A Go string can hold any bytes, including ones that are not valid UTF-8. That happens in this app: a README on GitHub is not always saved as UTF-8. Some are UTF-16, and some use an older encoding for Chinese or Western European text.
+
+Both languages show such a byte as the replacement character, `�`. They disagree about how many to show:
+
+| Bytes | JavaScript | `strings.ToValidUTF8` |
+|---|---|---|
+| `FF FE` (the start of a UTF-16 file) | 2 | 1 |
+| `C4 E3 BA C3` (two Chinese characters in GBK) | 3 | 1 |
+
+Go's helper writes one `�` for a whole run of bad bytes. JavaScript writes one for each broken sequence. Neither is wrong, but the two backends have to return the same string, so the Go backend has its own decoder that follows JavaScript's rule: `DecodeUTF8` in `backend/internal/jscompat/utf8.go`.
+
+It reads the bytes one at a time, remembering how many more bytes the current character still needs. That is the same loop-over-bytes shape as your `percentEncode` below, with a little state carried from one byte to the next. It was checked against JavaScript's own decoder on 200,000 random byte strings.
+
 ## Your turn
 
 Open `exercise.go` and finish:

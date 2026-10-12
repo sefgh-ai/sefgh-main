@@ -40,8 +40,8 @@ on differently configured servers; it passes GitHub's status code through to
 the caller; and it is public while spending the server token's GraphQL
 allowance, with no rate limit or cache. Eighteen cases are marked `defect`.
 
-The shared fixtures now contain 87 search cases, 83 repository cases, 3
-language-catalog cases and 95 contributions cases. `npm run test:contracts` runs 274 checks including fixture-integrity and rewrite
+The shared fixtures now contain 89 search cases, 124 repository cases, 3
+language-catalog cases and 95 contributions cases. `npm run test:contracts` runs 317 checks including fixture-integrity and rewrite
 checks; Go exercises every case in memory and over local sockets. See
 `coordination.md` for actual checks and the remaining cutover gates. The
 historical validation section below describes the earlier snapshot only.

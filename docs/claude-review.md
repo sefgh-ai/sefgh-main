@@ -216,3 +216,26 @@ Not verified, as Codex already recorded: this route has not been exercised throu
 ### Still open from REVIEW-002
 
 Unchanged by these two tasks, and still required before any repository route is switched on: finding 1 (input validation and token scope, owner decision), finding 7 (non-UTF-8 README), finding 8 (one deadline for the detail route), finding 11 (no token on detail and contents), a race-detector run on a machine with a C compiler, and a check of how the rewrite forwards percent-encoded path segments.
+
+## Where the REVIEW-002 findings stand — 2026-10-12
+
+Written by Claude Code after `FIX-003` and `FIX-004`. Neither of those tasks has been peer-reviewed.
+
+| Finding | State | Where |
+|---|---|---|
+| 1. Unchecked owner, name and path | Fixed in both implementations, contract version 3 | `FIX-003` |
+| 1, second part. The server token may read private repositories | **Open, owner decision.** The owner does not want the token limited to public data and has not said who may see private repositories | ADR, open items |
+| 2. Uncacheable answers queued callers | Fixed | `GO-003`, confirmed in REVIEW-003 |
+| 3. Nothing logged | Fixed | `GO-003` |
+| 4. `\|` and `^` in a path | Fixed | `GO-003` |
+| 5. Tests missed breakage | Fixed: 25 of 28 breaks caught, then more tests since | `GO-003` |
+| 6. Panic left a key blocked | Fixed | `GO-003` |
+| 7. Non-UTF-8 text decoded differently | Fixed: `jscompat.DecodeUTF8`, 0 differences from JavaScript on 200,000 random byte strings | `FIX-004` |
+| 8. Detail route could outlast the write deadline | Fixed: one 25-second deadline, guarded by a test | `FIX-004` |
+| 9. Lessons 09 and 10 assumed too much | Addressed | `GO-003` |
+| 10. `wire_url` unchecked | Fixed | `GO-003` |
+| 11. No token on detail and contents | **Open, owner decision**, tied to the private-repository question | ADR, open items |
+
+Verified since (`VERIFY-001`, Claude Code, 2026-10-12): how the Next.js rewrite forwards awkward URLs, for `next dev`. 46 of 46 paths reached Go unchanged, including percent-encoded slashes in a path segment. The script is `scripts/contracts/go-forwarding-probe.mjs`; the record is in `coordination.md`.
+
+Still not verified by anyone: `go test -race` (no C compiler on this machine; planned for CI), and the same forwarding check on a Vercel deployment.

@@ -80,4 +80,4 @@ Open `defect` cases: the search navbar sends `sort=stars` and `sort=updated`, na
 
 ## Not covered
 
-Timeouts, caching, concurrency, methods other than GET, request bytes that are not valid UTF-8 once decoded, and live GitHub behaviour. A 403 from a secondary rate limit that carries neither `Retry-After` nor a zero remaining count is still reported as a generic failure.
+Timeouts, caching, concurrency, methods other than GET, and live GitHub behaviour. Request bytes that are not valid UTF-8 are covered: two cases added in `FIX-004` pin them, and both implementations turn each ill-formed sequence into one replacement character, as a browser does. A 403 from a secondary rate limit that carries neither `Retry-After` nor a zero remaining count is still reported as a generic failure.
