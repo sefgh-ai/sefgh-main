@@ -50,6 +50,12 @@ fixtures run in memory and over sockets. Other tests cover cache freshness,
 refresh recovery, coalescing, cancellation, memory bounds, timeouts and body
 limits. `go test -race -count=1 ./...` needs cgo and a supported C compiler.
 
+The summary cache shares failures with callers already waiting, but stores
+only status-200 replies for later calls. A cancelled leader lets surviving
+waiters retry. Loader panic cleanup releases waiters and preserves stale data.
+The repository handlers use the server's `slog` logger for upstream failure
+stages and HTTP status failures, without logging URLs, tokens or reply bodies.
+
 `internal/githubsearch` runs every case in `../contracts/github-search/cases.json` twice: once in memory, checking the exact upstream URL and headers, and once over real sockets, checking the bytes on the wire. The same file drives `npm run test:contracts` against the Next.js handler. No test contacts GitHub.
 
 ## Send traffic to it

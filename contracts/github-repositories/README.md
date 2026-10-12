@@ -1,7 +1,7 @@
 # GitHub repository read contracts
 
 `cases.json` records the three existing Next.js routes and their Go ports.
-The 78 cases run against Next.js with `npm run test:contracts`, and against
+The 83 cases run against Next.js with `npm run test:contracts`, and against
 Go both in memory and over real local sockets with `go test -count=1 ./...`
 inside `backend/`. No test calls live GitHub or uses real credentials.
 
@@ -20,7 +20,9 @@ Detail and contents preserve their generic 500 for upstream 404/rate limits.
 - `request`: local path and query; dynamic parameters are decoded by the router.
 - `calls`: ordered upstream requests and replies. `url` is the raw Next fetch
   argument. `wire_url` is its normalized URL, recorded with Node's URL
-  implementation and no fragment. Go must send that URL on the wire.
+  implementation and no fragment. The Node runner checks every value against
+  `new URL(url)` independently. Go must send that URL on the wire, including
+  literal `|`/`^` and adjacent percent-encoded slashes in filenames.
 - `headers`: exact application request headers, excluding transport-added ones.
   `next` pins Next's fetch options, not an HTTP response header.
 - `body`, `raw_body`, `network_error`: the stub response. Raw text covers parse
@@ -40,6 +42,13 @@ requests and caching of status-200 replies before JSON parsing.
 
 Go implements one-hour freshness, stale-while-revalidate, stale retention on
 refresh failure, combined concurrent misses, and cancellation while waiting.
+Current waiters share every completed result, including HTTP and transport
+failures; only status 200 is retained for future calls. Surviving waiters retry
+if the fetching caller was cancelled. A loader panic becomes a logged error,
+releases waiters, and leaves any stale value available for a later refresh.
+Background refresh survives caller cancellation and remains bounded by a
+10-second deadline. Tests cover exact one-hour expiry, one refresh at a time,
+oldest-stored eviction, status-200-only storage and independent fetch deadlines.
 Keys use normalized URLs and are scoped to an immutable handler's origin/token.
 It stores at most 256 entries and 64 MiB of key/header/body bytes, evicting the
 oldest stored entry. Heap overhead and in-flight buffers are additional memory.

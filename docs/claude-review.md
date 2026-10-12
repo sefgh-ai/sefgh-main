@@ -124,3 +124,37 @@ Ordered by how much they matter. "Inherited" means the Next.js handler behaves t
 ### No disagreements
 
 Nothing here contradicts a decision in ADR-0002 or a statement in the contract README. Findings 1 and 11 extend open items Codex recorded. Findings 2 to 8 are new.
+
+## GO-003 response by Codex — 2026-10-12
+
+Base `1e5d87f`, `main`. This is the implementing agent's response, not a new
+Claude review. GO-003 preserves contract version 2 and leaves all Go routes off
+by default. See `coordination.md` for the release record and actual checks.
+
+| REVIEW-002 finding | Implemented response |
+|---|---|
+| 2: queued failures | `cacheFlight` publishes the result/error to existing waiters, even when it cannot be cached. Only 200 is stored for future callers; surviving waiters retry a cancelled leader. A barrier-based test verifies 20 callers share one load for 201, 404, 429, 500 and transport failures |
+| 3: missing logs | Repository handlers receive the server's `slog` logger. Upstream errors preserve causes with `%w`, record the failing stage, and log non-2xx status. Tests check DNS/timeout/body-limit/status diagnostics without request URL, token or body leakage |
+| 4: path encoding | `FetchURL` always preserves its normalized path through `Opaque`. Five additive fixtures cover `|`, `^`, braces and adjacent encoded slashes; Go runs them over sockets |
+| 5: missing regressions | Separate storage-policy tests use replies that fit in the cache. Tests cover exact expiry, detached single refresh, oldest-stored eviction, an independent ten-second fetch deadline, 300 rejection, repeated headers, credential rejection and braces |
+| 6: panic cleanup | Cleanup is deferred before loading; foreground/background panics become errors, release waiters and preserve stale data. Tests verify another request/refresh can recover |
+| 9: lesson clarity | Lessons 09/10 now explain goroutines/channels and include closing learning lists. New lesson 11 practices completion/cancellation and preserving shared errors; existing owner exercises are untouched |
+| 10: unchecked wire fixtures | A Node test independently checks every `wire_url` against `new URL(url)` with its fragment removed |
+
+Codex's validation: fresh Go tests and 174 Node contract checks pass; cache tests
+pass 20 repeated runs. Twelve deliberate mutations in an external scratch copy
+were all caught by test assertions: failure sharing, storing non-200, tying
+refresh to caller cancellation, duplicate refresh, newest-first eviction, late
+expiry, missing deadline, status 300 accepted, dropped repeated header values,
+URL credentials accepted, braces unescaped, and pipe/caret re-encoding.
+This is targeted regression evidence, not a full mutation score or performance
+measurement. No application mutation was applied to the working checkout.
+
+Still open: finding 1's owner decision and token scope verification; finding
+7's malformed UTF-8 behavior; finding 8's whole-handler deadline; finding 11's
+upstream identity policy. Race detection was attempted and could not run
+because cgo is disabled; no `gcc` or `clang` was found on PATH. Encoded-segment
+rewrite behavior, production cache/hosting choices, staging measurements and
+independent peer review of GO-003 remain unverified. Lint still reports the
+existing 10 errors and 16 warnings in unchanged UI files. No deployment,
+route activation, live GitHub/Supabase audit or production build was performed.

@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (REVIEW-002 handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Codex (GO-003 implementation handoff; owner low-capacity rule).
 
 ## Start here
 
@@ -11,9 +11,84 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `REVIEW-002`, the peer review of GO-002a and GO-002b, and released the role. Routing remains off by default; no deployment or cutover.
+- **Active writer:** none. Codex completed GO-003 implementation and released the role. Changes are uncommitted at handoff, based on `1e5d87f` on `main`. Claude Code is the intended read-only reviewer; GO-003 peer review has not run. Routes remain off by default; no deployment or cutover.
 - **Reviewer:** Claude Code reviewed GO-002a/GO-002b on 2026-10-12. Verdict: acceptable as merged with routing off, not ready to switch on. Eleven findings are in `claude-review.md`; the handoff is below. The SYNC-001 documentation diff was not reviewed as a separate item.
 - **Stage:** Phase 1 of the ADR. Search, repository summary, repository detail, and contents exist in Go behind opt-in switches that are off by default. Nothing is deployed and no traffic has moved.
+
+## Owner instruction: low-capacity checkpoints
+
+The owner requires every agent to stop implementation at approximately 3–5%
+remaining visible capacity and leave a pickup record. See `../AGENTS.md`,
+"Low-capacity checkpoint (owner requirement)". Account usage is not visible to
+Codex in this session; no percentage is asserted. Incomplete work must be marked
+paused, the writer released, and the next concrete action recorded. Do not emit
+the normal completion signal for an incomplete task.
+
+## Handoff: GO-003 (Codex, 2026-10-12)
+
+```text
+Task / scope: GO-003, REVIEW-002 findings 2–6 and 10, lesson clarification
+  (finding 9), and the owner's low-capacity checkpoint rule.
+Owner / reviewer: Codex / Claude Code intended, peer review NOT run.
+Status: implementation complete; review pending; not deployed.
+Base / branch / worktree: 1e5d87f / main / main checkout.
+Resulting commit: uncommitted at handoff. Git Agent owns synchronization.
+Changed files:
+  AGENTS.md: owner-required low-capacity checkpoint rule, shared via CLAUDE.md.
+  backend/internal/githubrepos/{cache.go,cache_test.go,cache_regression_test.go,
+    handler.go,limits_test.go}: shared flights, cancellation/panic recovery,
+    structured failure logs and targeted tests.
+  backend/internal/jscompat/{fetchurl.go,fetchurl_test.go}: preserve wire paths.
+  backend/cmd/api/main.go: wire the repository logger to the server logger.
+  backend/README.md: operational behavior and tests.
+  contracts/github-repositories/{cases.json,README.md}: five additive cases.
+  scripts/contracts/github-repositories.test.mjs: Node wire_url assertion.
+  learn-go/{README.md,09-path-parameters/README.md,10-shared-cache/README.md}:
+    updated explanations and lesson index.
+  learn-go/11-shared-results/{README.md,lesson.go,exercise.go,exercise_test.go,
+    solution.go}: new unfinished owner exercise and separate tested solution.
+  docs/{coordination.md,backend-map.md,claude-review.md,adr/0002-go-backend.md}:
+    current implementation, review responses and remaining gates.
+Contract / decision changes: no response contract changes; version remains 2.
+  Standard library only. No routing switches changed. No existing exercise.go
+  changed. Owner instructed all agents to checkpoint at 3–5% visible capacity;
+  account quota is not visible to Codex and no percentage is asserted.
+Checks and outcomes (Codex):
+  - Before fixing: the new shared-failure test reproduced 20 upstream calls
+    instead of one for 201/404/429/500/network errors. Expected red test.
+  - npm run test:contracts: 174 passed, 0 failed (87 search cases,
+    83 repository cases plus integrity/rewrite checks).
+  - backend: go test -count=1 ./... passed all four packages; go vet ./...
+    clean; gofmt -l . empty. Repository contracts run in memory and over sockets.
+  - Cache tests: go test -count=20 ./internal/githubrepos -run TestCache passed.
+  - Twelve deliberate mutations in a scratch copy outside the checkout:
+    all 12 caught by test assertions; see claude-review.md for categories.
+  - learn-go: go test -tags solution ./... passed all 12 packages (00–11);
+    go vet ./... and go vet -tags solution ./... clean; gofmt -l . empty.
+    Default exercise suite was not run and owner exercises remain unfinished.
+  - npm run lint: existing 26 problems (10 errors, 16 warnings), all in
+    unchanged UI files. No new lint findings in the modified runner.
+  - git diff --check and local Markdown link checks passed; existing owner
+    exercise files verified unchanged.
+  - go test -race ./internal/githubrepos ./internal/jscompat: could not run;
+    Go reported that -race requires cgo. No gcc/clang found on PATH.
+Release verification: npm run handoff runs immediately after writer release.
+  Its result is in .agent-signal.json; this record alone does not assert that
+  the release script has passed or that Git Agent has committed/pushed.
+Remaining gates / unverified work:
+  - Claude peer review of GO-003. REVIEW-002 remains Claude's earlier work.
+  - Finding 1: owner-approved validation contract in BOTH implementations,
+    and verification that the server token is limited to public data.
+  - Race detector with a supported C compiler; encoded-segment Next rewrite
+    checks; production cache/hosting choice; staging measurements and rollback.
+  - Findings 7 (malformed UTF-8), 8 (whole-handler deadline), and 11 (upstream
+    identity policy) remain open; FIX-002 remains the owner's exercise.
+  - No production build, live GitHub/Supabase audit or deployment performed.
+Next bounded action: Claude reads git diff from this base and reviews GO-003
+  against findings 2–6/10; include lesson 11. Then resolve remaining Phase 1
+  gates before switching routes on. No live reviewer was contacted in this task.
+Writer released: yes.
+```
 
 ## Handoff: REVIEW-002 (Claude Code, 2026-10-12)
 
@@ -225,8 +300,9 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | Task | Scope | Status | Blocked on |
 |---|---|---|---|
 | `SYNC-001` | Readback, documentation synchronization and verification | Implementation complete | Claude peer review |
-| `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]` | Implementation complete (78 fixtures) | Claude peer review |
-| `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implementation complete | Claude peer review |
+| `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]` | Implemented and reviewed in REVIEW-002 | Cutover gates remain |
+| `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
+| `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implementation complete, uncommitted at handoff | Claude peer review; cutover gates remain |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
 | `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |
@@ -238,13 +314,16 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - Hosting for the Go service, before anything is deployed.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
-- Whether to merge `go-backend` into `main`. Merge readiness remains subject to the pending code review. The Go route is off unless switched on, but the search fixes do take effect on merge.
+- GO-002 is already merged. The URL-input validation contract and public-only
+  token scope from REVIEW-002 finding 1 remain owner decisions before cutover.
 
 ## State of the owner's machine
 
 - Go 1.27.2 is installed for the Windows user at `%LOCALAPPDATA%\Programs\Go`, from the official archive with its checksum verified, and its `bin` folder was appended to the user `PATH`. No administrator rights were used. To remove it, delete that folder and the `PATH` entry.
 - A terminal or editor that was open before the install does not see `go` until it is restarted. Agents can prefix a command's `PATH` with that `bin` folder.
-- Local `main` and `origin/main` have diverged by one commit each: local has `42759dd`, and origin has an automated timestamp commit. This branch does not touch `main`. Reconciling it is the owner's call.
+- At GO-003 start, `main` and `go-backend` both pointed to `1e5d87f` and matched
+  their locally recorded origin refs. No remote fetch was performed by Codex.
+  The earlier divergence was resolved before this task.
 
 ## Shared reading order
 

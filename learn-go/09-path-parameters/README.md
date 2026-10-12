@@ -47,7 +47,13 @@ under `contracts/github-repositories/`, not silently fixed during migration.
 
 `jscompat.FetchURL` in `backend/internal/jscompat/fetchurl.go` matches the
 HTTP URL normalization covered by those fixtures, including dot segments
-and UTF-8 escaping. It is a deliberately limited compatibility helper,
+and UTF-8 escaping. It stores the normalized path in Go's `url.URL.Opaque`
+field to keep the wire bytes intact. For example, Node keeps `a|b%2Fc`
+as written; Go's usual path encoding can change both the `|` and the encoded
+slash. The Node fixture runner independently checks every `wire_url` using
+`new URL(url)` with its fragment removed. Go checks those bytes over sockets.
+
+This is a deliberately limited compatibility helper,
 not a general URL parser or input validation. New APIs should validate
 inputs and encode segments; changing these existing contracts needs an
 owner decision. The new routes stay off pending review and cutover gates.
@@ -67,3 +73,9 @@ go test -tags solution ./09-path-parameters
 
 The first command fails until you finish. The second checks the supplied
 solution. Next: [Lesson 10, shared caches](../10-shared-cache/README.md).
+
+## You now know
+
+- How `ServeMux` fills named path values and why tests run through the router.
+- Why decoding an incoming segment and encoding an outgoing URL are separate.
+- How shared fixtures catch differences between JavaScript and Go URLs.

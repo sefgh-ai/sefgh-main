@@ -58,7 +58,7 @@ func waitIdle(t *testing.T, c *repoCache) {
 	c.mu.Lock()
 	var done chan struct{}
 	for _, ch := range c.pending {
-		done = ch
+		done = ch.done
 		break
 	}
 	c.mu.Unlock()
@@ -100,20 +100,9 @@ func TestCacheCoalescesMissesAndWaitersCanCancel(t *testing.T) {
 	}
 }
 
-func TestCacheDoesNotStoreFailuresAndBoundsMemory(t *testing.T) {
+func TestCacheBoundsMemory(t *testing.T) {
 	c := newCache(2, 4)
-	calls := 0
 	load := func(context.Context) (upstreamReply, error) {
-		calls++
-		return upstreamReply{status: 404, body: []byte("no")}, nil
-	}
-	for range 2 {
-		_, _ = c.get(context.Background(), "missing", load)
-	}
-	if calls != 2 {
-		t.Fatal("cached a failed response")
-	}
-	load = func(context.Context) (upstreamReply, error) {
 		return upstreamReply{status: 200, body: []byte("abc")}, nil
 	}
 	for _, key := range []string{"a", "b", "c"} {

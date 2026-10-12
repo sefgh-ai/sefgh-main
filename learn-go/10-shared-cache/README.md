@@ -14,6 +14,10 @@ cache does not share Next.js's persistent storage or other Go processes.
 
 A Node handler often waits with `await`. A Go server runs handlers in
 separate goroutines. Two handlers can reach the same map at the same time.
+Think of a **goroutine** as a function running independently of the function
+that started it. `go refresh()` starts one without waiting for it to finish.
+Unlike two JavaScript callbacks on one event loop, goroutines can execute
+simultaneously on different CPU cores.
 Ordinary Go maps are not safe for concurrent writes or for reading while
 another goroutine writes.
 
@@ -42,12 +46,32 @@ Our production cache has three paths:
 If refresh fails, keep the old reply. That is **stale-while-revalidate**.
 The cache combines concurrent misses for the same key using a channel:
 the first request fetches, and other requests wait for its completion.
-Closing the channel wakes all waiting requests. A waiting caller can
-cancel without blocking everyone else.
+A **channel** lets goroutines communicate or signal an event. Here
+`make(chan struct{})` creates a completion signal with no payload. Closing
+it wakes all waiting requests, much like settling a shared JavaScript Promise.
+
+The `cacheFlight` holds the reply and error. `fill` writes both **before**
+closing `done`. Receiving that close makes the earlier writes visible to
+waiters; the result must not be mutated afterwards. Even 404s, 429s and
+network errors are shared with existing waiters. Only a 200 is saved in the
+cache for later requests. Sharing one in-progress request and storing a reply
+for an hour are different operations.
+
+A waiting caller can cancel without blocking everyone else. If the fetching
+caller is cancelled, its surviving waiters retry under their own contexts.
+Background refresh uses `context.WithoutCancel` plus a timeout: the original
+browser request ending must not stop the cache's refresh.
 
 Look at `get`: it releases the mutex **before** fetching or waiting. Holding
 the lock during a slow GitHub request would block unrelated repositories.
 `fill` takes the lock again only to publish the result.
+
+It also registers `defer` **before** calling the loader. This cleanup runs
+even if the loader panics. `recover`, called inside that deferred function,
+turns the panic into an error, removes the pending entry and wakes waiters.
+This narrowly scoped recovery also protects the background goroutine;
+the HTTP server's panic handling cannot catch a panic in another goroutine.
+The log records that a panic occurred, without exposing its arbitrary value.
 
 The production cache limits both the entry count and stored key/header/body
 bytes. When full, it evicts the oldest stored entry. Those are resource
@@ -75,3 +99,12 @@ go test -tags solution ./10-shared-cache
 Do not change the real cache to complete this exercise. Your function only
 classifies entries; fetching, refresh channels and eviction stay in the
 backend code for you to read next.
+
+## You now know
+
+- What goroutines, mutexes and completion channels each do.
+- Why an in-progress result can be shared without storing it in the cache.
+- Why expiry includes exactly one hour, and why refresh outlives its caller.
+- Why cleanup must be registered before a function that might panic.
+
+Next: [Lesson 11, waiting for shared results](../11-shared-results/README.md).

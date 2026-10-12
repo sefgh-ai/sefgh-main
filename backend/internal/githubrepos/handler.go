@@ -8,7 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -21,6 +23,8 @@ const upstreamTimeout = 10 * time.Second
 
 // Handler owns immutable upstream settings. Construct it once per server.
 type Handler struct {
+	// Logger is configured before serving; nil uses slog.Default().
+	Logger  *slog.Logger
 	client  *http.Client
 	baseURL string
 	token   string
@@ -34,7 +38,16 @@ func New(client *http.Client, baseURL, token string) *Handler {
 	if baseURL == "" {
 		baseURL = defaultBaseURL
 	}
-	return &Handler{client: client, baseURL: strings.TrimRight(baseURL, "/"), token: token, cache: newCache(256, 64<<20)}
+	h := &Handler{client: client, baseURL: strings.TrimRight(baseURL, "/"), token: token, cache: newCache(256, 64<<20)}
+	h.cache.logPanic = func() { h.logger().Error("repository cache loader panicked") }
+	return h
+}
+
+func (h *Handler) logger() *slog.Logger {
+	if h.Logger != nil {
+		return h.Logger
+	}
+	return slog.Default()
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -49,16 +62,32 @@ type upstreamReply struct {
 	body   []byte
 }
 
-func (h *Handler) fetch(ctx context.Context, target, accept string, token bool) (upstreamReply, error) {
+func (h *Handler) fetch(ctx context.Context, target, accept string, token bool) (result upstreamReply, err error) {
 	ctx, cancel := context.WithTimeout(ctx, upstreamTimeout)
 	defer cancel()
+	stage := "normalize_url"
+	defer func() {
+		if err != nil {
+			// net/http errors include the request URL. Preserve their underlying
+			// cause for operators without logging URLs, bodies or credentials.
+			cause := err
+			var urlErr *url.Error
+			if errors.As(err, &urlErr) {
+				cause = urlErr.Err
+			}
+			h.logger().Error("github repository upstream failed", "stage", stage, "error", cause)
+		} else if !result.ok() {
+			h.logger().Warn("github repository upstream status", "status", result.status)
+		}
+	}()
 	parsed, err := jscompat.FetchURL(target)
 	if err != nil {
-		return upstreamReply{}, errors.New("fetch failed")
+		return upstreamReply{}, fmt.Errorf("normalize upstream URL: %w", err)
 	}
+	stage = "create_request"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, h.baseURL, nil)
 	if err != nil {
-		return upstreamReply{}, errors.New("fetch failed")
+		return upstreamReply{}, fmt.Errorf("create upstream request: %w", err)
 	}
 	req.URL = parsed
 	req.Host = parsed.Host
@@ -67,14 +96,19 @@ func (h *Handler) fetch(ctx context.Context, target, accept string, token bool) 
 	if token && h.token != "" {
 		req.Header.Set("Authorization", "Bearer "+h.token)
 	}
+	stage = "transport"
 	resp, err := h.client.Do(req)
 	if err != nil {
-		return upstreamReply{}, errors.New("fetch failed")
+		return upstreamReply{}, fmt.Errorf("send upstream request: %w", err)
 	}
 	defer resp.Body.Close()
+	stage = "read_body"
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
-	if err != nil || len(body) > maxBodyBytes {
-		return upstreamReply{}, errors.New("fetch failed")
+	if err != nil {
+		return upstreamReply{}, fmt.Errorf("read upstream body: %w", err)
+	}
+	if len(body) > maxBodyBytes {
+		return upstreamReply{}, fmt.Errorf("upstream body exceeds %d bytes", maxBodyBytes)
 	}
 	return upstreamReply{resp.StatusCode, resp.Header, body}, nil
 }
@@ -99,7 +133,10 @@ func replyJSON(w http.ResponseWriter, status int, body any) {
 	w.WriteHeader(status)
 	_, _ = w.Write(data)
 }
-func fail(w http.ResponseWriter, status int, message string) {
+func (h *Handler) fail(w http.ResponseWriter, status int, message string) {
+	if status >= 500 {
+		h.logger().Error("github repository request failed", "status", status, "error", message)
+	}
 	replyJSON(w, status, map[string]string{"error": message})
 }
 func rateLimit(h http.Header) map[string]any {
@@ -119,13 +156,13 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 	owner, _ := params.Get("owner")
 	name, _ := params.Get("name")
 	if owner == "" || name == "" {
-		fail(w, 400, "Owner and name parameters are required")
+		h.fail(w, 400, "Owner and name parameters are required")
 		return
 	}
 	target := h.baseURL + "/repos/" + owner + "/" + name
 	parsed, err := jscompat.FetchURL(target)
 	if err != nil {
-		fail(w, 500, "Failed to fetch repository")
+		h.fail(w, 500, "Failed to fetch repository")
 		return
 	}
 	key := parsed.Scheme + "://" + parsed.Host + parsed.RequestURI()
@@ -133,24 +170,24 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 		return h.fetch(ctx, target, "application/vnd.github.v3+json", true)
 	})
 	if err != nil {
-		fail(w, 500, "Failed to fetch repository")
+		h.fail(w, 500, "Failed to fetch repository")
 		return
 	}
 	if !up.ok() {
 		if up.status == 404 {
-			fail(w, 404, "Repository not found")
+			h.fail(w, 404, "Repository not found")
 		} else {
-			fail(w, 500, fmt.Sprintf("GitHub API error: %d", up.status))
+			h.fail(w, 500, fmt.Sprintf("GitHub API error: %d", up.status))
 		}
 		return
 	}
 	repo, err := decode(up.body)
 	if err != nil {
-		fail(w, 500, err.Error())
+		h.fail(w, 500, err.Error())
 		return
 	}
 	if repo == nil {
-		fail(w, 500, "Failed to fetch repository")
+		h.fail(w, 500, "Failed to fetch repository")
 		return
 	}
 	result := map[string]any{}
@@ -169,34 +206,34 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
 	const message = "Failed to fetch repository details"
 	if err != nil || !up.ok() {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	repo, err := decode(up.body)
 	if err != nil {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	fields, ok := repo.(map[string]any)
 	if !ok {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	languagesURL, ok := fields["languages_url"].(string)
 	if !ok {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	languagesReply, err := h.fetch(r.Context(), languagesURL, "application/vnd.github.v3+json", false)
 	if err != nil {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	var languages any = map[string]any{}
 	if languagesReply.ok() {
 		languages, err = decode(languagesReply.body)
 		if err != nil {
-			fail(w, 500, message)
+			h.fail(w, 500, message)
 			return
 		}
 	}
@@ -211,19 +248,19 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) contents(w http.ResponseWriter, r *http.Request) {
 	path, _ := jscompat.ParseQuery(r.URL.RawQuery).Get("path")
 	if strings.Contains(path, "..") || strings.HasPrefix(path, "/") || strings.Contains(path, `\`) {
-		fail(w, 400, "Invalid path parameter")
+		h.fail(w, 400, "Invalid path parameter")
 		return
 	}
 	target := h.baseURL + "/repos/" + r.PathValue("owner") + "/" + r.PathValue("repo") + "/contents/" + path
 	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
 	const message = "Failed to fetch repository contents"
 	if err != nil || !up.ok() {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	contents, err := decode(up.body)
 	if err != nil {
-		fail(w, 500, message)
+		h.fail(w, 500, message)
 		return
 	}
 	replyJSON(w, 200, map[string]any{"contents": contents, "rate_limit": rateLimit(up.header)})

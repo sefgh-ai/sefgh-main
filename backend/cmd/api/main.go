@@ -29,8 +29,10 @@ func run(logger *slog.Logger) error {
 	addr := envOr("SEFGH_API_ADDR", "127.0.0.1:8787")
 
 	mux := http.NewServeMux()
-	githubrepos.New(&http.Client{Timeout: githubsearch.DefaultTimeout},
-		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), os.Getenv("GITHUB_TOKEN")).Register(mux)
+	repositories := githubrepos.New(&http.Client{Timeout: githubsearch.DefaultTimeout},
+		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), os.Getenv("GITHUB_TOKEN"))
+	repositories.Logger = logger
+	repositories.Register(mux)
 	mux.Handle("GET /api/github/search", &githubsearch.Handler{
 		Client:  &http.Client{Timeout: githubsearch.DefaultTimeout},
 		BaseURL: envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),

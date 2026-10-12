@@ -38,6 +38,15 @@ Check `git status --short` and the current commit before editing. The architectu
 - Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
 - Keep the reviewer read-only unless the user or the current task explicitly assigns implementation. Do not recursively launch more agents by default.
 
+## Low-capacity checkpoint (owner requirement)
+
+- If the agent's visible remaining usage, token, or context budget reaches approximately **3–5%**, stop implementation immediately. Reserve that capacity for a durable handoff, not another code change or long test run. Also checkpoint when a usage-limit warning indicates that the session may end soon.
+- Do not invent a remaining-usage percentage. If account usage is not visible, say so and use available context/budget warnings or the owner's low-usage notice. Do not promise automatic monitoring of an unavailable meter.
+- Before stopping, update `docs/coordination.md` with the task ID, owner, branch and base/current commit, actual working-tree state and changed files, completed and unfinished work, exact checks run and their outcomes, tests not yet run, known failures, remaining gates, and the next concrete command or edit. Mark the task **paused / incomplete**, not complete. Never include secrets or private transcripts.
+- Leave files in place. Do not reset, clean, stash, commit partial work merely to tidy it, or overwrite another agent's changes. Record any partial edit or currently failing check explicitly. Set **Active writer: none** after the checkpoint is written.
+- If the bounded task is incomplete, do **not** run `npm run handoff` merely to signal completion: that script signals the Git Agent to synchronize. Use the documentation checkpoint and tell the owner the task needs pickup. Run the normal handoff only when the bounded task is actually complete and its checks can finish.
+- The incoming agent must read the checkpoint, inspect Git status and the diff, then claim the writer role before continuing. A checkpoint does not notify a running agent; do not claim another agent has received or accepted it without evidence.
+
 ## The owner's Go tutorial
 
 The owner is learning Go from this codebase. `learn-go/` is their tutorial, and it grows with the backend. Read `learn-go/README.md` before touching it.

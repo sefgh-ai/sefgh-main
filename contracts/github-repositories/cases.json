@@ -3362,6 +3362,156 @@
         }
       },
       "disposition": "preserve"
+    },
+    {
+      "id": "contents-literal-pipe",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%7Cb.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a|b.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a|b.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-literal-caret",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%5Eb.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a^b.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a^b.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-pipe-encoded-slash",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%7Cb%252Fc.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a|b%2Fc.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a|b%2Fc.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-caret-encoded-slash",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%5Eb%252fc.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a^b%2fc.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a^b%2fc.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-braces-encoded-slash",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=%7Ba%7D%252Fb.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/{a}%2Fb.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/%7Ba%7D%2Fb.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
     }
   ]
 }

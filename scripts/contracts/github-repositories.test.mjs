@@ -18,6 +18,16 @@ test('repository case ids are unique', () => {
   assert.equal(new Set(contract.cases.map(c => c.id)).size, contract.cases.length);
 });
 
+test('repository wire URLs match Node normalization', () => {
+  for (const c of contract.cases) {
+    for (const call of c.calls) {
+      const normalized = new URL(call.url);
+      normalized.hash = '';
+      assert.equal(call.wire_url, normalized.href, `${c.id}: ${call.url}`);
+    }
+  }
+});
+
 for (const c of contract.cases) {
   test(`${c.id} [${c.disposition}]`, async () => {
     const originalFetch = globalThis.fetch;

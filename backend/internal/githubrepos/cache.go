@@ -2,6 +2,8 @@ package githubrepos
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 	"sync"
 	"time"
 )
@@ -11,37 +13,51 @@ type cacheEntry struct {
 	saved time.Time
 	size  int
 }
+
+// Fields are published before done closes and are immutable afterwards.
+// A flight shares even an uncacheable result with its existing waiters.
+type cacheFlight struct {
+	done  chan struct{}
+	reply upstreamReply
+	err   error
+	retry bool
+}
+
 type repoCache struct {
 	mu         sync.Mutex
 	entries    map[string]cacheEntry
-	pending    map[string]chan struct{}
+	pending    map[string]*cacheFlight
 	bytes      int
 	maxEntries int
 	maxBytes   int
 	now        func() time.Time
+	logPanic   func()
 }
 
 func newCache(maxEntries, maxBytes int) *repoCache {
-	return &repoCache{entries: map[string]cacheEntry{}, pending: map[string]chan struct{}{}, maxEntries: maxEntries, maxBytes: maxBytes, now: time.Now}
+	return &repoCache{entries: map[string]cacheEntry{}, pending: map[string]*cacheFlight{}, maxEntries: maxEntries, maxBytes: maxBytes, now: time.Now, logPanic: func() { slog.Error("repository cache loader panicked") }}
 }
 
 // get implements one-hour freshness followed by stale-while-revalidate.
 // Values are immutable after publication. Never hold the mutex during I/O.
 func (c *repoCache) get(ctx context.Context, key string, load func(context.Context) (upstreamReply, error)) (upstreamReply, error) {
 	for {
+		if err := ctx.Err(); err != nil {
+			return upstreamReply{}, err
+		}
 		c.mu.Lock()
 		entry, found := c.entries[key]
-		done, running := c.pending[key]
+		flight, running := c.pending[key]
 		if found {
 			if c.now().Sub(entry.saved) >= time.Hour && !running {
-				done = make(chan struct{})
-				c.pending[key] = done
+				flight = &cacheFlight{done: make(chan struct{})}
+				c.pending[key] = flight
 				go func() {
 					// A stale refresh belongs to the cache, not to the caller who has
 					// already received the old value. Still bound its lifetime.
 					refreshCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), upstreamTimeout)
 					defer cancel()
-					_, _ = c.fill(refreshCtx, key, load, done)
+					_, _ = c.fill(refreshCtx, key, load, flight)
 				}()
 			}
 			c.mu.Unlock()
@@ -50,25 +66,48 @@ func (c *repoCache) get(ctx context.Context, key string, load func(context.Conte
 		if running {
 			c.mu.Unlock()
 			select {
-			case <-done:
-				continue
+			case <-flight.done:
+				if err := ctx.Err(); err != nil {
+					return upstreamReply{}, err
+				}
+				if flight.retry {
+					continue
+				}
+				return flight.reply, flight.err
 			case <-ctx.Done():
 				return upstreamReply{}, ctx.Err()
 			}
 		}
-		done = make(chan struct{})
-		c.pending[key] = done
+		flight = &cacheFlight{done: make(chan struct{})}
+		c.pending[key] = flight
 		c.mu.Unlock()
-		return c.fill(ctx, key, load, done)
+		return c.fill(ctx, key, load, flight)
 	}
 }
 
-func (c *repoCache) fill(ctx context.Context, key string, load func(context.Context) (upstreamReply, error), done chan struct{}) (upstreamReply, error) {
-	result, err := load(ctx)
+func (c *repoCache) fill(ctx context.Context, key string, load func(context.Context) (upstreamReply, error), flight *cacheFlight) (result upstreamReply, err error) {
+	// Install cleanup before calling user code. Recover here for both foreground
+	// and background loads, so a panic cannot strand waiters or kill the server.
+	defer func() {
+		panicked := recover() != nil
+		if panicked {
+			result = upstreamReply{}
+			err = errors.New("repository cache loader panicked")
+		}
+		c.mu.Lock()
+		flight.reply, flight.err = result, err
+		flight.retry = ctx.Err() != nil && !panicked
+		delete(c.pending, key)
+		close(flight.done)
+		c.mu.Unlock()
+		if panicked {
+			// Never log the key or arbitrary panic value.
+			c.logPanic()
+		}
+	}()
+	result, err = load(ctx)
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	defer close(done)
-	delete(c.pending, key)
 	// Next's fetch cache stores status 200 responses, before parsing JSON.
 	// Errors leave any stale entry intact for the next refresh attempt.
 	if err == nil && result.status == 200 {

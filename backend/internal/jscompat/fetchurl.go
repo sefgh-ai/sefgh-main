@@ -50,12 +50,10 @@ func FetchURL(raw string) (*url.URL, error) {
 	}
 	encodedPath := fetchEncode(strings.Join(normalized, "/"), false)
 	encodedQuery := fetchEncode(query, true)
-	result, err := url.Parse(scheme + "://" + authority + encodedPath)
-	if err != nil {
-		// Browsers keep a literal invalid percent escape on the wire. Opaque
-		// preserves those bytes; Go's normal Path parser would reject them.
-		result = &url.URL{Scheme: scheme, Host: authority, Opaque: encodedPath}
-	}
+	// Always preserve the normalized wire path. Go's Path/RawPath validation
+	// re-escapes literal | and ^ and can also turn a neighboring %2F into /.
+	// Opaque avoids that second, incompatible normalization (including invalid %).
+	result := &url.URL{Scheme: scheme, Host: authority, Opaque: encodedPath}
 	result.RawQuery = encodedQuery
 	result.ForceQuery = hasQuery
 	return result, nil

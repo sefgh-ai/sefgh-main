@@ -8,7 +8,19 @@ This is a source inspection, not a production audit. Codex traced the key reques
 
 `package.json` declares Next.js 16.1.1, React 19.2.0, `@supabase/ssr` ^0.7.0, and `@supabase/supabase-js` ^2.48.1. There are 280 JS/JSX files under `src`, 25 `/api` route files exposing 38 HTTP handlers, plus the auth callback GET outside `/api`. No app database migration directory is present in this checkout. The sole checked-in GitHub workflow updates `LAST_UPDATED.txt`; it does not test the app.
 
-Since this map was written, a Go backend has been started in `backend/` under `adr/0002-go-backend.md`. It serves `/api/github/search` only when switched on; every route below still has its Next.js handler.
+Current implementation update (2026-10-12, GO-003): the standard-library Go
+backend in `backend/` implements search, repository summary, repository detail
+and contents under `adr/0002-go-backend.md`. All four remain off by default;
+every route below still has its Next.js handler. GO-003 adds shared failure
+results and panic recovery to the per-process summary cache, structured
+upstream failure logging, and wire-path preservation for `|`/`^` beside encoded
+slashes. These are local implementation changes, not a deployed topology.
+
+The shared fixtures now contain 87 search cases and 83 repository cases.
+`npm run test:contracts` runs 174 checks including fixture-integrity and rewrite
+checks; Go exercises the fixture cases in memory and over local sockets. See
+`coordination.md` for actual checks and the remaining cutover gates. The
+historical validation section below describes the earlier snapshot only.
 
 ## Current request paths
 

@@ -124,6 +124,15 @@ Before any cutover, capture p50 and p95 response time, upstream time, error rate
 
 See `../coordination.md` for owners and state. In order:
 
-1. `GO-002a`: fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]`, passing against the Next.js handlers.
-2. `GO-002b`: port those three routes to Go against the fixtures.
-3. Owner decisions above, as they become blocking: hosting before any deployment, AI policy before Phase 2.
+1. `GO-002a` and `GO-002b` are implemented and peer-reviewed (REVIEW-002):
+   acceptable with routes disabled, not approved for cutover.
+2. `GO-003` addresses the review's cache, logging, URL and test findings while
+   preserving contract version 2. Review the fixes before enabling any route.
+3. Close Phase 1 gates: owner-approved URL-input contract changes and token
+   scope verification, race-detector run, encoded-segment rewrite checks,
+   production cache behavior, hosting, staging measurements and tested rollback.
+4. Phase 2 is a separate bounded task with its own public/guest and AI policy
+   decisions; work on it does not waive any earlier route's cutover gates.
+
+Progress records and test outcomes belong in `../coordination.md`. The earlier
+phase table is dated 2026-10-11; it is not a claim that later work is absent.
