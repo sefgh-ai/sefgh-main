@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
+import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
 
 export async function GET(request, { params }) {
   try {
     const { owner, repo } = await params
+
+    if (!isValidOwner(owner) || !isValidRepoName(repo)) {
+      return NextResponse.json(
+        { error: 'Invalid repository owner or name' },
+        { status: 400 }
+      )
+    }
 
     // Fetch repository details
     const repoResponse = await fetch(

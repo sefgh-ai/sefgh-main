@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (GO-005b handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (FIX-003 handoff).
 
 ## Start here
 
@@ -11,9 +11,83 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `GO-005b` (Go port of the contributions route, lesson 13) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
+- **Active writer:** none. Claude Code completed `FIX-003` (input validation for the repository routes, contract version 3, lesson 14) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
 - **Stage:** Phase 2 of the ADR is under way; Phase 1 is built but none of its gates is closed. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1), languages and contributions (Phase 2). Left in Phase 2: trending, trending-developers and the three AI routes. Nothing is deployed and no traffic has moved.
+
+## Handoff: FIX-003 (Claude Code, 2026-10-12)
+
+```text
+Task / scope: FIX-003, input validation for the three repository routes
+  (REVIEW-002 finding 1), in Next.js and Go together, contract version 3.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: implementation complete; review pending; not deployed.
+Base commit / branch / worktree: 80cee17 / main / main checkout, clean at start.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Owner decisions this rests on, relayed by the owner on 2026-10-12 and now in
+  the ADR decisions log: input validation approved; the server token is NOT to
+  be limited to public data, and who may see private repositories is
+  undecided; hosting is Vercel and Supabase; free tier only.
+Changed files:
+  src/lib/github/repo-identifiers.js: new, the shared rules for Next.js.
+  src/app/api/github/repo/route.js, repo/[owner]/[repo]/route.js,
+    contents/[owner]/[repo]/route.js: validate before building a URL.
+  backend/internal/githubrepos/{identifiers.go,identifiers_test.go}: new.
+  backend/internal/githubrepos/{handler.go,http_test.go}: validate; one cache
+    test used names that are now invalid and was given valid ones.
+  contracts/github-repositories/{cases.json,README.md}: version 3, 120 cases.
+  scripts/contracts/route-loader.mjs: resolves any "@/" import, not one file.
+  learn-go/14-checking-input/*, learn-go/09-path-parameters/README.md,
+    learn-go/README.md: new lesson, one corrected passage, index row.
+  backend/README.md, docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}.
+  No existing exercise.go changed.
+Contract change: github-repositories version 2 -> 3. 22 existing cases changed,
+  37 added, 61 untouched, 18 still marked defect (upstream status collapsing
+  and unchecked reply shapes; none about URL input).
+Judgment calls inside the approved change, for the reviewer:
+  - Owner pattern ^[A-Za-z0-9][A-Za-z0-9_-]{0,38}$ is deliberately looser than
+    GitHub's own rule: it admits underscores (managed-user accounts) and
+    repeated or trailing hyphens (old accounts). It is a safety rule.
+  - Contents paths are ENCODED part by part, not restricted to a character
+    set, so a folder named "C#" works. This goes beyond "reject invalid
+    input": names containing #, ? or % now reach the right file.
+  - A trailing slash and an empty part are rejected. Before, "src/" was sent on.
+  - Backslash stays rejected, as before. Control characters are now rejected.
+  - Wire bytes change for some valid names: ";" is sent as %3B, "|" as %7C.
+    GitHub decodes both to the same name.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - Before touching fixtures: the new handlers failed exactly 22 of the old
+    cases, all about URL input, and no others.
+  - Re-recording printed every changed case, each reviewed by hand. A guard
+    in the recorder refuses any change outside a reviewed list.
+  - npm run test:contracts: 311 passed, 0 failed.
+  - backend: go test -count=1 ./... passes all six packages (240 repository
+    contract subtests); go vet clean; gofmt -l empty.
+  - New Go test: 11 hostile requests, with a server token set, produce 400 and
+    zero requests to GitHub.
+  - Deliberate weakenings of the validation: JavaScript 17 of 17 caught by the
+    contract tests; Go 14 of 14 valid ones caught (2 more did not compile).
+  - learn-go: all 15 solution packages pass; go vet clean in both modes;
+    gofmt -l empty; lesson 14's exercise fails without panic.
+  - npx eslint on the changed handlers, the new module, the runners and
+    next.config.mjs: clean.
+  - npm run build with the switch variables unset: passed, exit 0. The three
+    handlers import the shared module through the @/ alias, so this is the
+    check that the alias resolves in a real build.
+Unverified: live GitHub; the Next.js rewrite with these inputs; a production
+  deployment. The race detector has still not run.
+Remaining Phase 1 gates after this task:
+  - OWNER: who may see private repositories. Until decided, summary and search
+    return whatever the server token can read to any caller. This affects the
+    Next.js routes in production today, not only the Go ports.
+  - REVIEW-002 findings 7 (non-UTF-8 README) and 8 (one deadline for detail).
+  - Race-detector run; rewrite check for percent-encoded path segments.
+  - Hosting the Go service on the free tier; staging measurements; rollback
+    under real traffic; production cache behaviour.
+Next bounded action: FIX-004, findings 7 and 8 in Go. Then the two
+  verification gates. Then a hosting proposal for the owner.
+Writer released: yes
+```
 
 ## Handoff: GO-005b (Claude Code, 2026-10-12)
 
@@ -532,6 +606,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
 | `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implemented at `cd6ad67` | Codex peer review |
 | `GO-005b` | Go port of `github/contributions` against those fixtures, with lesson 13, routing off | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
+| `FIX-003` | Input validation for the three repository routes, Next.js and Go, repository contract version 3, lesson 14 | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
+| `FIX-004` | REVIEW-002 findings 7 (non-UTF-8 README) and 8 (one deadline for the detail route), in Go | Not started | Nothing |
 | `GO-006a` | Contract fixtures for `github/trending`, fixing its random `starsToday` source | Not started; unassigned | Nothing |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
 | `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
@@ -542,11 +618,10 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 ## Owner decisions pending
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
-- Hosting for the Go service, before anything is deployed.
+- How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
-- GO-002 is already merged. The URL-input validation contract and public-only
-  token scope from REVIEW-002 finding 1 remain owner decisions before cutover.
+- **Who may see private repositories.** The owner approved input validation (done in `FIX-003`) and said the server token is not to be limited to public data. Until an access rule exists, the summary and search routes return whatever that token can read to any caller, in production on Next.js today as well as in Go.
 
 ## State of the owner's machine
 

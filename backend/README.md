@@ -80,8 +80,9 @@ of the machine it runs on, as the Next.js handler does.
 They remain off by default and await peer review and ADR cutover gates. The
 summary cache is local to one Go process: one-hour freshness, stale background
 refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
-and sharing, plus recorded URL-input defects, need resolution before public
-rollout. See the repository contract README for exact boundaries.
+and sharing need resolution before public rollout. The repository routes check
+owner, name and path before any request to GitHub (`internal/githubrepos/identifiers.go`,
+contract version 3). See the repository contract README for exact boundaries.
 
 To see which backend answered a request, send a blank query, which is answered with a 400 without contacting GitHub, and read the headers:
 

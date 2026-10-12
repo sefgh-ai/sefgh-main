@@ -154,7 +154,8 @@ func TestSummaryCacheIsConnectedAndScopedToHandler(t *testing.T) {
 	for _, token := range []string{"first", "second"} {
 		mux := http.NewServeMux()
 		New(client, defaultBaseURL, token).Register(mux)
-		for _, target := range []string{"/api/github/repo?owner=o&name=a%2F.%2Fb", "/api/github/repo?owner=o&name=a/b"} {
+		// Two spellings of one request: they must share a cache entry.
+		for _, target := range []string{"/api/github/repo?owner=o&name=a.b", "/api/github/repo?name=a%2Eb&owner=o"} {
 			rec := httptest.NewRecorder()
 			mux.ServeHTTP(rec, httptest.NewRequest("GET", target, nil))
 			if rec.Code != 200 {

@@ -1,12 +1,15 @@
 // Module hooks that let plain Node import a Next.js route handler.
-// Route files are ESM in a package without "type": "module", and they
-// import the extensionless "next/server" specifier.
+// Route files are ESM in a package without "type": "module". They import
+// the extensionless "next/server" specifier, and other modules through the
+// "@/" alias that jsconfig.json maps to src/.
 
 const srcRoot = new URL("../../src/", import.meta.url).href;
 
 export async function resolve(specifier, context, nextResolve) {
-  if (specifier === "@/data/github-languages") {
-    return nextResolve(new URL("data/github-languages.js", srcRoot).href, context);
+  if (specifier.startsWith("@/")) {
+    const path = specifier.slice(2);
+    const file = /\.[a-z]+$/.test(path) ? path : `${path}.js`;
+    return nextResolve(new URL(file, srcRoot).href, context);
   }
   if (specifier === "next/server") {
     return nextResolve("next/server.js", context);

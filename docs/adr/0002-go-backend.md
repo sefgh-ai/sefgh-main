@@ -103,12 +103,17 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 |---|---|
 | 2026-10-11 | Go chosen over Rust (this ADR) |
 | 2026-10-11 | All 13 defects recorded in search contract version 1 are fixed in the Next.js handler; contract moves to version 2. Details in `../../contracts/github-search/README.md` |
+| 2026-10-12 | Owner approved input validation for the repository routes (REVIEW-002 finding 1). Applied in `FIX-003`: repository contract version 3, Next.js and Go together |
+| 2026-10-12 | Owner stated the server GitHub token is **not** to be limited to public data. Who may see private repositories is undecided, which leaves a cutover gate open (see below) |
+| 2026-10-12 | Owner stated hosting: Next.js on Vercel, database on Supabase, and that the owner holds the GitHub, Vercel and Supabase accounts. Token permissions are not yet verified |
+| 2026-10-12 | Owner set the budget: free tier only. No paid resource is to be created without the owner's approval |
 | 2026-10-11 | Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go` (version 1.27.2, official archive, checksum verified, user PATH updated). No administrator rights were used |
 
 Open, for the owner:
 
 - The search navbar sends `sort=stars` and `sort=updated`, which the API ignores. Recorded as `defect` cases. Either teach the API those names or change the navbar to send the names the API knows.
-- Where the Go service will be hosted, and how production routing and rollback will work. Production topology is still unverified; Vercel is suspected, not confirmed.
+- **Who may see private repositories.** The summary and search routes send the server token for any caller. With a token that can read private repositories, their details reach anyone, in the Next.js routes in production today as well as in the Go ports. Until this is decided, no token-bearing route should be cut over.
+- How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected.
 - Public and guest policy for the AI endpoints, and playground key semantics, before Phase 2 and 3.
 
 ## Measurements

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { encodeContentsPath, isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
 
 export async function GET(request, { params }) {
   try {
@@ -6,16 +7,19 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
     const path = searchParams.get('path') || ''
 
-    const isSafePath = (candidate) => {
-      if (!candidate) return true
-      return !candidate.includes('..') && !candidate.startsWith('/') && !candidate.includes('\\')
+    if (!isValidOwner(owner) || !isValidRepoName(repo)) {
+      return NextResponse.json(
+        { error: 'Invalid repository owner or name' },
+        { status: 400 }
+      )
     }
 
-    if (!isSafePath(path)) {
+    const encodedPath = encodeContentsPath(path)
+    if (encodedPath === null) {
       return NextResponse.json({ error: 'Invalid path parameter' }, { status: 400 })
     }
 
-    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodedPath}`
     
     const response = await fetch(url, {
       headers: {

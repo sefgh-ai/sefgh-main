@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
 
 /**
  * Fetch individual GitHub repository data
@@ -13,6 +14,13 @@ export async function GET(request) {
     if (!owner || !name) {
       return NextResponse.json(
         { error: 'Owner and name parameters are required' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidOwner(owner) || !isValidRepoName(name)) {
+      return NextResponse.json(
+        { error: 'Invalid repository owner or name' },
         { status: 400 }
       )
     }

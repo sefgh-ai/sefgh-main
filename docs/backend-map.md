@@ -23,6 +23,13 @@ array matching all 565 names in `src/data/github-languages.js`, including order.
 It needs no runtime data file, upstream HTTP call, token or database access.
 The browser consumer remains `src/app/trending/page.js`; the Next handler stays.
 
+FIX-003 (2026-10-12) added input validation to the three repository routes, in
+the Next.js handlers (`src/lib/github/repo-identifiers.js`) and the Go ports
+together, at repository contract version 3. An invalid owner, name or path now
+answers 400 without any request to GitHub. Before this, `owner=..` could reach
+other GitHub endpoints with the server token. Hosting is Vercel and Supabase by
+the owner's statement; the deployment has not been inspected.
+
 GO-005a (2026-10-12) recorded `/api/github/contributions` as contract version 1
 in `../contracts/github-contributions/`. GO-005b ported it to
 `backend/internal/githubcontributions`, off by default, reproducing the recorded

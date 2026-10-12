@@ -41,9 +41,11 @@ send browser traffic to it.
 ## Building the next request is a separate problem
 
 Reading a path value and inserting it into another URL are separate steps.
-An unescaped `#` becomes a fragment; `?` starts a query. Existing Next.js
-repository handlers interpolate these values. Their defects are recorded
-under `contracts/github-repositories/`, not silently fixed during migration.
+An unescaped `#` becomes a fragment; `?` starts a query. The repository
+handlers used to insert these values unchecked. The owner approved a fix on
+2026-10-12: both the Next.js and Go handlers now check the owner and name, and
+percent-encode each part of a file path, before building the URL.
+[Lesson 14](../14-checking-input/README.md) covers how.
 
 `jscompat.FetchURL` in `backend/internal/jscompat/fetchurl.go` matches the
 HTTP URL normalization covered by those fixtures, including dot segments
@@ -53,10 +55,9 @@ as written; Go's usual path encoding can change both the `|` and the encoded
 slash. The Node fixture runner independently checks every `wire_url` using
 `new URL(url)` with its fragment removed. Go checks those bytes over sockets.
 
-This is a deliberately limited compatibility helper,
-not a general URL parser or input validation. New APIs should validate
-inputs and encode segments; changing these existing contracts needs an
-owner decision. The new routes stay off pending review and cutover gates.
+This is a deliberately limited compatibility helper, not a general URL
+parser and not input validation. Checking the input is a separate step that
+happens first. The new routes stay off pending review and cutover gates.
 
 ## Your turn
 

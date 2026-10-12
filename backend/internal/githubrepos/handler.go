@@ -159,6 +159,10 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, 400, "Owner and name parameters are required")
 		return
 	}
+	if !validOwner(owner) || !validRepoName(name) {
+		h.fail(w, 400, msgInvalidRepository)
+		return
+	}
 	target := h.baseURL + "/repos/" + owner + "/" + name
 	parsed, err := jscompat.FetchURL(target)
 	if err != nil {
@@ -202,7 +206,12 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
-	target := h.baseURL + "/repos/" + r.PathValue("owner") + "/" + r.PathValue("repo")
+	owner, repoName := r.PathValue("owner"), r.PathValue("repo")
+	if !validOwner(owner) || !validRepoName(repoName) {
+		h.fail(w, 400, msgInvalidRepository)
+		return
+	}
+	target := h.baseURL + "/repos/" + owner + "/" + repoName
 	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
 	const message = "Failed to fetch repository details"
 	if err != nil || !up.ok() {
@@ -246,12 +255,18 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) contents(w http.ResponseWriter, r *http.Request) {
+	owner, repoName := r.PathValue("owner"), r.PathValue("repo")
+	if !validOwner(owner) || !validRepoName(repoName) {
+		h.fail(w, 400, msgInvalidRepository)
+		return
+	}
 	path, _ := jscompat.ParseQuery(r.URL.RawQuery).Get("path")
-	if strings.Contains(path, "..") || strings.HasPrefix(path, "/") || strings.Contains(path, `\`) {
+	encodedPath, ok := encodeContentsPath(path)
+	if !ok {
 		h.fail(w, 400, "Invalid path parameter")
 		return
 	}
-	target := h.baseURL + "/repos/" + r.PathValue("owner") + "/" + r.PathValue("repo") + "/contents/" + path
+	target := h.baseURL + "/repos/" + owner + "/" + repoName + "/contents/" + encodedPath
 	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
 	const message = "Failed to fetch repository contents"
 	if err != nil || !up.ok() {
