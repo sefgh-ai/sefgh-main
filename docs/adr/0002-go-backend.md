@@ -10,9 +10,9 @@ The owner wants the custom backend moved out of Next.js. The current app mixes 2
 
 ADR-0001 proposed Rust. Before any Rust was written, the owner asked whether Go would be better and chose Go. The reasons recorded at the time:
 
-- Nearly every handler waits on GitHub, an AI provider, or Supabase. For that work Go and Rust respond in about the same time, because the wait is upstream.
-- Go is simpler to read and maintain, builds in seconds, and its standard library covers HTTP, JSON and concurrency without third-party packages.
-- Rust's real advantage here was stricter handling of `null` versus a missing JSON key. The contract fixtures already catch that mistake in any language.
+- Many handlers wait on GitHub, an AI provider, or Supabase. Upstream waits may dominate their latency; equivalent Go and Rust response times have not been measured.
+- Go was chosen for readability and maintainability, and its standard library covers the current HTTP, JSON and concurrency needs without third-party packages. Build-time comparisons have not been measured.
+- Rust offers compile-time guarantees. The existing contract fixtures check the covered `null` versus missing-key cases across implementations; they do not replace all of those guarantees.
 
 No performance, cost or traffic measurement exists for either language. Nothing in this decision claims that Go makes search or chat faster.
 
@@ -65,7 +65,7 @@ Never dual-write to compare stateful implementations. Compare read fixtures or s
 |---|---|---|---|
 | Improve the existing Next.js backend | Fastest way to fix auth controls, caching, concurrency and tests | Business logic stays spread across handlers and browser code | Still valid for individual fixes, and used for the search defects |
 | Staged Go API and workers | Simple language, fast builds, small dependency surface, good fit for I/O-bound work and for workers | Two runtimes during the migration | **Chosen** |
-| Staged Rust API and workers | Strictest compile-time checks, lowest memory use | Slower builds, steeper learning curve, more dependencies; its advantages are not this app's bottleneck | Not chosen |
+| Staged Rust API and workers | Strong compile-time guarantees; potential resource benefits remain unmeasured here | Additional learning and implementation work; build-time, memory and bottleneck comparisons are unverified | Not chosen |
 | Rewrite everything at once, including managed services | Maximum ownership | Auth, data, realtime and embedding regressions; slow rollback; unproven payoff | Rejected |
 
 ## Phases and gates
@@ -92,7 +92,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Go treats a GitHub reply over 16 MB as a failure | Bounds memory. A full page of results is under 2 MB |
 | Go adds `X-Sefgh-Backend: go` | Shows which backend answered during rollout and rollback |
 | Go sends the six security headers itself | Next.js adds them to its own responses but not to responses it forwards. A Go test fails if the two lists drift |
-| Non-GET methods get Go's standard 405 | Not part of any caller's contract |
+| Methods other than GET and HEAD get Go's standard 405 | The registered GET pattern also accepts HEAD; method parity is outside the current fixtures |
 | Query bytes that are not valid UTF-8 may decode to a different number of replacement characters | Left unspecified by the contract |
 
 ## Decisions log

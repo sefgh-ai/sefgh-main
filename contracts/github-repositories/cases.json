@@ -1,0 +1,3367 @@
+{
+  "contract_version": 2,
+  "cases": [
+    {
+      "id": "missing-both",
+      "route": "summary",
+      "request": "/api/github/repo",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Owner and name parameters are required"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "missing-name",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Owner and name parameters are required"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "empty-owner",
+      "route": "summary",
+      "request": "/api/github/repo?owner=&name=demo",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Owner and name parameters are required"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "empty-first-owner",
+      "route": "summary",
+      "request": "/api/github/repo?owner=&owner=octo&name=demo",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Owner and name parameters are required"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "summary-projects-fields",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "summary-server-token",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App",
+            "Authorization": "Bearer fixture-token"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "disposition": "preserve",
+      "github_token": "fixture-token"
+    },
+    {
+      "id": "summary-first-values",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo&owner=other&name=other",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "summary-plus",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=a+b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/a b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/a%20b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Owner/name are interpolated without segment encoding or validation."
+    },
+    {
+      "id": "summary-fragment",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=a%23b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/a#b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/a"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Owner/name are interpolated without segment encoding or validation."
+    },
+    {
+      "id": "summary-query",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=a%3Fref%3Dx",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/a?ref=x",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/a?ref=x"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Owner/name are interpolated without segment encoding or validation."
+    },
+    {
+      "id": "summary-slash",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=a%2Fb",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/a/b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/a/b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Owner/name are interpolated without segment encoding or validation."
+    },
+    {
+      "id": "summary-missing-fields",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Malformed successful upstream shapes are accepted."
+    },
+    {
+      "id": "summary-explicit-nulls",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": null,
+            "description": null
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": null,
+          "description": null
+        }
+      },
+      "disposition": "defect",
+      "note": "Malformed successful upstream shapes are accepted."
+    },
+    {
+      "id": "summary-array-body",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Malformed successful upstream shapes are accepted."
+    },
+    {
+      "id": "summary-boolean-body",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": false,
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {}
+      },
+      "disposition": "defect",
+      "note": "Malformed successful upstream shapes are accepted."
+    },
+    {
+      "id": "summary-status-404",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 404,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Repository not found"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "summary-status-403",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 403"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+    },
+    {
+      "id": "summary-status-429",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 429"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+    },
+    {
+      "id": "summary-status-422",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 422,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 422"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+    },
+    {
+      "id": "summary-status-500",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 500,
+          "response_headers": {},
+          "body": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 500"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+    },
+    {
+      "id": "summary-null-body",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "summary-empty-json",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "summary-network",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": {
+            "revalidate": 3600
+          },
+          "network_error": true,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "detail-complete",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-limit-from-repo",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {
+            "x-ratelimit-remaining": "49",
+            "x-ratelimit-reset": "123"
+          },
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": "49",
+            "reset": "123"
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-token-not-sent",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "github_token": "fixture-token"
+    },
+    {
+      "id": "detail-status-404",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 404,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "defect",
+      "note": "Repository status is collapsed to 500."
+    },
+    {
+      "id": "detail-status-403",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "defect",
+      "note": "Repository status is collapsed to 500."
+    },
+    {
+      "id": "detail-status-429",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "defect",
+      "note": "Repository status is collapsed to 500."
+    },
+    {
+      "id": "detail-status-500",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 500,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "defect",
+      "note": "Repository status is collapsed to 500."
+    },
+    {
+      "id": "detail-languages-404",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 404,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {},
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-languages-403",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {},
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-languages-500",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 500,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {},
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-languages-network",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "network_error": true,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-languages-invalid-json",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-readme-404",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 404,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": null,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-readme-403",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": null,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-readme-500",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 500,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": null,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-readme-network",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "network_error": true,
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": null,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-readme-empty",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-null-languages",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": null,
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Language JSON shape is not validated."
+    },
+    {
+      "id": "detail-repo-null",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "detail-repo-invalid",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-root",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-file",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "type": "file",
+            "content": "YWJj",
+            "encoding": "base64"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": {
+            "type": "file",
+            "content": "YWJj",
+            "encoding": "base64"
+          },
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-directory",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [
+            {
+              "name": "main.go",
+              "type": "file"
+            }
+          ],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [
+            {
+              "name": "main.go",
+              "type": "file"
+            }
+          ],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-empty",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-invalid-47",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=..",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid path parameter"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-invalid-48",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src%2F..%2Fa",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid path parameter"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-invalid-49",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a..b",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid path parameter"
+        }
+      },
+      "disposition": "defect",
+      "note": "Rejects any double dot, including ordinary filenames."
+    },
+    {
+      "id": "contents-invalid-50",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=%2Fsrc",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid path parameter"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-invalid-51",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src%5Ca",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid path parameter"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-first",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src&path=other",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-plus",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a+b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a%20b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-unicode",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=%E6%97%A5.txt",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/日.txt",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/%E6%97%A5.txt"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-hash",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%23b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a#b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Path interpolation changes URL semantics for reserved characters."
+    },
+    {
+      "id": "contents-query",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%3Fref%3Dx",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a?ref=x",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a?ref=x"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Path interpolation changes URL semantics for reserved characters."
+    },
+    {
+      "id": "contents-percent",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%2520b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a%20b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a%20b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Path interpolation changes URL semantics for reserved characters."
+    },
+    {
+      "id": "contents-semicolon",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a;b",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a;b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a;b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-status-404",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 404,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream status is collapsed to 500."
+    },
+    {
+      "id": "contents-status-403",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream status is collapsed to 500."
+    },
+    {
+      "id": "contents-status-429",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream status is collapsed to 500."
+    },
+    {
+      "id": "contents-status-500",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 500,
+          "response_headers": {},
+          "body": {},
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "defect",
+      "note": "Upstream status is collapsed to 500."
+    },
+    {
+      "id": "contents-network",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "network_error": true,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-invalid-json",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "contents-null-body",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {
+            "x-ratelimit-remaining": "",
+            "x-ratelimit-reset": "123"
+          },
+          "body": null,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": null,
+          "rate_limit": {
+            "remaining": "",
+            "reset": "123"
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Contents JSON shape is not validated."
+    },
+    {
+      "id": "contents-token-not-sent",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "github_token": "fixture-token"
+    },
+    {
+      "id": "contents-punctuation",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a!'()*%3A%3B%40%5B%5D%24%2C%26%3D~",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a!'()*:;@[]$,&=~",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a!'()*:;@[]$,&=~"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "contents-literal-percent",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=50%25",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/50%",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/50%"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "contents-dot-segment",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%2F.%2Fb",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a/./b",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a/b"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "contents-double-encoded-parent",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=%252e%252e%2Fprivate",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/%2e%2e/private",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/private"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "contents-query-space",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%3Fref%3Dmy%20branch",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a?ref=my branch",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/a?ref=my%20branch"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "contents-line-break",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=a%0Ab",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/a\nb",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/ab"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "defect",
+      "note": "Unescaped interpolation allows URL normalization to change the requested resource."
+    },
+    {
+      "id": "summary-malformed-json",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "raw_body": "{broken}",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "summary-truncated-json",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "raw_body": "{\"id\":",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "summary-whitespace-json",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "raw_body": "   ",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "Owner approved stable internal-error text on 2026-10-12."
+    },
+    {
+      "id": "detail-readme-utf8-bom",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "﻿# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve"
+    },
+    {
+      "id": "summary-json-utf8-bom",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo",
+          "raw_body": "﻿{\"id\":42,\"full_name\":\"octo/demo\",\"name\":\"demo\",\"owner\":{\"login\":\"octo\"},\"html_url\":\"https://github.com/octo/demo\",\"description\":null,\"stargazers_count\":7,\"forks_count\":2,\"language\":null,\"topics\":[],\"license\":null,\"created_at\":\"2024-01-01\",\"updated_at\":\"2024-02-01\",\"pushed_at\":\"2024-02-01\",\"homepage\":\"\",\"clone_url\":\"https://github.com/octo/demo.git\",\"default_branch\":\"main\",\"open_issues_count\":1,\"watchers_count\":7,\"size\":12,\"languages_url\":\"https://api.github.com/repos/octo/demo/languages\",\"extra\":\"kept only in detail\"}"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "disposition": "preserve"
+    }
+  ]
+}

@@ -95,7 +95,7 @@ Two test programs read that one file:
 - `scripts/contracts/github-search.test.mjs` runs every row against the Next.js handler.
 - `backend/internal/githubsearch/contract_test.go` runs every row against the Go handler.
 
-If both pass, the two handlers agree on every row, and that is what makes it safe to switch a route from one to the other. Neither test talks to the real GitHub. Each replaces GitHub with a stand-in that gives the reply the row names.
+If both pass, the two handlers agree on every row. Switching still requires peer review, staging measurements, cache and timeout checks, and the other ADR gates. Neither test talks to the real GitHub. Each replaces GitHub with a stand-in that gives the reply the row names. Use `go test -count=1` after changing fixtures outside the Go module so cached test results cannot hide the change.
 
 Find the loop in `contract_test.go`:
 
@@ -132,7 +132,7 @@ The contract checks the stars filters `>=50`, `<10`, `100..500` and `*`. Nothing
    go test -v -run "TestContract.*/stars-less-or-equal" ./internal/githubsearch     (from the backend folder)
    ```
 
-   The Next.js count rises from 88 to 89. The Go output shows your case running twice, once in `TestContract` and once in `TestContractOverHTTP`.
+   The search suite gains one case (other route suites may also run). Use `-count=1` in the Go command after editing fixtures. The Go output shows your case running twice, once in `TestContract` and once in `TestContractOverHTTP`.
 
 3. Break it on purpose. Change `%3D10` to `%3D11` in `expect_upstream_url`, run again, watch both suites fail on your case, then change it back.
 
@@ -145,4 +145,4 @@ A new case that describes what the programs already do needs no version change. 
 - Why you break code to test your tests
 - How one fixture file keeps Next.js and Go in agreement
 
-This is the last lesson for now. The next one arrives with the next route that moves to Go.
+Next: [Lesson 09, path parameters](../09-path-parameters/README.md).

@@ -9,6 +9,9 @@ It uses only Go's standard library: there are no third-party dependencies.
 | Route | Package | Contract |
 |---|---|---|
 | `GET /api/github/search` | `internal/githubsearch` | `../contracts/github-search/` |
+| `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
+| `GET /api/github/repo/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
+| `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -34,12 +37,18 @@ Go does not read `.env.local`. Set variables in the shell that starts the server
 
 ```
 cd backend
-go test ./...
+go test -count=1 ./...
 go vet ./...
 gofmt -l .
 ```
 
 `gofmt -l .` prints nothing when every file is formatted.
+
+Use `-count=1` after editing fixtures: they live outside this Go module and
+cached results must not be used as evidence for changed data. Repository
+fixtures run in memory and over sockets. Other tests cover cache freshness,
+refresh recovery, coalescing, cancellation, memory bounds, timeouts and body
+limits. `go test -race -count=1 ./...` needs cgo and a supported C compiler.
 
 `internal/githubsearch` runs every case in `../contracts/github-search/cases.json` twice: once in memory, checking the exact upstream URL and headers, and once over real sockets, checking the bytes on the wire. The same file drives `npm run test:contracts` against the Next.js handler. No test contacts GitHub.
 
@@ -53,6 +62,13 @@ SEFGH_GO_ROUTES=github-search
 ```
 
 `SEFGH_GO_ROUTES` is a comma-separated list of route names from `goBackendRoutes` in `../next.config.mjs`. To roll back, remove the route's name, or unset `SEFGH_GO_API_URL`, and rebuild. The Next.js handler stays in place until its route is retired.
+
+The new names are `github-repo`, `github-repo-details`, and `github-contents`.
+They remain off by default and await peer review and ADR cutover gates. The
+summary cache is local to one Go process: one-hour freshness, stale background
+refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
+and sharing, plus recorded URL-input defects, need resolution before public
+rollout. See the repository contract README for exact boundaries.
 
 To see which backend answered a request, send a blank query, which is answered with a 400 without contacting GitHub, and read the headers:
 

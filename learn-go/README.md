@@ -58,6 +58,8 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [06 HTTP handlers](06-http-handlers/README.md) | Answering a request, interfaces, middleware | `ServeHTTP` in `handler.go`, and `backend/cmd/api/main.go` |
 | [07 Calling GitHub](07-calling-github/README.md) | Making a request, timeouts, `defer` | The upstream call in `ServeHTTP`, and `isRateLimited` |
 | [08 Testing](08-testing/README.md) | Table-driven tests, and how the contract fixtures work | `backend/internal/githubsearch/contract_test.go` |
+| [09 Path parameters](09-path-parameters/README.md) | Named URL segments, router tests, URL compatibility | `backend/internal/githubrepos/handler.go`, `backend/internal/jscompat/fetchurl.go` |
+| [10 Shared cache](10-shared-cache/README.md) | Mutexes, freshness and background refresh | `backend/internal/githubrepos/cache.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 
