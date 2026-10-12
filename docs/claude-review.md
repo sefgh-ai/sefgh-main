@@ -158,3 +158,61 @@ rewrite behavior, production cache/hosting choices, staging measurements and
 independent peer review of GO-003 remain unverified. Lint still reports the
 existing 10 errors and 16 warnings in unchanged UI files. No deployment,
 route activation, live GitHub/Supabase audit or production build was performed.
+
+## GO-003 and GO-004 peer review by Claude Code — 2026-10-12
+
+Task `REVIEW-003`. Scope: GO-003 (`cd8906c` against `1e5d87f`) and GO-004 (`b0ef691` against `cd8906c`), reviewed at `b0ef691`. Read-only: no implementation, fixture, test or lesson file was changed. Experiments ran in a copy outside the repository.
+
+### Verdicts
+
+- **GO-003: accepted.** Every finding it set out to fix is fixed, and the fixes are now guarded by tests.
+- **GO-004: accepted with routing off.** No findings.
+- Neither verdict changes a cutover gate. No repository route, and not the languages route, is approved to switch on.
+
+### GO-003: the earlier experiments, repeated
+
+| REVIEW-002 finding | Before | After GO-003 |
+|---|---|---|
+| 2. Uncacheable answers made callers queue | 20 callers, one 404 key, 50 ms upstream: 20 upstream calls, slowest caller 1.0 s | 1 upstream call, all 20 callers received the 404, slowest caller 50 ms |
+| 2, continued | Not applicable | A waiter behind a fetching caller that is cancelled retries and gets a fresh result; it does not inherit the cancellation |
+| 3. Nothing logged | A transport failure produced a 500 and no log line | Two log lines naming the stage and cause. The token, owner, name and URL do not appear in them |
+| 4. `\|` and `^` in a path | 72 of 712 generated URLs differed from Node | 0 of the same 712 differ |
+| 6. Panic left a key blocked | Key stayed pending; next caller timed out | Key released; first caller gets an error; next caller succeeds |
+| 10. `wire_url` never checked against Node | No test | The Node runner asserts it for every call |
+
+Finding 5 was that the tests missed real breakage. The same deliberate breaks were applied again, with more added for the new logic:
+
+| | REVIEW-002 | REVIEW-003 |
+|---|---|---|
+| Valid breaks | 27 | 28 |
+| Caught by tests | 16 | 25 |
+| The 11 that went unnoticed in REVIEW-002 | 0 caught | 11 caught |
+
+Three breaks still pass every test. None is serious, and none blocks acceptance:
+
+1. The cache's byte count is not reduced when an entry is replaced by a refresh. The count would drift upward and cause early eviction.
+2. `Handler.fail` stops logging 5xx replies. The log line written by `fetch` is tested; this one is not.
+3. `FetchURL` stops treating a backslash as a slash. The contents route rejects backslashes before this point, so only owner and name can reach it.
+
+**Live check, new evidence.** GO-003 changed `FetchURL` to always use Go's `Opaque` URL form. Local socket tests speak HTTP/1.1, and GitHub speaks HTTP/2, so the compiled server was run once against real GitHub without a token. A summary request answered 200 in 0.9 s; the same request again answered in under 2 ms from the cache; a renamed repository (`facebook/jest`) followed GitHub's redirect and returned `jestjs/jest`; a contents request answered 200 with rate-limit values. Six unauthenticated requests were used.
+
+**Lessons.** Lesson 10 now explains what a goroutine and a channel are before relying on them, which was finding 9. Lesson 11 is accurate against `cache.go`. Its solution passes, its exercise fails without hanging or panicking, and `go vet` is clean in both modes.
+
+One observation, not a defect: `fetch` logs every non-2xx reply from GitHub at warning level, so a mistyped repository name writes a log line. That is useful now and may be noisy under real traffic.
+
+### GO-004: languages route
+
+| Check | Outcome |
+|---|---|
+| The three copies of the catalog: `src/data/github-languages.js`, the contract snapshot, and Go's embedded `catalog.json` | Identical: 565 names, same order, no duplicates |
+| Five deliberate breaks: a name changed, two names swapped, a name removed, wrong content type, an added `Cache-Control` | All 5 caught |
+| Compiled server, real request | 200 with 565 names |
+| Lesson 12 | Accurate. Solution passes; exercise fails cleanly |
+
+The design choice worth keeping: the Go catalog and the Next.js array are each tested against a third, independent snapshot, not against each other and not against themselves. Changing the catalog therefore requires changing three files on purpose.
+
+Not verified, as Codex already recorded: this route has not been exercised through the Next.js rewrite.
+
+### Still open from REVIEW-002
+
+Unchanged by these two tasks, and still required before any repository route is switched on: finding 1 (input validation and token scope, owner decision), finding 7 (non-UTF-8 README), finding 8 (one deadline for the detail route), finding 11 (no token on detail and contents), a race-detector run on a machine with a C compiler, and a check of how the rewrite forwards percent-encoded path segments.

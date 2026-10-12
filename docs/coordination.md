@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Codex (GO-004 language catalog handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (REVIEW-003 handoff).
 
 ## Start here
 
@@ -11,9 +11,46 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed GO-004 implementation and released the role. Base `cd8906c` on `main`; changes are uncommitted at handoff. GO-003 is committed at `cd8906c`. GO-003 and GO-004 peer review remain pending; no deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/GO-002b on 2026-10-12. Verdict: acceptable as merged with routing off, not ready to switch on. Eleven findings are in `claude-review.md`; the handoff is below. The SYNC-001 documentation diff was not reviewed as a separate item.
+- **Active writer:** none. Claude Code completed `REVIEW-003`, the peer review of GO-003 and GO-004, and released the role. No deployment or cutover.
+- **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
 - **Stage:** Phase 1 implementation plus the first Phase 2 slice (static languages). Search, repository summary, repository detail, contents and languages exist in Go behind off-by-default switches. Earlier review/cutover gates remain open. Nothing is deployed and no traffic has moved.
+
+## Handoff: REVIEW-003 (Claude Code, 2026-10-12)
+
+```text
+Task / scope: REVIEW-003, peer review of GO-003 (cd8906c against 1e5d87f) and
+  GO-004 (b0ef691 against cd8906c), including lessons 10, 11 and 12.
+Owner / reviewer: Claude Code reviewed Codex's work. This record is unreviewed.
+Status: review complete for both tasks. Not deployed.
+Base commit / branch / worktree: b0ef691 / main / main checkout, clean at start.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files: docs/claude-review.md (review section added) and this file. Nothing else.
+Contract or decision changes: none.
+Verdicts: GO-003 accepted. GO-004 accepted with routing off. No route is
+  approved to switch on; every earlier cutover gate remains.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - REVIEW-002 experiments repeated on the GO-003 code in a scratch copy:
+    712 generated URLs against Node, 0 mismatches (was 72); 20 concurrent
+    callers on one 404 key, 1 upstream call and 50 ms (was 20 calls, 1.0 s);
+    panic in the loader releases the key; a cancelled fetching caller does not
+    pass its cancellation to waiters; failures are logged without token or URL.
+  - 28 deliberate breaks of handler.go, cache.go and fetchurl.go: 25 caught,
+    3 not (listed in claude-review.md). All 11 missed in REVIEW-002 are caught.
+  - Compiled server against live GitHub, no token, six requests: summary 200,
+    repeat served from cache, renamed-repository redirect followed, contents 200.
+  - GO-004: three catalog copies identical (565 names); 5 of 5 breaks caught.
+  - learn-go lessons 11 and 12: exercises fail without panic or hang; go vet
+    clean in both modes; gofmt -l empty.
+  - npm run handoff: run at release; see .agent-signal.json for its result.
+Unverified: race detector (no C compiler here); the Next.js rewrite for the
+  languages route and for percent-encoded path segments; staging measurements.
+Remaining gates before any route is switched on: REVIEW-002 findings 1, 7, 8
+  and 11; the unverified items above; hosting and measurements.
+Next bounded action: Claude Code continues with GO-005a as Codex's GO-004
+  handoff specifies: characterize GET /api/github/contributions with
+  deterministic GraphQL stubs before any Go port.
+Writer released: yes
+```
 
 ## Handoff: GO-004 (Codex, 2026-10-12)
 
@@ -362,7 +399,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `SYNC-001` | Readback, documentation synchronization and verification | Implementation complete | Claude peer review |
 | `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]` | Implemented and reviewed in REVIEW-002 | Cutover gates remain |
 | `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
-| `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implementation complete, uncommitted at handoff | Claude peer review; cutover gates remain |
+| `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implemented at `cd8906c`; accepted in REVIEW-003 | Cutover gates remain |
+| `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
 | `GO-004` | Phase 2 static languages contract, embedded Go handler and lesson 12 | Implementation complete, uncommitted at handoff | Peer review and cutover gates |
 | `GO-005a / GO-005b` | Contributions GraphQL contracts, then opt-in Go port and lesson | Next bounded implementation; unassigned | Fixtures before port; record defects and await approval for behavior changes |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
