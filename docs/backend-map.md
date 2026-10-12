@@ -22,9 +22,17 @@ array matching all 565 names in `src/data/github-languages.js`, including order.
 It needs no runtime data file, upstream HTTP call, token or database access.
 The browser consumer remains `src/app/trending/page.js`; the Next handler stays.
 
-The shared fixtures now contain 87 search cases, 83 repository cases and 3
-language-catalog cases. `npm run test:contracts` runs 178 checks including fixture-integrity and rewrite
-checks; Go exercises the fixture cases in memory and over local sockets. See
+GO-005a (2026-10-12) recorded `/api/github/contributions` as contract version 1
+in `../contracts/github-contributions/`, with no Go port yet. What the recording
+found: no page or component in this checkout calls the route; its date range is
+computed in the server's time zone, so the same instant gives different ranges
+on differently configured servers; it passes GitHub's status code through to
+the caller; and it is public while spending the server token's GraphQL
+allowance, with no rate limit or cache. Eighteen cases are marked `defect`.
+
+The shared fixtures now contain 87 search cases, 83 repository cases, 3
+language-catalog cases and 95 contributions cases. `npm run test:contracts` runs 274 checks including fixture-integrity and rewrite
+checks; Go exercises the search, repository and language cases in memory and over local sockets. The contributions cases have no Go implementation yet. See
 `coordination.md` for actual checks and the remaining cutover gates. The
 historical validation section below describes the earlier snapshot only.
 

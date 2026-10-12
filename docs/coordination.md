@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (REVIEW-003 handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (GO-005a handoff).
 
 ## Start here
 
@@ -11,9 +11,63 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `REVIEW-003`, the peer review of GO-003 and GO-004, and released the role. No deployment or cutover.
+- **Active writer:** none. Claude Code completed `GO-005a` (contributions contract fixtures, no Go code) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Phase 1 implementation plus the first Phase 2 slice (static languages). Search, repository summary, repository detail, contents and languages exist in Go behind off-by-default switches. Earlier review/cutover gates remain open. Nothing is deployed and no traffic has moved.
+- **Stage:** Phase 2 of the ADR is under way; Phase 1 is built but none of its gates is closed. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1) and languages (Phase 2). Recorded as a contract but not ported: contributions (Phase 2). Nothing is deployed and no traffic has moved.
+
+## Handoff: GO-005a (Claude Code, 2026-10-12)
+
+```text
+Task / scope: GO-005a, characterize GET /api/github/contributions as contract
+  fixtures, before any Go port. Second Phase 2 route.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: implementation complete; review pending; not deployed. No Go code.
+Base commit / branch / worktree: 73429e1 / main / main checkout, clean at start.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files:
+  contracts/github-contributions/{cases.json,README.md}: 95 cases, version 1.
+  scripts/contracts/github-contributions.test.mjs: Node runner.
+  docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}: state and findings.
+  No handler, Go, routing, lesson or exercise file changed. No lesson is owed:
+  the tutorial rule applies to Go changes in backend/, and there are none.
+Contract or decision changes: none. New contract at version 1; the Next.js
+  handler is unchanged. 18 cases are marked defect and await owner decisions.
+How the fixtures were made: a one-off recorder ran the unchanged handler with
+  a fixed clock, fixed time zone and stubbed GitHub replies, and wrote the file.
+  The committed runner replays the file and never regenerates expectations.
+  Date ranges for the leap-day, India, and three daylight-saving cases, and the
+  statistics for the week, streak and rounding cases, were then checked by hand.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - node --test scripts/contracts/github-contributions.test.mjs: 96 pass
+    (95 cases plus a well-formedness check).
+  - npm run test:contracts: 274 passed, 0 failed.
+  - Ten deliberate breaks of the handler, one at a time, each then restored and
+    the file confirmed identical to HEAD: all 10 caught (364-day window, Sunday
+    not moved to Monday, weekday in UTC, status not passed through, streak not
+    sorted, two-decimal average, 40-character name, errors ignored, zero days
+    counted active, extra upstream header).
+  - npx eslint on the new runner: clean.
+  - backend Go tests, vet, gofmt and learn-go solutions: run by npm run handoff
+    at release; nothing in them changed.
+Findings recorded (details in contracts/github-contributions/README.md):
+  - No page or component in this checkout calls the route.
+  - Its date range depends on the server's time zone and daylight saving.
+  - It passes GitHub's status through, so a bad server token answers 401.
+  - A real unknown user answers 400, not the 404 the handler intends. This
+    follows GitHub's documented reply shape and was NOT observed live.
+  - It is public, spends the server token's GraphQL allowance, and has no
+    rate limit or cache.
+Unverified: live GitHub GraphQL behaviour (needs a token; none was used);
+  non-number counts and totals; undated days; methods other than GET.
+Remaining gates: Codex peer review of GO-005a. Owner decisions below before a
+  port changes any behaviour. All earlier cutover gates remain.
+Next bounded action: GO-005b, port to Go against these fixtures with a lesson,
+  routing off. Start only after the owner confirms the route is still wanted,
+  since nothing calls it. If it is, port the 18 defect cases as recorded; do
+  not fix them without an owner-approved contract change in both
+  implementations. The contract README ends with notes for the port.
+Writer released: yes
+```
 
 ## Handoff: REVIEW-003 (Claude Code, 2026-10-12)
 
@@ -401,8 +455,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
 | `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implemented at `cd8906c`; accepted in REVIEW-003 | Cutover gates remain |
 | `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
-| `GO-004` | Phase 2 static languages contract, embedded Go handler and lesson 12 | Implementation complete, uncommitted at handoff | Peer review and cutover gates |
-| `GO-005a / GO-005b` | Contributions GraphQL contracts, then opt-in Go port and lesson | Next bounded implementation; unassigned | Fixtures before port; record defects and await approval for behavior changes |
+| `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implementation complete, uncommitted at handoff | Codex peer review |
+| `GO-005b` | Go port of `github/contributions` against those fixtures, with a lesson, routing off | Not started; unassigned | Owner confirms the route is still wanted (nothing calls it) |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
 | `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |
@@ -414,6 +468,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - Hosting for the Go service, before anything is deployed.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
+- Contributions route (`GO-005a`): is it still wanted, given nothing calls it? If so, decide the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - GO-002 is already merged. The URL-input validation contract and public-only
   token scope from REVIEW-002 finding 1 remain owner decisions before cutover.
 

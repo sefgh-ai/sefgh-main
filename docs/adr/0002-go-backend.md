@@ -140,10 +140,14 @@ Its version-1 fixtures pin the full existing catalog and headers before its Go
 port. Go embeds the catalog with the standard `embed` package and the route
 stays off unless `github-languages` is explicitly enabled. No existing contract
 was changed. GO-003/GO-004 peer reviews and all cutover gates remain open.
-Next bounded Phase 2 implementation: characterize `github/contributions`
-against a stub GitHub GraphQL response before porting it; no token inspection
-or live call is required for fixtures. Keep AI and stateful domains behind
-their existing policy/schema gates.
+GO-005a (2026-10-12) characterized `github/contributions` against stubbed
+GitHub GraphQL replies: contract version 1, 95 cases, the Next.js handler
+unchanged, no Go code. Eighteen cases are `defect`. Two findings bear on
+whether to port it at all: nothing in this checkout calls the route, and its
+date range depends on the server's time zone. Next bounded Phase 2
+implementation: `GO-005b`, the Go port against those fixtures with a lesson,
+only after the owner confirms the route is still wanted. Keep AI and stateful
+domains behind their existing policy/schema gates.
 
 Progress records and test outcomes belong in `../coordination.md`. The earlier
 phase table is dated 2026-10-11; it is not a claim that later work is absent.
