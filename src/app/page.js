@@ -105,23 +105,15 @@ export default function Home() {
   }, [mounted]);
 
   // Rotate search placeholders
+  const placeholders = messages?.hero?.searchPlaceholders;
+
   useEffect(() => {
-    if (!messages) return;
+    if (!Array.isArray(placeholders) || placeholders.length === 0) return;
     const interval = setInterval(() => {
-      setSearchPlaceholder(
-        (prev) => (prev + 1) % messages.hero.searchPlaceholders.length
-      );
+      setSearchPlaceholder((prev) => (prev + 1) % placeholders.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [messages]);
-
-  if (!messages || !mounted) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-blue-400">Loading...</div>
-      </div>
-    );
-  }
+  }, [placeholders]);
 
   // The particle field and glow orbs are built for a dark ground; on white they
   // wash out to nothing. Gate them on the resolved theme as well as motion,
@@ -214,7 +206,7 @@ export default function Home() {
           {/* Search Box */}
           <div className="max-w-3xl mx-auto mb-8 sm:mb-12 px-2 sm:px-0">
             <SearchComponent
-              placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
+              placeholder={placeholders?.[searchPlaceholder] ?? ""}
               onSearch={(query) =>
                 router.push(`/search?q=${encodeURIComponent(query)}`)
               }

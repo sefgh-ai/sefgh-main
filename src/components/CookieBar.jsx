@@ -9,14 +9,25 @@ export default function CookieBar() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      setVisible(true);
+    // localStorage throws outright in a private window or when site data is
+    // blocked. Unwrapped, that error escapes the effect and takes the tree
+    // down with it.
+    let stored = null;
+    try {
+      stored = localStorage.getItem(STORAGE_KEY);
+    } catch {
+      // Treat unavailable storage as "not yet accepted" but stay silent.
+      return;
     }
+    if (!stored) setVisible(true);
   }, []);
 
   const accept = () => {
-    localStorage.setItem(STORAGE_KEY, "accepted");
+    try {
+      localStorage.setItem(STORAGE_KEY, "accepted");
+    } catch {
+      // Non-fatal: the bar reappears next visit.
+    }
     setVisible(false);
   };
 
