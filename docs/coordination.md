@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Codex (shared-plan readback and handoff synchronization).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (REVIEW-002 handoff).
 
 ## Start here
 
@@ -11,9 +11,54 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed GO-002a and GO-002b implementation, verified all local test gates, and released the writer role. Routing remains off by default; no deployment or cutover.
-- **Reviewer:** Claude Code. Peer review pending for GO-002a/GO-002b diff and SYNC-001 documentation changes.
+- **Active writer:** none. Claude Code completed `REVIEW-002`, the peer review of GO-002a and GO-002b, and released the role. Routing remains off by default; no deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/GO-002b on 2026-10-12. Verdict: acceptable as merged with routing off, not ready to switch on. Eleven findings are in `claude-review.md`; the handoff is below. The SYNC-001 documentation diff was not reviewed as a separate item.
 - **Stage:** Phase 1 of the ADR. Search, repository summary, repository detail, and contents exist in Go behind opt-in switches that are off by default. Nothing is deployed and no traffic has moved.
+
+## Handoff: REVIEW-002 (Claude Code, 2026-10-12)
+
+```text
+Task / scope: REVIEW-002, peer review of GO-002a and GO-002b (commit 6e0753d):
+  contracts/github-repositories/, backend/internal/githubrepos/,
+  backend/internal/jscompat/fetchurl.go, their tests, and lessons 09 and 10.
+Owner / reviewer: Claude Code reviewed Codex's work. This record is itself unreviewed.
+Status: review complete. Implementation was already complete. Not deployed.
+Base commit / branch / worktree: 43513d4 / main / main checkout
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files: docs/claude-review.md (review section added) and this file. Nothing else.
+Contract or decision changes: none.
+Verdict: acceptable as merged with routing off. NOT ready to switch any of the
+  three repository routes on. Eleven findings are in claude-review.md under
+  "GO-002 peer review by Claude Code".
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - All 97 fixture wire_url values recomputed with Node's URL parser: all match.
+  - jscompat.FetchURL against Node on 712 generated URLs: 640 identical;
+    72 differ, every one containing "|" or "^".
+  - 27 deliberate code breaks in a scratch copy: 16 caught by tests, 11 not.
+  - Cache, 20 concurrent callers, one 404 key, 50 ms upstream: 20 upstream calls
+    one at a time; slowest caller waited 1.0 s.
+  - Panic inside the cache loader: key stays pending; next caller times out.
+  - Non-UTF-8 README bytes: JavaScript 2, 3, 1 replacement characters for three
+    samples; Go 1, 1, 1.
+  - learn-go lessons 09 and 10: solutions pass, exercises fail without panic,
+    go vet clean.
+  - Experiments ran in a copy outside the repository; git status showed only
+    this file modified before the review section was written.
+  - npm run handoff: run at release; see .agent-signal.json for its result.
+Remaining gates before any repository route is switched on:
+  - Findings 1 to 5 resolved (finding 1 needs an owner decision and a contract
+    change in both implementations).
+  - go test -race run on a machine with a C compiler.
+  - Forwarding of percent-encoded path segments through the Next.js rewrite checked.
+  - Codex's existing gates: production cache behaviour chosen and verified,
+    outbound request measurements, peer review of any fixes.
+Not reviewed: SYNC-001's documentation diff as a separate item, and CI-000
+  beyond the handoff script's release check.
+Next bounded action: Codex takes GO-003: fix findings 2 to 6 in Go, add the
+  missing cache tests and "|" / "^" fixture cases, and add the wire_url
+  assertion to the Node runner. No contract change is needed for those.
+Writer released: yes
+```
 
 ## What was done while Codex was away
 

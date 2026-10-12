@@ -54,3 +54,73 @@ Corrections applied to shared documentation:
 - Clarified that the backend map's original source-only audit predates Claude's later reported local runtime checks.
 
 No contracts or implementation decisions changed. Existing tests passed, but fixture completeness, implementation parity outside covered cases, switch behavior and lesson accuracy still require the six requested review items. Claude has not reviewed or acknowledged this new documentation diff.
+
+## GO-002 peer review by Claude Code — 2026-10-12
+
+Task `REVIEW-002`. Scope: commit `6e0753d` (GO-002a fixtures, GO-002b Go port, lessons 09 and 10), reviewed at `43513d4`. Read-only: no implementation, fixture, test or lesson file was changed. Every experiment ran in a copy outside the repository.
+
+### Verdict
+
+- **As merged with routing off: acceptable.** On every input the fixtures cover, the Go handlers and the Next.js handlers behave the same, and no route receives traffic unless it is switched on.
+- **Not ready to switch on.** Resolve findings 1 to 5 and close the items under "Not verified" before `github-repo`, `github-repo-details` or `github-contents` is enabled anywhere public.
+
+### What was checked
+
+| Check | Outcome |
+|---|---|
+| All 97 `wire_url` values in the fixtures, recomputed with Node 21.7.1's URL parser | All 97 match |
+| `jscompat.FetchURL` against Node's URL parser on 712 generated URLs built the way the handlers build them | 640 identical. 72 differ, and all 72 contain `\|` or `^` (finding 4) |
+| 27 deliberate breaks of `handler.go`, `cache.go` and `fetchurl.go`, one at a time, then the package tests | 16 caught, 11 not caught (finding 5) |
+| 20 concurrent callers asking the cache for one key whose answer is a 404 | Finding 2 |
+| A panic inside the cache's load function | Finding 6 |
+| README bytes that are not valid UTF-8, decoded by Go and by JavaScript | Finding 7 |
+| Lessons 09 and 10 | Solutions pass, exercises fail without panicking, `go vet` clean. Each statement compared with the code (finding 9) |
+| `go test -race` | Could not run here: no C compiler, cgo disabled |
+
+Reading the three Next.js handlers beside `handler.go` line by line found no difference on valid input. Every break that would leak the server token to the wrong call was caught by the fixtures.
+
+### Findings
+
+Ordered by how much they matter. "Inherited" means the Next.js handler behaves the same way, so the port did not introduce it.
+
+1. **High, inherited: the summary route gives callers the server token's reach.** Owner and name are pasted into the GitHub URL unchecked, and dot segments are resolved, so `owner=..&name=../user` requests `https://api.github.com/user` with the server's token. Only the 20 summary fields come back, which limits what leaks, but the caller chooses the endpoint. Codex already recorded the interpolation as an open defect; this confirms it and adds a second point: even with ordinary input, if `GITHUB_TOKEN` can read private repositories, `/api/github/repo` and `/api/github/search` will return their metadata to anyone. The second point follows from GitHub's documented behaviour and was not tested; the token was not inspected. **Owner action:** confirm the token is limited to public data. **Before cutover:** validate owner and name as single GitHub name segments in both implementations, as a contract change.
+
+2. **Medium, new in Go: an answer that cannot be cached makes concurrent callers queue.** The cache lets one caller fetch while the others wait, but it only shares a 200. After any other result each waiter wakes, finds nothing stored, and fetches again in turn. Measured: 20 concurrent callers for one key answering 404, 50 ms per upstream call, produced 20 upstream calls strictly one at a time, and the slowest caller waited 1.0 s. Next.js makes those calls in parallel. No upstream call is saved and latency grows with the number of callers, during exactly the conditions (missing repository, rate limit, GitHub error) where it hurts. Suggested fix: hand the fetching caller's result, whatever it is, to the callers already waiting, and still store only a 200. Retry only when the fetching caller was cancelled.
+
+3. **Medium, new in Go: this package logs nothing.** `fetch` replaces every cause with the text `fetch failed`, and `fail` writes the 500 without recording it. The Next.js handlers call `console.error`, and the Go search handler logs through `slog`. As written, a timeout, a DNS failure, an oversized body and a GitHub 500 are indistinguishable to whoever operates the service. Suggested fix: give `Handler` a logger as `githubsearch.Handler` has, and wrap errors with `%w`.
+
+4. **Medium, new in Go: `|` and `^` in a path are not sent the way Node sends them.** Node leaves both characters as they are. `FetchURL` hands the path to `url.Parse`, and Go re-escapes them to `%7C` and `%5E`. Worse, when that happens Go rebuilds the path from its decoded form, so an encoded slash in the same path becomes a real one: `a|b%2Fc` is sent as `a%7Cb/c`, a different resource. No fixture contains either character. Both are legal in file names, so the contents route can meet them. Suggested fix: always build the result in the `Opaque` form the function already uses for invalid percent escapes, and add fixture cases.
+
+5. **Medium: the tests miss real breakage in the cache.** These breaks left every test passing:
+   - The cache stores non-200 replies. `TestCacheDoesNotStoreFailuresAndBoundsMemory` is meant to catch this but cannot fail: its cache holds 4 bytes and the 404 entry is 9, so it is rejected for size whether or not the status is checked.
+   - A background refresh is cancelled when the caller that triggered it goes away.
+   - A second refresh starts while one is already running.
+   - The newest entry is evicted in place of the oldest.
+   - An entry counts as stale only after more than an hour, not at exactly one hour.
+   - Any 2xx is stored, not only 200.
+   - The 10-second per-call timeout is removed. The timeout test passes on the client's own 20 ms timeout.
+   - Status 300 is treated as success; a repeated rate-limit header uses only its first value; a URL with credentials is accepted; `{` and `}` in a path are not escaped.
+
+   The README beside the fixtures lists refresh survival and oldest-first eviction as implemented behaviour. They are implemented, by reading, but nothing would notice if they stopped being true.
+
+6. **Low, new in Go: a panic while loading leaves its key blocked for good.** `fill` registers its cleanup after `load` returns. Measured: after a panic the key stays marked as loading, and the next caller waits until its own deadline. In the background refresh there is no `recover`, so there the panic would end the process. No path to a panic was found in `fetch`; this is about robustness. Suggested fix: `defer` the cleanup before calling `load`, and recover in the refresh goroutine.
+
+7. **Low, new in Go: a README that is not UTF-8 decodes differently.** Go's `strings.ToValidUTF8` writes one replacement character for a whole run of invalid bytes. JavaScript writes one per invalid sequence. Measured: a UTF-16 file with a byte-order mark gives 2 replacement characters in JavaScript and 1 in Go; four GBK bytes give 3 and 1. The text is unreadable either way, so only the count differs. The contract README already places malformed UTF-8 outside the fixtures. Either match JavaScript's decoder or add this to the ADR's table of recorded differences. `jscompat.ParseQuery`, from GO-001, has the same property.
+
+8. **Low, by reading only: the detail route can outlast the server's write deadline.** It makes three calls in sequence, each allowed 10 seconds, and `cmd/api` sets a 30-second write timeout. A GitHub that is slow but not failing could push the reply past the deadline, and the caller would get a dropped connection, not the JSON 500. Suggested fix: one deadline for the whole handler.
+
+9. **Low: lessons 09 and 10 assume more than lessons 00 to 08 do.** Lesson 10 uses "goroutine" and "channel" without saying what either is, and they are the two ideas the lesson depends on. Both lessons drop the closing "You now know" list the earlier ones have. Lesson 10 says other requests "wait for its completion", which is true only when the fetch succeeds (finding 2). Nothing in either lesson is wrong about Go.
+
+10. **Test gap: nothing checks `wire_url` against Node.** The Node runner compares only the raw `url`. `wire_url` is what Go must match, so a wrong value would force Go to be wrong and no test would object. All 97 are correct today. Suggested fix: have the Node runner assert that `new URL(url)`, without its fragment, equals `wire_url`.
+
+11. **Inherited, for the owner: detail and contents send no token.** GitHub allows 60 unauthenticated requests an hour per address, and one detail view costs three. That is about 20 repository pages an hour for the whole site from one server address. The port copies this faithfully. Changing it is a contract decision.
+
+### Not verified
+
+- The data-race detector has never run on the cache. It needs a C compiler, which neither agent's environment here has. Reading found every map access under the mutex and cached values only read. Run `go test -race` on Linux before cutover.
+- How Next.js forwards percent-encoded path segments, such as `%2F` in an owner, to Go for the two routes with path parameters. The fixtures call each handler directly.
+- Everything Codex already listed: live GitHub behaviour, the Next.js Data Cache in a real deployment, redirects, and measurements.
+
+### No disagreements
+
+Nothing here contradicts a decision in ADR-0002 or a statement in the contract README. Findings 1 and 11 extend open items Codex recorded. Findings 2 to 8 are new.
