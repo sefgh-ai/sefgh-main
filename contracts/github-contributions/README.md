@@ -1,15 +1,15 @@
 # GitHub contributions contract
 
-`cases.json` records what `GET /api/github/contributions?username=...` does today. Version 1 was captured from the unchanged Next.js handler (`src/app/api/github/contributions/route.js`) at commit `73429e1`, before any Go port exists.
+`cases.json` records what `GET /api/github/contributions?username=...` does. Version 1 was captured from the unchanged Next.js handler (`src/app/api/github/contributions/route.js`) at commit `73429e1`, before the Go port was written.
 
 | Implementation | Check it with |
 |---|---|
 | Next.js handler | `npm run test:contracts` |
-| Go handler | Not written yet (`GO-005b`) |
+| Go handler, `backend/internal/githubcontributions` | `go test -count=1 ./...` inside `backend/` |
 
-The runner is `scripts/contracts/github-contributions.test.mjs`. It makes no network request and needs no real token.
+The Next.js runner is `scripts/contracts/github-contributions.test.mjs`. The Go test (`contract_test.go`) runs each case twice: in memory, and over real sockets against a fake GitHub. Neither makes a network request or needs a real token.
 
-**No page or component in this checkout calls this route.** A search of `src/` finds no request to it. Confirm it is still wanted before spending effort on a port.
+**No page or component in this checkout calls this route.** A search of `src/` finds no request to it. The owner chose on 2026-10-12 to port it anyway. Its opt-in route name is `github-contributions`, off by default.
 
 ## What the route does
 
@@ -105,9 +105,10 @@ The 18 open `defect` cases fall into seven groups:
 
 ## Not covered
 
-- A `contributionCount` or `totalContributions` that is a string, boolean, list or object. JavaScript would coerce them; no case pins how.
-- Days with a missing or unparseable `date`, where the streak's sort order is not defined.
-- Methods other than GET, upstream redirects and timeouts. The handler sets no timeout.
+- A `contributionCount` or `totalContributions` that is a string, boolean, list or object. JavaScript would coerce them; no case pins how. The Go handler passes such a value through, does not count it towards `maxCount`, `activeDays` or the streak, and writes `averagePerDay` as `null` for such a total.
+- Days with a missing or unparseable `date`, where the streak's sort order is not defined. The Go handler leaves such days where they are.
+- Methods other than GET, upstream redirects and timeouts. The Next.js handler sets no timeout; the Go handler gives up after 10 seconds and answers 500.
+- A GitHub status that a reply cannot carry with a body, such as 304. Both answer 500.
 - Live GitHub behaviour. GraphQL needs a token, and none was used.
 
 ## Recorded for the owner, outside the fixtures
@@ -115,10 +116,11 @@ The 18 open `defect` cases fall into seven groups:
 - The route is public and spends the server token's GraphQL allowance. There is no sign-in check, rate limit or cache in front of it.
 - The time-zone group disappears if the range is computed in UTC. That would be a contract change in both implementations.
 
-## Notes for the Go port
+## How the Go port handles the awkward parts
 
-- Take the clock and the time zone as inputs to the handler, so a test can set `now` and `time_zone`. Default to the process's local zone, which is what the Next.js handler uses. In tests, import `time/tzdata` so named zones load on Windows.
-- `time.Date` with a day of `Day()-365` reproduces step 1. Check the skipped-hour case explicitly.
-- Truncate now to milliseconds before formatting.
-- Do the average with exact arithmetic on the float64, not `FormatFloat`.
+- The clock and the time zone are fields on the handler, `Now` and `Location`, so a test can set a case's `now` and `time_zone`. Left empty they mean the real clock and the machine's zone, which is what the Next.js handler uses. The tests import `time/tzdata` so named zones load on Windows.
+- `wallClock` in `dates.go` settles a skipped or repeated clock time the way JavaScript does, by applying the offset in force before the change. Go's `time.Date` does not promise either answer.
+- `toFixed1` rounds with exact arithmetic on the float64, not `FormatFloat`.
 - "Truthy" for `errors` means anything but `null`, `false`, `0`, `""` or a missing key.
+
+Both pieces of arithmetic were also compared with JavaScript on 24,000 random instants across 12 time zones and 200,000 random divisions, with no difference.

@@ -94,6 +94,8 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Go sends the six security headers itself | Next.js adds them to its own responses but not to responses it forwards. A Go test fails if the two lists drift |
 | Methods other than GET and HEAD get Go's standard 405 | The registered GET pattern also accepts HEAD; method parity is outside the current fixtures |
 | Query bytes that are not valid UTF-8 may decode to a different number of replacement characters | Left unspecified by the contract |
+| Contributions: a count or total from GitHub that is not a JSON number is passed through, not converted as JavaScript would | No fixture pins JavaScript's conversion, and reproducing it for every JSON type is not worth the risk |
+| Contributions: a GitHub status that cannot carry a body, such as 304, answers 500 | The Next.js handler reaches the same 500 through its catch block |
 
 ## Decisions log
 
@@ -144,10 +146,11 @@ GO-005a (2026-10-12) characterized `github/contributions` against stubbed
 GitHub GraphQL replies: contract version 1, 95 cases, the Next.js handler
 unchanged, no Go code. Eighteen cases are `defect`. Two findings bear on
 whether to port it at all: nothing in this checkout calls the route, and its
-date range depends on the server's time zone. Next bounded Phase 2
-implementation: `GO-005b`, the Go port against those fixtures with a lesson,
-only after the owner confirms the route is still wanted. Keep AI and stateful
-domains behind their existing policy/schema gates.
+date range depends on the server's time zone. The owner then chose to port it. GO-005b (2026-10-12) is that port, in
+`backend/internal/githubcontributions`, off unless `github-contributions` is
+enabled, reproducing all 18 `defect` cases as recorded, with lesson 13. Next
+bounded Phase 2 implementation: `GO-006a`, characterize `github/trending`.
+Keep AI and stateful domains behind their existing policy/schema gates.
 
 Progress records and test outcomes belong in `../coordination.md`. The earlier
 phase table is dated 2026-10-11; it is not a claim that later work is absent.

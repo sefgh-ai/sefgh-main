@@ -10,8 +10,9 @@ This is a source inspection, not a production audit. Codex traced the key reques
 
 Current implementation update (2026-10-12, GO-004): the standard-library Go
 backend in `backend/` implements search, repository summary, repository detail
-and contents, plus the static language catalog, under `adr/0002-go-backend.md`.
-All five remain off by default;
+and contents, plus the static language catalog and (GO-005b) contributions,
+under `adr/0002-go-backend.md`.
+All six remain off by default;
 every route below still has its Next.js handler. GO-003 adds shared failure
 results and panic recovery to the per-process summary cache, structured
 upstream failure logging, and wire-path preservation for `|`/`^` beside encoded
@@ -23,7 +24,9 @@ It needs no runtime data file, upstream HTTP call, token or database access.
 The browser consumer remains `src/app/trending/page.js`; the Next handler stays.
 
 GO-005a (2026-10-12) recorded `/api/github/contributions` as contract version 1
-in `../contracts/github-contributions/`, with no Go port yet. What the recording
+in `../contracts/github-contributions/`. GO-005b ported it to
+`backend/internal/githubcontributions`, off by default, reproducing the recorded
+behaviour including its defects. What the recording
 found: no page or component in this checkout calls the route; its date range is
 computed in the server's time zone, so the same instant gives different ranges
 on differently configured servers; it passes GitHub's status code through to
@@ -32,7 +35,7 @@ allowance, with no rate limit or cache. Eighteen cases are marked `defect`.
 
 The shared fixtures now contain 87 search cases, 83 repository cases, 3
 language-catalog cases and 95 contributions cases. `npm run test:contracts` runs 274 checks including fixture-integrity and rewrite
-checks; Go exercises the search, repository and language cases in memory and over local sockets. The contributions cases have no Go implementation yet. See
+checks; Go exercises every case in memory and over local sockets. See
 `coordination.md` for actual checks and the remaining cutover gates. The
 historical validation section below describes the earlier snapshot only.
 

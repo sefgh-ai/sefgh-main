@@ -62,6 +62,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels and background refresh | `backend/internal/githubrepos/cache.go` |
 | [11 Shared results](11-shared-results/README.md) | Waiting with `select`, cancellation, and preserving errors | `cacheFlight` in `cache.go`, upstream errors in `handler.go` |
 | [12 Embedded data](12-embedded-data/README.md) | `go:embed`, blank imports and serving static JSON | `backend/internal/githublanguages/handler.go` |
+| [13 Time and clocks](13-time-and-clocks/README.md) | Moments and time zones, moving by days, formatting dates, and passing the clock in so date logic can be tested | `dateRange` in `backend/internal/githubcontributions/dates.go`, and `Handler` in `handler.go` beside it |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

@@ -10,6 +10,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 |---|---|---|
 | `GET /api/github/search` | `internal/githubsearch` | `../contracts/github-search/` |
 | `GET /api/github/languages` | `internal/githublanguages` | `../contracts/github-languages/` |
+| `GET /api/github/contributions` | `internal/githubcontributions` | `../contracts/github-contributions/` |
 | `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/repo/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
@@ -73,6 +74,9 @@ SEFGH_GO_ROUTES=github-search
 The new names are `github-repo`, `github-repo-details`, and `github-contents`.
 GO-004 adds `github-languages`, a static embedded catalog with no upstream
 calls, credentials or runtime data file. It also stays disabled by default.
+GO-005b adds `github-contributions`, which needs `GITHUB_TOKEN`: without it
+every valid request answers 500. It works out its date range in the time zone
+of the machine it runs on, as the Next.js handler does.
 They remain off by default and await peer review and ADR cutover gates. The
 summary cache is local to one Go process: one-hour freshness, stale background
 refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
@@ -93,6 +97,7 @@ A header `x-sefgh-backend: go` means Go answered. Without it, Next.js did. In Po
 - **Body limit.** A GitHub reply over 16 MB is treated as a failure.
 - **Marker header.** `X-Sefgh-Backend: go`.
 - **Other methods.** Anything but GET or HEAD gets Go's standard 405.
+- **Contributions only.** A count or total from GitHub that is not a JSON number is passed through as it is; JavaScript would convert it. A GitHub status that cannot carry a body, such as 304, answers 500.
 
 Everything the contract fixtures cover is identical.
 

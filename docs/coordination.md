@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (GO-005a handoff).
+Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (GO-005b handoff).
 
 ## Start here
 
@@ -11,9 +11,84 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `GO-005a` (contributions contract fixtures, no Go code) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
+- **Active writer:** none. Claude Code completed `GO-005b` (Go port of the contributions route, lesson 13) and released the role. Changes are uncommitted at handoff. No deployment or cutover.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Phase 2 of the ADR is under way; Phase 1 is built but none of its gates is closed. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1) and languages (Phase 2). Recorded as a contract but not ported: contributions (Phase 2). Nothing is deployed and no traffic has moved.
+- **Stage:** Phase 2 of the ADR is under way; Phase 1 is built but none of its gates is closed. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1), languages and contributions (Phase 2). Left in Phase 2: trending, trending-developers and the three AI routes. Nothing is deployed and no traffic has moved.
+
+## Handoff: GO-005b (Claude Code, 2026-10-12)
+
+```text
+Task / scope: GO-005b, Go port of GET /api/github/contributions against the
+  GO-005a fixtures, with lesson 13. Routing off. The owner confirmed on
+  2026-10-12 that the route should be ported although nothing calls it.
+Owner / reviewer: Claude Code / Codex (peer review NOT run).
+Status: implementation complete; review pending; not deployed.
+Base commit / branch / worktree: cd6ad67 / main / main checkout, clean at start.
+Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Changed files:
+  backend/internal/githubcontributions/{handler.go,dates.go,query.go,
+    contract_test.go,dates_test.go,limits_test.go}: new package.
+  backend/cmd/api/main.go: registers GET /api/github/contributions.
+  next.config.mjs, scripts/contracts/go-rewrites.test.mjs: opt-in route name
+    github-contributions.
+  backend/README.md, contracts/github-contributions/README.md.
+  learn-go/13-time-and-clocks/{README.md,lesson.go,exercise.go,
+    exercise_test.go,solution.go}, learn-go/README.md: new lesson and index row.
+  docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}.
+  Not changed: the fixtures, the Next.js handler, any existing exercise.go.
+Contract or decision changes: none. Contract stays at version 1. All 18
+  defect cases are reproduced as recorded, not fixed. Standard library only.
+Design notes for the reviewer:
+  - The clock and the time zone are fields on Handler (Now, Location). Nil
+    means time.Now and the machine's zone, matching the Next.js handler.
+  - dates.go has its own wallClock helper in place of time.Date / AddDate,
+    because Go leaves a skipped or repeated clock time unspecified and
+    JavaScript does not. A first version returned its result in UTC and failed
+    every non-UTC case; the fixtures and the Node-derived table caught it.
+  - toFixed1 rounds with math/big on the exact float64, because
+    strconv.FormatFloat sends an exact tie to the even digit (0.25 -> 0.2).
+  - query.go was generated from the fixture's recorded text and is checked
+    against it by TestQueryMatchesTheContract.
+Checks run and exact outcome (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+  - backend: go test -count=1 ./... passes all six packages; go vet clean;
+    gofmt -l empty. The new package runs the 95 cases in memory and over
+    sockets (190 subtests) plus unit and limit tests.
+  - npm run test:contracts: 274 passed, 0 failed.
+  - Large comparison with JavaScript in a scratch copy: 24,000 random instants
+    across 12 time zones, 0 date ranges differ; 200,000 random divisions,
+    0 rounded values differ.
+  - Deliberate breaks in a scratch copy: 31 valid, 29 caught at first. The two
+    misses led to changes: a redundant truncation was removed, and the
+    body-limit test was rewritten so that it fails when the limit is removed.
+    Five further breaks of logging and limits were then all caught.
+  - One new test hung on its first run: a fake GitHub waited for a hang-up
+    that Go's server cannot see while a POST body is unread. Fixed in the test.
+  - Compiled server against a local stand-in for GitHub's GraphQL endpoint,
+    dummy token: 200 with the expected grid and statistics; the stand-in
+    received POST /graphql with the bearer token, JSON content type and the
+    three variables; an invalid name answered 400 with no upstream call; POST
+    answered 405. Marker and security headers present.
+  - learn-go: go test -tags solution ./... passes all 14 packages; go vet clean
+    in both modes; gofmt -l empty; lesson 13's exercise fails without panic.
+  - npx eslint next.config.mjs scripts/contracts: clean.
+  - npm run build with the switch variables unset: passed, exit 0.
+Unverified:
+  - Live GitHub GraphQL. It needs a real token and none was used, so the
+    reply shapes for an unknown user and for errors rest on documentation.
+  - The Next.js rewrite for this route in dev or a production build. Only the
+    rewrite configuration is unit-tested.
+  - The race detector (no C compiler here). The handler holds no shared state.
+Recorded differences from the Next.js handler, outside the fixtures (also in
+  ADR-0002): a 10-second timeout; a 16 MiB reply limit; a count or total that
+  is not a JSON number is passed through without JavaScript's coercion; a
+  status that cannot carry a body answers 500.
+Remaining gates: Codex peer review of GO-005a and GO-005b. Owner decisions on
+  the seven groups of defect cases. All earlier cutover gates.
+Next bounded action: GO-006a, characterize GET /api/github/trending as
+  fixtures. It calls GitHub search and adds a random starsToday value, so the
+  runner must fix the random source as this one fixes the clock.
+Writer released: yes
+```
 
 ## Handoff: GO-005a (Claude Code, 2026-10-12)
 
@@ -455,8 +530,9 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
 | `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implemented at `cd8906c`; accepted in REVIEW-003 | Cutover gates remain |
 | `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
-| `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implementation complete, uncommitted at handoff | Codex peer review |
-| `GO-005b` | Go port of `github/contributions` against those fixtures, with a lesson, routing off | Not started; unassigned | Owner confirms the route is still wanted (nothing calls it) |
+| `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implemented at `cd6ad67` | Codex peer review |
+| `GO-005b` | Go port of `github/contributions` against those fixtures, with lesson 13, routing off | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
+| `GO-006a` | Contract fixtures for `github/trending`, fixing its random `starsToday` source | Not started; unassigned | Nothing |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
 | `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |
@@ -468,7 +544,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - Hosting for the Go service, before anything is deployed.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
-- Contributions route (`GO-005a`): is it still wanted, given nothing calls it? If so, decide the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
+- Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - GO-002 is already merged. The URL-input validation contract and public-only
   token scope from REVIEW-002 finding 1 remain owner decisions before cutover.
 

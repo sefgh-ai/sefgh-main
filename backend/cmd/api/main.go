@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
@@ -31,6 +32,12 @@ func run(logger *slog.Logger) error {
 
 	mux := http.NewServeMux()
 	githublanguages.Register(mux)
+	mux.Handle("GET /api/github/contributions", &githubcontributions.Handler{
+		Client:  &http.Client{Timeout: githubcontributions.DefaultTimeout},
+		BaseURL: envOr("GITHUB_API_URL", githubcontributions.DefaultBaseURL),
+		Token:   os.Getenv("GITHUB_TOKEN"),
+		Logger:  logger,
+	})
 	repositories := githubrepos.New(&http.Client{Timeout: githubsearch.DefaultTimeout},
 		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), os.Getenv("GITHUB_TOKEN"))
 	repositories.Logger = logger
