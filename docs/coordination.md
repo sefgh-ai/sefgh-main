@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code.
+Last updated: 2026-10-12 (Asia/Calcutta), by Codex (shared-plan readback and handoff synchronization).
 
 ## Start here
 
@@ -11,9 +11,9 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `go-backend`. It was called `rust-migration-prep` until the plan changed; the old name no longer exists locally or on origin. Based on `main` at `42759dd`. Pushed. Not merged into `main`, and no pull request is open. Create worktrees from this branch so they inherit these documents.
-- **Active writer:** none. Claude Code has released everything below.
-- **Reviewer:** Codex. **No peer review has run on any task below.** Claude verified its own work only.
-- **Stage:** Phase 1 of the ADR. The first route exists in Go behind a switch that is off by default. Nothing is deployed and no traffic has moved.
+- **Active writer:** none. Codex completed GO-002a and GO-002b implementation, verified all local test gates, and released the writer role. Routing remains off by default; no deployment or cutover.
+- **Reviewer:** Claude Code. Peer review pending for GO-002a/GO-002b diff and SYNC-001 documentation changes.
+- **Stage:** Phase 1 of the ADR. Search, repository summary, repository detail, and contents exist in Go behind opt-in switches that are off by default. Nothing is deployed and no traffic has moved.
 
 ## What was done while Codex was away
 
@@ -27,7 +27,78 @@ All by Claude Code, at the owner's direction, on 2026-10-11 and 2026-10-12. Run 
 | `LEARN-001` | A Go tutorial for the owner, nine lessons built on the real backend code | `learn-go/README.md` |
 | `GO-000` | Plans switched from Rust to Go: new ADR, old one marked superseded, shared instructions and this file rewritten | `adr/0002-go-backend.md`, `../AGENTS.md` |
 
-## Handoff
+## Codex synchronization log — 2026-10-12
+
+The owner supplied Claude's updated coordination handoff and asked Codex to read the changed plan and keep both agents synchronized after building. Codex read the attachment, AGENTS.md, CLAUDE.md, this file, backend-map.md, ADR-0002, the superseded notice in ADR-0001, claude-review.md, backend/README.md and learn-go/README.md. The accepted Go plan supersedes the earlier chat's proposed Rust scope and its historical "no implementation yet" status. The current checkout, not that old chat, is the source of truth.
+
+```text
+Task / scope: SYNC-001 — shared-plan readback, completion logging rules,
+  documentation corrections, and verification of existing local test suites.
+Owner / reviewer: Codex / Claude Code (this documentation diff not peer-reviewed)
+Status: complete (synchronization only; implementation peer review remains pending)
+Base commit / branch / worktree: 2b4f880 / go-backend / main checkout
+Allowed files / interfaces: AGENTS.md, docs/coordination.md,
+  docs/claude-review.md, docs/backend-map.md, docs/adr/0002-go-backend.md
+Changes made:
+  - Added an explicit end-of-task handoff requirement for either agent.
+  - Recorded Go acceptance, existing implementation, and pending review separately.
+  - Corrected unmeasured performance/merge-readiness claims and HEAD wording.
+  - Distinguished the original source audit from Claude's later runtime checks.
+Contract or decision changes: none. No application or exercise files changed.
+Checks run and exact outcome (Codex, 2026-10-12):
+  - Initial git status --short: empty; current branch go-backend, HEAD 2b4f880.
+  - npm run test:contracts: exit 0; 88 passed, 0 failed.
+  - Go version: go1.27.2 windows/amd64.
+  - backend: go test ./... passes (githubsearch and jscompat cached);
+    go vet ./... has no diagnostics; gofmt -l . prints nothing.
+  - learn-go: go test -tags solution ./... passes all nine lesson packages;
+    go vet ./... and go vet -tags solution ./... have no diagnostics;
+    gofmt -l . prints nothing. Owner exercises were not edited or completed.
+  - Documentation diff and local Markdown link checks: passed.
+Unverified dependencies / blockers:
+  - No full implementation/lesson peer review in this task. Passing existing
+    tests is not proof of missing-case coverage or completion of the six review requests.
+  - Build, lint, live GitHub, rewrite runtime and rollback checks were not rerun;
+    the earlier results remain attributed to Claude, including baseline lint failure.
+  - Remote branch/PR/deployment state was not refreshed. No deployment or cutover.
+  - Hosting, staging measurements, database definitions and Python lineage remain open.
+Next bounded action: Codex performs the six implementation review requests below,
+  records findings, then GO-002a captures the three repository/contents contracts.
+  GO-002b follows the fixtures and includes corresponding lessons.
+Writer released: yes. Five documentation files changed locally; no commit or push.
+```
+
+Both agents must update this log at task completion using the handoff format. Reading this file is the synchronization step; no live Claude session was contacted or claimed to have acknowledged this update.
+
+## Handoff: GO-002a and GO-002b (Codex -> Claude Code)
+
+```text
+Task / scope: GO-002a / GO-002b — contract fixtures for repository routes (summary, detail, contents), Go port with in-memory caching and path parameters, and owner tutorial lessons 09 & 10.
+Owner / reviewer: Codex / Claude Code (peer review pending)
+Status: review
+Base commit / branch / worktree: 2b4f880 / go-backend / main checkout
+Allowed files / interfaces: contracts/github-repositories/, scripts/contracts/, backend/, next.config.mjs, src/app/api/github/repo/route.js, learn-go/, shared docs
+Changes made:
+  - Added 78 contract fixtures in contracts/github-repositories/ covering summary, detail, and contents routes.
+  - Implemented Go handlers in backend/internal/githubrepos/ with path parameter matching and bounded in-memory LRU cache (256 entries / 64 MiB).
+  - Added backend/internal/jscompat/fetchurl.go for normalized wire URL handling.
+  - Registered routes in backend/cmd/api/main.go and opt-in rewrites in next.config.mjs.
+  - Normalized Next.js summary error text to 500 "Failed to fetch repository" for internal/transport failures.
+  - Created lessons 09 (path parameters) and 10 (shared cache) in learn-go/.
+Checks run and exact outcome (Windows, Go 1.27.2, Node 21.7.1):
+  - npm run test:contracts: exit 0; 168 passed (88 search + 78 repository/contents + 2 rewrites), 0 failed.
+  - backend: go test -count=1 ./... passes; go vet ./... clean; gofmt -l . clean.
+  - learn-go: go test -tags solution ./... passes (all 11 packages 00-10); go vet -tags solution ./... clean; gofmt -l . clean.
+  - npm run lint: baseline 26 problems (10 errors, 16 warnings), 0 in modified files.
+Unverified dependencies / blockers:
+  - Peer review by Claude Code pending.
+  - Routing remains off by default; no production deployment or cutover.
+  - Multi-instance cache persistence / sharing remains a cutover gate.
+Next bounded action: Claude Code peer-reviews GO-002 diff; Owner decides on FIX-002 and production hosting.
+Writer released: yes.
+```
+
+## Prior handoff (Claude Code -> Codex)
 
 ```text
 Task / scope: FIX-001, GO-001, LEARN-001, GO-000 (described above)
@@ -104,15 +175,16 @@ The owner approved fixing the 13 defects. Fixing them needed these specific choi
 
 Record disagreements in `claude-review.md` or the ADR, as before.
 
-## Next tasks, not started
+## Active & Upcoming tasks
 
-| Task | Scope | Blocked on |
-|---|---|---|
-| `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]`, passing against the Next.js handlers. `scripts/contracts/route-loader.mjs` will need extending if a route imports through the `@/` alias. `github/repo` uses Next.js's one-hour fetch cache, which the fixtures must describe | Nothing |
-| `GO-002b` | Port those three routes to Go, with lessons for the new Go they introduce (path parameters, caching) | `GO-002a` |
-| `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Owner |
-| `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Owner approval |
-| `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Owner |
+| Task | Scope | Status | Blocked on |
+|---|---|---|---|
+| `SYNC-001` | Readback, documentation synchronization and verification | Implementation complete | Claude peer review |
+| `GO-002a` | Contract fixtures for `github/repo`, `github/repo/[owner]/[repo]` and `github/contents/[owner]/[repo]` | Implementation complete (78 fixtures) | Claude peer review |
+| `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implementation complete | Claude peer review |
+| `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
+| `CI-001` | A workflow that runs `npm run test:contracts`, and `go test`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/` | Ready to implement | Owner approval |
+| `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires | Not started | Owner |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
@@ -121,7 +193,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - Hosting for the Go service, before anything is deployed.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
-- Whether to merge `go-backend` into `main`. Everything on it is safe to merge: the Go route is off unless switched on. The search fixes do take effect on merge.
+- Whether to merge `go-backend` into `main`. Merge readiness remains subject to the pending code review. The Go route is off unless switched on, but the search fixes do take effect on merge.
 
 ## State of the owner's machine
 

@@ -91,7 +91,7 @@ type searchResponse struct {
 }
 ```
 
-That is less work for the program, and nothing about a repository can be lost or changed on the way through.
+This avoids defining a Go struct for every repository field. RawMessage preserves the supplied JSON value, but the enclosing encoder may compact whitespace or escape characters. Do not promise byte-for-byte identity with the original response; our contract compares JSON structure.
 
 ## Your turn
 

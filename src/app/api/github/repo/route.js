@@ -39,7 +39,10 @@ export async function GET(request) {
           { status: 404 }
         )
       }
-      throw new Error(`GitHub API error: ${response.status}`)
+      return NextResponse.json(
+        { error: `GitHub API error: ${response.status}` },
+        { status: 500 }
+      )
     }
 
     const repo = await response.json()
@@ -70,7 +73,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('Error fetching repository:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch repository' },
+      { error: 'Failed to fetch repository' },
       { status: 500 }
     )
   }

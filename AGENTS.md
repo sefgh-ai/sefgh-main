@@ -22,6 +22,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - Browser data access is substantial: `src/lib/supabase`, hooks, contexts, and playground components. Migrating API routes alone is not a full backend migration.
 - Checks for the app: `npm run lint`, `npm run build`, and `npm run test:contracts` (fixtures against the Next.js handlers). There is no general `npm test` script. `npm run lint` already fails on the baseline; see `docs/backend-map.md`.
 - Checks for Go, run inside `backend/`: `go test ./...`, `go vet ./...`, and `gofmt -l .`, which must print nothing.
+- After fixture changes, use `go test -count=1 ./...`: `contracts/` is outside the Go module, so cached results are not verification of changed fixtures.
 - Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go\bin`. A shell started before the install may not find `go`; add that folder to `PATH` for the command.
 - Local secrets live outside shared documentation. Never copy `.env.local`, tokens, cookie values, or private agent transcripts into handoffs.
 
@@ -32,6 +33,8 @@ Check `git status --short` and the current commit before editing. The architectu
 - Before taking over, confirm the previous writer has released the task and re-read the diff. Do not reset, clean, stash, or overwrite another agent's work.
 - Keep decisions in the ADR and current progress in the coordination file. Avoid separate conflicting plans in private agent memory.
 - Handoffs must state changed files, actual checks/results, unverified dependencies, and the next bounded task. Claim a peer review only when it actually ran.
+- Before calling a bounded task finished, update `docs/coordination.md` in the same change with the task ID, owner/reviewer, base and resulting commit (or explicitly uncommitted state), changed files, checks and outcomes, remaining gates, next action, and writer release. Distinguish implementation complete, review complete, and deployed; none implies the others. Keep prior results attributed to the agent that ran them.
+- Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
 - Keep the reviewer read-only unless the user or the current task explicitly assigns implementation. Do not recursively launch more agents by default.
 
 ## The owner's Go tutorial

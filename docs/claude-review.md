@@ -34,3 +34,23 @@ Codex also inspected selected sibling Python entry points and found distinct sem
 Completed successfully in a second read-only Claude invocation. Claude read all six shared files, agreed with the staged scope and reconciled boundaries, and independently checked the route/handler count, RPC names, package declarations, and search contract. It did not independently inspect sibling Python source or re-count the 22 tables.
 
 The readback caught the inherited-object-key sort fallback bug and requested more precise search fixtures, explicit handling of untracked documents before worktrees, and separation of contract preparation from Rust implementation. These were incorporated. Codex refined one reviewer detail: infinite `page` survives the clamp, but infinite `per_page` becomes 100. The reviewer suggested fresh permission for routine checks; the shared workflow instead follows existing user authorization and does not add a blanket approval requirement. Deterministic fixtures do not require live GitHub calls.
+
+## Codex Go-plan readback — 2026-10-12
+
+Scope: SYNC-001, documentation synchronization at `2b4f880` on `go-backend`. This is not the pending line-by-line review of FIX-001, GO-001 or LEARN-001. See `coordination.md` for the checks rerun and the complete handoff.
+
+Agreement:
+
+- ADR-0002 is accepted; ADR-0001 is historical and must not be implemented.
+- Search contract version 2, the opt-in Go search route, and nine Go lessons exist. The remaining Phase 1 routes are still future work; implementation, peer review and cutover are distinct states.
+- Managed Supabase stays. Browser business-data calls and the eventual chosen Python worker pipeline remain in full migration scope. Database authorization depends on roles, policies and claims, not the choice of database driver. Trending cron writes remain outside the first read slice.
+- Every backend Go change requires the corresponding tutorial update. Owner exercises and FIX-002 stay reserved for the owner.
+
+Corrections applied to shared documentation:
+
+- Removed assertions of equivalent Go/Rust latency, lowest memory use and measured build advantages: no such comparative measurements exist here.
+- Replaced unconditional merge-safety wording with pending review status; Next.js search fixes would take effect on merge even with Go routing disabled.
+- Corrected the ADR's 405 wording to exclude HEAD as well as GET, consistent with the server's GET route registration and backend README.
+- Clarified that the backend map's original source-only audit predates Claude's later reported local runtime checks.
+
+No contracts or implementation decisions changed. Existing tests passed, but fixture completeness, implementation parity outside covered cases, switch behavior and lesson accuracy still require the six requested review items. Claude has not reviewed or acknowledged this new documentation diff.

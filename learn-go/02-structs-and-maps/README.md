@@ -42,7 +42,7 @@ option := sortOption{sort: "stars", order: "desc"}
 fmt.Println(option.sort)   // stars
 ```
 
-Two structs of the same type can be compared with `==`. They are equal when all their fields are equal.
+Two structs of the same type can be compared with `==` when all their fields are comparable, as these string fields are. They are equal when all their fields are equal. A struct containing a slice, map or function cannot generally be compared this way.
 
 ## Maps
 

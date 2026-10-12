@@ -6,7 +6,7 @@
 
 ## The problem in the app
 
-A search request can ask for any page: `page=2`, `page=0`, `page=99999`. GitHub only has pages 1 to 1000, so the handler squeezes whatever arrives into that range. Squeezing a number into a range is called *clamping*.
+A search request can ask for any page: `page=2`, `page=0`, `page=99999`. GitHub exposes only the first 1000 search results; the last usable page depends on page size. Our handler applies a coarse page bound of 1 to 1000, which does not guarantee GitHub accepts every page. Squeezing a number into a range is called *clamping*.
 
 The Next.js handler does it like this:
 
