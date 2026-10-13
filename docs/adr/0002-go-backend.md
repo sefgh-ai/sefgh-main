@@ -138,7 +138,7 @@ Open, for the owner:
 - The search navbar sends `sort=stars` and `sort=updated`, which the API ignores. Recorded as `defect` cases. Either teach the API those names or change the navbar to send the names the API knows.
 - **Private implementation and verification (agents).** Policy is decided. AUTH-001 removes server-token fallback from the five migrated dynamic GitHub handlers. Private UI integration, other server-token call sites, independent review and live OAuth verification remain. No production token permissions were inspected.
 - How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected. See the hosting proposal below.
-- Public and guest policy for the AI endpoints, and playground key semantics, before Phase 2 and 3.
+- Public and guest policy for the AI endpoints, and playground key semantics, before Phase 2 and 3. Four specific decisions, with recommendations, are in "AI routes: decisions needed before a port" below.
 
 ## Hosting proposal (not decided, nothing deployed)
 
@@ -168,6 +168,27 @@ Either way, in this order. Step 1 is done; every later step waits for the owner'
 5. Switch on one route that sends no token, `github-languages`, and practise the rollback.
 
 Nothing here needs a paid resource according to the documentation. That is a reading of the pricing pages, not a measurement; check the usage page after the first preview.
+
+## AI routes: decisions needed before a port (proposal, not decided)
+
+Written by Claude Code on 2026-10-13. All three AI routes are now recorded as fixtures: suggestions (AI-001a, 35 cases), enhance-query (AI-001b, 62) and chat (AI-001c, 42). No provider was contacted, and nothing about the live site, its keys or its usage was inspected. The Go ports wait for the four answers below, because each one changes what the port has to do.
+
+What the fixtures show today:
+
+- None of the three routes checks who is calling or how often.
+- Chat sends any caller's messages to GitHub Models with the server's `GITHUB_TOKEN`. A caller who includes a system message replaces the application's instructions, so the route works as an open relay to the model, paid for by that token.
+- Chat returns the provider's error text to the caller.
+- Enhance-query calls OpenAI or Anthropic with `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`, using model names fixed in the source.
+- Nothing streams. `streamAIResponse` only throws.
+
+| # | Decision | Options | Recommendation |
+|---|---|---|---|
+| 1 | Who may call each route | (a) anyone, as today; (b) signed-in users only; (c) anyone, with a small allowance for visitors and a larger one for signed-in users | Chat: (b). It is the expensive route and the only one that carries a conversation. Suggestions and enhance-query sit in the public search box: (c). Whether the chat page is meant to work signed out was not established from the source |
+| 2 | Limits per caller and per request | Requests per period; messages per request; characters per request | Start with fixed limits in the Go process: 20 messages and 8,000 characters per chat request, 500 characters per query, 30 requests per five minutes per caller. They are starting values to adjust from real usage, not measurements. A counter in one process does not hold across instances, so a shared counter in Supabase is the later step and needs its table definition first |
+| 3 | Keys and providers | Keep three keys and three providers; or one provider for all three routes; a key for AI separate from the GitHub API token | Give AI its own key, not the variable the GitHub API code reads. Confirm with each provider that the address and model named in the source are still served before porting them: that was not checked here, and a retired model or address would already be failing on the live site |
+| 4 | Which recorded defects to fix in the port | Reproduce all of them; or fix a named set in Next.js and Go together, with a version change | Fix the three that affect safety, in both implementations: provider and internal error text returned to callers; a caller's system message replacing the application's; unchecked message shapes. Leave the cosmetic ones (word-list matches, title fallback) recorded |
+
+Once answered, the port is three bounded tasks: a session check that reuses the Supabase half of `backend/internal/githubaccess`, with the limits; suggestions and enhance-query; chat. Each stays off by default like every other route.
 
 ## Measurements
 
@@ -282,3 +303,11 @@ developers 57 cases, trending 34, AI suggestions 35. Five rows were added to
 the recorded differences above. Next: characterize `ai/enhance-query` and
 `ai/chat` the same way. No AI port before the owner's guest, quota and key
 decisions.
+
+AI-001b and AI-001c (2026-10-13): Claude Code recorded `ai/enhance-query` (62
+cases, 10 defect) and `ai/chat` (42 cases, 16 defect) with only the provider's
+HTTP call replaced. The chat fixtures run the real `src/lib/ai/github.js`, so
+the provider request is pinned too. Every Phase 2 route now has fixtures; the
+three AI ports wait for the owner's answers in the proposal above. Next work
+that needs no decision: independent review of AUTH-001, AUTH-002, CI-001,
+VERIFY-002 and VERIFY-003.

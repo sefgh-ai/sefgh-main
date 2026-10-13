@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: GO-007b / lesson 18 / AI-001a / REVIEW-005 handoff.
+Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: AI-001b / AI-001c / AI policy proposal handoff.
 
 ## Start here
 
@@ -11,11 +11,55 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released the batch GO-007b / lesson 18 / AI-001a / REVIEW-005, which Codex began. Uncommitted at handoff. No deployment or cutover.
+- **Active writer:** none. Claude Code completed and released AI-001b / AI-001c / AI policy proposal. Uncommitted at handoff. No deployment or cutover.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`) and GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: AUTH-001, AUTH-002, CI-001, VERIFY-002, VERIFY-003. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. AI suggestions is characterized, not ported. Hosted CI, including the race detector, passed at `259ff7b`; this batch has not run there yet. No route is cut over and no new deployment evidence exists. Next: AI-001b, fixtures for `ai/enhance-query`, then `ai/chat`.
+- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. Every Phase 2 route has fixtures: the eight GitHub reads are ported, the three AI routes are recorded and wait for four owner decisions (see the ADR). Hosted CI, including the race detector, passed at `259ff7b`; later commits have not been checked there by an agent. No route is cut over and no new deployment evidence exists.
 
-## Latest handoff: GO-007b / lesson 18 / AI-001a / REVIEW-005 (Codex implementation; Claude Code review and completion, 2026-10-13)
+## Latest handoff: AI-001b / AI-001c / AI policy proposal (Claude Code, 2026-10-13)
+
+Status: **fixtures and documentation complete; awaiting independent review; no source, Go or route change; not deployed**.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base b5745b32d68a75d3bddf4926ae098da4d7cf23cc.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `b5745b3`).
+
+Done:
+- AI-001b: 62 fixtures (10 defect) for `POST /api/ai/enhance-query`. The real handler runs; the two provider keys, global fetch and console.error are replaced and restored.
+- AI-001c: 42 fixtures (16 defect) for `POST /api/ai/chat`. The real handler and the real `src/lib/ai/github.js` run, so the provider request (address, headers, model, system prompt) is pinned as well.
+- A proposal for the owner in adr/0002-go-backend.md: four decisions, each with a recommendation, that the AI ports wait for.
+- Every Phase 2 route now has fixtures. Eight are ported (the GitHub reads); the three AI routes are recorded only.
+
+Findings worth the owner's attention (recorded as `defect` cases, nothing fixed):
+- Chat checks no caller and no limit, and a caller's system message replaces the application's. It is an open relay to the model on the server's `GITHUB_TOKEN`.
+- Chat returns provider and internal error text to the caller.
+- Enhance-query answers 500 on any provider failure and does not use its own basic enhancement as a fallback.
+
+Changed files (all new except the shared docs):
+- scripts/contracts/{enhance-fixture.mjs,ai-enhance-query.test.mjs,chat-fixture.mjs,ai-chat.test.mjs}
+- contracts/ai-enhance-query/{cases.json,README.md}, contracts/ai-chat/{cases.json,README.md}
+- docs/{coordination.md,adr/0002-go-backend.md,backend-map.md}
+No file under src/, backend/ or learn-go/ changed, so no lesson and no production probe.
+
+Checks (Claude Code, Windows, Node 21.7.1):
+- The two new test files: 106 of 106.
+- `npm run test:contracts`: 589 of 589.
+- Fixture sensitivity: 63 changes to the two handlers and the helper, applied in memory through a module loader so no source file was written. 62 were noticed at first; the miss, one trigger word, got its own case and is now noticed.
+- ESLint on scripts/contracts: clean. `git diff --check`: exit 0.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: any live provider, key, model name, address or usage. Three failures whose message is the JavaScript engine's own wording are described in the chat README and not pinned.
+
+Remaining gates: owner's four AI decisions before any AI port; independent review of this batch and of AUTH-001, AUTH-002, CI-001, VERIFY-002, VERIFY-003; a hosted CI run that includes the last two batches; anonymous GitHub quota; hosting, Vercel forwarding, measurements, rollback.
+Next bounded action that needs no decision: REVIEW-006, independent review of AUTH-001 and AUTH-002 with full suites and deliberate breaks. With the owner's answers: AI-002, the session check and limits in Go.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: AI-001b / AI-001c / AI policy proposal (Claude Code, 2026-10-13)
+
+Status: active. Claude Code owns this batch; reviewer unassigned. Base/current main @ b5745b3 (the Git Agent committed the previous batch); tree clean at start; previous writer released.
+Objective: record what the two remaining AI routes do today, before any port. enhance-query calls OpenAI or Anthropic directly; chat calls GitHub Models through src/lib/ai/github.js. Only global fetch and the environment are replaced; the real handlers and the real helper run. Fixture keys are obvious fakes. No provider is contacted and no real key is read.
+Plan: 1) enhance-query harness, cases, runner, README; 2) chat harness, cases, runner, README; 3) deliberate in-memory handler changes to check the fixtures notice; 4) policy proposal in the ADR; 5) full contracts, ESLint, diff check, handoff. No Go change, so no lesson and no production probe.
+Milestone 1: both harnesses, runners and fixture files are written and pass. New files: scripts/contracts/{enhance-fixture.mjs,ai-enhance-query.test.mjs,chat-fixture.mjs,ai-chat.test.mjs}, contracts/ai-enhance-query/cases.json (62 cases, 10 defect), contracts/ai-chat/cases.json (42 cases, 16 defect). Focused run of the two test files: 106 of 106. ESLint on scripts/contracts clean. Fixture sensitivity: 63 changes to the handlers and the helper, applied in memory only, 62 noticed at first; the miss (one trigger word) got its own case and is now noticed. No source file under src/ or backend/ changed.
+Still to do: the two contract READMEs, the policy proposal in the ADR, shared docs, full contracts, diff check, handoff. If interrupted: the fixture files are complete and self-checking; only documentation is missing. No processes running. Account usage is not visible to Claude Code.
+
+## Handoff: GO-007b / lesson 18 / AI-001a / REVIEW-005 (Codex implementation; Claude Code review and completion, 2026-10-13)
 
 Status: **bounded local implementation complete and reviewed by the other agent; not deployed; no route switched on**.
 Owner: Codex wrote GO-007b, lesson 18 and AI-001a and stopped on a usage limit at its pre-final checkpoint. Claude Code took the batch over at the owner's instruction, ran the outstanding checks, reviewed it (REVIEW-005 in claude-review.md) and fixed what the review found. Codex has not seen those fixes.
@@ -1271,11 +1315,13 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
 | `GO-006b` | Trending Go port and lesson 17 | Committed 4640b10; logging and JSON decoding reviewed and fixed in REVIEW-005 | Rest of it unreviewed; cutover gates |
 | `GO-007a` | Trending-developers characterization | Committed 259ff7b; 57 fixtures/23 defects after REVIEW-005 | Cutover gates |
-| `GO-007b` | Trending-developers Go port and lesson 18 | Implemented by Codex; reviewed and completed by Claude Code (REVIEW-005); uncommitted at handoff | Hosted CI run; anonymous quota decision; cutover gates |
-| `AI-001a` | Fixtures for `POST /api/ai/suggestions`, AI call stubbed | 35 fixtures/8 defects; written by Codex, reviewed by Claude Code (REVIEW-005); uncommitted at handoff | Owner's AI guest, quota and key decisions before any port |
-| `REVIEW-005` | Claude Code review of GO-007b, lesson 18, AI-001a, with fixes | Complete; recorded in claude-review.md | Codex has not seen the fixes |
-| `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, AI call stubbed | Not started; next | Nothing |
-| `AI-001c` | Fixtures for `POST /api/ai/chat`, AI call and Supabase stubbed | Not started | AI-001b first |
+| `GO-007b` | Trending-developers Go port and lesson 18 | Committed b5745b3; reviewed in REVIEW-005 | Hosted CI run; anonymous quota decision; cutover gates |
+| `AI-001a` | Fixtures for `POST /api/ai/suggestions`, AI call stubbed | Committed b5745b3; 35 fixtures/8 defects; reviewed in REVIEW-005 | Owner's AI decisions before any port |
+| `REVIEW-005` | Claude Code review of GO-007b, lesson 18, AI-001a, with fixes | Committed b5745b3 | Codex has not seen the fixes |
+| `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, provider call stubbed | 62 fixtures/10 defects; uncommitted at handoff | Independent review; owner's AI decisions before any port |
+| `AI-001c` | Fixtures for `POST /api/ai/chat` with the real helper, provider call stubbed | 42 fixtures/16 defects; uncommitted at handoff | Independent review; owner's AI decisions before any port |
+| `AI-002` | Session check and limits for AI routes in Go, then the three AI ports | Not started | Owner's four decisions in the ADR |
+| `REVIEW-006` | Independent review of AUTH-001 and AUTH-002, with full suites and deliberate breaks | Not started; next task that needs no decision | Nothing |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
@@ -1283,7 +1329,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval. Two options and a recommendation are in "Hosting proposal" in `adr/0002-go-backend.md`.
-- AI endpoint and playground-key policy, before Phases 2 and 3.
+- **AI routes: four decisions**, before any AI port: who may call each route, limits, keys and providers, and which recorded defects to fix. Options and a recommendation for each are in "AI routes: decisions needed before a port" in `adr/0002-go-backend.md`. Today chat is an open relay to the model on the server's token. Playground-key policy is separate and still open, before Phase 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
 - **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.

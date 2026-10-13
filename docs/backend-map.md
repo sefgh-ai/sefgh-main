@@ -229,3 +229,14 @@ trending and trending-developers handlers to read GitHub replies as
 failed. Fixture counts are now 57 for trending developers (23 defect), 34 for
 trending and 35 for AI suggestions. No browser, Supabase, worker or deployment
 boundary changed. Findings are in `claude-review.md` under REVIEW-005.
+
+## AI-001b / AI-001c update (2026-10-13)
+
+All three AI routes are characterized; none is ported. `ai/enhance-query`
+calls OpenAI or Anthropic directly from its handler with `OPENAI_API_KEY` or
+`ANTHROPIC_API_KEY`. `ai/chat` and `ai/suggestions` go through
+`src/lib/ai/github.js`, which calls GitHub Models with `GITHUB_TOKEN`. None of
+the three checks the caller or limits use. Fixtures: `contracts/ai-suggestions`
+(35), `contracts/ai-enhance-query` (62), `contracts/ai-chat` (42). No provider
+was contacted and no live key, usage or deployment was inspected. The Go
+inventory is unchanged at eight routes.
