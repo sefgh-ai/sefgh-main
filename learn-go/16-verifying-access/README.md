@@ -73,3 +73,6 @@ The real issuer calls and two-user isolation are tested separately using
 GO-006b adds `/api/github/trending` to the public-only exceptions alongside
 health and languages. It ignores incoming credentials and never forwards a
 GitHub token, matching its Next.js handler; this is not private search.
+
+GO-007b adds public-only `/api/github/trending-developers`, ignoring caller
+credentials and forwarding no token. Lesson 18 explains its bounded workers.

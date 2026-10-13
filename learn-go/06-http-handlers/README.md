@@ -145,3 +145,6 @@ Next: [Lesson 07, calling GitHub](../07-calling-github/README.md).
 
 GO-006b registers `GET /api/github/trending` in githubMux. It is a public-only
 handler with clock/random functions; lesson 17 explains those inputs.
+
+GO-007b adds public-only `/api/github/trending-developers`, ignoring caller
+credentials and forwarding no token. Lesson 18 explains its bounded workers.

@@ -54,7 +54,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [02 Structs and maps](02-structs-and-maps/README.md) | Grouping data, looking things up, the "comma ok" form | `sortOptions` in the same file |
 | [03 Strings and bytes](03-strings-and-bytes/README.md) | What a string really is, loops, building text | `EncodeURIComponent` in `backend/internal/jscompat/jscompat.go` |
 | [04 Errors](04-errors/README.md) | Errors are ordinary values, not exceptions | `parseRequest` in `request.go` |
-| [05 JSON](05-json/README.md) | Struct tags, `null` versus missing, pointers | `rateLimit` and `errorResponse` in `backend/internal/githubsearch/handler.go` |
+| [05 JSON](05-json/README.md) | Struct tags, `null` versus missing, pointers, and JSON whose shape you cannot trust | `rateLimit` and `errorResponse` in `backend/internal/githubsearch/handler.go`, and `DecodeJSON` in `backend/internal/jscompat/json.go` |
 | [06 HTTP handlers](06-http-handlers/README.md) | Answering a request, interfaces, middleware | `ServeHTTP` in `handler.go`, and `backend/cmd/api/main.go` |
 | [07 Calling GitHub](07-calling-github/README.md) | Making a request, timeouts, `defer` | The upstream call in `ServeHTTP`, and `isRateLimited` |
 | [08 Testing](08-testing/README.md) | Table-driven tests, and how the contract fixtures work | `backend/internal/githubsearch/contract_test.go` |
@@ -67,6 +67,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [15 Settings from the environment](15-settings-from-the-environment/README.md) | Environment variables, handing a function to a function, and refusing a bad setting at start-up | `listenAddr` in `backend/cmd/api/main.go` |
 | [16 Verifying access](16-verifying-access/README.md) | Middleware, online identity verification, deadlines and private cache isolation | `backend/internal/githubaccess/access.go` and `backend/cmd/api/main.go` |
 | [17 Clocks and randomness](17-clocks-and-randomness/README.md) | Function injection, local calendar arithmetic, deterministic random fixtures | `backend/internal/githubtrending/handler.go` |
+| [18 Bounded parallel work](18-bounded-parallel-work/README.md) | Goroutines, semaphore channels, WaitGroup and ordered results | `backend/internal/githubdevelopers/handler.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

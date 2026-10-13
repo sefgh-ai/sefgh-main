@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 )
 
@@ -35,6 +36,9 @@ func TestSecurityHeadersMatchNextConfig(t *testing.T) {
 // A handler that outlasts the write timeout gets its caller a dropped
 // connection, not a reply.
 func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
+	if githubdevelopers.Timeout >= writeTimeout {
+		t.Fatal("developers timeout exceeds write timeout")
+	}
 	if githubrepos.DetailTimeout >= writeTimeout {
 		t.Errorf("githubrepos.DetailTimeout is %v, which is not below the server's write timeout of %v", githubrepos.DetailTimeout, writeTimeout)
 	}

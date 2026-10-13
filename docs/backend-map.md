@@ -212,3 +212,20 @@ src/hooks/trending/useTrendingData.js. Its search fans out to at most twenty
 repository reads. HTTP enrichment failures create fallback cards; transport
 or malformed-JSON failures may fail the whole response. No credential is sent.
 Source behavior and the seven-route Go inventory are unchanged. GO-007b is next.
+
+## GO-007b / AI-001a update (2026-10-13)
+
+Eight Go routes now include trending-developers, public-only, default-off, with
+four enrichment slots and joined workers. AI suggestions has 32 fixture cases
+at the generateAIResponse boundary; no AI provider integration or production
+AI behavior changed. Browser/Supabase/worker/deployment boundaries unchanged.
+
+## REVIEW-005 update (2026-10-13)
+
+Trending developers is ported (eight Go routes, all opt-in) and reviewed by
+Claude Code. `backend/internal/jscompat/json.go` adds `DecodeJSON`, used by the
+trending and trending-developers handlers to read GitHub replies as
+`response.json()` does. Both handlers take a logger and record why a request
+failed. Fixture counts are now 57 for trending developers (23 defect), 34 for
+trending and 35 for AI suggestions. No browser, Supabase, worker or deployment
+boundary changed. Findings are in `claude-review.md` under REVIEW-005.

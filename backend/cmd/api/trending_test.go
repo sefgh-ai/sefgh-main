@@ -25,20 +25,22 @@ func TestTrendingStaysPublicWithoutForwardingCredentials(t *testing.T) {
 		t.Error("public trending selected a private handler")
 		return http.NotFoundHandler()
 	})
-	req := httptest.NewRequest("GET", "/api/github/trending", nil)
-	req.Header.Set("Authorization", "Bearer not-a-session")
-	req.Header.Set("X-GitHub-Token", "must-not-leak-either")
-	rec := httptest.NewRecorder()
-	h.ServeHTTP(rec, req)
-	if rec.Code != 200 || rec.Body.String() != "[]\n" {
-		t.Fatalf("got %d %s", rec.Code, rec.Body.String())
-	}
-	select {
-	case call := <-seen:
-		if call != "/search/repositories||" {
-			t.Fatalf("unexpected upstream: %q", call)
+	for route, upstreamPath := range map[string]string{"/api/github/trending": "/search/repositories", "/api/github/trending-developers": "/search/users"} {
+		req := httptest.NewRequest("GET", route, nil)
+		req.Header.Set("Authorization", "Bearer not-a-session")
+		req.Header.Set("X-GitHub-Token", "must-not-leak-either")
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, req)
+		if rec.Code != 200 || rec.Body.String() != "[]\n" {
+			t.Fatalf("got %d %s", rec.Code, rec.Body.String())
 		}
-	default:
-		t.Fatal("missing upstream request")
+		select {
+		case call := <-seen:
+			if call != upstreamPath+"||" {
+				t.Fatalf("unexpected upstream: %q", call)
+			}
+		default:
+			t.Fatal("missing upstream request")
+		}
 	}
 }

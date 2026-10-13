@@ -1,7 +1,7 @@
 # GitHub trending characterization (GO-006a)
 
 Version 1 pins the existing `GET /api/github/trending` handler at `7e0820c`.
-There are 33 cases, including 13 marked `defect`, plus a fixture integrity
+There are 34 cases, including 13 marked `defect`, plus a fixture integrity
 check. No production Next.js trending source was changed. The GO-006b update below records its later Go port.
 
 Run `node --test scripts/contracts/github-trending.test.mjs`, or all contracts
@@ -43,10 +43,17 @@ Vercel forwarding and cutover gates still apply.
 
 ## Go port (GO-006b)
 
-`backend/internal/githubtrending` now runs all 33 fixtures through handler and
+`backend/internal/githubtrending` now runs all 34 fixtures through handler and
 local HTTP-server tests. `Now` and `Random` functions inject the fixture inputs.
 Runtime defaults are local time.Now and concurrent-safe math/rand/v2.Float64.
 No contract or production Next trending behavior changed. Extra tests cover
 request cancellation, oversized/trailing replies, and tokenless routing.
 The public route is opt-in as `github-trending`; lesson 17 accompanies it.
 Peer review, hosted race, quota and deployment gates still apply.
+
+## REVIEW-005 additions (Claude Code, 2026-10-13)
+
+`byte-order-mark` pins that `response.json()` skips a leading byte-order mark.
+Go answered 500 for it until the handler moved to `jscompat.DecodeJSON`, which
+reads a reply as `response.json()` does. The Go handler also writes one log
+record for a failed request: the stage and the cause, never the address.

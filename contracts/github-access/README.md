@@ -57,3 +57,6 @@ scope was inspected. This is not a claim that the whole live site's policy is fi
 GO-006b: `/api/github/trending` is public-only, like health/languages, and does
 not run the identity verifier. It ignores all supplied credentials and never
 sends a GitHub token. Its unchanged Next handler behaves the same way.
+
+GO-007b: `/api/github/trending-developers` is also public-only, matching its
+Next handler. It bypasses identity verification and forwards no credentials.

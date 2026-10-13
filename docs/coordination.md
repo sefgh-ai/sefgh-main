@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-13 (Asia/Calcutta), by Codex: completed local batch and recovery handoff.
+Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: GO-007b / lesson 18 / AI-001a / REVIEW-005 handoff.
 
 ## Start here
 
@@ -11,9 +11,126 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed GO-007a characterization and local verification. Go port GO-007b is next; review/cutover gates remain.
-- **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Seven of 25 API routes implemented in Go (28% of route implementation, not total migration); rewrites off by default. GO-007a developers fixtures complete; next GO-007b port + lesson 18. Verified Go cutover remains zero. No new deployment evidence.
+- **Active writer:** none. Claude Code completed and released the batch GO-007b / lesson 18 / AI-001a / REVIEW-005, which Codex began. Uncommitted at handoff. No deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`) and GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: AUTH-001, AUTH-002, CI-001, VERIFY-002, VERIFY-003. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. AI suggestions is characterized, not ported. Hosted CI, including the race detector, passed at `259ff7b`; this batch has not run there yet. No route is cut over and no new deployment evidence exists. Next: AI-001b, fixtures for `ai/enhance-query`, then `ai/chat`.
+
+## Latest handoff: GO-007b / lesson 18 / AI-001a / REVIEW-005 (Codex implementation; Claude Code review and completion, 2026-10-13)
+
+Status: **bounded local implementation complete and reviewed by the other agent; not deployed; no route switched on**.
+Owner: Codex wrote GO-007b, lesson 18 and AI-001a and stopped on a usage limit at its pre-final checkpoint. Claude Code took the batch over at the owner's instruction, ran the outstanding checks, reviewed it (REVIEW-005 in claude-review.md) and fixed what the review found. Codex has not seen those fixes.
+Branch main; base 259ff7ba125bfb367e3fbba211e277a05f41476d.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `259ff7b`).
+
+What the batch contains:
+- GO-007b (Codex): `GET /api/github/trending-developers` in Go, `backend/internal/githubdevelopers`. Public-only, no credential forwarded, four lookups at a time, 25 seconds for the whole request, off unless `github-trending-developers` is enabled.
+- Lesson 18 (Codex): bounded parallel work.
+- AI-001a (Codex): fixtures for `POST /api/ai/suggestions` with the AI call stubbed. No AI code in Go, no provider call.
+- REVIEW-005 (Claude Code): findings and fixes below.
+
+Codex's tree as found, checked by Claude Code before changing anything:
+backend gofmt/vet clean; `go test -count=1 ./...` 9 packages; build; learn-go
+vet both ways and 19 solution packages; `npm run test:contracts` 470/470;
+ESLint on next.config.mjs and scripts/contracts clean; `git diff --check`
+clean; production probe 55 of 55, exit 0.
+
+Review fixes by Claude Code (all in this batch):
+- Trending and trending developers logged nothing on failure. Each now takes a
+  Logger and writes one error record per failed request: stage and cause,
+  never the address. Wired in cmd/api/main.go.
+- New `jscompat.DecodeJSON` reads a GitHub reply as `response.json()` does
+  (leading byte-order mark skipped, digits kept, nothing after the value).
+  Both handlers use it; before, a byte-order mark was a 500 in Go only.
+- Developers: a search entry that is not an object, a login that is not a
+  string, and a repository reply that is a string are now handled as the
+  Next.js handler handles them.
+- Fixtures added from the unchanged Next.js handlers, existing cases
+  byte-identical, no version raised: developers 48 -> 57 (23 defect),
+  trending 33 -> 34, ai-suggestions 32 -> 35.
+- Lesson 18's test now requires two calls to really run together. Lesson 18
+  and lesson 05 explain the new Go. No exercise.go changed.
+- Two differences from Next.js are left on purpose, recorded in the ADR and
+  pinned by a Go test each: a numeric login keeps its digits; an object reply
+  with a `length` field counts as no repositories.
+
+Final checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` 9 packages pass; `go build -o bin/api.exe ./cmd/api` ok.
+- learn-go: gofmt -l empty; go vet clean with and without the solution tag; `go test -count=1 -tags solution ./...` 19 packages pass; lesson 18 as shipped fails its test without panicking; its solution passed 5 runs.
+- `npm run test:contracts`: 483 of 483.
+- ESLint on next.config.mjs and scripts/contracts: clean. `git diff --check`: exit 0.
+- Production forwarding probe on the rebuilt binary: 55 of 55 identical, exit 0.
+- Differential check, developers route: 32 inputs outside the fixtures, Next.js against Go. 12 differed before the fixes; the two recorded differences remain.
+- 21 deliberate breaks of the fixes in a scratch copy: 20 caught at first; the survivor led to one more fixture, after which it was caught.
+- The test table for DecodeJSON and jsString was run against Node; one row was wrong (Node 21 accepts two byte-order marks) and is now a recorded difference.
+- Hosted CI: `node scripts/agent-handoff.mjs --status --ci` reported the Backend verification run 38351494790 on 259ff7b as completed, success. That run includes `go test -race`. It does not cover this batch.
+
+Changed files, beyond Codex's 22 listed in the checkpoint below:
+- backend/internal/jscompat/{json.go,json_test.go} (new)
+- backend/internal/githubdevelopers/{handler.go,review_test.go}
+- backend/internal/githubtrending/{handler.go,review_test.go}
+- backend/cmd/api/main.go (Logger for both handlers)
+- contracts/{github-trending-developers,github-trending,ai-suggestions}/{cases.json,README.md}
+- learn-go/18-bounded-parallel-work/{README.md,exercise_test.go}, learn-go/05-json/README.md, learn-go/README.md
+- docs/{coordination.md,claude-review.md,backend-map.md,adr/0002-go-backend.md}, backend/README.md
+
+Remaining gates:
+- Independent review of AUTH-001, AUTH-002, CI-001, VERIFY-002 and VERIFY-003. Codex has not reviewed REVIEW-005's fixes.
+- A hosted CI run that includes this batch.
+- Anonymous GitHub quota: one developers call makes up to 21 requests without a credential, against a limit of 60 an hour per address. Owner decision, shared with search, summary and trending.
+- Hosting, Vercel forwarding, measurements, rollback under traffic: unchanged.
+- AI: guest policy, quotas and key ownership before any AI port.
+
+Next bounded action: AI-001b, fixtures for `POST /api/ai/enhance-query` with the AI call stubbed, then the same for `POST /api/ai/chat`. Those two complete the characterization of Phase 2's routes. No AI port before the owner's policy decisions.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical takeover checkpoint: Claude Code, batch GO-007b / lesson 18 / AI-001a (2026-10-13)
+
+Status: active. Claude Code claimed the writer role by owner instruction after
+Codex's usage limit. Tree on arrival: main @ 259ff7b, 22 uncommitted files as
+Codex's pre-final checkpoint below lists; `node scripts/agent-handoff.mjs
+--status` reported WRITER_ACTIVE, signalMatchesTree false. No file other than
+this one changed yet. No processes running. Account usage is not visible to
+Claude Code; no remaining percentage is claimed.
+Milestone 1 (Claude Code): Codex's tree, unaltered, passed every outstanding
+check: backend gofmt/vet clean, `go test -count=1 ./...` 9 packages, build of
+bin/api.exe, learn-go vet both ways and 19 solution packages, lesson 18 fails
+as shipped without panicking, `npm run test:contracts` 470/470, ESLint on
+next.config.mjs and scripts/contracts clean, `git diff --check` clean,
+production probe 55 of 55 exit 0.
+Milestone 2: differential check of the developers route, 32 inputs outside
+the 48 fixtures, Next.js handler against Go in a scratch copy: 20 agree, 12
+differ (entries that are not objects; a login that is an object, array or
+non-canonical number; a repository reply that is a string or an object with
+`length`; a leading byte-order mark). None is something GitHub sends.
+Milestone 3 (Claude Code): fixes written and passing in the changed packages
+(`go test -count=1` jscompat, githubdevelopers, githubtrending, cmd/api; gofmt
+and vet clean). New: backend/internal/jscompat/{json.go,json_test.go},
+backend/internal/githubdevelopers/review_test.go,
+backend/internal/githubtrending/review_test.go. Changed by Claude Code:
+githubdevelopers/handler.go, githubtrending/handler.go, cmd/api/main.go
+(Logger wiring), learn-go/18-bounded-parallel-work/exercise_test.go, and
+fixtures added without touching existing cases: developers 48 -> 56,
+trending 33 -> 34, ai-suggestions 32 -> 35.
+Still to do: full suites and production probe on the final tree, deliberate
+breaks (running), lesson text for the new Go, REVIEW-005, ADR rows, handoff.
+If interrupted: run `npm run test:contracts`, then in backend `go test
+-count=1 ./...`; both are expected to pass on the tree as it stands.
+
+## Historical pre-final checkpoint (Codex): batch GO-007b / lesson 18 / AI-001a (2026-10-13)
+
+Status: active, all three implementations written. Developers focused Go checks passed: 48 cases in two modes plus real upstream fan-out/order and cancellation. Main route/public exception/default-off switch added; lesson 18 exercise/solution/tests written, prior exercises untouched. AI suggestions 32 fixtures/8 defects and integrity check passed (33/33), actual provider stubbed. Docs/index updated. Initial Go harness mismatch with opaque URL.String fixed; no known implementation failure remains. No running processes. Base/current 259ff7b, main, uncommitted.
+
+Next long operations: full fresh Go tests/vet/format/build, lesson solutions/vet, all Node contracts/lint, production probe with 55 URLs. Checkpoint files: backend/internal/githubdevelopers/, backend/cmd/api/{main.go,main_test.go,trending_test.go}, backend/internal/githubaccess/access.go, next.config.mjs, scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs,ai-suggestions-loader.mjs,suggestions-fixture.mjs,ai-suggestions.test.mjs}, contracts/ai-suggestions/, learn-go/18-bounded-parallel-work/, lesson06/16/index and backend/access/developers/shared docs. No deployment/cutover, peer review or hosted race result claimed.
+
+## Batch milestone (2026-10-13)
+
+Status: active. GO-007b handler and all 48 fixtures pass in memory/local HTTP. Wire test verifies four-request fan-out and result order; cancellation test verifies workers joined. First test run failed because fixture transport used URL.String on jscompat's opaque URLs; fixed harness to inspect scheme/host/RequestURI, production unchanged. Routing/public exemption/default-off switch wired; focused Go packages passed. Lesson 18 and AI suggestions harness written; AI fixtures not recorded yet. Base/current 259ff7b main, uncommitted. No owned processes running. Next: record AI fixtures, lesson/docs, final full suites/build/probe, single batch handoff. No deployment or provider calls.
+
+## Batch checkpoint: GO-007b / lesson 18 / AI-001a (2026-10-13)
+
+Status: active. Owner requested 2-3 related tasks per turn. Codex owns this batch; reviewer unassigned. Base/current main @ 259ff7ba125bfb367e3fbba211e277a05f41476d; starting tree clean; previous writer released. Go developers port will preserve all 48 cases/17 defects, limit concurrent enrichment to four, use a 25-second whole-request deadline and no credentials, remain default-off. Lesson 18 covers bounded parallel work. AI-001a records suggestions route behavior with only the AI dependency stubbed; no provider calls, production AI port or guest-policy decision implied.
+
+Next: implement developers Go and fixture tests, wire route, add lesson; checkpoint; record AI fixtures, then one final full verification/handoff. No tests run yet, no owned processes running, no secret reads. Existing review/hosted CI/auth/quota/cache/deployment gates remain. Progress metric is 7/25 built routes (28%), not a weighted whole-migration percentage.
 
 ## Latest handoff: GO-007a (Codex, 2026-10-13)
 
@@ -1147,15 +1264,18 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `AUTH-001` | Two-token verification & private repo isolation across 5 dynamic GitHub routes + Lesson 16 | Committed 7e0820c | Independent review |
 | `AUTH-002` | Public repository page & starred enrichment isolation (18 tests) | Implementation complete & verified (387/387) | Independent review |
 | `VERIFY-003` | Exact credentials & wrong-session 401 forwarding check (50/50 production probe) | Implementation complete & verified | Independent review |
-| `GO-006a` | Characterize trending with fixed clock/random inputs; no production fix | 33 fixtures written & verified (387/387) | Independent review before cutover; GO-006b next |
-| `GO-006b` | Port `GET /api/github/trending` to Go + Lesson 17 | Unassigned; ready to start | GO-006a complete |
+| `GO-006a` | Characterize trending with fixed clock/random inputs; no production fix | Committed 7831c0b; 34 fixtures after REVIEW-005 | Independent review before cutover |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
-| `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Committed at 7e0820c; hosted Linux `npm ci` lockfile fix in progress | Independent review and hosted run |
+| `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Committed; hosted run 38351494790 on 259ff7b succeeded | Independent review; a run for each later commit |
 | `OPS-001a` | PORT support and lesson 15 | Committed 905c1d9; reviewed in REVIEW-004 | Deployment gates |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
-| `GO-006b` | Trending Go port and lesson 17 | Implementation/local checks complete, uncommitted | Independent review and cutover gates |
-| `GO-007a` | Trending-developers characterization | 48 fixtures/17 defects complete locally | Independent review/cutover gates |
-| `GO-007b` | Trending-developers Go port and lesson 18 | Unassigned | Follow version-1 contract; preserve marked defects |
+| `GO-006b` | Trending Go port and lesson 17 | Committed 4640b10; logging and JSON decoding reviewed and fixed in REVIEW-005 | Rest of it unreviewed; cutover gates |
+| `GO-007a` | Trending-developers characterization | Committed 259ff7b; 57 fixtures/23 defects after REVIEW-005 | Cutover gates |
+| `GO-007b` | Trending-developers Go port and lesson 18 | Implemented by Codex; reviewed and completed by Claude Code (REVIEW-005); uncommitted at handoff | Hosted CI run; anonymous quota decision; cutover gates |
+| `AI-001a` | Fixtures for `POST /api/ai/suggestions`, AI call stubbed | 35 fixtures/8 defects; written by Codex, reviewed by Claude Code (REVIEW-005); uncommitted at handoff | Owner's AI guest, quota and key decisions before any port |
+| `REVIEW-005` | Claude Code review of GO-007b, lesson 18, AI-001a, with fixes | Complete; recorded in claude-review.md | Codex has not seen the fixes |
+| `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, AI call stubbed | Not started; next | Nothing |
+| `AI-001c` | Fixtures for `POST /api/ai/chat`, AI call and Supabase stubbed | Not started | AI-001b first |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
@@ -1166,7 +1286,8 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - AI endpoint and playground-key policy, before Phases 2 and 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
-- **CI-001 is approved and implemented locally.** Independent review and the first hosted run remain; no further owner approval is needed to add the workflow.
+- **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.
+- **Anonymous GitHub quota.** Search, summary, trending and trending developers call GitHub without a credential. GitHub allows 60 requests an hour per address that way, and one trending-developers call uses up to 21. Decide whether anonymous traffic may use a server credential that can read only public data. Until then these routes will run out under modest use, in Next.js as well as in Go.
 
 ## State of the owner's machine
 

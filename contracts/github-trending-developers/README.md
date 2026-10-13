@@ -1,8 +1,9 @@
 # Trending developers contract (GO-007a)
 
 Version 1 characterizes the unchanged `GET /api/github/trending-developers`
-handler at `086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3`. There are 48 cases,
-17 marked `defect`, plus two integrity/ordering checks. The caller is
+handler at `086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3`. There are 57 cases,
+23 marked `defect`, plus two integrity/ordering checks. GO-007a recorded 48;
+REVIEW-005 added nine from the same unchanged handler. The caller is
 `src/hooks/trending/useTrendingData.js`. No production behavior was changed.
 
 Run:
@@ -77,3 +78,43 @@ GO-007b: implement the Go handler with a clock, controlled fan-out, resource
 bounds, shared fixtures, public-only/no-credential routing, default-off switch
 and owner lesson 18. This recording is not a Go implementation, independent peer
 review, deployed verification or authorization to waive cutover gates.
+
+## GO-007b implementation
+
+Go implements every case, in memory and via a local HTTP server.
+Upstream calls are compared as a multiset because goroutine scheduling differs.
+A real upstream socket test verifies four concurrent requests and ordered output.
+The implementation bounds each reply to 2 MiB, HTTP calls to 10 seconds, and
+the whole request to 25 seconds. It waits for workers instead of leaving them
+running after an early Promise.all failure. These operational differences do
+not change recorded response contracts. Lesson 18 and a default-off switch ship
+with this port. Review, quota, hosted race and cutover gates remain.
+
+## REVIEW-005 additions (Claude Code, 2026-10-13)
+
+A differential check sent 32 inputs outside the first 48 cases to the Next.js
+handler and to Go. Twelve answers differed. Nine cases now pin what the
+Next.js handler does, and Go matches them:
+
+| Case | Next.js behaviour | Disposition |
+|---|---|---|
+| `search-byte-order-mark`, `repository-byte-order-mark` | `response.json()` skips a leading byte-order mark | preserve |
+| `number-in-place-of-user`, `array-in-place-of-user` | A search entry that is not an object is treated as a user with no fields; `/users/undefined/repos` is requested | defect |
+| `boolean-login`, `object-login`, `array-login` | A login that is not a string is converted to text (`true`, `[object Object]`, `a,b`) and looked up | defect |
+| `repository-reply-is-text` | A string reply has a length, so its first character is read as a repository with no fields | defect |
+| `repository-reply-is-empty-text` | An empty string has length zero and is answered like an empty list | preserve |
+
+These add to defect 5 above: nothing checks the shape of what GitHub returns.
+GitHub does not send any of them.
+
+Two differences are deliberate, listed in `docs/adr/0002-go-backend.md` and
+pinned by `TestRecordedDifferencesFromNextJS`, not by fixtures:
+
+- A numeric login keeps the digits GitHub sent. For `1.0` Go asks for
+  `/users/1.0/repos`; JavaScript prints the number as `1`.
+- A repository reply that is a JSON object is "no repositories" in Go even if
+  it has a `length` field. Next.js reads the length, finds no first element
+  and answers 500.
+
+The Go handler writes one log record for a failed request: the stage and the
+cause, never the address. The Next.js handler logs with `console.error`.

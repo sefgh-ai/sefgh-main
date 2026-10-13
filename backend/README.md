@@ -9,6 +9,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | Route | Package | Contract |
 |---|---|---|
 | `GET /api/github/search` | `internal/githubsearch` | `../contracts/github-search/` |
+| `GET /api/github/trending-developers` | `internal/githubdevelopers` | `../contracts/github-trending-developers/` |
 | `GET /api/github/trending` | `internal/githubtrending` | `../contracts/github-trending/` |
 | `GET /api/github/languages` | `internal/githublanguages` | `../contracts/github-languages/` |
 | `GET /api/github/contributions` | `internal/githubcontributions` | `../contracts/github-contributions/` |
@@ -140,3 +141,17 @@ responses and injected randomness, including 13 defect cases. The handler has
 a 10-second upstream timeout and 16 MiB body limit, and honors cancellation.
 It preserves fabricated starsToday and local-time date calculation pending
 contract decisions. No private data, database access or shared cache.
+
+## Developers (GO-007b)
+
+Opt-in name: `github-trending-developers`, off by default. Public-only; no token
+is forwarded. Shared v1 fixtures preserve status/body/date/URL behavior and
+known defects. Up to 20 enrichments run with four concurrent slots, 10-second
+per-call timeout and one 25-second request deadline; replies are capped at 2 MiB
+each. Workers are joined before responding and result order follows search order.
+These bounds deliberately differ from the unbounded Next Promise.all.
+
+Trending and trending developers read GitHub's replies with `jscompat.DecodeJSON`
+and write one log record for a failed request: the stage and the cause, without
+the address. Two deliberate differences from the Next.js developers handler are
+listed in the ADR and pinned by `TestRecordedDifferencesFromNextJS`.

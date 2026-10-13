@@ -1581,6 +1581,35 @@
         ],
         "random_calls": 0
       }
+    },
+    {
+      "id": "byte-order-mark",
+      "disposition": "preserve",
+      "reason": "response.json() skips a leading byte-order mark.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "raw_body": "﻿{\"items\":[]}"
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
     }
   ]
 }

@@ -94,11 +94,11 @@ The table above is dated 2026-10-11. This is where Phase 1 stood after `VERIFY-0
 | Review findings (REVIEW-002) | 1 to 10 addressed; AUTH-001 implements per-user credentials for finding 11, pending independent review | Reviewer |
 | Who may see private repositories | **Decided:** signed-in users, only their own GitHub account's access. API implemented; private UI and live OAuth checks remain | Agents; no repeated owner policy decision |
 | Rewrite forwards requests unchanged | VERIFY-002 extends the probe to production and 49 requests including bearer forwarding and mismatch denial. Not checked on Vercel | Agent on an approved preview |
-| Race detector | CI-001 workflow added under owner implementation authorization. A successful hosted run is still required | GitHub Actions after synchronization |
+| Race detector | First hosted result recorded: run 38351494790 on `259ff7b`, success, read through `agent-handoff.mjs --status --ci` on 2026-10-13. Later commits each need their own run | GitHub Actions on each push |
 | Hosting for the Go service | **Open.** Proposal below | Owner |
 | Staging latency and resource comparison | Not started. Needs hosting | Owner, then an agent |
 | Tested rollback | Met locally. Not tested under real traffic | Needs hosting |
-| Peer review | REVIEW-004 records Codex review of GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a. New changes await independent review | Assigned reviewer |
+| Peer review | REVIEW-004: Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a. REVIEW-005: Claude Code reviewed GO-007b, lesson 18 and AI-001a, and the logging and decoding of GO-006b. AUTH-001, AUTH-002, CI-001, VERIFY-002 and VERIFY-003 await independent review | Assigned reviewer |
 
 ## Recorded differences between Go and Next.js
 
@@ -114,6 +114,11 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Methods other than GET and HEAD get Go's standard 405 | The registered GET pattern also accepts HEAD; method parity is outside the current fixtures |
 | Contributions: a count or total from GitHub that is not a JSON number is passed through, not converted as JavaScript would | No fixture pins JavaScript's conversion, and reproducing it for every JSON type is not worth the risk |
 | Contributions: a GitHub status that cannot carry a body, such as 304, answers 500 | The Next.js handler reaches the same 500 through its catch block |
+| Trending developers: at most four repository lookups run at once, each reply is limited to 2 MiB and the whole request to 25 seconds, and every lookup has ended before the reply is sent | Next.js starts all twenty at once with no limit and can leave some running after it has answered. The reply is the same |
+| Trending developers: a login that is a number keeps the digits GitHub sent, so `1.0` is looked up as `1.0` where JavaScript prints `1` | A login is never a number, and copying JavaScript's number formatting is not worth the risk. A Go test pins it |
+| Trending developers: a repository reply that is a JSON object counts as no repositories even if it has a `length` field, where Next.js answers 500 | GitHub answers with a list. A Go test pins it |
+| A reply that starts with two byte-order marks is refused; Node 21 accepts it | The fetch standard removes one mark. Node removes a second by accident of its implementation |
+| Trending and trending developers write one log record for a failed request, without the address | Next.js uses `console.error`. Operators need the cause; the contract fixes only the reply |
 
 ## Decisions log
 
@@ -258,3 +263,22 @@ while preserving response contracts and input/result ordering; document runtime
 bounds as deliberate differences. No token forwarding, direct database access
 or new dependency is needed. Every behavior fix still requires a contract
 revision in all implementations. See contracts/github-trending-developers.
+
+### GO-007b and AI-001a (2026-10-13)
+
+Owner requested batches of 2-3 related tasks. Developers port, lesson 18 and AI
+suggestions characterization are one batch. Developers contract v1 unchanged,
+standard library only, public-only verifier exception, opt-in switch. Explicit
+Go bounds: four simultaneous enrichments, 2 MiB per reply, 10-second HTTP calls,
+25-second overall deadline, workers joined before responding. Return order and
+recorded failures preserved. AI suggestions has 32 cases/8 defects, using only
+a stubbed generateAIResponse; no provider call, guest-policy approval or AI port
+is inferred. A later AI implementation needs auth/guest, quotas and key policy.
+
+REVIEW-005 (2026-10-13): Claude Code completed and reviewed that batch after
+Codex's usage limit. Trending and trending developers now log failures and
+share `jscompat.DecodeJSON`. Fixtures grew without a version change:
+developers 57 cases, trending 34, AI suggestions 35. Five rows were added to
+the recorded differences above. Next: characterize `ai/enhance-query` and
+`ai/chat` the same way. No AI port before the owner's guest, quota and key
+decisions.

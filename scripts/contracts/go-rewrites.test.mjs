@@ -16,6 +16,7 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'github-search': '/api/github/search',
       'github-languages': '/api/github/languages',
       'github-trending': '/api/github/trending',
+      'github-trending-developers': '/api/github/trending-developers',
       'github-contributions': '/api/github/contributions',
       'github-repo': '/api/github/repo',
       'github-repo-details': '/api/github/repo/:owner/:repo',

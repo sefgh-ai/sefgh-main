@@ -93,6 +93,27 @@ type searchResponse struct {
 
 This avoids defining a Go struct for every repository field. RawMessage preserves the supplied JSON value, but the enclosing encoder may compact whitespace or escape characters. Do not promise byte-for-byte identity with the original response; our contract compares JSON structure.
 
+## JSON whose shape you cannot trust
+
+A struct says "the reply looks like this". Two later routes, trending and trending developers, replace JavaScript that never checked. There the backend decodes into `any`, which holds whatever arrived, and then asks:
+
+```go
+data, _ := body.(map[string]any)
+items, ok := data["items"].([]any)
+if !ok {
+	h.fail(w, "search", errors.New("reply has no list of items"))
+	return
+}
+```
+
+`body.(map[string]any)` is a **type assertion**: "is this value a JSON object?" With two results it never crashes; a wrong type gives the zero value and `false`. Reading a key from a `nil` map is allowed and gives `nil`, so the second line is safe even when the first one failed. In JavaScript `data.items` just hands you `undefined`. Go makes you ask, which is how these handlers reproduce the old behaviour on purpose and not by accident.
+
+The decoding itself is `DecodeJSON` in `backend/internal/jscompat/json.go`. It does three things plain `json.Unmarshal` does not, each copied from what `response.json()` does in JavaScript:
+
+- It skips a byte-order mark, three invisible bytes some programs put at the start of a file.
+- It keeps a number as the digits that were sent (`json.Number`), so `1.0` does not quietly become `1`.
+- It refuses anything after the first value, as `JSON.parse` does.
+
 ## Your turn
 
 Open `exercise.go`.

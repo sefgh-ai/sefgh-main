@@ -4,10 +4,14 @@ package githubtrending
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
+	"log/slog"
 	"math"
 	"math/rand/v2"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -30,6 +34,9 @@ type Handler struct {
 	BaseURL string
 	Now     func() time.Time
 	Random  func() float64
+	// Logger receives one record for each request that fails. nil uses
+	// slog.Default().
+	Logger *slog.Logger
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +76,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	u := strings.TrimRight(base, "/") + "/search/repositories?q=" + jscompat.EncodeURIComponent(search) + "&sort=stars&order=desc&per_page=30"
 	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, u, nil)
 	if err != nil {
-		fail(w)
+		h.fail(w, "create_request", err)
 		return
 	}
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -80,35 +87,34 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		fail(w)
+		h.fail(w, "transport", err)
 		return
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		fail(w)
+		h.fail(w, "status", fmt.Errorf("GitHub answered %d", resp.StatusCode))
 		return
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
-	if err != nil || len(body) > maxBodyBytes {
-		fail(w)
+	if err != nil {
+		h.fail(w, "read_body", err)
 		return
 	}
-	var data map[string]any
-	decoder := json.NewDecoder(strings.NewReader(string(body)))
-	decoder.UseNumber()
-	if decoder.Decode(&data) != nil {
-		fail(w)
+	if len(body) > maxBodyBytes {
+		h.fail(w, "read_body", errors.New("GitHub reply too large"))
 		return
 	}
-	// JSON.parse rejects trailing data, even after a valid first object.
-	var extra any
-	if decoder.Decode(&extra) != io.EOF {
-		fail(w)
+	// DecodeJSON reads the reply as response.json() does: it skips a leading
+	// byte-order mark and rejects anything after the first value.
+	decoded, err := jscompat.DecodeJSON(body)
+	if err != nil {
+		h.fail(w, "decode", err)
 		return
 	}
+	data, _ := decoded.(map[string]any)
 	items, ok := data["items"].([]any)
 	if !ok {
-		fail(w)
+		h.fail(w, "decode", errors.New("reply has no list of items"))
 		return
 	}
 	random := rand.Float64
@@ -119,7 +125,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for index, item := range items {
 		repo, ok := item.(map[string]any)
 		if !ok || repo["owner"] == nil {
-			fail(w)
+			h.fail(w, "decode", errors.New("an item is not a repository with an owner"))
 			return
 		}
 		owner, _ := repo["owner"].(map[string]any)
@@ -189,7 +195,19 @@ func languageColor(language any) (any, bool) {
 	return "#8b949e", true
 }
 
-func fail(w http.ResponseWriter) {
+// fail answers the one generic error the contract allows and tells the
+// operator why. net/http puts the request URL in its errors; the log record
+// carries only the cause.
+func (h *Handler) fail(w http.ResponseWriter, stage string, err error) {
+	logger := h.Logger
+	if logger == nil {
+		logger = slog.Default()
+	}
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		err = urlErr.Err
+	}
+	logger.Error("github trending request failed", "stage", stage, "error", err)
 	write(w, 500, map[string]string{"error": "Failed to fetch trending repositories"})
 }
 func write(w http.ResponseWriter, status int, body any) {

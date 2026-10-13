@@ -1,5 +1,56 @@
 # Claude Code review and reconciliation
 
+## REVIEW-005: Claude Code review, 2026-10-13
+
+Scope: Codex's uncommitted batch at base `259ff7b`: GO-007b (trending developers in Go), lesson 18 and AI-001a (AI suggestions fixtures). Claude Code took the batch over at the owner's instruction when Codex stopped on a usage limit. The same checks reached into GO-006b (trending in Go) and used GO-007a's fixtures. This was a review with fixes in the same batch, not a read-through.
+
+Not covered, and still without an independent review: AUTH-001, AUTH-002, CI-001, VERIFY-002 and VERIFY-003. The read-only alignment report of 2026-10-13 looked at AUTH-001, CI-001 and VERIFY-002, but ran no full suites and no deliberate breaks. GO-006a's and GO-007a's fixtures were relied on here, not reviewed case by case.
+
+### Verdict
+
+Accepted with routing off. Codex's tree, before any change of mine, passed every check it had left to run. The review found two things to fix and two differences to record. No route is approved to switch on.
+
+### Codex's tree as found
+
+| Check | Outcome |
+|---|---|
+| backend `gofmt -l`, `go vet ./...` | Clean |
+| backend `go test -count=1 ./...` | 9 packages pass |
+| `go build -o bin/api.exe ./cmd/api` | Builds |
+| learn-go `go vet` with and without the solution tag, `go test -tags solution ./...` | Clean; 19 packages pass; lesson 18 fails as shipped without panicking |
+| `npm run test:contracts` | 470 of 470 |
+| ESLint on `next.config.mjs` and `scripts/contracts` | Clean |
+| `git diff --check` | Clean |
+| Production forwarding probe | 55 of 55, exit 0 |
+
+### Findings
+
+| # | Severity | Finding | Outcome |
+|---|---|---|---|
+| 1 | Medium | The two newest handlers, trending and trending developers, logged nothing when they failed. A 500 left no trace of why. This is REVIEW-002 finding 3 again, in new code | Fixed. Each takes a `Logger` and writes one error record for a failed request: the stage and the cause, never the address. Tests require exactly one record, its content, no address, and none for a success or a 400 |
+| 2 | Medium | A differential check sent 32 inputs the 48 developer fixtures do not cover to the Next.js handler and to Go. 12 answers differed. GitHub sends none of these, but they were untested ground behind "anything the fixtures cover is identical". A leading byte-order mark was accepted by Next.js and answered 500 by Go, in trending as well. A search entry that is a number, string, boolean or array became a card for "undefined" in Next.js and a 500 in Go. A login that is an object or array was sent to GitHub in Go's own formatting (`map[]`, `[a b]`). A repository reply that is a string produced a different card | Fixed. `jscompat.DecodeJSON` reads a reply as `response.json()` does and both handlers use it. The developers handler converts entries and logins as JavaScript does. Ten fixtures added, 9 for developers and 1 for trending, recorded from the unchanged Next.js handlers and passed by both implementations |
+| 3 | Low | Two differences are left on purpose. A numeric login keeps the digits GitHub sent, so `1.0` asks for `/users/1.0/repos` where Next.js asks for `/users/1`. A repository reply that is an object with a `length` field is "no repositories" in Go where Next.js answers 500 | Recorded in the ADR. A Go test pins each |
+| 4 | Low | Lesson 18's test accepted a plain loop: it only required at most two calls at once | The test now requires exactly two |
+| 5 | Low | AI-001a had no case for a JSON body that is not an object | Three cases added: an array, a string and a number are answered like an empty body. A body of `null` answers 500 with the JavaScript engine's own wording, which changes between Node versions, so it is described in the contract README and not pinned |
+| 6 | Note | Checking my own test table against Node showed that Node 21's `Response.json()` accepts two leading byte-order marks: its fetch removes one and its text decoder then removes another. The fetch standard removes one | Go follows the standard. Recorded in the ADR, with a test |
+
+Considered and rejected: cancelling the remaining lookups as soon as one fails. It would save anonymous GitHub quota, but the fixtures pin every upstream call the Next.js handler makes, and that handler does not cancel.
+
+Looked for and not found: a data race in the fan-out (results and errors are written by index, one goroutine per index, and read after `Wait`); any path that forwards a caller's credential (the handler has no token field, and the server test sends both headers and checks nothing arrives upstream).
+
+### Deliberate breaks
+
+21 deliberate breaks of the fixes, in a scratch copy outside the repository. 20 were caught at first. The survivor, an empty string reply treated as a repository, had no fixture; `repository-reply-is-empty-text` was added and then caught it. The breaks covered the decoder (byte-order mark, trailing text, digits), each conversion in the developers handler, the failure count, and the log records of both handlers including the address being kept out.
+
+### Hosted CI
+
+`node scripts/agent-handoff.mjs --status --ci` reports the "Backend verification" run 38351494790 for `259ff7b` as completed with conclusion success. That workflow runs `go test -race`. It is the first hosted race-detector result recorded for this project, and it covers what was committed at `259ff7b`, not this batch. I read the status through the script and did not open the run's logs.
+
+### Still open
+
+- **Quota.** One call to the developers route makes up to 21 GitHub requests with no credential. GitHub allows 60 an hour for one address without a credential, so three calls an hour use it up. After that every lookup is refused and every developer is shown as having no repositories, which is recorded defect 3 in the contract. This is the same anonymous-credential decision as search and it must be made before this route is switched on.
+- AUTH-001, AUTH-002, CI-001, VERIFY-002 and VERIFY-003 have not had an independent review.
+
 ## Alignment follow-up (Codex, 2026-10-13; not peer approval)
 
 Owner pasted Claude's independent read-only alignment report at 7e0820c.
