@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
@@ -42,6 +44,9 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	if githubrepos.DetailTimeout >= writeTimeout {
 		t.Errorf("githubrepos.DetailTimeout is %v, which is not below the server's write timeout of %v", githubrepos.DetailTimeout, writeTimeout)
+	}
+	if aiprovider.Timeout >= writeTimeout || aienhance.Timeout >= writeTimeout {
+		t.Errorf("an AI provider call may take %v or %v, which is not below the server's write timeout of %v", aiprovider.Timeout, aienhance.Timeout, writeTimeout)
 	}
 	// A request with credentials is verified first, and that time counts too.
 	if total := githubaccess.DefaultTimeout + githubrepos.DetailTimeout; total >= writeTimeout {

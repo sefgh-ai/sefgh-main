@@ -68,6 +68,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [16 Verifying access](16-verifying-access/README.md) | Middleware, online identity verification, deadlines and private cache isolation | `backend/internal/githubaccess/access.go` and `backend/cmd/api/main.go` |
 | [17 Clocks and randomness](17-clocks-and-randomness/README.md) | Function injection, local calendar arithmetic, deterministic random fixtures | `backend/internal/githubtrending/handler.go` |
 | [18 Bounded parallel work](18-bounded-parallel-work/README.md) | Goroutines, semaphore channels, WaitGroup and ordered results | `backend/internal/githubdevelopers/handler.go` |
+| [19 Counting requests](19-counting-requests/README.md) | State shared by requests, locks, a clock you can pass in, and reading a POST body | `Limiter` in `backend/internal/ailimit/limit.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

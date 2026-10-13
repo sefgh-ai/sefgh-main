@@ -15,6 +15,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
@@ -82,7 +86,45 @@ func newHandler(logger *slog.Logger) http.Handler {
 		SupabaseKey: os.Getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 		GitHubURL:   envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
 	}
-	return markBackend(verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) }))
+	github := verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) })
+	// The AI routes have their own rules about who may call them, so they sit
+	// beside the GitHub access check, not behind it.
+	top := http.NewServeMux()
+	top.Handle("/api/ai/", aiMux(logger))
+	top.Handle("/", github)
+	return markBackend(top)
+}
+
+// aiMux serves the AI routes. GITHUB_TOKEN is the credential for GitHub
+// Models here, exactly as it is in src/lib/ai/github.js. It is sent to the
+// models endpoint and never to a GitHub API route: githubMux above still gets
+// no token for callers without credentials.
+func aiMux(logger *slog.Logger) *http.ServeMux {
+	mux := http.NewServeMux()
+	models := &aiprovider.Client{
+		HTTP:     &http.Client{Timeout: aiprovider.Timeout},
+		Endpoint: envOr("SEFGH_AI_MODELS_URL", aiprovider.DefaultEndpoint),
+		Token:    os.Getenv("GITHUB_TOKEN"),
+	}
+	// One allowance per address, shared by the two search-box helpers.
+	searchAllowance := ailimit.New(ailimit.Requests, ailimit.Window)
+	mux.Handle("POST /api/ai/suggestions", &aisuggestions.Handler{
+		Generate: func(ctx context.Context, messages []aiprovider.Message) (any, error) {
+			return models.Generate(ctx, messages, aiprovider.Options{})
+		},
+		Limiter: searchAllowance,
+		Logger:  logger,
+	})
+	mux.Handle("POST /api/ai/enhance-query", &aienhance.Handler{
+		Client:       &http.Client{Timeout: aienhance.Timeout},
+		OpenAIKey:    os.Getenv("OPENAI_API_KEY"),
+		AnthropicKey: os.Getenv("ANTHROPIC_API_KEY"),
+		OpenAIURL:    envOr("SEFGH_OPENAI_URL", aienhance.DefaultOpenAIURL),
+		AnthropicURL: envOr("SEFGH_ANTHROPIC_URL", aienhance.DefaultAnthropicURL),
+		Limiter:      searchAllowance,
+		Logger:       logger,
+	})
+	return mux
 }
 
 // Public settings never use GITHUB_TOKEN. Private muxes live for one request.

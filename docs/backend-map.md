@@ -262,3 +262,15 @@ request counter, and the check that reduces chat messages to `role` and
 identity call both checks share. Contracts: `ai-chat` 78 cases, `ai-enhance-query`
 73, `ai-suggestions` 44, all version 2. No Go, browser, database or deployment
 boundary changed. The browser still calls chat with its cookie.
+
+## AI-002b update (2026-10-14)
+
+Ten Go routes exist: the eight GitHub reads plus `ai/suggestions` and
+`ai/enhance-query`. All remain opt-in. `backend/cmd/api/main.go` serves the AI
+routes from `aiMux`, beside the GitHub access check; `ai/chat` is not ported
+and answers 404 from Go. New packages: `backend/internal/ailimit`,
+`aiprovider`, `aisuggestions`, `aienhance`, and `aitest` for test support.
+`jscompat` gains JavaScript's trim, lower-casing, string length and
+`JSON.parse`. The Go server reads `GITHUB_TOKEN` (GitHub Models only),
+`OPENAI_API_KEY` and `ANTHROPIC_API_KEY`. No browser, database or deployment
+boundary changed.

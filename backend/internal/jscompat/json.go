@@ -13,7 +13,13 @@ import (
 // sent, as json.Number. Anything after the first value other than white
 // space is an error, as it is for JSON.parse.
 func DecodeJSON(body []byte) (any, error) {
-	decoder := json.NewDecoder(strings.NewReader(DecodeUTF8(body)))
+	return ParseJSON(DecodeUTF8(body))
+}
+
+// ParseJSON parses text as JavaScript's JSON.parse does. Unlike DecodeJSON it
+// does not skip a byte-order mark: JSON.parse refuses one.
+func ParseJSON(text string) (any, error) {
+	decoder := json.NewDecoder(strings.NewReader(text))
 	decoder.UseNumber()
 	var value, extra any
 	if err := decoder.Decode(&value); err != nil {

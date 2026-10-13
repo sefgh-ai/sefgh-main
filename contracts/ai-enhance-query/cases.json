@@ -2316,6 +2316,67 @@
         "cache_control": null,
         "calls": []
       }
+    },
+    {
+      "id": "null-body",
+      "disposition": "defect",
+      "reason": "A JSON body of null fails inside the handler and is answered 500, where every other body without a query is a 400.",
+      "body": null,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to enhance query"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "null-body-with-a-key",
+      "disposition": "defect",
+      "reason": "A JSON body of null fails before any key is looked at.",
+      "body": null,
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to enhance query"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "query-length-counts-utf16-units-at-the-limit",
+      "disposition": "preserve",
+      "reason": "A character is one UTF-16 unit, as JavaScript counts: 250 emoji are exactly 500, though 1,000 bytes.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "😀",
+            250
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": {
+            "$repeat": [
+              "😀",
+              250
+            ]
+          },
+          "source": "basic-enhancement"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
     }
   ]
 }

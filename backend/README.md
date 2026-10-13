@@ -16,6 +16,8 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/repo/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
+| `POST /api/ai/suggestions` | `internal/aisuggestions` | `../contracts/ai-suggestions/` |
+| `POST /api/ai/enhance-query` | `internal/aienhance` | `../contracts/ai-enhance-query/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -33,7 +35,9 @@ go run ./cmd/api
 |---|---|---|
 | `SEFGH_API_ADDR` | `127.0.0.1:8787` | Address to listen on. Wins over `PORT` |
 | `PORT` | none | Set by a hosting platform. When `SEFGH_API_ADDR` is not set, the server listens on this port on every network interface. A value that is not a number from 1 to 65535 stops the server at start-up |
-| `GITHUB_TOKEN` | ignored by migrated handlers | Never grants public callers the owner's private permissions |
+| `GITHUB_TOKEN` | none | The credential for GitHub Models, used by the AI routes only, as in `src/lib/ai/github.js`. It is never sent to a GitHub API route: those get no token for callers without credentials, and a test fails if that changes |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | none | Keys for enhance-query. OpenAI is used when its key is set, otherwise Anthropic, otherwise the built-in word lists and no provider |
+| `SEFGH_AI_MODELS_URL`, `SEFGH_OPENAI_URL`, `SEFGH_ANTHROPIC_URL` | the providers' real addresses | For pointing the three AI providers at a stub in tests and in the forwarding probe |
 | `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
@@ -160,3 +164,23 @@ Trending and trending developers read GitHub's replies with `jscompat.DecodeJSON
 and write one log record for a failed request: the stage and the cause, without
 the address. Two deliberate differences from the Next.js developers handler are
 listed in the ADR and pinned by `TestRecordedDifferencesFromNextJS`.
+
+## AI search helpers (AI-002b)
+
+Opt-in names: `ai-suggestions` and `ai-enhance-query`, off by default. Both
+are open to everyone. An address may make 30 AI calls in five minutes across
+the two; past that the built-in answers are used and no provider is called.
+The count is kept in this process (`internal/ailimit`), so several instances
+each count separately. The caller's address is the first entry of
+`X-Forwarded-For`, which is only right behind a proxy that sets it.
+
+These routes are served beside the GitHub access check, not behind it. A
+request body is limited to 1 MiB, a provider reply to 4 MiB and a provider
+call to 25 seconds; the Next.js handlers set none of these. On failure the
+log gets the stage and the provider's status, never the query or the
+provider's words.
+
+`internal/aiprovider/prompt.go`, `internal/aienhance/prompts.go` and
+`internal/aisuggestions/terms.go` are generated from the contracts and from
+the Next.js source, so their text is not a retyped copy. The contract cases
+compare every provider request in full and fail if either side drifts.

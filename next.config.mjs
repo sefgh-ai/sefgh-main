@@ -30,6 +30,8 @@ const goBackendRoutes = {
   "github-repo": "/api/github/repo",
   "github-repo-details": "/api/github/repo/:owner/:repo",
   "github-contents": "/api/github/contents/:owner/:repo",
+  "ai-suggestions": "/api/ai/suggestions",
+  "ai-enhance-query": "/api/ai/enhance-query",
 };
 
 function goBackendRewrites() {

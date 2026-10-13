@@ -1,0 +1,51 @@
+// Code generated from src/app/api/ai/suggestions/route.js; DO NOT EDIT.
+// TestTermsMatchTheNextHandler fails if the two lists drift.
+
+package aisuggestions
+
+// popularSearches answers a query without the AI. Every term is lower-case
+// ASCII, in the order the Next.js handler lists them.
+var popularSearches = []string{
+	"javascript projects",
+	"python machine learning",
+	"react components",
+	"nodejs backend",
+	"typescript utilities",
+	"go microservices",
+	"rust systems programming",
+	"nextjs templates",
+	"vue.js applications",
+	"angular projects",
+	"tailwind css components",
+	"bootstrap themes",
+	"css animations",
+	"rest api examples",
+	"graphql server",
+	"express middleware",
+	"fastapi projects",
+	"django applications",
+	"react native apps",
+	"flutter projects",
+	"ios swift",
+	"android kotlin",
+	"machine learning models",
+	"deep learning tensorflow",
+	"data visualization",
+	"jupyter notebooks",
+	"pytorch projects",
+	"docker containers",
+	"kubernetes deployments",
+	"ci/cd pipelines",
+	"terraform infrastructure",
+	"monitoring dashboards",
+	"awesome lists",
+	"starter templates",
+	"boilerplate code",
+	"ui component library",
+	"design systems",
+	"authentication systems",
+	"payment integrations",
+	"chat applications",
+	"e-commerce platforms",
+	"portfolio websites",
+}

@@ -148,3 +148,10 @@ handler with clock/random functions; lesson 17 explains those inputs.
 
 GO-007b adds public-only `/api/github/trending-developers`, ignoring caller
 credentials and forwarding no token. Lesson 18 explains its bounded workers.
+
+AI-002b adds the first routes that receive a body: `POST /api/ai/suggestions`
+and `POST /api/ai/enhance-query`. They are registered with the method in the
+pattern, `mux.Handle("POST /api/ai/suggestions", ...)`, so a GET to the same
+address is answered 405 by the router itself. They sit in their own small
+router beside the GitHub routes, because who may call them is decided by
+different rules. Lesson 19 explains how they count requests.

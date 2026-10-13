@@ -52,15 +52,17 @@ async function ready(url, child) {
 }
 // A raw request, so that the path is sent exactly as written. fetch() would
 // tidy some of these before they left.
-function raw(port, path, headers) {
+// `body`, when given, makes it a POST of that exact text as JSON.
+function raw(port, path, headers, body) {
   return new Promise((resolve) => {
-    const req = http.request({ host: "127.0.0.1", port, path, headers, method: "GET" }, (res) => {
+    const sent = body === undefined ? headers : { ...headers, "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) };
+    const req = http.request({ host: "127.0.0.1", port, path, headers: sent, method: body === undefined ? "GET" : "POST" }, (res) => {
       let body = ""; res.setEncoding("utf8");
       res.on("data", (d) => (body += d)).on("end", () => resolve({ status: res.statusCode, backend: res.headers["x-sefgh-backend"] ?? null, cache: res.headers['cache-control'] ?? null, body }));
     });
     req.on("error", (e) => resolve({ status: 0, backend: null, body: String(e.message) }));
     req.setTimeout(60_000, () => req.destroy(new Error("timeout")));
-    req.end();
+    req.end(body);
   });
 }
 
@@ -123,6 +125,16 @@ const scenarios = [
   { path: '/api/github/search?q=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-other' }, status: 403 },
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer wrong-session', 'X-GitHub-Token': 'fixture-user' }, status: 401 },
+  // POST bodies through the rewrite. No AI key is configured for these, and
+  // none of them reaches an AI call, so no provider is involved.
+  { path: '/api/ai/suggestions', body: '{"query":"rea"}' },
+  { path: '/api/ai/suggestions', body: '{"query":"a"}' },
+  { path: '/api/ai/suggestions', body: '{broken' },
+  { path: '/api/ai/suggestions', body: 'null' },
+  { path: '/api/ai/enhance-query', body: '{"query":"web charts"}' },
+  { path: '/api/ai/enhance-query', body: '{"query":"  \u65e5\u672c\u8a9e web  "}' },
+  { path: '/api/ai/enhance-query', body: '{"query":""}' },
+  { path: '/api/ai/enhance-query', body: JSON.stringify({ query: 'k'.repeat(501) }) },
 ];
 
 try {
@@ -158,9 +170,12 @@ try {
   github = `http://127.0.0.1:${upstream.address().port}`;
 
   const goPort = await freePort(), nextPort = await freePort();
-  const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key' });
+  const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key',
+    // Never let a real key from the surrounding shell reach a real provider:
+    // the keys are emptied and every provider address points at the stand-in.
+    OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic` });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -179,20 +194,20 @@ try {
 
   // Summary answers are cached by the Go server, so a second identical
   // request makes no upstream call. Count only what each request triggers.
-  const ask = async (port, path, headers) => {
+  const ask = async (port, path, headers, body) => {
     const before = seen.length;
-    const answer = await raw(port, path, headers);
+    const answer = await raw(port, path, headers, body);
     return { ...answer, upstream: seen.slice(before) };
   };
 
   let same = 0;
   const different = [];
-  for (const { path, headers, status } of scenarios) {
+  for (const { path, headers, status, body } of scenarios) {
     // Via Next first, then direct. On the cached summary route the second
     // request makes no upstream call, so those are compared on the reply
     // only; the reply carries the upstream path in full_name.
-    const viaNext = await ask(nextPort, path, headers);
-    const direct = await ask(goPort, path, headers);
+    const viaNext = await ask(nextPort, path, headers, body);
+    const direct = await ask(goPort, path, headers, body);
     const cached = !headers && path.startsWith("/api/github/repo?");
     const equal = viaNext.status === direct.status && viaNext.body === direct.body && viaNext.backend === "go" &&
       (!headers || (viaNext.status === status && viaNext.cache === 'private, no-store')) &&

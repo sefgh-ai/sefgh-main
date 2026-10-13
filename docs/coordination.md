@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: AI-002a handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: AI-002b handoff.
 
 ## Start here
 
@@ -11,11 +11,65 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released AI-002a. REVIEW-006 and AI-002a are both uncommitted at handoff. No deployment or cutover by an agent.
+- **Active writer:** none. Claude Code completed and released AI-002b. Uncommitted at handoff. No deployment or cutover.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. The three AI routes are at contract version 2 in Next.js, with the owner's sign-in rule, limits and safety fixes; their Go ports are next (AI-002b, AI-002c). Hosted CI, including the race detector, passed at `9480ef9`; the work since has not run there. No route is cut over and no new deployment evidence exists.
+- **Stage:** Ten of 25 API routes are implemented in Go (40% of routes, not of the whole migration); rewrites off by default. Phase 2 has one route left to port, `ai/chat` (AI-002c); its contract is at version 2 in Next.js. Hosted CI, including the race detector, passed at `9480ef9`; the work since has not been checked there by an agent. No route is cut over and no new deployment evidence exists.
 
-## Latest handoff: AI-002a, with REVIEW-006 still uncommitted beneath it (Claude Code, 2026-10-13)
+## Latest handoff: AI-002b (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed; both new routes off by default**.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base d2320c2.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `d2320c2`).
+
+Done: `POST /api/ai/suggestions` and `POST /api/ai/enhance-query` are ported to Go against contract version 2 and pass every case, including the ones marked defect. Ten of 25 routes now exist in Go. Lesson 19.
+
+What was added:
+- backend/internal/jscompat/{text.go,text_test.go}: JavaScript's trim, lower-casing and string length; json.go gains ParseJSON. Every expected value was checked against Node.
+- backend/internal/ailimit: the request counter and the caller's address, tested with the same steps and answers as the JavaScript limiter.
+- backend/internal/aiprovider: the GitHub Models call. prompt.go is generated from the chat contract, and a test compares the request with the one that contract records.
+- backend/internal/aisuggestions, backend/internal/aienhance: the handlers and their contract tests, in memory and over a socket. terms.go and prompts.go are generated from the Next.js source and the contract.
+- backend/internal/aitest: test support shared by the AI contract tests.
+- backend/cmd/api/main.go: the AI routes are served from aiMux, beside the GitHub access check. ai_wiring_test.go and main_test.go cover the wiring and the time budget.
+- next.config.mjs, scripts/contracts/go-rewrites.test.mjs: switch names `ai-suggestions` and `ai-enhance-query`.
+- scripts/contracts/go-forwarding-probe.mjs: eight POST cases; the Go server it starts is given empty AI keys and stub provider addresses, so a real key in the surrounding shell cannot reach a real provider.
+- Fixtures, additive, recorded from the unchanged Next.js handlers: ai-enhance-query 73 -> 76 (a null body, marked defect; length counted in UTF-16 units), ai-suggestions 44 -> 49 (length counted in UTF-16 units; the AI reply trimmed as JavaScript trims). No version changed.
+- learn-go/19-counting-requests (new), learn-go/README.md, learn-go/06-http-handlers/README.md. No existing exercise.go changed.
+- docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}, backend/README.md, the two contract READMEs.
+
+Things a reviewer should know:
+- The Go server reads GITHUB_TOKEN again. It is the GitHub Models credential, as in src/lib/ai/github.js, and goes only to the models address. The REVIEW-006 test that forbids it on GitHub API routes still passes, and a new test checks the same from the AI side.
+- The AI routes are outside the GitHub access check on purpose: behind it, a request with a bearer and no X-GitHub-Token would be refused, and chat will send exactly that.
+- Go refuses a request body over 1 MiB, a provider reply over 4 MiB and a provider call over 25 seconds, and logs a failure's stage and status without the query or the provider's words. Next.js does none of this. Recorded in the ADR.
+- Go's lower-casing differs from JavaScript's for two characters. One is handled; the other cannot affect a result. Recorded in the ADR.
+- The allowance is per process and the caller's address comes from X-Forwarded-For, as in Next.js. Both limits of that design are unchanged.
+- While writing tests, three Unicode escapes were turned into the characters themselves by the editing tool, one of them a byte-order mark that Go refuses in source. The affected files now build such text from code points and contain only ASCII.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` passes 13 tested packages; `go build -o bin/api.exe ./cmd/api` ok.
+- learn-go: gofmt -l empty; go vet clean with and without the solution tag; `go test -count=1 -tags solution ./...` passes 20 packages; lesson 19 as shipped fails its three tests without panicking.
+- `npm run test:contracts`: 696 of 696.
+- ESLint on next.config.mjs and scripts/contracts: clean. `git diff --check`: exit 0.
+- Production forwarding probe on the rebuilt binary: production build compiled; 63 of 63 identical, exit 0. The eight POST cases answered 200, 200, 500, 200 for suggestions and 200, 200, 400, 400 for enhance-query, through Next.js and directly.
+- Deliberate breaks of the new Go in scratch copies: 97 tried. 84 were noticed at first, 6 of the breaks themselves did not compile and were rewritten, and 7 were not noticed. Five cases and two tests were added. Now 95 are noticed and the 2 left change nothing: the cap of five suggestions cannot be exceeded by three AI answers plus two built-in ones, and a null first choice is refused by the next check.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: a real AI provider or key; `go test -race` (it runs in hosted CI after synchronization; the new counter is the code it matters most for); Vercel.
+
+Remaining gates: independent review of AI-002a and AI-002b; a hosted CI run for this batch; live-provider checks; a decision on a shared counter before the allowance is relied on across instances; hosting, Vercel forwarding, measurements, rollback.
+Next bounded action: AI-002c, the Go port of chat: the bearer sign-in check from githubaccess's Supabase half, the per-user allowance, message checking, title generation, and the browser sending a bearer token. Then QUOTA-001.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: AI-002b (Claude Code, 2026-10-13)
+
+Earlier note: Claude Code owned this task; reviewer unassigned. Base main @ d2320c2, tree clean at start: the Git Agent committed REVIEW-006 and AI-002a together.
+Objective: Go ports of `POST /api/ai/suggestions` and `POST /api/ai/enhance-query` that pass the version 2 fixtures unchanged, off by default like every other route.
+Plan: 1) jscompat helpers for JavaScript's trim, lower-casing, string length and JSON.parse; 2) backend/internal/ailimit, the request counter and caller address; 3) backend/internal/aiprovider, the GitHub Models call the suggestions route needs; 4) backend/internal/aisuggestions and aienhance with contract tests in memory and over sockets; 5) server wiring outside the GitHub access check, switch names, rewrite test, POST cases in the forwarding probe; 6) lesson 19; 7) deliberate breaks; 8) full checks, probe, handoff.
+Nothing written yet beyond this checkpoint. No processes running. Account usage is not visible to Claude Code.
+Milestone 1 (AI-002b): the Go packages are written and pass. New: backend/internal/jscompat/{text.go,text_test.go} (JavaScript's trim, lower-casing and string length; every expected value checked against Node), jscompat/json.go gains ParseJSON; backend/internal/ailimit (counter and caller address, same steps and answers as the JavaScript limiter test); backend/internal/aiprovider (GitHub Models call; prompt.go is generated from the chat contract; its request test compares with the contract's recorded request); backend/internal/aitest (shared test support); backend/internal/aisuggestions and aienhance with terms.go and prompts.go generated from the Next.js source and the contract. Contract runs in Go: suggestions 44 cases and enhance-query 73, each in memory and over a socket, 234 of 234. Not yet done: server wiring, switch names, rewrite test, probe, lesson 19, deliberate breaks, docs, full checks. Nothing is registered in cmd/api yet, so the server is unchanged. If interrupted: `go test -count=1 ./...` in backend is expected to pass as the tree stands.
+Milestone 2 (AI-002b): server wiring, switch names, rewrite test and probe are done; lesson 19 is written. backend/cmd/api/main.go serves the two routes from aiMux beside the GitHub access check; ai_wiring_test.go checks each AI credential reaches only its own provider, that the two helpers share one allowance, and that the models token never reaches a GitHub API route. next.config.mjs has ai-suggestions and ai-enhance-query. The probe gained eight POST cases and empties any real AI key from the environment it gives the Go server; dev-mode run 63 of 63. Additive fixtures from the unchanged Next.js handlers: ai-enhance-query 73 -> 75 (null body, defect), ai-suggestions 44 -> 47 (UTF-16 counting). Backend `go test -count=1 ./...` passed with 13 tested packages before the last fixture additions; the two affected packages pass after them. learn-go/19-counting-requests fails as shipped without panicking and its solution passes. Running now: about 99 deliberate breaks of the new Go in a scratch copy. Still to do: read those results, full checks, production probe, handoff record.
+Milestone 3 (AI-002b), written when the owner asked to stop as soon as possible: all code, tests, fixtures, lesson 19 and documentation except the final handoff record are written. Deliberate breaks of the new Go in scratch copies: 97 tried, 95 noticed after five cases and two tests were added; the 2 left change nothing (a cap of five suggestions that three plus two can never exceed; a null first choice that the next check refuses anyway). Fixtures now: ai-suggestions 49 cases (7 defect), ai-enhance-query 76 (12 defect), both passing in Next.js and Go. No further implementation will be started. In progress: the final full check run in the background (backend gofmt, vet, tests, build; learn-go; all contracts; lint; diff check; production probe). If it passes, the next and last steps are the handoff record and `npm run handoff`. If it does not, this checkpoint is to be marked paused / incomplete with the failure, the writer released, and no handoff run.
+
+## Handoff: AI-002a, with REVIEW-006 still uncommitted beneath it (Claude Code, 2026-10-13)
 
 Status: **implementation complete in Next.js with version 2 fixtures; awaiting independent review; not deployed by an agent; no Go route added or switched on**.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1463,11 +1517,11 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `REVIEW-005` | Claude Code review of GO-007b, lesson 18, AI-001a, with fixes | Committed b5745b3 | Codex has not seen the fixes |
 | `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, provider call stubbed | Committed 9480ef9; 62 fixtures/10 defects | Independent review; owner's AI decisions before any port |
 | `AI-001c` | Fixtures for `POST /api/ai/chat` with the real helper, provider call stubbed | Committed 9480ef9; 42 fixtures/16 defects | Independent review; owner's AI decisions before any port |
-| `AI-002a` | AI contract version 2 in Next.js: sign-in for chat, limits, three safety fixes, fixtures | Complete; uncommitted at handoff | Independent review; browser check of chat |
-| `AI-002b` | Go ports of suggestions and enhance-query against version 2, with a lesson | Not started; next | Nothing |
-| `AI-002c` | Go port of chat with the session check and limits, with a lesson | Not started | AI-002b |
+| `AI-002a` | AI contract version 2 in Next.js: sign-in for chat, limits, three safety fixes, fixtures | Committed d2320c2 | Independent review; browser check of chat |
+| `AI-002b` | Go ports of suggestions and enhance-query against version 2, with lesson 19 | Complete; uncommitted at handoff | Independent review; hosted CI run |
+| `AI-002c` | Go port of chat with the session check and limits, with a lesson; the browser sends a bearer token | Not started; next | Nothing |
 | `QUOTA-001` | Public-only server token for anonymous GitHub reads, in Next.js and Go, with a check that refuses a private-capable token | Not started | Owner creates the token before it can be used live |
-| `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Complete; uncommitted at handoff | Someone other than Claude Code to look at the fixes |
+| `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.

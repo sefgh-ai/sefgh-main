@@ -119,6 +119,9 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Trending developers: a repository reply that is a JSON object counts as no repositories even if it has a `length` field, where Next.js answers 500 | GitHub answers with a list. A Go test pins it |
 | A reply that starts with two byte-order marks is refused; Node 21 accepts it | The fetch standard removes one mark. Node removes a second by accident of its implementation |
 | Trending and trending developers write one log record for a failed request, without the address | Next.js uses `console.error`. Operators need the cause; the contract fixes only the reply |
+| AI routes: a request body is limited to 1 MiB, a provider reply to 4 MiB and a provider call to 25 seconds | The Next.js handlers set none of these. A backend must bound what it reads and how long it waits; 25 seconds stays inside the 30-second write limit |
+| AI routes: a failure is logged with its stage and the provider's status, never the query or the provider's words | Next.js logs the whole error with `console.error`, which can repeat what a user typed |
+| AI routes: lower-casing follows Go except for the dotted capital I, which is written as JavaScript writes it | Only that character could make a query match the built-in ASCII lists differently. The Greek final sigma also differs and cannot |
 
 ## Decisions log
 
@@ -334,3 +337,12 @@ One difference is planned for the Go port and recorded here in advance: the
 Next.js chat handler also accepts its own session cookie, which is how the
 browser calls it today; Go will accept a bearer token only, so the browser
 must send one before chat is served by Go.
+
+AI-002b (2026-10-14): `ai/suggestions` and `ai/enhance-query` are ported to Go
+against contract version 2, off unless `ai-suggestions` or `ai-enhance-query`
+is enabled. Ten of 25 routes now exist in Go. New packages: `ailimit` (the
+request counter, tested step for step against the JavaScript one),
+`aiprovider` (the GitHub Models call), `aisuggestions`, `aienhance`. The AI
+routes are served beside the GitHub access check. `GITHUB_TOKEN` is read by
+the Go server again, as the GitHub Models credential only; the test that
+forbids it on GitHub API routes still holds. Lesson 19. Next: AI-002c, chat.

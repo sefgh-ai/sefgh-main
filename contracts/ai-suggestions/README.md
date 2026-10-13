@@ -1,6 +1,6 @@
 # AI suggestions contract
 
-**Version 2** (AI-002a, 2026-10-13) is current: 44 cases, 7 marked `defect`,
+**Version 2** (AI-002a, 2026-10-13) is current: 49 cases, 7 marked `defect`,
 plus an integrity check. Read "Version 2" at the end first.
 
 Version 1 recorded `POST /api/ai/suggestions` at 259ff7b with 35 cases,
@@ -89,3 +89,23 @@ Fixture conventions added in version 2, shared by the three AI contracts
 
 The allowance is counted in the server process. Another instance has its own
 count and a restart forgets it. It slows a caller down; it is not a balance.
+
+## Go port (AI-002b, 2026-10-14)
+
+`backend/internal/aisuggestions` passes every case here, once in memory and once
+through a local socket, including the cases marked `defect`. It is off unless
+`ai-suggestions` is named in `SEFGH_GO_ROUTES`.
+
+Differences that are deliberate and outside these cases: Go limits a request
+body to 1 MiB, a provider reply to 4 MiB and a provider call to 25 seconds,
+and logs the stage and status of a failure. They are listed in
+`docs/adr/0002-go-backend.md`.
+
+AI-002b added five cases, recorded from the unchanged Next.js handler. Four
+pin how length is counted: 250 emoji are exactly 500 characters and allowed,
+251 are refused, one emoji is two characters, so it is not "shorter than
+two", and one Japanese character is one, whatever its size in bytes. The
+fifth pins that the AI's reply is trimmed as JavaScript trims, which removes a
+no-break space that JSON would refuse. The Go runner sends `{broken` for a case with `json_error`, and stands
+in for the AI at the same place the Node runner does: the function that takes
+the messages and returns the content.

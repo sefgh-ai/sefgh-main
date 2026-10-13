@@ -1159,6 +1159,139 @@
         "content_type": "application/json",
         "cache_control": null
       }
+    },
+    {
+      "id": "query-length-counts-utf16-units",
+      "disposition": "preserve",
+      "reason": "A character is one UTF-16 unit, as JavaScript counts. An emoji is two. 250 of them are exactly 500.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "😀",
+            250
+          ]
+        }
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "query-length-counts-utf16-units-over",
+      "disposition": "preserve",
+      "reason": "A character is one UTF-16 unit, as JavaScript counts. An emoji is two. 251 of them are 502.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "😀",
+            251
+          ]
+        }
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "one-emoji-is-two-characters",
+      "disposition": "preserve",
+      "reason": "A character is one UTF-16 unit, as JavaScript counts. An emoji is two. One emoji is therefore not \"shorter than two characters\".",
+      "body": {
+        "query": "😀"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [],
+          "source": "predefined"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "one-character-outside-ascii",
+      "disposition": "preserve",
+      "reason": "One character is shorter than two whatever its size in bytes.",
+      "body": {
+        "query": "日"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": []
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "ai-reply-padded-with-no-break-spaces",
+      "disposition": "preserve",
+      "reason": "The AI reply is trimmed as JavaScript trims, which removes a no-break space; JSON itself would not accept one.",
+      "body": {
+        "query": "python"
+      },
+      "ai_response": " [\"one\",\"two\"] ",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "one",
+            "two",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
     }
   ]
 }

@@ -1,6 +1,6 @@
 # AI enhance-query contract
 
-**Version 2** (AI-002a, 2026-10-13) is current: 73 cases, 10 marked `defect`,
+**Version 2** (AI-002a, 2026-10-13) is current: 76 cases, 12 marked `defect`,
 plus an integrity check. Read "Version 2" at the end first. Version 1 recorded
 the route as it was, with 62 cases; none of those cases changed. The
 caller is `src/components/search/SearchBox.jsx`. No production source changed.
@@ -103,3 +103,20 @@ Fixture conventions added in version 2, shared by the three AI contracts
 
 The allowance is counted in the server process. Another instance has its own
 count and a restart forgets it. It slows a caller down; it is not a balance.
+
+## Go port (AI-002b, 2026-10-14)
+
+`backend/internal/aienhance` passes every case here, once in memory and once
+through a local socket, including the cases marked `defect`. It is off unless
+`ai-enhance-query` is named in `SEFGH_GO_ROUTES`.
+
+Differences that are deliberate and outside these cases: Go limits a request
+body to 1 MiB, a provider reply to 4 MiB and a provider call to 25 seconds,
+and logs the stage and status of a failure. They are listed in
+`docs/adr/0002-go-backend.md`.
+
+AI-002b added two `defect` cases, recorded from the unchanged Next.js handler:
+a JSON body of `null` is answered 500, where every other body without a query
+is 400. The handler reads a field of `null` and fails. Go reproduces it.
+A third added case pins that 250 emoji, which are 500 characters and 1,000
+bytes, are inside the length limit.
