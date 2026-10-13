@@ -64,7 +64,7 @@ type Handler struct {
 	// BaseURL is the GitHub API origin, without a trailing slash.
 	// Empty means DefaultBaseURL.
 	BaseURL string
-	// Token is the server-side GitHub token. GraphQL cannot be used without one.
+	// Token is the verified caller's GitHub token. GraphQL needs a credential.
 	Token string
 	// Logger records failures. Nil means slog.Default().
 	Logger *slog.Logger

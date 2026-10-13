@@ -1,3 +1,4 @@
+import { withGitHubAccess, githubFetch } from '@/lib/github/access'
 import { NextResponse } from "next/server";
 
 // GitHub serves only the first 1000 results, so no later page can succeed.
@@ -15,7 +16,8 @@ function isRateLimited(response) {
   );
 }
 
-export async function GET(request) {
+async function handleGET(request, _context, access) {
+  const fetch = (url, init) => githubFetch(url, access.token, init)
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q");
@@ -93,8 +95,8 @@ export async function GET(request) {
       headers: {
         Accept: "application/vnd.github.v3+json",
         "User-Agent": "SEFGH-NextJS-App",
-        ...(process.env.GITHUB_TOKEN
-          ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+        ...(access.token
+          ? { Authorization: `Bearer ${access.token}` }
           : {}),
       },
     });
@@ -150,3 +152,5 @@ export async function GET(request) {
     );
   }
 }
+
+export const GET = withGitHubAccess(handleGET);

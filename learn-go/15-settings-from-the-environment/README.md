@@ -1,5 +1,9 @@
 # Lesson 15: Settings from the environment
 
+AUTH-001 update: run still calls listenAddr as shown below; serving and
+shutdown now live in serve, while githubMux constructs per-request private
+handlers. The environment parsing in this lesson is unchanged.
+
 **You will learn:** reading environment variables, handing one function to another, and why a program should refuse to start with a bad setting.
 
 **Real code:** `listenAddr` in `backend/cmd/api/main.go`, and `TestListenAddr` in `main_test.go` beside it.

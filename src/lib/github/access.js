@@ -1,0 +1,69 @@
+// Verify each bearer pair with its issuer. Never decode unverified JWT claims,
+// trust user_metadata, parse SSR cookies, or fall back to the owner's token.
+const tokenPattern = /^[A-Za-z0-9._~+\/-]+=*$/;
+export const accessError = 'GitHub authorization failed';
+
+export async function resolveGitHubAccess(request, options = {}) {
+  const auth = request.headers.get('authorization') || '';
+  const token = request.headers.get('x-github-token') || '';
+  if (!auth && !token) return { status: 200, token: '' };
+  const session = /^Bearer ([A-Za-z0-9._~+\/-]+=*)$/i.exec(auth)?.[1];
+  if (!session || !tokenPattern.test(token) || session.length > 8192 || token.length > 8192) return { status: 401 };
+  const base = options.supabaseURL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = options.supabaseKey ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!base || !key) return { status: 503 };
+  const send = options.fetch ?? fetch;
+  const signal = AbortSignal.any([request.signal, AbortSignal.timeout(4000)]);
+  const check = async (url, headers) => {
+    const response = await send(url, { headers, signal, cache: 'no-store', redirect: 'error' });
+    if (!response.ok) return { status: [401, 403].includes(response.status) ? 401 : 503 };
+    // Bound identity responses, including chunked bodies.
+    const reader = response.body.getReader();
+    const parts = []; let length = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        length += value.length;
+        if (length > 1024 * 1024) throw new Error('identity reply too large');
+        parts.push(value);
+      }
+    } finally { await reader.cancel(); }
+    const bytes = new Uint8Array(length); let offset = 0;
+    for (const part of parts) { bytes.set(part, offset); offset += part.length; }
+    return { status: 200, body: JSON.parse(new TextDecoder().decode(bytes)) };
+  };
+  try {
+    const user = await check(`${base.replace(/\/+$/, '')}/auth/v1/user`, { Authorization: `Bearer ${session}`, apikey: key });
+    if (user.status !== 200) return user;
+    const identities = user.body?.identities;
+    if (!user.body?.id || user.body.is_anonymous || !Array.isArray(identities)) return { status: 403 };
+    const linked = identities.filter(i => i.provider === 'github' && typeof i.id === 'string');
+    if (!linked.length) return { status: 403 };
+    const github = await check(`${options.githubURL ?? 'https://api.github.com'}/user`, { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'SEFGH' });
+    if (github.status !== 200) return github;
+    if (!Number.isSafeInteger(github.body?.id) || github.body.id <= 0 || !linked.some(i => i.id === String(github.body.id))) return { status: 403 };
+    return { status: 200, token };
+  } catch { return { status: 503 }; }
+}
+
+export function withGitHubAccess(handler) {
+  return async (request, context) => {
+    const access = await resolveGitHubAccess(request);
+    const response = access.status === 200
+      ? await handler(request, context, access)
+      : Response.json({ error: accessError }, { status: access.status });
+    // Authenticated replies and failures may never enter a browser/CDN cache.
+    if (access.token || access.status !== 200) response.headers.set('Cache-Control', 'private, no-store');
+    return response;
+  };
+}
+
+export function githubFetch(url, token, init = {}) {
+  if (token && new URL(url).origin !== 'https://api.github.com') throw new Error('Untrusted GitHub URL');
+  return fetch(url, {
+    ...init,
+    ...(token ? { next: undefined, cache: 'no-store', redirect: 'error' } : {}),
+    headers: { ...init.headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+  });
+}

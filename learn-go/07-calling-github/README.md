@@ -1,5 +1,9 @@
 # Lesson 07: Calling GitHub
 
+AUTH-001 update: Handler.Token now receives the verified caller's GitHub
+credential from the access wrapper. The production mux never supplies the
+shared environment token. See [lesson 16](../16-verifying-access/README.md).
+
 **You will learn:** how a Go program makes a web request of its own, and the three habits that keep it safe.
 
 **Real code:** the middle of `ServeHTTP`, plus `isRateLimited` and `headerValue`, in `backend/internal/githubsearch/handler.go`.

@@ -1,3 +1,4 @@
+import { fixtureRequest } from './access-fixture.mjs';
 // Characterization tests: the real Next handlers, with only GitHub replaced.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -52,7 +53,7 @@ for (const c of contract.cases) {
       });
     };
     try {
-      const request = new Request(`http://localhost${c.request}`);
+      const request = fixtureRequest(`http://localhost${c.request}`, c.github_token);
       const segments = new URL(request.url).pathname.split('/');
       const response = await handlers[c.route](request, {
         params: Promise.resolve({owner: decodeURIComponent(segments[4] ?? ''), repo: decodeURIComponent(segments[5] ?? '')}),
@@ -60,7 +61,7 @@ for (const c of contract.cases) {
       assert.equal(response.status, c.expect.status);
       assert.deepEqual(await response.json(), c.expect.body);
       assert.equal(response.headers.get('content-type'), 'application/json');
-      assert.equal(response.headers.get('cache-control'), null);
+      assert.equal(response.headers.get('cache-control'), c.github_token ? 'private, no-store' : null);
       assert.equal(response.headers.get('retry-after'), null);
       assert.deepEqual(calls, c.calls.map(({url, headers, next}) => ({url, headers, next})));
     } finally {

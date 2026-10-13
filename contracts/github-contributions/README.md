@@ -1,5 +1,11 @@
 # GitHub contributions contract
 
+AUTH-001 (2026-10-13): current contract version **2**. The shared
+[access contract](../github-access/README.md) now governs credentials and
+private response caching. In fixtures, github_token is a verified per-user
+credential, never an environment-token fallback. Anonymous reads use no token.
+Prior version notes below are historical.
+
 `cases.json` records what `GET /api/github/contributions?username=...` does. Version 1 was captured from the unchanged Next.js handler (`src/app/api/github/contributions/route.js`) at commit `73429e1`, before the Go port was written.
 
 | Implementation | Check it with |

@@ -49,7 +49,7 @@ type Handler struct {
 	// BaseURL is the GitHub API origin, without a trailing slash.
 	// Empty means DefaultBaseURL.
 	BaseURL string
-	// Token is an optional server-side GitHub token, sent as a bearer token.
+	// Token is the verified caller's GitHub token; empty means public access.
 	Token string
 	// Logger records failures. Nil means slog.Default().
 	Logger *slog.Logger

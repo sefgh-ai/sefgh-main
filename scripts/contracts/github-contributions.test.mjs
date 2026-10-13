@@ -1,3 +1,4 @@
+import { fixtureRequest } from './access-fixture.mjs';
 // Replays contracts/github-contributions/cases.json against the real Next.js
 // handler. Each case fixes GitHub's reply, the clock and the server time zone,
 // because the handler derives its date range from all three.
@@ -46,11 +47,11 @@ for (const c of contract.cases) {
       return new Response(reply.raw_body ?? JSON.stringify(reply.body), { status: reply.status });
     };
     try {
-      const response = await GET(new Request(`http://localhost${c.request}`));
+      const response = await GET(fixtureRequest(`http://localhost${c.request}`, c.github_token));
       assert.equal(response.status, c.expect.status);
       assert.deepEqual(await response.json(), c.expect.body);
       assert.equal(response.headers.get('content-type'), 'application/json');
-      assert.equal(response.headers.get('cache-control'), null);
+      assert.equal(response.headers.get('cache-control'), c.github_token ? 'private, no-store' : null);
       assert.equal(response.headers.get('retry-after'), null);
       assert.deepEqual(calls, c.calls.map(call => ({
         url: call.url, method: call.method, headers: call.headers,

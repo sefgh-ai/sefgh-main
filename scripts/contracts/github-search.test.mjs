@@ -1,3 +1,4 @@
+import { fixtureRequest } from './access-fixture.mjs';
 // Runs contracts/github-search/cases.json against the current Next.js
 // handler. GitHub is replaced by a stub, so no network request is made.
 
@@ -83,7 +84,7 @@ for (const c of contract.cases) {
     stubUpstream(upstream, calls);
 
     const response = await GET(
-      new Request(`http://localhost/api/github/search?${c.request}`)
+      fixtureRequest(`http://localhost/api/github/search?${c.request}`, c.github_token)
     );
 
     if (c.expect_upstream_url === null) {
@@ -105,7 +106,7 @@ for (const c of contract.cases) {
     assert.equal(response.status, expected.status);
     const expectedHeaders = {
       "content-type": "application/json",
-      "cache-control": null,
+      "cache-control": c.github_token ? "private, no-store" : null,
       "retry-after": null,
       ...expected.headers,
     };

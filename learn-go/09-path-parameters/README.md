@@ -1,5 +1,10 @@
 # Lesson 09: Path parameters
 
+AUTH-001 update: all repository resource calls now use the verified caller
+credential when present. Anonymous calls use no token. Private enrichment URLs
+are restricted to the GitHub origin and redirects are refused. The path
+validation taught here is unchanged. See [lesson 16](../16-verifying-access/README.md).
+
 **You will learn:** how one Go route handles many repository URLs.
 
 **Real code:** `Register`, `detail` and `contents` in `backend/internal/githubrepos/handler.go`.

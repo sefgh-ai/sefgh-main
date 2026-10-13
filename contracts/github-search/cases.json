@@ -1,6 +1,8 @@
 {
   "contract": "GET /api/github/search",
-  "contract_version": 2,
+  "contract_version": 3,
+  "authorization_contract": "../github-access/cases.json",
+  "github_token_semantics": "Per-user GitHub credential, verified with the matching Supabase session; never the server token.",
   "source": "src/app/api/github/search/route.js",
   "upstream_url_prefix": "https://api.github.com/search/repositories?",
   "upstream_request_headers": {

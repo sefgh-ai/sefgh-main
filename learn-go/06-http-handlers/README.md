@@ -1,5 +1,9 @@
 # Lesson 06: HTTP handlers
 
+AUTH-001 update: the server wraps the GitHub mux with githubaccess.Verifier.Wrap
+before adding response headers. It verifies private callers at the direct Go
+URL as well as through Next. See [lesson 16](../16-verifying-access/README.md).
+
 **You will learn:** how a Go program answers a web request, what an interface is, and what "middleware" means.
 
 **Real code:** `Handler` and `ServeHTTP` in `backend/internal/githubsearch/handler.go`, and the server in `backend/cmd/api/main.go`.

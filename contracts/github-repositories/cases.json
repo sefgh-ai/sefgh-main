@@ -1,5 +1,5 @@
 {
-  "contract_version": 3,
+  "contract_version": 4,
   "cases": [
     {
       "id": "missing-both",
@@ -167,9 +167,7 @@
             "languages_url": "https://api.github.com/repos/octo/demo/languages",
             "extra": "kept only in detail"
           },
-          "next": {
-            "revalidate": 3600
-          },
+          "next": null,
           "wire_url": "https://api.github.com/repos/octo/demo"
         }
       ],
@@ -863,7 +861,8 @@
           "url": "https://api.github.com/repos/octo/demo",
           "headers": {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "SEFGH-NextJS-App"
+            "User-Agent": "SEFGH-NextJS-App",
+            "Authorization": "Bearer fixture-token"
           },
           "status": 200,
           "response_headers": {},
@@ -900,7 +899,8 @@
           "url": "https://api.github.com/repos/octo/demo/languages",
           "headers": {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "SEFGH-NextJS-App"
+            "User-Agent": "SEFGH-NextJS-App",
+            "Authorization": "Bearer fixture-token"
           },
           "status": 200,
           "response_headers": {},
@@ -914,7 +914,8 @@
           "url": "https://api.github.com/repos/octo/demo/readme",
           "headers": {
             "Accept": "application/vnd.github.v3.raw",
-            "User-Agent": "SEFGH-NextJS-App"
+            "User-Agent": "SEFGH-NextJS-App",
+            "Authorization": "Bearer fixture-token"
           },
           "status": 200,
           "response_headers": {},
@@ -2883,7 +2884,8 @@
           "url": "https://api.github.com/repos/octo/demo/contents/",
           "headers": {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "SEFGH-NextJS-App"
+            "User-Agent": "SEFGH-NextJS-App",
+            "Authorization": "Bearer fixture-token"
           },
           "status": 200,
           "response_headers": {},
@@ -4989,5 +4991,7 @@
       "disposition": "preserve",
       "note": "An unfinished three-byte sequence is one replacement character, and the byte after it is kept."
     }
-  ]
+  ],
+  "authorization_contract": "../github-access/cases.json",
+  "github_token_semantics": "Per-user GitHub credential, verified with the matching Supabase session; never the server token."
 }

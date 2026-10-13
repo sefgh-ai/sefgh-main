@@ -1,5 +1,15 @@
 # SEFGH backend map
 
+Update 2026-10-13: AUTH-001 verifies Supabase and GitHub bearer credentials for
+the five migrated dynamic GitHub handlers; anonymous requests use no server
+token. Private responses are not cached. Go protects direct requests too.
+No private browser integration or deployment occurred. Shared localStorage
+and chat/share flows need isolation before receiving private results. Other
+server-token helpers/starred routes remain outside this slice. CI-001 adds
+a Linux workflow; VERIFY-002 adds production forwarding coverage. Actual test
+results and gates are in coordination.md. The sections below retain their
+dated historical evidence. See [access contract](../contracts/github-access/README.md).
+
 Inspected: 2026-10-11 (Asia/Calcutta). Source baseline: `42759dd` (`fix: resolve client-side exception on the landing page`). Working tree was clean before this documentation work.
 
 ## Evidence boundary

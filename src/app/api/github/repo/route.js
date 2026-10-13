@@ -1,3 +1,4 @@
+import { withGitHubAccess, githubFetch } from '@/lib/github/access'
 import { NextResponse } from 'next/server'
 import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
 
@@ -5,7 +6,8 @@ import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
  * Fetch individual GitHub repository data
  * GET /api/github/repo?owner=<owner>&name=<repo>
  */
-export async function GET(request) {
+async function handleGET(request, _context, access) {
+  const fetch = (url, init) => githubFetch(url, access.token, init)
   try {
     const { searchParams } = new URL(request.url)
     const owner = searchParams.get('owner')
@@ -32,8 +34,8 @@ export async function GET(request) {
         headers: {
           'Accept': 'application/vnd.github.v3+json',
           'User-Agent': 'SEFGH-NextJS-App',
-          ...(process.env.GITHUB_TOKEN && {
-            'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`
+          ...(access.token && {
+            'Authorization': `Bearer ${access.token}`
           })
         },
         next: { revalidate: 3600 } // Cache for 1 hour
@@ -86,3 +88,5 @@ export async function GET(request) {
     )
   }
 }
+
+export const GET = withGitHubAccess(handleGET);

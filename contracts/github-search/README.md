@@ -1,5 +1,11 @@
 # GitHub search contract fixtures
 
+AUTH-001 (2026-10-13): current contract version **3**. The shared
+[access contract](../github-access/README.md) now governs credentials and
+private response caching. In fixtures, github_token is a verified per-user
+credential, never an environment-token fallback. Anonymous reads use no token.
+Prior version notes below are historical.
+
 `cases.json` is the contract for `GET /api/github/search`: what a caller sends and what it must get back. It is plain data, so every implementation is checked against the same file.
 
 | Implementation | Check it with |

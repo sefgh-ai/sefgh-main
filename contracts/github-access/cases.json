@@ -1,0 +1,288 @@
+{
+  "contract_version": 1,
+  "error": "GitHub authorization failed",
+  "cases": [
+    {
+      "id": "anonymous",
+      "headers": {},
+      "calls": [],
+      "status": 200,
+      "token": ""
+    },
+    {
+      "id": "token-without-session",
+      "headers": {
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [],
+      "status": 401
+    },
+    {
+      "id": "session-without-provider",
+      "headers": {
+        "Authorization": "Bearer session-a"
+      },
+      "calls": [],
+      "status": 401
+    },
+    {
+      "id": "bad-scheme",
+      "headers": {
+        "Authorization": "Basic session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [],
+      "status": 401
+    },
+    {
+      "id": "malformed-provider",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a,gh-b"
+      },
+      "calls": [],
+      "status": 401
+    },
+    {
+      "id": "expired-session",
+      "headers": {
+        "Authorization": "Bearer expired",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 401,
+          "body": {}
+        }
+      ],
+      "status": 401
+    },
+    {
+      "id": "auth-outage",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 503,
+          "body": {}
+        }
+      ],
+      "status": 503
+    },
+    {
+      "id": "no-linked-github",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": []
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "editable-metadata-is-not-identity",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "user_metadata": {
+              "sub": "101"
+            },
+            "identities": []
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "verified-a",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 101
+          }
+        }
+      ],
+      "status": 200,
+      "token": "gh-a"
+    },
+    {
+      "id": "verified-b",
+      "headers": {
+        "Authorization": "Bearer session-b",
+        "X-GitHub-Token": "gh-b"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "b",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "102"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 102
+          }
+        }
+      ],
+      "status": 200,
+      "token": "gh-b"
+    },
+    {
+      "id": "another-users-github-token",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-b"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 102
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "revoked-github-token",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "revoked"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 401,
+          "body": {}
+        }
+      ],
+      "status": 401
+    },
+    {
+      "id": "github-outage",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 500,
+          "body": {}
+        }
+      ],
+      "status": 503
+    },
+    {
+      "id": "anonymous-supabase-account",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "is_anonymous": true,
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        }
+      ],
+      "status": 403
+    }
+  ]
+}

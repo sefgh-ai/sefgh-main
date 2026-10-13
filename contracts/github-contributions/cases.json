@@ -1,6 +1,6 @@
 {
   "contract": "GET /api/github/contributions",
-  "contract_version": 1,
+  "contract_version": 2,
   "source": "src/app/api/github/contributions/route.js",
   "graphql_url": "https://api.github.com/graphql",
   "query": "\n      query($username: String!, $from: DateTime!, $to: DateTime!) {\n        user(login: $username) {\n          contributionsCollection(from: $from, to: $to) {\n            contributionCalendar {\n              totalContributions\n              weeks {\n                contributionDays {\n                  date\n                  contributionCount\n                  color\n                }\n              }\n            }\n          }\n        }\n      }\n    ",
@@ -5714,5 +5714,7 @@
         }
       }
     }
-  ]
+  ],
+  "authorization_contract": "../github-access/cases.json",
+  "github_token_semantics": "Per-user GitHub credential, verified with the matching Supabase session; never the server token."
 }

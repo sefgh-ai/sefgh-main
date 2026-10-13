@@ -1,5 +1,40 @@
 # Claude Code review and reconciliation
 
+## REVIEW-004: Codex review, 2026-10-13
+
+Reviewed at base `905c1d9`, before AUTH-001: GO-005a/b (contributions fixtures,
+GraphQL/date/rounding implementation), FIX-003 (matching input validation and
+encoding), FIX-004 (UTF-8 decoder and detail deadline), VERIFY-001 (forwarding
+probe), OPS-001a (PORT precedence and validation), their relevant tests and
+lessons 13-15. Source and deterministic checks, not a production security audit.
+
+Verdict: these implementations are acceptable with routing off. The shared
+fixtures pass; input rules match, the decoder handles partial UTF-8 sequences,
+the detail deadline is shorter than the server write timeout, and PORT has
+explicit precedence/range checks. Contributions' recorded timezone/coercion
+defects remain deliberate. No repeat of Claude's mutation campaign is claimed.
+
+Rollout findings:
+- High: private policy was already decided by the owner but not transferred to
+  these docs. Shared server-token permissions cannot implement that policy.
+- High: the Next switch does not disable endpoints at a separately hosted Go
+  origin. Token-bearing direct requests need their own authorization boundary.
+- Medium: the original forwarding probe tested next dev only and its teardown
+  used Windows taskkill unconditionally. Production/Linux coverage was absent.
+- Medium: the handoff's uncommitted warning was stale; the tree was clean at
+  905c1d9. The hosted race, Vercel routing, measurements and rollback gates remain.
+
+AUTH-001 and VERIFY-002 in the current change address the first three findings
+locally; CI-001 supplies the hosted verification workflow. Owner authorization
+to implement these recommendations is recorded in ADR-0002. New implementation
+was authored by Codex and has **not** received independent peer review.
+See coordination.md for actual final checks, not historical counts below.
+
+In particular, this review is not approval to deploy, enable a route, grant a
+shared token private access, or send private results into the existing browser
+cache/chat/share flows. Private UI integration and remaining server-token call
+sites still require their own bounded work.
+
 > Later decision, 2026-10-11: the owner chose Go instead of Rust (`adr/0002-go-backend.md`). This file records a review of the Rust proposal as it happened and is not rewritten. Its findings about the application do not depend on the language. Where it says Rust or SQLx, the current plan says Go and `pgx`.
 
 Date: 2026-10-11. Source baseline: `42759dd`. Reviewer: installed local Claude Code 2.1.286, invoked by Codex at the user's request. This is a curated summary of its actual review, not a claim that Claude shares Codex's chat history.

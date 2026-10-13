@@ -48,6 +48,11 @@ func New(client *http.Client, baseURL, token string) *Handler {
 		baseURL = defaultBaseURL
 	}
 	h := &Handler{client: client, baseURL: strings.TrimRight(baseURL, "/"), token: token, cache: newCache(256, 64<<20), detailTimeout: DetailTimeout}
+	if token != "" {
+		privateClient := *client
+		privateClient.CheckRedirect = func(*http.Request, []*http.Request) error { return errors.New("authenticated redirect refused") }
+		h.client = &privateClient
+	}
 	h.cache.logPanic = func() { h.logger().Error("repository cache loader panicked") }
 	return h
 }
@@ -92,6 +97,12 @@ func (h *Handler) fetch(ctx context.Context, target, accept string, token bool) 
 	parsed, err := jscompat.FetchURL(target)
 	if err != nil {
 		return upstreamReply{}, fmt.Errorf("normalize upstream URL: %w", err)
+	}
+	if h.token != "" {
+		base, baseErr := url.Parse(h.baseURL)
+		if baseErr != nil || parsed.Scheme != base.Scheme || parsed.Host != base.Host {
+			return upstreamReply{}, errors.New("untrusted GitHub URL")
+		}
 	}
 	stage = "create_request"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, h.baseURL, nil)
@@ -179,9 +190,15 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := parsed.Scheme + "://" + parsed.Host + parsed.RequestURI()
-	up, err := h.cache.get(r.Context(), key, func(ctx context.Context) (upstreamReply, error) {
+	load := func(ctx context.Context) (upstreamReply, error) {
 		return h.fetch(ctx, target, "application/vnd.github.v3+json", true)
-	})
+	}
+	var up upstreamReply
+	if h.token != "" {
+		up, err = load(r.Context()) // Recheck permissions; never reuse private data.
+	} else {
+		up, err = h.cache.get(r.Context(), key, load)
+	}
 	if err != nil {
 		h.fail(w, 500, "Failed to fetch repository")
 		return
@@ -225,7 +242,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	target := h.baseURL + "/repos/" + owner + "/" + repoName
-	up, err := h.fetch(ctx, target, "application/vnd.github.v3+json", false)
+	up, err := h.fetch(ctx, target, "application/vnd.github.v3+json", true)
 	const message = "Failed to fetch repository details"
 	if err != nil || !up.ok() {
 		h.fail(w, 500, message)
@@ -246,7 +263,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, 500, message)
 		return
 	}
-	languagesReply, err := h.fetch(ctx, languagesURL, "application/vnd.github.v3+json", false)
+	languagesReply, err := h.fetch(ctx, languagesURL, "application/vnd.github.v3+json", true)
 	if err != nil {
 		h.fail(w, 500, message)
 		return
@@ -260,7 +277,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var readme any
-	readmeReply, err := h.fetch(ctx, target+"/readme", "application/vnd.github.v3.raw", false)
+	readmeReply, err := h.fetch(ctx, target+"/readme", "application/vnd.github.v3.raw", true)
 	if err == nil && readmeReply.ok() {
 		// README files are not always UTF-8. Decode them as JavaScript's
 		// Response.text() does, so both backends return the same string.
@@ -282,7 +299,7 @@ func (h *Handler) contents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	target := h.baseURL + "/repos/" + owner + "/" + repoName + "/contents/" + encodedPath
-	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", false)
+	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", true)
 	const message = "Failed to fetch repository contents"
 	if err != nil || !up.ok() {
 		h.fail(w, 500, message)

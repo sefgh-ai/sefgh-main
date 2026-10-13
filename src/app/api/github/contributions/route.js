@@ -1,10 +1,12 @@
+import { withGitHubAccess, githubFetch } from '@/lib/github/access'
 import { NextResponse } from 'next/server'
 
 /**
  * GitHub GraphQL API endpoint for fetching user contributions
  * GET /api/github/contributions?username=octocat
  */
-export async function GET(request) {
+async function handleGET(request, _context, access) {
+  const fetch = (url, init) => githubFetch(url, access.token, init)
   try {
     const { searchParams } = new URL(request.url)
     const username = searchParams.get('username')
@@ -60,7 +62,7 @@ export async function GET(request) {
     }
 
     // Use GitHub token from environment
-    const token = process.env.GITHUB_TOKEN
+    const token = access.token
 
     if (!token) {
       return NextResponse.json(
@@ -168,3 +170,5 @@ export async function GET(request) {
     )
   }
 }
+
+export const GET = withGitHubAccess(handleGET);

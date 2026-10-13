@@ -31,7 +31,9 @@ go run ./cmd/api
 |---|---|---|
 | `SEFGH_API_ADDR` | `127.0.0.1:8787` | Address to listen on. Wins over `PORT` |
 | `PORT` | none | Set by a hosting platform. When `SEFGH_API_ADDR` is not set, the server listens on this port on every network interface. A value that is not a number from 1 to 65535 stops the server at start-up |
-| `GITHUB_TOKEN` | none | Optional GitHub token. The same variable the Next.js handler reads. Without it GitHub allows about 10 searches a minute |
+| `GITHUB_TOKEN` | ignored by migrated handlers | Never grants public callers the owner's private permissions |
+| `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
 
 Go does not read `.env.local`. Set variables in the shell that starts the server.
@@ -77,7 +79,7 @@ SEFGH_GO_ROUTES=github-search
 The new names are `github-repo`, `github-repo-details`, and `github-contents`.
 GO-004 adds `github-languages`, a static embedded catalog with no upstream
 calls, credentials or runtime data file. It also stays disabled by default.
-GO-005b adds `github-contributions`, which needs `GITHUB_TOKEN`: without it
+GO-005b adds `github-contributions`, which now needs a verified user credential: without it
 every valid request answers 500. It works out its date range in the time zone
 of the machine it runs on, as the Next.js handler does.
 They remain off by default and await peer review and ADR cutover gates. The
@@ -85,7 +87,7 @@ summary cache is local to one Go process: one-hour freshness, stale background
 refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
 and sharing need resolution before public rollout. The repository routes check
 owner, name and path before any request to GitHub (`internal/githubrepos/identifiers.go`,
-contract version 3). See the repository contract README for exact boundaries.
+contract version 4). See the repository contract README for exact boundaries.
 
 To see which backend answered a request, send a blank query, which is answered with a 400 without contacting GitHub, and read the headers:
 
@@ -113,3 +115,17 @@ Everything the contract fixtures cover is identical.
 4. Add or extend a lesson in `../learn-go/` for whatever Go the route introduces.
 
 Use `internal/jscompat` to read query strings and to percent-encode. Go's `net/url` parses and encodes differently from the JavaScript the contracts were recorded from.
+
+## API access and CI (AUTH-001 / CI-001)
+
+The five dynamic GitHub routes verify private requests with Supabase and GitHub
+online, including direct requests to Go. Supply a Supabase bearer token and
+a matching X-GitHub-Token. Private summaries bypass the shared cache; private
+responses carry Cache-Control: private, no-store. Public summaries retain their
+cache. See [the access contract](../contracts/github-access/README.md) for errors,
+tests and the separate private-UI integration still needed.
+
+.github/workflows/backend-verification.yml runs Linux contracts, the race detector,
+vet/formatting, lesson solutions and production forwarding. It has read-only
+permissions and no deployment credentials. Its presence is not evidence of a
+successful hosted run.

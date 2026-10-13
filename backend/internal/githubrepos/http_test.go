@@ -148,9 +148,9 @@ func TestSummaryCacheIsConnectedAndScopedToHandler(t *testing.T) {
 		calls.Add(1)
 		return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"id":1}`))}, nil
 	})}
-	for _, token := range []string{"first", "second"} {
+	for range 2 {
 		mux := http.NewServeMux()
-		New(client, defaultBaseURL, token).Register(mux)
+		New(client, defaultBaseURL, "").Register(mux)
 		// Two spellings of one request: they must share a cache entry.
 		for _, target := range []string{"/api/github/repo?owner=o&name=a.b", "/api/github/repo?name=a%2Eb&owner=o"} {
 			rec := httptest.NewRecorder()

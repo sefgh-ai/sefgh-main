@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
@@ -62,22 +63,41 @@ func run(logger *slog.Logger) error {
 		return err
 	}
 
+	verifier := githubaccess.Verifier{
+		SupabaseURL: os.Getenv("NEXT_PUBLIC_SUPABASE_URL"),
+		SupabaseKey: os.Getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+		GitHubURL:   envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
+	}
+	mux := verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) })
+	srv := &http.Server{
+		Addr: addr, Handler: markBackend(mux), ReadHeaderTimeout: 5 * time.Second,
+		WriteTimeout: writeTimeout, IdleTimeout: 60 * time.Second,
+	}
+	return serve(logger, srv, addr)
+}
+
+// Public settings never use GITHUB_TOKEN. Private muxes live for one request.
+func githubMux(logger *slog.Logger, token string) *http.ServeMux {
 	mux := http.NewServeMux()
+	client := &http.Client{Timeout: githubsearch.DefaultTimeout}
+	if token != "" {
+		client.CheckRedirect = func(*http.Request, []*http.Request) error { return errors.New("authenticated redirect refused") }
+	}
 	githublanguages.Register(mux)
 	mux.Handle("GET /api/github/contributions", &githubcontributions.Handler{
-		Client:  &http.Client{Timeout: githubcontributions.DefaultTimeout},
+		Client:  client,
 		BaseURL: envOr("GITHUB_API_URL", githubcontributions.DefaultBaseURL),
-		Token:   os.Getenv("GITHUB_TOKEN"),
+		Token:   token,
 		Logger:  logger,
 	})
-	repositories := githubrepos.New(&http.Client{Timeout: githubsearch.DefaultTimeout},
-		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), os.Getenv("GITHUB_TOKEN"))
+	repositories := githubrepos.New(client,
+		envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL), token)
 	repositories.Logger = logger
 	repositories.Register(mux)
 	mux.Handle("GET /api/github/search", &githubsearch.Handler{
-		Client:  &http.Client{Timeout: githubsearch.DefaultTimeout},
+		Client:  client,
 		BaseURL: envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
-		Token:   os.Getenv("GITHUB_TOKEN"),
+		Token:   token,
 		Logger:  logger,
 	})
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -85,14 +105,10 @@ func run(logger *slog.Logger) error {
 		io.WriteString(w, `{"status":"ok"}`)
 	})
 
-	srv := &http.Server{
-		Addr:              addr,
-		Handler:           markBackend(mux),
-		ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout:      writeTimeout,
-		IdleTimeout:       60 * time.Second,
-	}
+	return mux
+}
 
+func serve(logger *slog.Logger, srv *http.Server, addr string) error {
 	// Stop cleanly on Ctrl+C or a termination signal from the host.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

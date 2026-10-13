@@ -42,11 +42,11 @@ Add a third-party dependency only when the standard library cannot reasonably do
 
 Keep `src/proxy.js` and `/auth/callback`. For protected Go endpoints, accept an access token obtained through the existing session flow, or forwarded by a thin session-aware Next.js adapter. Go must verify signature, issuer, audience, expiry and algorithm. Never trust a client-supplied user ID or unsigned claims. Do not hand-parse Supabase SSR cookies in Go.
 
-Confirm the project's signing-key mode first. Asymmetric keys can be verified with Supabase's JWKS and rotation-aware caching; legacy symmetric signing needs its own verified strategy. See [Supabase signing keys](https://supabase.com/docs/guides/auth/signing-keys) and [JWT guidance](https://supabase.com/docs/guides/auth/jwts).
+AUTH-001 delegates verification to the configured Supabase project's Auth `/auth/v1/user` endpoint, which verifies its own tokens regardless of signing-key mode. The public anon key is sufficient; Go never decodes unverified claims. A future local JWT verifier must first confirm signing-key mode, issuer, audience, algorithms, expiry and rotation behavior. See [Supabase signing keys](https://supabase.com/docs/guides/auth/signing-keys).
 
 Do not use a service-role credential for ordinary user operations. It bypasses RLS and changes the security model. Call the Supabase Data API and RPCs with the verified user's token, so the existing RLS identity still applies. Give workers their own narrowly scoped privileges. See [Supabase RLS guidance](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
-Keep same-origin routing through Next.js, and test cookies, CSRF protection for cookie-authenticated mutations, streaming and headers. The first route, GitHub search, is public and needs none of this.
+Keep same-origin routing through Next.js, and test cookies, CSRF protection for cookie-authenticated mutations, streaming and headers. Public GitHub reads need no session. Private reads require the verified Supabase/GitHub bearer pair in [the access contract](../../contracts/github-access/README.md), including at the direct Go URL. Private UI integration is a subsequent slice: browser storage and sharing need isolation before private results enter those flows.
 
 ### How a route moves
 
@@ -91,14 +91,14 @@ The table above is dated 2026-10-11. This is where Phase 1 stood after `VERIFY-0
 | Fixture parity, old and new, for search, summary, detail and contents | Met locally: every case passes against both | Done; repeat on each change |
 | Invalid-input and upstream-failure tests | Met. Input rules approved by the owner and applied in `FIX-003` | Done |
 | Explicit timeout and cache behaviour | Met in code. Production cache behaviour is not chosen | Owner, with hosting |
-| Review findings (REVIEW-002) | 1 to 10 fixed. 11, no token on detail and contents, is open | Owner |
-| Who may see private repositories | **Open.** No token-bearing route is to be cut over until decided | Owner |
-| Rewrite forwards requests unchanged | Met for `next dev`, 46 of 46 paths. Not checked on Vercel | An agent, once a preview deployment exists |
-| Race detector | **Not run.** Needs a C compiler; none on the owner's machine | `CI-001`, which needs the owner's approval |
+| Review findings (REVIEW-002) | 1 to 10 addressed; AUTH-001 implements per-user credentials for finding 11, pending independent review | Reviewer |
+| Who may see private repositories | **Decided:** signed-in users, only their own GitHub account's access. API implemented; private UI and live OAuth checks remain | Agents; no repeated owner policy decision |
+| Rewrite forwards requests unchanged | VERIFY-002 extends the probe to production and 49 requests including bearer forwarding and mismatch denial. Not checked on Vercel | Agent on an approved preview |
+| Race detector | CI-001 workflow added under owner implementation authorization. A successful hosted run is still required | GitHub Actions after synchronization |
 | Hosting for the Go service | **Open.** Proposal below | Owner |
 | Staging latency and resource comparison | Not started. Needs hosting | Owner, then an agent |
 | Tested rollback | Met locally. Not tested under real traffic | Needs hosting |
-| Peer review | GO-005a, GO-005b, FIX-003, FIX-004 and VERIFY-001 not yet reviewed | Codex |
+| Peer review | REVIEW-004 records Codex review of GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a. New changes await independent review | Assigned reviewer |
 
 ## Recorded differences between Go and Next.js
 
@@ -122,7 +122,8 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | 2026-10-11 | Go chosen over Rust (this ADR) |
 | 2026-10-11 | All 13 defects recorded in search contract version 1 are fixed in the Next.js handler; contract moves to version 2. Details in `../../contracts/github-search/README.md` |
 | 2026-10-12 | Owner approved input validation for the repository routes (REVIEW-002 finding 1). Applied in `FIX-003`: repository contract version 3, Next.js and Go together |
-| 2026-10-12 | Owner stated the server GitHub token is **not** to be limited to public data. Who may see private repositories is undecided, which leaves a cutover gate open (see below) |
+| 2026-10-12 | Corrected earlier interpretation: the owner chose private access for signed-in users only to repositories their own GitHub account can access. This does not authorize sharing the server token's permissions |
+| 2026-10-13 | Owner authorized implementing Codex's recommendations, including CI-001 and API authorization. Contracts change in Next and Go together. No deployment or route cutover is implied |
 | 2026-10-12 | Owner stated hosting: Next.js on Vercel, database on Supabase, and that the owner holds the GitHub, Vercel and Supabase accounts. Token permissions are not yet verified |
 | 2026-10-12 | Owner set the budget: free tier only. No paid resource is to be created without the owner's approval |
 | 2026-10-11 | Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go` (version 1.27.2, official archive, checksum verified, user PATH updated). No administrator rights were used |
@@ -130,7 +131,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 Open, for the owner:
 
 - The search navbar sends `sort=stars` and `sort=updated`, which the API ignores. Recorded as `defect` cases. Either teach the API those names or change the navbar to send the names the API knows.
-- **Who may see private repositories.** The summary and search routes send the server token for any caller. With a token that can read private repositories, their details reach anyone, in the Next.js routes in production today as well as in the Go ports. Until this is decided, no token-bearing route should be cut over.
+- **Private implementation and verification (agents).** Policy is decided. AUTH-001 removes server-token fallback from the five migrated dynamic GitHub handlers. Private UI integration, other server-token call sites, independent review and live OAuth verification remain. No production token permissions were inspected.
 - How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected. See the hosting proposal below.
 - Public and guest policy for the AI endpoints, and playground key semantics, before Phase 2 and 3.
 
@@ -156,7 +157,7 @@ Recommendation: **A, on a preview deployment first**, because it changes nothing
 Either way, in this order. Step 1 is done; every later step waits for the owner's go-ahead:
 
 1. Make `backend/cmd/api` honour `PORT`. Done in `OPS-001a`, with no deployment.
-2. The owner creates the project or preview on the free plan and sets `GITHUB_TOKEN` there. Agents do not handle the token.
+2. After approval, create a protected preview project rooted at `backend/`, with the `go` framework preset. Start with health/languages and no GitHub credential. The frontend switch does not disable direct backend requests. Verify Hobby eligibility (personal/noncommercial) and allowance first; free hosting is conditional. Configure Supabase's public URL/key only when testing the bearer boundary. Never add a private-capable shared GitHub token for public callers.
 3. Run `scripts/contracts/go-forwarding-probe.mjs`'s path list against the preview, with routes still off in production.
 4. Take the measurements in the next section.
 5. Switch on one route that sends no token, `github-languages`, and practise the rollback.

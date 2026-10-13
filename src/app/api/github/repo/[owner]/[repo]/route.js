@@ -1,7 +1,9 @@
+import { withGitHubAccess, githubFetch } from '@/lib/github/access'
 import { NextResponse } from 'next/server'
 import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers'
 
-export async function GET(request, { params }) {
+async function handleGET(request,  { params }, access) {
+  const fetch = (url, init) => githubFetch(url, access.token, init)
   try {
     const { owner, repo } = await params
 
@@ -75,3 +77,5 @@ export async function GET(request, { params }) {
     )
   }
 }
+
+export const GET = withGitHubAccess(handleGET);

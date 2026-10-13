@@ -16,7 +16,8 @@
 // no credentials, no live GitHub. It is not part of npm run test:contracts,
 // because it starts servers and takes about a minute.
 //
-// This checks `next dev`. A deployment on Vercel forwards through Vercel's
+// Add --production to build and check `next start` in an isolated output folder.
+// A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
 import { once } from "node:events";
@@ -25,6 +26,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const executable = process.argv[2];
 if (!executable) throw new Error("pass the path to the built Go API executable");
+const production = process.argv.includes('--production');
 const children = [];
 let upstream;
 
@@ -35,8 +37,8 @@ async function freePort() {
   await new Promise((r) => server.close(r));
   return port;
 }
-function start(command, args, env) {
-  const child = spawn(command, args, { env: { ...process.env, ...env }, stdio: "ignore", windowsHide: true });
+function start(command, args, env, stdio = 'ignore') {
+  const child = spawn(command, args, { env: { ...process.env, ...env }, stdio, windowsHide: true });
   children.push(child);
   return child;
 }
@@ -50,11 +52,11 @@ async function ready(url, child) {
 }
 // A raw request, so that the path is sent exactly as written. fetch() would
 // tidy some of these before they left.
-function raw(port, path) {
+function raw(port, path, headers) {
   return new Promise((resolve) => {
-    const req = http.request({ host: "127.0.0.1", port, path, method: "GET" }, (res) => {
+    const req = http.request({ host: "127.0.0.1", port, path, headers, method: "GET" }, (res) => {
       let body = ""; res.setEncoding("utf8");
-      res.on("data", (d) => (body += d)).on("end", () => resolve({ status: res.statusCode, backend: res.headers["x-sefgh-backend"] ?? null, body }));
+      res.on("data", (d) => (body += d)).on("end", () => resolve({ status: res.statusCode, backend: res.headers["x-sefgh-backend"] ?? null, cache: res.headers['cache-control'] ?? null, body }));
     });
     req.on("error", (e) => resolve({ status: 0, backend: null, body: String(e.message) }));
     req.setTimeout(60_000, () => req.destroy(new Error("timeout")));
@@ -110,6 +112,12 @@ const probes = [
   "/api/github/contributions?username=octocat",
   "/api/github/contributions?username=-bad-",
 ];
+const scenarios = [
+  ...probes.map(path => ({ path })),
+  { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
+  { path: '/api/github/search?q=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
+  { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-other' }, status: 403 },
+];
 
 try {
   const seen = [];
@@ -119,7 +127,9 @@ try {
       seen.push(`${req.method} ${req.url}`);
       res.setHeader("Content-Type", "application/json");
       res.setHeader("x-ratelimit-remaining", "59");
-      if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
+      if (req.url === '/auth/v1/user') res.end(JSON.stringify({ id: 'a', identities: [{ provider: 'github', id: '101' }] }));
+      else if (req.url === '/user') res.end(JSON.stringify({ id: req.headers.authorization === 'Bearer fixture-user' ? 101 : 102 }));
+      else if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
       else if (req.url.startsWith("/search/")) res.end(JSON.stringify({ total_count: 0, items: [] }));
       else if (req.url.endsWith("/languages")) res.end('{"Go":42}');
       else if (req.url.endsWith("/readme")) res.end("# Demo");
@@ -133,39 +143,50 @@ try {
   github = `http://127.0.0.1:${upstream.address().port}`;
 
   const goPort = await freePort(), nextPort = await freePort();
-  const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token" });
+  const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
   const routes = "github-search,github-languages,github-contributions,github-repo,github-repo-details,github-contents";
-  const next = start(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--port", String(nextPort), "--hostname", "127.0.0.1"], {
+  const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "",
-  });
+    SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
+    // This probe never needs a real Supabase account or browser session.
+    NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'probe-placeholder',
+  };
+  if (production) {
+    const build = start(process.execPath, ['node_modules/next/dist/bin/next', 'build'], nextEnv, 'inherit');
+    const [code] = await once(build, 'exit');
+    if (code !== 0) throw new Error(`production build exited ${code}`);
+  }
+  const next = start(process.execPath, ["node_modules/next/dist/bin/next", production ? "start" : "dev", "--port", String(nextPort), "--hostname", "127.0.0.1"], nextEnv);
   await ready(`http://127.0.0.1:${nextPort}/api/github/languages`, next);
-  console.log("servers ready; probing", probes.length, "paths\n");
+  console.log("servers ready; probing", scenarios.length, "requests\n");
 
   // Summary answers are cached by the Go server, so a second identical
   // request makes no upstream call. Count only what each request triggers.
-  const ask = async (port, path) => {
+  const ask = async (port, path, headers) => {
     const before = seen.length;
-    const answer = await raw(port, path);
+    const answer = await raw(port, path, headers);
     return { ...answer, upstream: seen.slice(before) };
   };
 
   let same = 0;
   const different = [];
-  for (const path of probes) {
+  for (const { path, headers, status } of scenarios) {
     // Via Next first, then direct. On the cached summary route the second
     // request makes no upstream call, so those are compared on the reply
     // only; the reply carries the upstream path in full_name.
-    const viaNext = await ask(nextPort, path);
-    const direct = await ask(goPort, path);
-    const cached = path.startsWith("/api/github/repo?");
+    const viaNext = await ask(nextPort, path, headers);
+    const direct = await ask(goPort, path, headers);
+    const cached = !headers && path.startsWith("/api/github/repo?");
     const equal = viaNext.status === direct.status && viaNext.body === direct.body && viaNext.backend === "go" &&
+      (!headers || (viaNext.status === status && viaNext.cache === 'private, no-store')) &&
       (cached || JSON.stringify(viaNext.upstream) === JSON.stringify(direct.upstream));
     if (equal) same++;
     else different.push({ path, viaNext, direct });
     if (process.env.PROBE_SHOW) console.log(`${equal ? "same" : "DIFF"} ${String(viaNext.status).padEnd(4)}${path.padEnd(62)} -> ${viaNext.upstream.join(" , ").slice(0, 110) || "(no upstream call)"}`);
   }
-  console.log(`identical through Next.js and direct: ${same} of ${probes.length}`);
+  console.log(`identical through Next.js and direct: ${same} of ${scenarios.length}`);
   if (different.length > 0) process.exitCode = 1;
   for (const d of different) {
     console.log(`\nDIFFERENT  ${d.path}`);
@@ -175,8 +196,16 @@ try {
 } finally {
   for (const child of children.reverse()) {
     if (child.exitCode !== null) continue;
-    const stop = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
-    await once(stop, "exit");
+    if (process.platform === 'win32') {
+      const stop = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
+      await once(stop, "exit");
+    } else {
+      const stopped = once(child, 'exit');
+      child.kill('SIGTERM');
+      const timer = setTimeout(() => child.kill('SIGKILL'), 5000);
+      await stopped;
+      clearTimeout(timer);
+    }
   }
   if (upstream) await new Promise((r) => upstream.close(r));
 }

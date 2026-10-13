@@ -1,0 +1,12 @@
+{
+  "contract_version": 1,
+  "cases": [
+    {"id":"anonymous-before-private", "user":"", "resource_status":404, "resource_id":0, "status":404},
+    {"id":"alice-private", "user":"a", "resource_status":200, "resource_id":11, "status":200},
+    {"id":"bob-cannot-use-alices-cache", "user":"b", "resource_status":404, "resource_id":0, "status":404},
+    {"id":"anonymous-after-private", "user":"", "resource_status":404, "resource_id":0, "status":404},
+    {"id":"bob-has-own-access", "user":"b", "resource_status":200, "resource_id":22, "status":200},
+    {"id":"alice-permission-revoked", "user":"a", "resource_status":404, "resource_id":0, "status":404},
+    {"id":"bob-token-revoked", "user":"b", "revoked":true, "resource_status":200, "resource_id":22, "status":401}
+  ]
+}

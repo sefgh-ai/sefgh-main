@@ -6,7 +6,11 @@ outside a lock.
 **Real code:** `repoCache.get` and `repoCache.fill` in
 `backend/internal/githubrepos/cache.go`.
 
-The repository summary route asks Next.js to cache GitHub replies for an
+AUTH-001 update: this cache is for **anonymous public replies only**. Requests
+using a verified user's GitHub token bypass it and recheck GitHub on every
+request, so revoked access cannot reuse a private cached answer. See lesson 16.
+
+The public repository summary route asks Next.js to cache GitHub replies for an
 hour. The Go version keeps its own cache. A new process starts empty; this
 cache does not share Next.js's persistent storage or other Go processes.
 

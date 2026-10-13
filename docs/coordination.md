@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-12 (Asia/Calcutta), by Claude Code (VERIFY-001 and OPS-001a handoff).
+Last updated: 2026-10-13 (Asia/Calcutta), by Codex: completed local batch and recovery handoff.
 
 ## Start here
 
@@ -11,9 +11,175 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed `VERIFY-001` and `OPS-001a` and released the role. `FIX-004`, `VERIFY-001` and `OPS-001a` are all uncommitted in the working tree: the Git Agent had not acted on the FIX-004 signal when this was written. No deployment or cutover.
+- **Active writer:** none. Codex released REVIEW-004 / CI-001 / VERIFY-002 / AUTH-001 after completing the bounded local implementation and checks. Independent review and deployment gates remain.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Phase 2 of the ADR is under way. Phase 1 is built and its review findings 1 to 10 are fixed, but no route is cut over: the gates left need the owner (private-repository access, CI approval, hosting) or a deployment. See "Phase 1 gates on 2026-10-12" in `adr/0002-go-backend.md`. In Go behind off-by-default switches: search, repository summary, repository detail, contents (Phase 1), languages and contributions (Phase 2). Left in Phase 2: trending, trending-developers and the three AI routes. Nothing is deployed and no traffic has moved.
+- **Stage:** Six routes are implemented with Go rewrites off by default. Private-access policy and CI implementation are authorized. AUTH-001 API boundary is implemented locally; private UI integration, independent review of new work, hosted race checks and Vercel deployment/rollback/measurements remain. Phase 2 next port is GO-006a (trending). No route cut over or deployment performed.
+
+## Latest handoff: REVIEW-004 / CI-001 / VERIFY-002 / AUTH-001 (Codex, 2026-10-13)
+
+Status: **bounded local implementation complete; new work awaiting independent review; not deployed**.
+Owner: Codex. Reviewer: unassigned for this batch; no Claude review or receipt claimed.
+Branch main; base/current HEAD 905c1d953a15b296fad1ff257d5c0a53e0043688.
+Resulting commit: uncommitted; Git Agent owns synchronization after the handoff hook.
+This record supersedes the historical incomplete checkpoints below.
+
+Completed:
+- REVIEW-004 reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a at the base commit; accepted with routing off. See claude-review.md.
+- CI-001 adds a pinned, read-only Linux workflow for contracts, race/vet/format, lesson solutions and production forwarding. Hosted run pending.
+- VERIFY-002 tests production Next build/start with isolated output and portable cleanup: 46 public URL cases plus 3 authenticated cases.
+- AUTH-001 verifies Supabase user and GitHub account online, matches the linked provider ID, and uses only that user's GitHub credential on five dynamic migrated routes. Anonymous requests have no server-token fallback. Private summary requests bypass shared caches; private replies are no-store. Shared contracts cover two users and revocation.
+- Added lesson 16 and updated affected lessons; existing exercise.go files untouched. All Go rewrites remain opt-in/off by default.
+- Global checkpoint instructions saved in C:/Users/Windows/.codex/AGENTS.md and C:/Users/Windows/.claude/CLAUDE.md, plus the owner's requested memory note. No suitable checkpoint plugin found or installed. No quota meter/background watcher is claimed.
+
+Final checks (Codex):
+- npm run test:contracts: 335 passed, exit 0.
+- backend: go test -count=1 ./...: seven packages passed; go vet ./... passed; gofmt -l . empty; go build -o bin/api.exe ./cmd/api passed.
+- learn-go: go test -count=1 -tags solution ./...: 17 packages passed; go vet -tags solution ./... passed; gofmt -l . empty.
+- node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api.exe --production: production build and 49/49 checks passed, explicitly captured native exit 0.
+- Full ESLint: existing 10 errors/16 warnings in unaffected UI; targeted changed access/probe/test/config files passed. Generated probe output is now ignored by ESLint.
+- Workflow YAML parsed; git diff --check passed; no existing exercise.go diff.
+- Logs under ignored backend/bin/: final-contracts.log, production-probe-final.log, final-lint-source.log.
+- Earlier lint run scanned generated files and was stopped; earlier probe exit ambiguity was resolved by the final explicit exit-0 run. No known task test/server processes remain running.
+
+Remaining gates / dependencies:
+- Independent review of AUTH-001 / CI-001 / VERIFY-002; hosted Linux race-detector result. No local race detector result (no C compiler).
+- Live Supabase/GitHub OAuth, Vercel preview forwarding, latency/error measurements and rollback evidence not run. No deployment or cutover authorized by this handoff.
+- Private UI is deliberately not connected yet: useGitHubSearch localStorage cache is not account-scoped; chat/share flows need a private-data audit. This API boundary is not a claim that all private UI or all server-token consumers are secured.
+- Audit remaining token consumers in src/lib/github-api.js, src/lib/repo/repoData.js, /api/repo/starred, /api/trending/refresh and AI helpers. Anonymous contributions retain the existing missing-token error and anonymous GitHub rate limits are lower.
+- Hosting selection/deployment and later AI/data policy decisions remain as listed below. No credentials needed from the owner for the completed local work.
+
+Next bounded action: run git status --short and git diff, read this handoff and contracts/github-access/README.md, then independently review this batch. Observe the first hosted CI run after Git Agent synchronization. Before private UI integration, claim writer and design account-isolated caches and provider-token/session handling. GO-006a remains the next unassigned route port.
+Writer released: yes. Completion hook: npm run handoff passed, exit 0; contracts, fresh backend tests/vet/format and lesson solutions passed. Emitted .agent-signal.json at 2026-10-13T04:14:38.997Z, writerReleased=true, branch main, HEAD 905c1d953a15b296fad1ff257d5c0a53e0043688. Git Agent receipt, commit and push are not verified.
+
+Actual repository files changed (all uncommitted at this handoff):
+
+```text
+.github/workflows/backend-verification.yml
+.gitignore
+backend/README.md
+backend/cmd/api/access_test.go
+backend/cmd/api/main.go
+backend/internal/githubaccess/access.go
+backend/internal/githubaccess/access_test.go
+backend/internal/githubcontributions/handler.go
+backend/internal/githubrepos/handler.go
+backend/internal/githubrepos/http_test.go
+backend/internal/githubrepos/private_test.go
+backend/internal/githubsearch/handler.go
+contracts/github-access/README.md
+contracts/github-access/cases.json
+contracts/github-access/isolation.json
+contracts/github-contributions/README.md
+contracts/github-contributions/cases.json
+contracts/github-repositories/README.md
+contracts/github-repositories/cases.json
+contracts/github-search/README.md
+contracts/github-search/cases.json
+docs/adr/0002-go-backend.md
+docs/backend-map.md
+docs/claude-review.md
+docs/coordination.md
+eslint.config.mjs
+learn-go/06-http-handlers/README.md
+learn-go/07-calling-github/README.md
+learn-go/09-path-parameters/README.md
+learn-go/10-shared-cache/README.md
+learn-go/15-settings-from-the-environment/README.md
+learn-go/16-verifying-access/README.md
+learn-go/16-verifying-access/exercise.go
+learn-go/16-verifying-access/exercise_test.go
+learn-go/16-verifying-access/solution.go
+learn-go/README.md
+next.config.mjs
+scripts/contracts/access-fixture.mjs
+scripts/contracts/github-access-isolation.test.mjs
+scripts/contracts/github-access.test.mjs
+scripts/contracts/github-contributions.test.mjs
+scripts/contracts/github-repositories.test.mjs
+scripts/contracts/github-search.test.mjs
+scripts/contracts/go-forwarding-probe.mjs
+src/app/api/github/contents/[owner]/[repo]/route.js
+src/app/api/github/contributions/route.js
+src/app/api/github/repo/[owner]/[repo]/route.js
+src/app/api/github/repo/route.js
+src/app/api/github/search/route.js
+src/lib/github/access.js
+```
+
+## Historical resume milestone: Codex, 2026-10-13
+
+Global checkpoint instructions saved in local Codex AGENTS.md and Claude
+CLAUDE.md at the owner's explicit request, plus an authorized memory note.
+No suitable quota/checkpoint plugin found; none installed. No background quota
+meter is available. Existing checkpoint below remains the interruption record.
+Next: finish docs, final formatting/tests, production probe with explicit exit
+code, then final handoff. No known test processes remain running from prior work.
+
+Pre-verification checkpoint: AUTH-001 code and lesson 16 are now written;
+REVIEW-004 record, ADR, backend/access/route contract documentation are updated.
+Redirect errors were aligned between Next and Go. No new credentials or UI
+integration. Final checks below are about to run; this is still incomplete.
+If interrupted, inspect their logs under ignored backend/bin/ and rerun any
+whose exit status was not captured. Writer remains Codex while checks run.
+
+## Historical recovery checkpoint: Codex, 2026-10-13
+
+Status: **paused / incomplete**, not ready for synchronization. Owner reported
+a usage interruption and requested global checkpointing. Account quota is not
+visible; no remaining percentage can be claimed. This checkpoint precedes resume.
+
+Task: REVIEW-004 / CI-001 / VERIFY-002 / AUTH-001. Owner Codex; new work has
+no independent peer review. Branch main; base/current HEAD
+`905c1d953a15b296fad1ff257d5c0a53e0043688`; all new changes uncommitted.
+Working tree: modified .gitignore, backend/cmd/api/main.go,
+backend/internal/githubrepos/{handler.go,http_test.go}, three existing route
+contract JSON files, docs/{coordination.md,adr/0002-go-backend.md},
+learn-go/{README.md,10-shared-cache/README.md}, next.config.mjs, three existing
+Node contract runners, scripts/contracts/go-forwarding-probe.mjs, and the five
+dynamic migrated src/app/api/github route handlers. New files/directories:
+.github/workflows/backend-verification.yml, backend/cmd/api/access_test.go,
+backend/internal/githubaccess/, backend/internal/githubrepos/private_test.go,
+contracts/github-access/, learn-go/16-verifying-access/,
+scripts/contracts/{access-fixture.mjs,github-access.test.mjs,github-access-isolation.test.mjs},
+src/lib/github/access.js. Use git status --short for the exact list.
+
+Implemented but not final-verified:
+- CI: read-only pinned actions, Ubuntu race detector, vet/formatting, Node
+  contracts, lesson solutions, production forwarding. Hosted execution pending.
+- Probe: isolated .next-forwarding-probe build, production mode, portable
+  teardown, 46 public + 3 authenticated requests.
+- Access: Supabase /auth/v1/user then GitHub /user, linked provider ID match,
+  no server-token fallback for five migrated handlers, no private shared cache,
+  no-store responses, credential redirect/origin restrictions. Shared auth and
+  two-user/revocation fixtures; contract versions search 3/repositories 4/contributions 2.
+- Lesson 16 added, exercise unfinished. Existing exercises untouched.
+- ADR and access README partly reconciled; other shared docs still stale.
+
+Actual checks already run:
+- Initial baseline: 317 Node checks, six backend packages, 16 solution lessons passed.
+- Updated npm run test:contracts: 334 passed before the last extra origin test.
+- Updated backend go test -count=1 ./...: seven packages passed before the last
+  redirect/cancellation and origin tests. Need rerun on final files.
+- Production build/probe: 46/46 initially; after auth 49/49 printed in
+  backend/bin/production-probe.log. The latter PowerShell session returned 1
+  with a NativeCommandError for stderr warnings: rerun with explicit native
+  exit-code propagation before claiming a clean exit.
+- Direct local eslint command for access/probe/new tests/config exited 0;
+  npx invocation eventually exited 0 too. Existing application lint baseline
+  remains 10 errors/16 warnings, not rerun across the whole app in this batch.
+- Workflow parsed with installed js-yaml; remote v6 action refs resolved before pinning.
+
+Still to do: final gofmt/tests/vet/lesson solutions and lint; prove clean probe
+exit; finish REVIEW-004 record, backend-map/README/contract and lesson updates;
+inspect final diff/security boundaries. New auth/CI/probe need independent peer
+review. No race-detector result, live OAuth, Vercel routing, performance or rollback
+evidence. Existing other server-token call sites need later audit. Private UI
+integration is not wired because shared browser storage/chat sharing need isolation.
+
+Next command: inspect git diff, claim writer, then run Go formatting and fresh
+tests and Node contracts. Record final results before release and npm run handoff.
+Do not run npm run handoff until this bounded batch is complete. Do not reset,
+stash, delete or overwrite this work. No agent receipt/review is claimed.
 
 ## Handoff: OPS-001a (Claude Code, 2026-10-12)
 
@@ -807,15 +973,15 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-002b` | Go implementation of repo summary, detail, contents + lessons 09 & 10 | Implemented and reviewed in REVIEW-002 | Findings and cutover gates |
 | `GO-003` | Cache/logging/URL fixes, regression coverage, wire URL checks and lesson 11 | Implemented at `cd8906c`; accepted in REVIEW-003 | Cutover gates remain |
 | `GO-004` | First Phase 2 route: static `github/languages`, with lesson 12 | Implemented at `b0ef691`; accepted with routing off in REVIEW-003 | Cutover gates remain |
-| `GO-005a` | Contract fixtures for `github/contributions`: 95 cases, 18 marked `defect` | Implemented at `cd6ad67` | Codex peer review |
-| `GO-005b` | Go port of `github/contributions` against those fixtures, with lesson 13, routing off | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
-| `FIX-003` | Input validation for the three repository routes, Next.js and Go, repository contract version 3, lesson 14 | Implemented at `3f4c7dd` | Codex peer review; cutover gates |
-| `FIX-004` | REVIEW-002 findings 7 (non-UTF-8 text) and 8 (one deadline for the detail route), in Go | Implementation complete, uncommitted at handoff | Codex peer review; cutover gates |
-| `VERIFY-001` | The two Phase 1 verification gates that can be tried locally: `go test -race`, and how the Next.js rewrite forwards awkward URLs | Forwarding checked for `next dev`, 46 of 46, uncommitted at handoff. Race detector not run | `CI-001` for the race detector; a preview deployment for the same check on Vercel; Codex peer review |
+| `GO-005a` | Contract fixtures for contributions | Committed cd6ad67; reviewed in REVIEW-004 | Cutover gates |
+| `GO-005b` | Contributions Go port and lesson 13 | Committed 80cee17; reviewed in REVIEW-004 | Cutover gates |
+| `FIX-003` | Repository input validation and lesson 14 | Committed 3f4c7dd; reviewed in REVIEW-004 | Cutover gates |
+| `FIX-004` | Non-UTF-8 text and shared detail deadline | Committed 905c1d9; reviewed in REVIEW-004 | Cutover gates |
+| `VERIFY-001` | Development forwarding and race preparation | Committed 905c1d9; reviewed in REVIEW-004; dev 46/46 | Hosted race and Vercel preview |
 | `GO-006a` | Contract fixtures for `github/trending`, fixing its random `starsToday` source | Not started; unassigned | Nothing |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
-| `CI-001` | A workflow that runs `npm run test:contracts`, and `go test -race`, `go vet` and `gofmt -l` in `backend/`, plus `go test -tags solution` in `learn-go/`. It is the only planned way to run the race detector | Ready to implement | Owner approval |
-| `OPS-001a` | `backend/cmd/api` reads the `PORT` variable a hosting platform sets, with lesson 15 | Implementation complete, uncommitted at handoff | Codex peer review |
+| `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Implemented locally, uncommitted | Independent review and hosted run |
+| `OPS-001a` | PORT support and lesson 15 | Committed 905c1d9; reviewed in REVIEW-004 | Deployment gates |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
@@ -826,8 +992,8 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval. Two options and a recommendation are in "Hosting proposal" in `adr/0002-go-backend.md`.
 - AI endpoint and playground-key policy, before Phases 2 and 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
-- **Who may see private repositories.** The owner approved input validation (done in `FIX-003`) and said the server token is not to be limited to public data. Until an access rule exists, the summary and search routes return whatever that token can read to any caller, in production on Next.js today as well as in Go.
-- Approval for `CI-001`. It adds a GitHub Actions workflow file and uses GitHub's free minutes. Without it the race detector has no machine to run on.
+- **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
+- **CI-001 is approved and implemented locally.** Independent review and the first hosted run remain; no further owner approval is needed to add the workflow.
 
 ## State of the owner's machine
 

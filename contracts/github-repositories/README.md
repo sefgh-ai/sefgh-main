@@ -1,5 +1,11 @@
 # GitHub repository read contracts
 
+AUTH-001 (2026-10-13): current contract version **4**. The shared
+[access contract](../github-access/README.md) now governs credentials and
+private response caching. In fixtures, github_token is a verified per-user
+credential, never an environment-token fallback. Anonymous reads use no token.
+Prior version notes below are historical.
+
 `cases.json` records the three existing Next.js routes and their Go ports.
 The 124 cases run against Next.js with `npm run test:contracts`, and against
 Go both in memory and over real local sockets with `go test -count=1 ./...`
@@ -138,8 +144,9 @@ have a Go port:
 node scripts/contracts/go-forwarding-probe.mjs <path-to-api-executable>
 ```
 
-It sends 46 awkward paths twice, once through `next dev` and once straight to
-Go, and compares the replies and what a fake GitHub received. It exits 1 on
-any difference. `PROBE_SHOW=1` lists every path. It checks `next dev` only: a
-Vercel deployment forwards through Vercel's own routing and must be checked
-there. Last recorded result: 46 of 46 identical (`VERIFY-001`, 2026-10-12).
+It sends 46 awkward public paths and three authenticated requests through Next
+and directly to Go. Add `--production` to build and test `next start` in the
+ignored `.next-forwarding-probe/` directory. Default mode remains `next dev`.
+The fake identity services verify bearer forwarding and mismatch rejection.
+A Vercel preview still requires its own routing check. See coordination.md
+for actual checks. No production environment values or route switches are changed.
