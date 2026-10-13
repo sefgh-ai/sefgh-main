@@ -248,3 +248,13 @@ retain host local calendar behavior; deployments must align time zones for
 parity. Random starsToday remains a marked defect, not a measured signal.
 Next Phase 2 route: trending-developers characterization (GO-007a). Existing
 auth, cache, quota, review, hosted CI and cutover gates are not waived.
+
+### GO-007a (2026-10-13)
+
+Trending-developers version-1 contract records 48 cases, including 17 defects,
+with clock/time-zone control and delayed enrichment replies. The Next handler
+is unchanged. GO-007b should add bounded Go fan-out and a whole-request deadline
+while preserving response contracts and input/result ordering; document runtime
+bounds as deliberate differences. No token forwarding, direct database access
+or new dependency is needed. Every behavior fix still requires a contract
+revision in all implementations. See contracts/github-trending-developers.

@@ -1,0 +1,3166 @@
+{
+  "contract_version": 1,
+  "route": "GET /api/github/trending-developers",
+  "recorded_from": "086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3",
+  "cases": [
+    {
+      "id": "daily-default",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-default",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "weekly",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=weekly",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "monthly",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=monthly",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-09-13&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-09-13&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "first-duplicate",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=weekly&since=invalid",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ignored-language",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?language=C%23",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid-period",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=yearly",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "uppercase-period",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=Daily",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "space-period",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=+",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "encoded-invalid",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=%FF",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "month-overflow",
+      "disposition": "defect",
+      "reason": "Month subtraction overflows into March rather than clamping to February.",
+      "request": "/api/github/trending-developers?since=monthly",
+      "now": "2026-03-31T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "leap-overflow",
+      "disposition": "defect",
+      "reason": "Leap-year month overflow retained.",
+      "request": "/api/github/trending-developers?since=monthly",
+      "now": "2024-03-31T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2024-03-02&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2024-03-02&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "dst-local",
+      "disposition": "defect",
+      "reason": "Local calendar subtraction changes the UTC query date across DST.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-03-08T23:30:00Z",
+      "timezone": "America/New_York",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-08&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-08&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "same-instant-utc",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-03-08T23:30:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-07&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-07&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "india-timezone",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers?since=weekly",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "Asia/Kolkata",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "single-developer",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "demo",
+              "description": "A project"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-repositories",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-description",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "demo",
+              "description": null
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-description",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "demo",
+              "description": ""
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-description",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "demo"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "first-repository-only",
+      "disposition": "defect",
+      "reason": "Relies on sort=stars on the users repositories endpoint; actual popularity is unverified. Selects only first result.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "first",
+              "description": "A project"
+            },
+            {
+              "name": "second",
+              "description": "A project"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "first",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-user-fields",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": "alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "description": "Only description"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "popularRepo": {
+              "description": "Only description"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "explicit-null-fields",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": null,
+                "login": "alice",
+                "avatar_url": null,
+                "html_url": null
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": null,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": null,
+            "popularRepo": {
+              "name": null,
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": null
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "auth-headers-ignored",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "request_headers": {
+        "Authorization": "Bearer invalid-session",
+        "X-GitHub-Token": "fixture-private-token"
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "twenty-developer-limit",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "user0",
+                "avatar_url": "https://example.test/user0",
+                "html_url": "https://github.com/user0"
+              },
+              {
+                "id": 2,
+                "login": "user1",
+                "avatar_url": "https://example.test/user1",
+                "html_url": "https://github.com/user1"
+              },
+              {
+                "id": 3,
+                "login": "user2",
+                "avatar_url": "https://example.test/user2",
+                "html_url": "https://github.com/user2"
+              },
+              {
+                "id": 4,
+                "login": "user3",
+                "avatar_url": "https://example.test/user3",
+                "html_url": "https://github.com/user3"
+              },
+              {
+                "id": 5,
+                "login": "user4",
+                "avatar_url": "https://example.test/user4",
+                "html_url": "https://github.com/user4"
+              },
+              {
+                "id": 6,
+                "login": "user5",
+                "avatar_url": "https://example.test/user5",
+                "html_url": "https://github.com/user5"
+              },
+              {
+                "id": 7,
+                "login": "user6",
+                "avatar_url": "https://example.test/user6",
+                "html_url": "https://github.com/user6"
+              },
+              {
+                "id": 8,
+                "login": "user7",
+                "avatar_url": "https://example.test/user7",
+                "html_url": "https://github.com/user7"
+              },
+              {
+                "id": 9,
+                "login": "user8",
+                "avatar_url": "https://example.test/user8",
+                "html_url": "https://github.com/user8"
+              },
+              {
+                "id": 10,
+                "login": "user9",
+                "avatar_url": "https://example.test/user9",
+                "html_url": "https://github.com/user9"
+              },
+              {
+                "id": 11,
+                "login": "user10",
+                "avatar_url": "https://example.test/user10",
+                "html_url": "https://github.com/user10"
+              },
+              {
+                "id": 12,
+                "login": "user11",
+                "avatar_url": "https://example.test/user11",
+                "html_url": "https://github.com/user11"
+              },
+              {
+                "id": 13,
+                "login": "user12",
+                "avatar_url": "https://example.test/user12",
+                "html_url": "https://github.com/user12"
+              },
+              {
+                "id": 14,
+                "login": "user13",
+                "avatar_url": "https://example.test/user13",
+                "html_url": "https://github.com/user13"
+              },
+              {
+                "id": 15,
+                "login": "user14",
+                "avatar_url": "https://example.test/user14",
+                "html_url": "https://github.com/user14"
+              },
+              {
+                "id": 16,
+                "login": "user15",
+                "avatar_url": "https://example.test/user15",
+                "html_url": "https://github.com/user15"
+              },
+              {
+                "id": 17,
+                "login": "user16",
+                "avatar_url": "https://example.test/user16",
+                "html_url": "https://github.com/user16"
+              },
+              {
+                "id": 18,
+                "login": "user17",
+                "avatar_url": "https://example.test/user17",
+                "html_url": "https://github.com/user17"
+              },
+              {
+                "id": 19,
+                "login": "user18",
+                "avatar_url": "https://example.test/user18",
+                "html_url": "https://github.com/user18"
+              },
+              {
+                "id": 20,
+                "login": "user19",
+                "avatar_url": "https://example.test/user19",
+                "html_url": "https://github.com/user19"
+              },
+              {
+                "id": 21,
+                "login": "user20",
+                "avatar_url": "https://example.test/user20",
+                "html_url": "https://github.com/user20"
+              },
+              {
+                "id": 22,
+                "login": "user21",
+                "avatar_url": "https://example.test/user21",
+                "html_url": "https://github.com/user21"
+              },
+              {
+                "id": 23,
+                "login": "user22",
+                "avatar_url": "https://example.test/user22",
+                "html_url": "https://github.com/user22"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project0",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project1",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project2",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project3",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project4",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project5",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project6",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project7",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project8",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project9",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project10",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project11",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project12",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project13",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project14",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project15",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project16",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project17",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project18",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "project19",
+              "description": "A project"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "user0",
+            "username": "user0",
+            "avatar": "https://example.test/user0",
+            "popularRepo": {
+              "name": "project0",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user0"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "user1",
+            "username": "user1",
+            "avatar": "https://example.test/user1",
+            "popularRepo": {
+              "name": "project1",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user1"
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "user2",
+            "username": "user2",
+            "avatar": "https://example.test/user2",
+            "popularRepo": {
+              "name": "project2",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user2"
+          },
+          {
+            "id": 4,
+            "rank": 4,
+            "name": "user3",
+            "username": "user3",
+            "avatar": "https://example.test/user3",
+            "popularRepo": {
+              "name": "project3",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user3"
+          },
+          {
+            "id": 5,
+            "rank": 5,
+            "name": "user4",
+            "username": "user4",
+            "avatar": "https://example.test/user4",
+            "popularRepo": {
+              "name": "project4",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user4"
+          },
+          {
+            "id": 6,
+            "rank": 6,
+            "name": "user5",
+            "username": "user5",
+            "avatar": "https://example.test/user5",
+            "popularRepo": {
+              "name": "project5",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user5"
+          },
+          {
+            "id": 7,
+            "rank": 7,
+            "name": "user6",
+            "username": "user6",
+            "avatar": "https://example.test/user6",
+            "popularRepo": {
+              "name": "project6",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user6"
+          },
+          {
+            "id": 8,
+            "rank": 8,
+            "name": "user7",
+            "username": "user7",
+            "avatar": "https://example.test/user7",
+            "popularRepo": {
+              "name": "project7",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user7"
+          },
+          {
+            "id": 9,
+            "rank": 9,
+            "name": "user8",
+            "username": "user8",
+            "avatar": "https://example.test/user8",
+            "popularRepo": {
+              "name": "project8",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user8"
+          },
+          {
+            "id": 10,
+            "rank": 10,
+            "name": "user9",
+            "username": "user9",
+            "avatar": "https://example.test/user9",
+            "popularRepo": {
+              "name": "project9",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user9"
+          },
+          {
+            "id": 11,
+            "rank": 11,
+            "name": "user10",
+            "username": "user10",
+            "avatar": "https://example.test/user10",
+            "popularRepo": {
+              "name": "project10",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user10"
+          },
+          {
+            "id": 12,
+            "rank": 12,
+            "name": "user11",
+            "username": "user11",
+            "avatar": "https://example.test/user11",
+            "popularRepo": {
+              "name": "project11",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user11"
+          },
+          {
+            "id": 13,
+            "rank": 13,
+            "name": "user12",
+            "username": "user12",
+            "avatar": "https://example.test/user12",
+            "popularRepo": {
+              "name": "project12",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user12"
+          },
+          {
+            "id": 14,
+            "rank": 14,
+            "name": "user13",
+            "username": "user13",
+            "avatar": "https://example.test/user13",
+            "popularRepo": {
+              "name": "project13",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user13"
+          },
+          {
+            "id": 15,
+            "rank": 15,
+            "name": "user14",
+            "username": "user14",
+            "avatar": "https://example.test/user14",
+            "popularRepo": {
+              "name": "project14",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user14"
+          },
+          {
+            "id": 16,
+            "rank": 16,
+            "name": "user15",
+            "username": "user15",
+            "avatar": "https://example.test/user15",
+            "popularRepo": {
+              "name": "project15",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user15"
+          },
+          {
+            "id": 17,
+            "rank": 17,
+            "name": "user16",
+            "username": "user16",
+            "avatar": "https://example.test/user16",
+            "popularRepo": {
+              "name": "project16",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user16"
+          },
+          {
+            "id": 18,
+            "rank": 18,
+            "name": "user17",
+            "username": "user17",
+            "avatar": "https://example.test/user17",
+            "popularRepo": {
+              "name": "project17",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user17"
+          },
+          {
+            "id": 19,
+            "rank": 19,
+            "name": "user18",
+            "username": "user18",
+            "avatar": "https://example.test/user18",
+            "popularRepo": {
+              "name": "project18",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user18"
+          },
+          {
+            "id": 20,
+            "rank": 20,
+            "name": "user19",
+            "username": "user19",
+            "avatar": "https://example.test/user19",
+            "popularRepo": {
+              "name": "project19",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user19"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "out-of-order-completion",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              },
+              {
+                "id": 2,
+                "login": "bob",
+                "avatar_url": "https://example.test/bob",
+                "html_url": "https://github.com/bob"
+              },
+              {
+                "id": 3,
+                "login": "carol",
+                "avatar_url": "https://example.test/carol",
+                "html_url": "https://github.com/carol"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "slow",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 8
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "fast",
+              "description": "A project"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "middle",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 2
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "slow",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "popularRepo": {
+              "name": "fast",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/bob"
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "carol",
+            "username": "carol",
+            "avatar": "https://example.test/carol",
+            "popularRepo": {
+              "name": "middle",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/carol"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-http-401",
+      "disposition": "defect",
+      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 401,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-http-403",
+      "disposition": "defect",
+      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 403,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-http-404",
+      "disposition": "defect",
+      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 404,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-http-429",
+      "disposition": "defect",
+      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 429,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-http-500",
+      "disposition": "defect",
+      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 500,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "one-network-failure",
+      "disposition": "defect",
+      "reason": "One failed enrichment rejects the whole route while siblings are not cancelled.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              },
+              {
+                "id": 2,
+                "login": "bob",
+                "avatar_url": "https://example.test/bob",
+                "html_url": "https://github.com/bob"
+              }
+            ]
+          }
+        },
+        {
+          "network_error": true
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "still-running",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 5
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-malformed-json",
+      "disposition": "defect",
+      "reason": "One malformed enrichment JSON reply fails the whole route.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "raw_body": "{broken"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-null-body",
+      "disposition": "defect",
+      "reason": "Null enrichment body throws instead of using a fallback.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": null
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-object-body",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "message": "not an array"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-null-first",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            null
+          ]
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-items",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {}
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-items",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": null
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "object-items",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": {}
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-user",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null
+            ]
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-malformed-json",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "raw_body": "{broken"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-network-failure",
+      "disposition": "preserve",
+      "reason": "Preserve existing status, output and upstream requests.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-http-403",
+      "disposition": "defect",
+      "reason": "Upstream failure is flattened to generic 500; rate-limit details are lost.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 403,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "20"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-http-429",
+      "disposition": "defect",
+      "reason": "Upstream failure is flattened to generic 500; rate-limit details are lost.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 429,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "20"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-http-503",
+      "disposition": "preserve",
+      "reason": "Upstream failure is flattened to generic 500; rate-limit details are lost.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 503,
+          "body": {
+            "message": "failed"
+          },
+          "headers": {
+            "retry-after": "20"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-login",
+      "disposition": "defect",
+      "reason": "Missing upstream login is interpolated as undefined without validation.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "login-path-segments",
+      "disposition": "defect",
+      "reason": "Upstream login is interpolated unescaped; wire URL normalizes path segments.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice/../bob",
+                "avatar_url": "https://example.test/alice/../bob",
+                "html_url": "https://github.com/alice/../bob"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice/../bob",
+            "username": "alice/../bob",
+            "avatar": "https://example.test/alice/../bob",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice/../bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/../bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "query-in-login",
+      "disposition": "defect",
+      "reason": "Upstream login can alter the URL query without validation.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice?x=1",
+                "avatar_url": "https://example.test/alice?x=1",
+                "html_url": "https://github.com/alice?x=1"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice?x=1",
+            "username": "alice?x=1",
+            "avatar": "https://example.test/alice?x=1",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice?x=1"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

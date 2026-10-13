@@ -204,3 +204,11 @@ summary, detail and contents. All remain opt-in. Trending is public-only and
 bypasses the identity verifier while sending no credential upstream, matching
 Next.js. Clock/random injection pins the 33 fixtures; known defects remain.
 No browser, Supabase, worker or deployment boundary changes.
+
+## GO-007a characterization (2026-10-13)
+
+Trending-developers has 48 contract fixtures (17 defect), invoked by
+src/hooks/trending/useTrendingData.js. Its search fans out to at most twenty
+repository reads. HTTP enrichment failures create fallback cards; transport
+or malformed-JSON failures may fail the whole response. No credential is sent.
+Source behavior and the seven-route Go inventory are unchanged. GO-007b is next.

@@ -11,9 +11,68 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed GO-006b implementation and local verification; independent review and cutover gates remain.
+- **Active writer:** none. Codex completed GO-007a characterization and local verification. Go port GO-007b is next; review/cutover gates remain.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Seven API routes are implemented in Go, rewrites off by default. GO-006b trending port and lesson 17 complete locally; next Phase 2 slice GO-007a (trending-developers characterization). Private UI, independent review, hosted race, quota/cache and deployment gates remain. Automatic Vercel deployment state is unknown.
+- **Stage:** Seven of 25 API routes implemented in Go (28% of route implementation, not total migration); rewrites off by default. GO-007a developers fixtures complete; next GO-007b port + lesson 18. Verified Go cutover remains zero. No new deployment evidence.
+
+## Latest handoff: GO-007a (Codex, 2026-10-13)
+
+Status: **implementation complete; local contract verification complete; independent review pending**.
+Owner: Codex. Reviewer: unassigned, no peer approval claimed.
+Branch main; base/current 086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `086a6dc`).
+
+Implemented: 48 version-1 fixtures for GET /api/github/trending-developers,
+17 marked defect; two integrity/ordering checks. Fixed clocks/time zones,
+delayed enrichment, up to 21 upstream calls, 20-result cap, ordered ranks,
+credential non-forwarding, partial failures, malformed replies and URL behavior.
+Harness drains pending mocked requests before restoring global substitutions.
+No production handler, Go code, lesson, route switch or deployment change.
+
+Changed files:
+- contracts/github-trending-developers/README.md
+- contracts/github-trending-developers/cases.json
+- scripts/contracts/developers-fixture.mjs
+- scripts/contracts/github-trending-developers.test.mjs
+- docs/coordination.md
+- docs/backend-map.md
+- docs/adr/0002-go-backend.md
+
+Checks by Codex:
+- Focused developers tests: 50/50 passed.
+- Full npm run test:contracts: 437/437 passed, exit 0 (backend/bin/go007a-contracts.log).
+- Six deliberate in-memory handler mutations caught; real source untouched:
+  result cap, rank offset, wrong date, enrichment HTTP-error handling,
+  credential leakage and reversed developer order.
+- Focused ESLint passed, exit 0; git diff --check passed.
+- No source diff under src/, backend/ or learn-go/. Build/probe/full UI lint not
+  repeated because this task changes only fixtures, harness and documentation.
+- npm run handoff passed, exit 0: all contracts, fresh backend tests/vet/format and lesson solutions passed; writerReleased=true, signal emitted. Log: backend/bin/go007a-handoff.log. Rerun after this documentation-only result update refreshes the tree fingerprint.
+
+Remaining gates: GO-007b is not implemented; existing seven Go routes still
+require independent review/hosted CI/live cutover evidence. No live GitHub,
+Supabase, deployment or quota check was performed. Defect characterization does
+not approve fixing or publishing defective behavior. No owned processes running.
+Next bounded action: claim GO-007b after checking status and this handoff; add
+standard-library handler, controlled fan-out, clock injection, shared fixtures,
+public-only/no-credential routing, default-off switch and lesson 18. Writer
+released: yes. No Git Agent receipt or remote synchronization claimed yet.
+
+## Historical GO-007a pre-verification checkpoint (2026-10-13)
+
+Status: active. 48 fixtures/17 defects and two additional checks pass locally (50/50). Six deliberate in-memory source mutations caught: cap21, rank offset, wrong date, HTTP-error fail-all, credential leakage, reversed output. Actual production source unchanged. Contract README, ADR and backend-map updated; Go/lessons untouched. Base/current 086a6dc main, changes uncommitted; no processes running. Next: full contracts/focused lint/diff and shared handoff suites. No production build needed for fixture/docs-only changes. Remaining review/deployment/CI gates unchanged. Full changed files: contracts/github-trending-developers/{README.md,cases.json}, scripts/contracts/{developers-fixture.mjs,github-trending-developers.test.mjs}, docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}.
+
+## GO-007a milestone checkpoint (2026-10-13)
+
+Status: active. Wrote 48 version-1 developer fixtures (17 marked defects), harness and Node runner. Focused checks 50/50 passed (backend/bin/go007a-focused.log). Manually inspected normal card, 429 fallback, whole-response network failure, path normalization, DST/UTC dates. No production files changed. New files: contracts/github-trending-developers/cases.json, scripts/contracts/{developers-fixture.mjs,github-trending-developers.test.mjs}; coordination modified. Base/current 086a6dc, main, uncommitted. No owned processes running. Next: deliberate in-memory handler changes to check fixture sensitivity, README/architecture notes, full contracts/lint/diff, then handoff suites. No Go source change so no lesson added.
+
+## Active checkpoint: GO-007a (Codex, 2026-10-13)
+
+Status: active. Objective: characterize existing trending-developers behavior before its Go port. Starting tree clean, previous writer released. Branch main, base/current 086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3. GO-006b committed at 4640b10; subsequent Git Agent commit 086a6dc fixes HTTP-test counter synchronization. No hosted CI result inferred from that fix.
+
+Constraints: contract-first; preserve response/query/date behavior and mark defects. Public route sends no credential; never inspect secrets or make real GitHub requests. Exercise/Go code untouched in this bounded task. Capture up to 20 parallel enrichment requests, ordered results despite out-of-order completion, and asymmetric HTTP versus transport/malformed-body failures. Fixed clocks/time zones; stub fetch only. Test counts and progress percentage are not cutover evidence (7/25 routes implemented = 28%; wider migration unweighted).
+
+Next: write fixture harness and explicit cases, record expected results from unchanged source, inspect representative outputs, run full contracts/lint and handoff suites. Checks so far: status/HEAD/source inspected only; no owned processes running. Reviewer unassigned. No new tests run yet. All new work will remain uncommitted until Git Agent synchronization.
 
 ## Latest handoff: GO-006b (Codex, 2026-10-13)
 
@@ -1095,7 +1154,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `OPS-001a` | PORT support and lesson 15 | Committed 905c1d9; reviewed in REVIEW-004 | Deployment gates |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
 | `GO-006b` | Trending Go port and lesson 17 | Implementation/local checks complete, uncommitted | Independent review and cutover gates |
-| `GO-007a` | Trending-developers characterization | Unassigned | No implementation blocker |
+| `GO-007a` | Trending-developers characterization | 48 fixtures/17 defects complete locally | Independent review/cutover gates |
+| `GO-007b` | Trending-developers Go port and lesson 18 | Unassigned | Follow version-1 contract; preserve marked defects |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
