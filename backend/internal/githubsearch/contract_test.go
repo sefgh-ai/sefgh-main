@@ -183,7 +183,10 @@ func TestContractOverHTTP(t *testing.T) {
 
 			var received []*http.Request
 			github := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				received = append(received, r)
+				received = append(received, &http.Request{
+					RequestURI: r.RequestURI,
+					Header:     r.Header.Clone(),
+				})
 				switch {
 				case reply == nil:
 					http.Error(w, "upstream must not be called for this case", http.StatusTeapot)
@@ -217,6 +220,11 @@ func TestContractOverHTTP(t *testing.T) {
 			}
 			defer res.Body.Close()
 
+			checkReply(t, res, expected)
+			res.Body.Close()
+			api.Close()
+			github.Close() // join upstream handler goroutine before reading received
+
 			if tc.UpstreamURL == nil {
 				if len(received) != 0 {
 					t.Fatalf("upstream was called: %s", received[0].RequestURI)
@@ -240,8 +248,6 @@ func TestContractOverHTTP(t *testing.T) {
 					t.Error("Authorization sent without a token")
 				}
 			}
-
-			checkReply(t, res, expected)
 		})
 	}
 }

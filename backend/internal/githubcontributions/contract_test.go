@@ -207,10 +207,14 @@ func TestContractOverHTTP(t *testing.T) {
 			}
 			defer res.Body.Close()
 
+			checkReply(t, res, tc)
+			res.Body.Close()
+			api.Close()
+			github.Close() // join upstream handler goroutine before reading calls
+
 			if calls != len(tc.Calls) {
 				t.Errorf("upstream calls = %d, want %d", calls, len(tc.Calls))
 			}
-			checkReply(t, res, tc)
 		})
 	}
 }
