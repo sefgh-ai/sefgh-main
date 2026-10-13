@@ -11,9 +11,98 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex completed implementation for `AUTH-002 / VERIFY-003 / GO-006a` at the pre-final-verification checkpoint before hitting a usage limit; Git Agent ran the remaining final verification checks (`npm run test:contracts` 387/387, focused ESLint 0 errors, `git diff --check` clean) and released the writer role.
+- **Active writer:** none. Codex completed GO-006b implementation and local verification; independent review and cutover gates remain.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Six routes are implemented with Go rewrites off by default. `AUTH-001` and `AUTH-002` public/private boundaries are implemented locally; `GO-006a` trending characterization fixtures (33 cases, 13 defects) are recorded. Phase 2 next port is `GO-006b` (Go implementation of `GET /api/github/trending` + Lesson 17). No Go cutover is recorded; automatic Vercel deployment of Next.js changes is unknown.
+- **Stage:** Seven API routes are implemented in Go, rewrites off by default. GO-006b trending port and lesson 17 complete locally; next Phase 2 slice GO-007a (trending-developers characterization). Private UI, independent review, hosted race, quota/cache and deployment gates remain. Automatic Vercel deployment state is unknown.
+
+## Latest handoff: GO-006b (Codex, 2026-10-13)
+
+Status: **implementation complete; local verification complete; independent review pending**.
+Owner: Codex. Reviewer: unassigned; no peer approval claimed.
+Branch main; base/current 7097beec821d296fbaa0cb6d1a8116f64666bdb3.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `7097bee`).
+
+Implemented: standard-library GET /api/github/trending, with injected clock/random
+inputs and unchanged version-1 contract. Preserves all 33 cases including 13
+marked defects; no new package dependency. Public-only, ignores inbound auth
+and sends no GitHub credential. Registered in the actual mux, with explicit
+public verifier exemption and default-off github-trending rewrite. Ten-second
+upstream timeout, cancellation and 16 MiB body bound. Added lesson 17 and updated
+lessons 06/16 and index. Existing exercise.go files untouched. Node source and
+trending fixtures unchanged. Production probe includes three trending URLs.
+
+Checks by Codex on final implementation:
+- npm run test:contracts: 387 passed, exit 0 (backend/bin/go006b-contracts.log).
+- backend go test -count=1 ./...: all eight packages passed; go vet ./... passed;
+  gofmt -l . empty; go build -o bin/api.exe ./cmd/api passed.
+- All 33 trending cases checked through in-memory and local HTTP handlers (66
+  subcases), plus cancellation, oversized/trailing JSON and actual mux token
+  non-forwarding tests. Upstream is stubbed; not a live GitHub test.
+- learn-go go test -count=1 -tags solution ./...: eighteen packages passed;
+  go vet -tags solution ./... passed; gofmt empty.
+- Focused ESLint next.config/probe/rewrite test passed. Full UI lint not repeated;
+  earlier baseline 10 errors/16 warnings remains an attributed prior result.
+- Production Next build/probe: 53/53, native exit 0 (backend/bin/go006b-production.log).
+- git diff --check passed. No owned processes remain running.
+- Completion hook: npm run handoff passed, exit 0; contracts/backend/lesson checks passed, writerReleased=true, signal emitted. Log: backend/bin/go006b-handoff.log. Rerun after this documentation-only result update refreshes the tree fingerprint. Git Agent receipt/commit/push not yet verified.
+
+Remaining gates: independent review; hosted CI after Git Agent's lockfile fix;
+live OAuth/Vercel, quota and summary cache-retention work; hosting/measurements
+and rollback. Local fixtures do not approve fabricated starsToday or fix its
+calendar/prototype defects. Public-only trending must not later inherit a private
+credential without a new contract. No agent deployment/cutover performed;
+automatic deployment of synchronized Next.js changes remains unverified.
+
+Next bounded task: GO-007a ? characterize /api/github/trending-developers,
+including its fan-out, error behavior and rate-limit exposure. Reviewer can
+independently review GO-006b first. Read this handoff and inspect git status/diff,
+then claim writer before editing. Writer released: yes.
+
+Actual changed files:
+
+```text
+backend/README.md
+backend/cmd/api/main.go
+backend/cmd/api/trending_test.go
+backend/internal/githubaccess/access.go
+backend/internal/githubtrending/handler.go
+backend/internal/githubtrending/handler_test.go
+contracts/github-access/README.md
+contracts/github-trending/README.md
+docs/adr/0002-go-backend.md
+docs/backend-map.md
+docs/coordination.md
+learn-go/06-http-handlers/README.md
+learn-go/16-verifying-access/README.md
+learn-go/17-clocks-and-randomness/README.md
+learn-go/17-clocks-and-randomness/exercise.go
+learn-go/17-clocks-and-randomness/exercise_test.go
+learn-go/17-clocks-and-randomness/solution.go
+learn-go/README.md
+next.config.mjs
+scripts/contracts/go-forwarding-probe.mjs
+scripts/contracts/go-rewrites.test.mjs
+```
+
+## Historical GO-006b verification milestone (2026-10-13)
+
+387 Node checks passed. All eight Go packages passed fresh tests; go vet passed; gofmt empty; rebuilt binary passed. All eighteen lesson packages passed with solutions, lesson vet passed, gofmt empty. Focused changed-JS ESLint and git diff --check passed. Existing exercises unchanged. Production probe running in owned session 71716, log backend/bin/go006b-production.log, 53 scenarios expected. No other owned tests running. Next: capture probe exit, finalize docs and release, run npm run handoff. Current source stays uncommitted on 7097bee; independent review/hosted race not claimed.
+
+Git Agent pipeline note from source inspection: its new treeHash hashes status text and git diff HEAD, which does not include untracked file contents. Do not treat a matching hash alone as proof that untracked content was tested; the current task runs the full handoff checks. Pipeline hardening is separate work, not modified during GO-006b.
+
+## GO-006b pre-verification checkpoint (2026-10-13)
+
+Status: active. Base/current 7097bee, main; writer Codex. Implemented standard-library handler, 33 shared cases in memory/local HTTP, route registration/default-off rewrite, explicit public-only auth exemption, credential non-forwarding test, cancellation/body bounds, lesson 17 plus updated lesson 06/16 and index, backend/access/trending/docs notes. Focused Go tests for githubtrending, cmd/api and githubaccess passed before extra cancellation/body tests. No new dependency, contract version change, deployment or cutover.
+
+Next long checks: gofmt changed Go/new lesson; fresh backend tests/vet/format and lesson solutions/vet/format; 387 Node checks + lint; rebuilt binary and production probe (53 scenarios). New source paths: backend/internal/githubtrending/{handler.go,handler_test.go}, backend/cmd/api/trending_test.go, learn-go/17-clocks-and-randomness/. Modified main.go, githubaccess/access.go, next.config.mjs, rewrite test/probe, listed docs/lessons. No owned process running at checkpoint. Remaining gates: independent review, hosted CI after Git Agent lockfile fix, live OAuth/Vercel, public cache retention and quotas. No new permission needed for this local port.
+
+## Active checkpoint: GO-006b (Codex, 2026-10-13)
+
+Status: active, implementation written; final verification pending. Starting tree clean; prior writer released. Base/current main @ 7097beec821d296fbaa0cb6d1a8116f64666bdb3. Prior batch committed by Git Agent at 7831c0b, pipeline/lockfile changes at 7097bee. Read-only --status says IDLE_CLEAN. Remote main observed at 6a11b032, contents uninspected; no merge/reset performed.
+
+Objective: standard-library Go trending handler against all 33 GO-006a cases, injected clock/random source, preserved marked defects, opt-in switch, lesson 17. Public-only route must not borrow any credential; match current Next trending behavior even with auth headers. No source contract fixes. No new Go dependency. Review unassigned; no peer approval claimed.
+
+Additional evidence: Codex's switch-off npm run build completed exit 0 (backend/bin/auth002-switch-off-build.log). Earlier 387 Node tests/focused lint were also run by Codex before Git Agent repeated them. Git Agent's commit message records hosted Linux npm ci failure and lockfile fix, not a verified green rerun. Corrected max-5 handoff typo to actual max 4. New task checks not yet run; no owned processes running. Next: complete final checks and handoff.
 
 ## Latest handoff: AUTH-002 / VERIFY-003 / GO-006a (Codex + Git Agent final verification, 2026-10-13)
 
@@ -22,7 +111,7 @@ Owner: Codex (implementation & 50/50 production probe); final verification & han
 Branch: `main`; base `7e0820c3649ae83205f682a93d6b934ede1d8899`.
 
 Completed:
-- **AUTH-002:** Closed shared-token reads on the public repository page (`src/lib/repo/repoData.js`) and starred collection enrichment (`src/app/api/repo/starred/route.js`). Validated identifiers, removed server `GITHUB_TOKEN` usage, enforced uncached public reads, and revalidated starred enrichment with bounded concurrency (max 5) while preserving user-scoped Supabase authorization. Added 18 contract/isolation tests in `contracts/public-repository-reads/` and `scripts/contracts/public-repository-reads.test.mjs`.
+- **AUTH-002:** Closed shared-token reads on the public repository page (`src/lib/repo/repoData.js`) and starred collection enrichment (`src/app/api/repo/starred/route.js`). Validated identifiers, removed server `GITHUB_TOKEN` usage, enforced uncached public reads, and revalidated starred enrichment with bounded concurrency (max 4) while preserving user-scoped Supabase authorization. Added 18 contract/isolation tests in `contracts/public-repository-reads/` and `scripts/contracts/public-repository-reads.test.mjs`.
 - **VERIFY-003:** Strengthened `scripts/contracts/go-forwarding-probe.mjs` identity stub to require exact Supabase bearer token, exact public key, and known GitHub tokens, plus a wrong-session `401` scenario (50/50 production probe passed, native exit 0).
 - **GO-006a:** Recorded 33 characterization fixtures (including 13 marked `defect`) for `GET /api/github/trending` under fixed UTC/local clocks and deterministic `Math.random` in `contracts/github-trending/` and `scripts/contracts/github-trending.test.mjs`. No trending behavior change or Go route port yet (`GO-006b` is next).
 
@@ -67,7 +156,7 @@ Remaining gates / dependencies:
 - Hosting selection/deployment and later AI/data policy decisions remain as listed below. No credentials needed from the owner for the completed local work.
 
 Next bounded action: run git status --short and git diff, read this handoff and contracts/github-access/README.md, then independently review this batch. Observe the first hosted CI run after Git Agent synchronization. Before private UI integration, claim writer and design account-isolated caches and provider-token/session handling. GO-006a remains the next unassigned route port.
-Writer released: yes. Completion hook: npm run handoff passed, exit 0; contracts, fresh backend tests/vet/format and lesson solutions passed. Emitted .agent-signal.json at 2026-10-13T04:14:38.997Z, writerReleased=true, branch main, HEAD 905c1d953a15b296fad1ff257d5c0a53e0043688. Git Agent receipt, commit and push are not verified.
+Writer released: yes. Completion hook: npm run handoff passed, exit 0; contracts, fresh backend tests/vet/format and lesson solutions passed. Emitted .agent-signal.json at 2026-10-13T04:14:38.997Z, writerReleased=true, branch main, HEAD 905c1d953a15b296fad1ff257d5c0a53e0043688. Synchronized and verified by Git Agent (base `7097bee`).
 
 Actual repository files changed (all uncommitted at this handoff):
 
@@ -1005,6 +1094,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Committed at 7e0820c; hosted Linux `npm ci` lockfile fix in progress | Independent review and hosted run |
 | `OPS-001a` | PORT support and lesson 15 | Committed 905c1d9; reviewed in REVIEW-004 | Deployment gates |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
+| `GO-006b` | Trending Go port and lesson 17 | Implementation/local checks complete, uncommitted | Independent review and cutover gates |
+| `GO-007a` | Trending-developers characterization | Unassigned | No implementation blocker |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 

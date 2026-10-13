@@ -9,6 +9,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | Route | Package | Contract |
 |---|---|---|
 | `GET /api/github/search` | `internal/githubsearch` | `../contracts/github-search/` |
+| `GET /api/github/trending` | `internal/githubtrending` | `../contracts/github-trending/` |
 | `GET /api/github/languages` | `internal/githublanguages` | `../contracts/github-languages/` |
 | `GET /api/github/contributions` | `internal/githubcontributions` | `../contracts/github-contributions/` |
 | `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
@@ -38,7 +39,7 @@ go run ./cmd/api
 
 Go does not read `.env.local`. Set variables in the shell that starts the server.
 
-With neither address variable set, the server is reachable from this machine only. Nothing is deployed anywhere; `PORT` support is preparation for hosting, described in `../docs/adr/0002-go-backend.md`.
+With neither address variable set, the server is reachable from this machine only. No Go deployment has been verified; `PORT` support is preparation for hosting, described in `../docs/adr/0002-go-backend.md`.
 
 ## Test it
 
@@ -129,3 +130,13 @@ tests and the separate private-UI integration still needed.
 vet/formatting, lesson solutions and production forwarding. It has read-only
 permissions and no deployment credentials. Its presence is not evidence of a
 successful hosted run.
+
+## Trending (GO-006b)
+
+Enable only with `SEFGH_GO_ROUTES=github-trending` and the Go origin. Off by
+default. Public-only: supplied authorization headers are ignored, and no token
+is sent upstream. Thirty-three shared fixtures pin calendar/date/query rules,
+responses and injected randomness, including 13 defect cases. The handler has
+a 10-second upstream timeout and 16 MiB body limit, and honors cancellation.
+It preserves fabricated starsToday and local-time date calculation pending
+contract decisions. No private data, database access or shared cache.

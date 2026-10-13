@@ -236,3 +236,15 @@ only controls forwarding; it cannot gate changes in Next.js handlers. OAuth
 consent mechanism is still to be designed; the user's private-access policy is
 already decided. Shared-token capacity, independent review, hosted CI and live
 provider/hosting gates remain.
+
+### GO-006b (2026-10-13)
+
+Trending port implemented with only the standard library, contract v1 unchanged,
+lesson 17 and `github-trending` default-off switch. Public-only verifier exemption
+retains Next behavior with headers present; no caller or server token forwarded.
+33 cases pass through Go handlers and local HTTP endpoints. A 10-second client
+timeout, cancellation and 16 MiB reply limit are deliberate Go bounds. Clocks
+retain host local calendar behavior; deployments must align time zones for
+parity. Random starsToday remains a marked defect, not a measured signal.
+Next Phase 2 route: trending-developers characterization (GO-007a). Existing
+auth, cache, quota, review, hosted CI and cutover gates are not waived.

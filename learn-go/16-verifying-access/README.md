@@ -69,3 +69,7 @@ go test -tags solution ./16-verifying-access
 This exercise only compares already-verified IDs. It is not a token verifier.
 The real issuer calls and two-user isolation are tested separately using
 `contracts/github-access/`; no real credentials are needed for those tests.
+
+GO-006b adds `/api/github/trending` to the public-only exceptions alongside
+health and languages. It ignores incoming credentials and never forwards a
+GitHub token, matching its Next.js handler; this is not private search.

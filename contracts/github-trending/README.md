@@ -2,7 +2,7 @@
 
 Version 1 pins the existing `GET /api/github/trending` handler at `7e0820c`.
 There are 33 cases, including 13 marked `defect`, plus a fixture integrity
-check. No production trending source was changed and no Go route was added.
+check. No production Next.js trending source was changed. The GO-006b update below records its later Go port.
 
 Run `node --test scripts/contracts/github-trending.test.mjs`, or all contracts
 with `npm run test:contracts`. The runner invokes the actual handler with only
@@ -34,9 +34,19 @@ Defects requiring an explicit decision before fixing behavior:
    instead of a color string.
 7. Upstream rate limits become generic 500 responses without retry metadata.
 
-Next bounded task: GO-006b, a standard-library Go port with shared fixtures,
+GO-006b scope: a standard-library Go port with shared fixtures,
 clock/random injection, an owner lesson, and a disabled-by-default route switch.
 Retain marked behavior until an approved contract revision changes both sides.
 These fixtures are characterization, not approval of fabricated activity or
 evidence of real-provider behavior. Quota, independent review, hosted race,
 Vercel forwarding and cutover gates still apply.
+
+## Go port (GO-006b)
+
+`backend/internal/githubtrending` now runs all 33 fixtures through handler and
+local HTTP-server tests. `Now` and `Random` functions inject the fixture inputs.
+Runtime defaults are local time.Now and concurrent-safe math/rand/v2.Float64.
+No contract or production Next trending behavior changed. Extra tests cover
+request cancellation, oversized/trailing replies, and tokenless routing.
+The public route is opt-in as `github-trending`; lesson 17 accompanies it.
+Peer review, hosted race, quota and deployment gates still apply.

@@ -53,3 +53,7 @@ bearer credentials. Do not add custom token storage in localStorage.
 Other server-token call sites (`src/lib/github-api.js`, `src/lib/repo/repoData.js`,
 starred and trending refresh) still need auditing. No live credential or OAuth
 scope was inspected. This is not a claim that the whole live site's policy is fixed.
+
+GO-006b: `/api/github/trending` is public-only, like health/languages, and does
+not run the identity verifier. It ignores all supplied credentials and never
+sends a GitHub token. Its unchanged Next handler behaves the same way.

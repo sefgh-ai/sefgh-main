@@ -20,6 +20,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 )
 
 // writeTimeout is how long the server allows for writing one response. Every
@@ -84,6 +85,12 @@ func githubMux(logger *slog.Logger, token string) *http.ServeMux {
 		client.CheckRedirect = func(*http.Request, []*http.Request) error { return errors.New("authenticated redirect refused") }
 	}
 	githublanguages.Register(mux)
+	// Trending remains public-only, like its Next.js implementation. Never
+	// pass the verified caller token or a shared environment token to it.
+	mux.Handle("GET /api/github/trending", &githubtrending.Handler{
+		Client:  &http.Client{Timeout: githubtrending.Timeout},
+		BaseURL: envOr("GITHUB_API_URL", githubtrending.DefaultBaseURL),
+	})
 	mux.Handle("GET /api/github/contributions", &githubcontributions.Handler{
 		Client:  client,
 		BaseURL: envOr("GITHUB_API_URL", githubcontributions.DefaultBaseURL),

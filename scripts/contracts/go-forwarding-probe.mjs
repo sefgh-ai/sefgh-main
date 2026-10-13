@@ -109,6 +109,9 @@ const probes = [
   "/api/github/search?q=react&page=2&per_page=12",
   "/api/github/search?%71=react",
   "/api/github/languages",
+  "/api/github/trending?since=weekly&language=Go",
+  "/api/github/trending?since=invalid",
+  "/api/github/trending?language=C%23",
   "/api/github/contributions?username=octocat",
   "/api/github/contributions?username=-bad-",
 ];
@@ -155,7 +158,7 @@ try {
   const goPort = await freePort(), nextPort = await freePort();
   const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-contributions,github-repo,github-repo-details,github-contents";
+  const routes = "github-search,github-languages,github-trending,github-contributions,github-repo,github-repo-details,github-contents";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

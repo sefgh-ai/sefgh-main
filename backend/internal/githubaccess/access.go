@@ -117,7 +117,7 @@ func (v Verifier) get(ctx context.Context, target string, headers map[string]str
 // request so neither cached data nor an in-flight result is shared across users.
 func (v Verifier) Wrap(public http.Handler, private func(string) http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/healthz" || r.URL.Path == "/api/github/languages" {
+		if r.URL.Path == "/healthz" || r.URL.Path == "/api/github/languages" || r.URL.Path == "/api/github/trending" {
 			public.ServeHTTP(w, r)
 			return
 		}

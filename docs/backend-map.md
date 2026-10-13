@@ -196,3 +196,11 @@ Trending now has 33 characterization fixtures; its source and Go route inventory
 are unchanged. AUTH-002 needs review and anonymous quota measurement. Automatic
 Vercel deployment state has not been inspected. Historical snapshots above do
 not establish the current deployment or absence of the CI-001 workflow.
+
+## GO-006b update (2026-10-13)
+
+Seven Go routes now exist: trending joins search, languages, contributions,
+summary, detail and contents. All remain opt-in. Trending is public-only and
+bypasses the identity verifier while sending no credential upstream, matching
+Next.js. Clock/random injection pins the 33 fixtures; known defects remain.
+No browser, Supabase, worker or deployment boundary changes.

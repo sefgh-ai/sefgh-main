@@ -66,6 +66,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [14 Checking input](14-checking-input/README.md) | Regular expressions, allowlists against blocklists, and putting outside text into a URL safely | `backend/internal/githubrepos/identifiers.go` |
 | [15 Settings from the environment](15-settings-from-the-environment/README.md) | Environment variables, handing a function to a function, and refusing a bad setting at start-up | `listenAddr` in `backend/cmd/api/main.go` |
 | [16 Verifying access](16-verifying-access/README.md) | Middleware, online identity verification, deadlines and private cache isolation | `backend/internal/githubaccess/access.go` and `backend/cmd/api/main.go` |
+| [17 Clocks and randomness](17-clocks-and-randomness/README.md) | Function injection, local calendar arithmetic, deterministic random fixtures | `backend/internal/githubtrending/handler.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 
