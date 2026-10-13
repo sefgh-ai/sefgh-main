@@ -1,0 +1,20 @@
+{
+  "contract_version": 1,
+  "policy": "AUTH-002: repository pages and collection enrichment are public-only; no shared token, redirects or cached visibility decisions",
+  "cases": [
+    {"id":"public","owner":"octo","repo":"demo","status":200,"body":{"id":1,"private":false,"name":"demo"},"calls":1,"expect":{"id":1,"private":false,"name":"demo"}},
+    {"id":"private-response-denied","owner":"octo","repo":"demo","status":200,"body":{"id":1,"private":true},"calls":1,"expect":null},
+    {"id":"unknown-visibility-denied","owner":"octo","repo":"demo","status":200,"body":{"id":1},"calls":1,"expect":null},
+    {"id":"null-response","owner":"octo","repo":"demo","status":200,"body":null,"calls":1,"expect":null},
+    {"id":"not-found","owner":"octo","repo":"demo","status":404,"body":{},"calls":1,"expect":null},
+    {"id":"rate-limited","owner":"octo","repo":"demo","status":403,"body":{},"calls":1,"expect":null},
+    {"id":"unauthorized-no-retry","owner":"octo","repo":"demo","status":401,"body":{},"calls":1,"expect":null},
+    {"id":"redirect-denied","owner":"octo","repo":"demo","status":301,"body":{},"calls":1,"expect":null},
+    {"id":"network-failure","owner":"octo","repo":"demo","network_error":true,"calls":1,"expect":null},
+    {"id":"path-in-owner","owner":"octo/other","repo":"demo","calls":0,"expect":null},
+    {"id":"query-in-name","owner":"octo","repo":"demo?x=y","calls":0,"expect":null},
+    {"id":"traversal","owner":"octo","repo":"..","calls":0,"expect":null},
+    {"id":"missing-owner","owner":null,"repo":"demo","calls":0,"expect":null},
+    {"id":"encoded-slash","owner":"octo","repo":"a%2Fb","calls":0,"expect":null}
+  ]
+}

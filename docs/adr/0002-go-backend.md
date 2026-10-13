@@ -170,7 +170,7 @@ Before any cutover, capture p50 and p95 response time, upstream time, error rate
 
 ## Consequences
 
-- Next.js and Go both run during the migration. CI, observability, secrets and deployment must cover both. There is no CI for either today.
+- Next.js and Go both run during the migration. CI, observability, secrets and deployment must cover both. CI-001 now provides contracts, Go race/vet/format, lessons and production forwarding; a hosted result has not been observed.
 - A full custom-backend migration includes significant frontend data-access refactoring and database policy work, not only route handlers.
 - Every contract fix must land in two implementations until a route's Next.js handler is retired.
 - Managed Auth, Storage and Realtime stay. This ADR does not approve replacing them.
@@ -212,3 +212,27 @@ nothing.
 
 Progress records and test outcomes belong in `../coordination.md`. The earlier
 phase table is dated 2026-10-11; it is not a claim that later work is absent.
+
+
+### AUTH-002 / VERIFY-003 / GO-006a (2026-10-13)
+
+Owner authorized continued implementation after the alignment review. Repository
+page reads and authenticated collection enrichment now use validated, uncached,
+tokenless public GitHub reads; no shared private-capable token. Stored collection
+metadata is not proof of current access: enrichment is rechecked and withheld
+when unavailable, preserving collection rows and notes without database writes.
+See contracts/public-repository-reads for fixtures and the quota tradeoff.
+The public summary cache in Go is a separate unresolved visibility gate.
+
+VERIFY-003 strengthens the existing probe to require exact Supabase bearer,
+public key and known GitHub tokens; wrong-session rejection is added (50 cases).
+GO-006a records 33 trending cases (13 defect) with fixed clocks/randomness.
+GO-006b is the next Go port. Trending production behavior is unchanged; no defect
+fix is implied by characterization. See contracts/github-trending/README.md.
+
+Deployment wording: no agent-issued deployment is recorded. Automatic deployment
+of pushed Next.js changes is unknown until Vercel is inspected. The Go switch
+only controls forwarding; it cannot gate changes in Next.js handlers. OAuth
+consent mechanism is still to be designed; the user's private-access policy is
+already decided. Shared-token capacity, independent review, hosted CI and live
+provider/hosting gates remain.

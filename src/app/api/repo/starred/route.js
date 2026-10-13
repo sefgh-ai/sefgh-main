@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { fetchRepoFromGitHub } from "@/lib/repo/repoData";
 
 /**
  * GET /api/repo/starred
@@ -34,54 +35,34 @@ export async function GET(request) {
       );
     }
 
-    // Optionally fetch additional repo data from GitHub for each repo
-    const reposWithData = await Promise.all(
-      (repos || []).map(async (repo) => {
-        // Try to get cached repo data or fetch from GitHub
-        if (!repo.repo_data) {
-          try {
-            const githubResponse = await fetch(
-              `https://api.github.com/repos/${repo.repo_full_name}`,
-              {
-                headers: {
-                  Accept: "application/vnd.github.v3+json",
-                  ...(process.env.GITHUB_TOKEN && {
-                    Authorization: `token ${process.env.GITHUB_TOKEN}`,
-                  }),
-                },
-                next: { revalidate: 3600 }, // Cache for 1 hour
-              }
-            );
-
-            if (githubResponse.ok) {
-              const githubData = await githubResponse.json();
-              return {
-                ...repo,
-                repo_data: {
-                  description: githubData.description,
-                  stargazers_count: githubData.stargazers_count,
-                  forks_count: githubData.forks_count,
-                  language: githubData.language,
-                  topics: githubData.topics,
-                  updated_at: githubData.updated_at,
-                },
-              };
-            }
-          } catch (fetchError) {
-            console.error(
-              `Error fetching GitHub data for ${repo.repo_full_name}:`,
-              fetchError
-            );
-          }
-        }
-        return repo;
-      })
-    );
+    // Stored enrichment is a snapshot, not proof of current public visibility.
+    // Keep the owner's collection/notes; never return stale repository metadata.
+    const reposWithData = [];
+    const rows = repos || [];
+    // Revalidation must not start an unbounded number of upstream requests.
+    for (let offset = 0; offset < rows.length; offset += 4) {
+      const batch = await Promise.all(rows.slice(offset, offset + 4).map(async (repo) => {
+        const parts = typeof repo.repo_full_name === 'string' ? repo.repo_full_name.split('/') : [];
+        const data = parts.length === 2 ? await fetchRepoFromGitHub(parts[0], parts[1]) : null;
+        return {
+          ...repo,
+          repo_data: data ? {
+            description: data.description,
+            stargazers_count: data.stargazers_count,
+            forks_count: data.forks_count,
+            language: data.language,
+            topics: data.topics,
+            updated_at: data.updated_at,
+          } : null,
+        };
+      }));
+      reposWithData.push(...batch);
+    }
 
     return NextResponse.json({
       repos: reposWithData,
       count: reposWithData.length,
-    });
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
     console.error("Starred API error:", error);
     return NextResponse.json(

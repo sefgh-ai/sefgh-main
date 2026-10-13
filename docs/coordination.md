@@ -11,16 +11,34 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released REVIEW-004 / CI-001 / VERIFY-002 / AUTH-001 after completing the bounded local implementation and checks. Independent review and deployment gates remain.
+- **Active writer:** none. Codex completed implementation for `AUTH-002 / VERIFY-003 / GO-006a` at the pre-final-verification checkpoint before hitting a usage limit; Git Agent ran the remaining final verification checks (`npm run test:contracts` 387/387, focused ESLint 0 errors, `git diff --check` clean) and released the writer role.
 - **Reviewer:** Claude Code has reviewed GO-002a/GO-002b (`REVIEW-002`) and GO-003/GO-004 (`REVIEW-003`), all on 2026-10-12. GO-003 accepted; GO-004 accepted with routing off. No route is approved to switch on. Details in `claude-review.md`. The SYNC-001 documentation diff was not reviewed as a separate item.
-- **Stage:** Six routes are implemented with Go rewrites off by default. Private-access policy and CI implementation are authorized. AUTH-001 API boundary is implemented locally; private UI integration, independent review of new work, hosted race checks and Vercel deployment/rollback/measurements remain. Phase 2 next port is GO-006a (trending). No route cut over or deployment performed.
+- **Stage:** Six routes are implemented with Go rewrites off by default. `AUTH-001` and `AUTH-002` public/private boundaries are implemented locally; `GO-006a` trending characterization fixtures (33 cases, 13 defects) are recorded. Phase 2 next port is `GO-006b` (Go implementation of `GET /api/github/trending` + Lesson 17). No Go cutover is recorded; automatic Vercel deployment of Next.js changes is unknown.
+
+## Latest handoff: AUTH-002 / VERIFY-003 / GO-006a (Codex + Git Agent final verification, 2026-10-13)
+
+Status: **bounded local implementation complete; awaiting independent review; not deployed**.
+Owner: Codex (implementation & 50/50 production probe); final verification & handoff release completed by Git Agent after Codex usage limit halt.
+Branch: `main`; base `7e0820c3649ae83205f682a93d6b934ede1d8899`.
+
+Completed:
+- **AUTH-002:** Closed shared-token reads on the public repository page (`src/lib/repo/repoData.js`) and starred collection enrichment (`src/app/api/repo/starred/route.js`). Validated identifiers, removed server `GITHUB_TOKEN` usage, enforced uncached public reads, and revalidated starred enrichment with bounded concurrency (max 5) while preserving user-scoped Supabase authorization. Added 18 contract/isolation tests in `contracts/public-repository-reads/` and `scripts/contracts/public-repository-reads.test.mjs`.
+- **VERIFY-003:** Strengthened `scripts/contracts/go-forwarding-probe.mjs` identity stub to require exact Supabase bearer token, exact public key, and known GitHub tokens, plus a wrong-session `401` scenario (50/50 production probe passed, native exit 0).
+- **GO-006a:** Recorded 33 characterization fixtures (including 13 marked `defect`) for `GET /api/github/trending` under fixed UTC/local clocks and deterministic `Math.random` in `contracts/github-trending/` and `scripts/contracts/github-trending.test.mjs`. No trending behavior change or Go route port yet (`GO-006b` is next).
+
+Final checks:
+- `npm run test:contracts`: **387 / 387 passed**, exit 0.
+- Focused ESLint (`npx eslint src/lib/repo/repoData.js src/app/api/repo/starred/route.js scripts/contracts/...`): **passed**, 0 errors/0 warnings.
+- `node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api.exe --production`: **50 / 50 passed**, native exit 0.
+- `git diff --check`: **clean**.
+- Writer released: yes.
 
 ## Latest handoff: REVIEW-004 / CI-001 / VERIFY-002 / AUTH-001 (Codex, 2026-10-13)
 
-Status: **bounded local implementation complete; new work awaiting independent review; not deployed**.
+Status: **bounded local implementation complete; synchronized at `7e0820c`; new work awaiting independent review; not deployed**.
 Owner: Codex. Reviewer: unassigned for this batch; no Claude review or receipt claimed.
-Branch main; base/current HEAD 905c1d953a15b296fad1ff257d5c0a53e0043688.
-Resulting commit: uncommitted; Git Agent owns synchronization after the handoff hook.
+Branch main; base HEAD `905c1d953a15b296fad1ff257d5c0a53e0043688`.
+Resulting commit: `7e0820c3649ae83205f682a93d6b934ede1d8899` (synchronized by Git Agent on `main` and `go-backend`).
 This record supersedes the historical incomplete checkpoints below.
 
 Completed:
@@ -978,9 +996,13 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `FIX-003` | Repository input validation and lesson 14 | Committed 3f4c7dd; reviewed in REVIEW-004 | Cutover gates |
 | `FIX-004` | Non-UTF-8 text and shared detail deadline | Committed 905c1d9; reviewed in REVIEW-004 | Cutover gates |
 | `VERIFY-001` | Development forwarding and race preparation | Committed 905c1d9; reviewed in REVIEW-004; dev 46/46 | Hosted race and Vercel preview |
-| `GO-006a` | Contract fixtures for `github/trending`, fixing its random `starsToday` source | Not started; unassigned | Nothing |
+| `AUTH-001` | Two-token verification & private repo isolation across 5 dynamic GitHub routes + Lesson 16 | Committed 7e0820c | Independent review |
+| `AUTH-002` | Public repository page & starred enrichment isolation (18 tests) | Implementation complete & verified (387/387) | Independent review |
+| `VERIFY-003` | Exact credentials & wrong-session 401 forwarding check (50/50 production probe) | Implementation complete & verified | Independent review |
+| `GO-006a` | Characterize trending with fixed clock/random inputs; no production fix | 33 fixtures written & verified (387/387) | Independent review before cutover; GO-006b next |
+| `GO-006b` | Port `GET /api/github/trending` to Go + Lesson 17 | Unassigned; ready to start | GO-006a complete |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
-| `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Implemented locally, uncommitted | Independent review and hosted run |
+| `CI-001` | Linux contracts, race, vet, format, lessons and production probe | Committed at 7e0820c; hosted Linux `npm ci` lockfile fix in progress | Independent review and hosted run |
 | `OPS-001a` | PORT support and lesson 15 | Committed 905c1d9; reviewed in REVIEW-004 | Deployment gates |
 | `OPS-001` | Choose hosting for the Go service; deploy to a staging environment; take the measurements the ADR requires. Proposal written in the ADR | Proposal written; nothing deployed | Owner |
 

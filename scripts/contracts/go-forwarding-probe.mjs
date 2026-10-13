@@ -117,6 +117,7 @@ const scenarios = [
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
   { path: '/api/github/search?q=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-other' }, status: 403 },
+  { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer wrong-session', 'X-GitHub-Token': 'fixture-user' }, status: 401 },
 ];
 
 try {
@@ -127,8 +128,17 @@ try {
       seen.push(`${req.method} ${req.url}`);
       res.setHeader("Content-Type", "application/json");
       res.setHeader("x-ratelimit-remaining", "59");
-      if (req.url === '/auth/v1/user') res.end(JSON.stringify({ id: 'a', identities: [{ provider: 'github', id: '101' }] }));
-      else if (req.url === '/user') res.end(JSON.stringify({ id: req.headers.authorization === 'Bearer fixture-user' ? 101 : 102 }));
+      if (req.url === '/auth/v1/user') {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') {
+          res.writeHead(401); res.end('{}'); return;
+        }
+        res.end(JSON.stringify({ id: 'a', identities: [{ provider: 'github', id: '101' }] }));
+      }
+      else if (req.url === '/user') {
+        const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
+        if (!id) { res.writeHead(401); res.end('{}'); return; }
+        res.end(JSON.stringify({ id }));
+      }
       else if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
       else if (req.url.startsWith("/search/")) res.end(JSON.stringify({ total_count: 0, items: [] }));
       else if (req.url.endsWith("/languages")) res.end('{"Go":42}');

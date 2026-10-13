@@ -181,3 +181,18 @@ Baseline recorded on 2026-10-11 by Claude Code at `42759dd` application source, 
 - `npm run lint`: **fails**, exit 1, 10 errors and 16 warnings. All 10 errors are `react-hooks/set-state-in-effect` in UI files: `src/app/page.js`, `src/components/3d/ThreeBackground.jsx`, `src/components/Canvas.jsx` (2), `src/components/CookieBar.jsx`, `src/components/settings/AccountTab.jsx`, `src/components/settings/SessionsTab.jsx`, `src/components/usage-contributions/UsageContributionsCard.jsx`, `src/contexts/LanguageContext.js` (2). Warnings: 13 `react-hooks/exhaustive-deps`, 2 `@next/next/no-img-element`, 1 `react-hooks/unsupported-syntax`. None is in an API handler.
 - `npm run build`: **passes**, exit 0.
 - No latency, resource, or cost measurement was taken.
+
+
+## AUTH-002 and GO-006a implementation update (2026-10-13)
+
+The repository page's fetchRepoFromGitHub helper and /api/repo/starred GitHub
+enrichment now use the same public-only validated no-store read. The starred
+route retains Supabase getUser and user_id scoping. It refreshes stored metadata
+in batches of four, returns null enrichment on denied/unavailable repositories,
+and marks successful replies private/no-store. It writes no database rows.
+No other server-token consumer or browser private-data flow is claimed fixed.
+
+Trending now has 33 characterization fixtures; its source and Go route inventory
+are unchanged. AUTH-002 needs review and anonymous quota measurement. Automatic
+Vercel deployment state has not been inspected. Historical snapshots above do
+not establish the current deployment or absence of the CI-001 workflow.

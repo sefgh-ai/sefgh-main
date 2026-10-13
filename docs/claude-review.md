@@ -1,5 +1,18 @@
 # Claude Code review and reconciliation
 
+## Alignment follow-up (Codex, 2026-10-13; not peer approval)
+
+Owner pasted Claude's independent read-only alignment report at 7e0820c.
+Codex accepts the remaining token paths, anonymous capacity, cache-retention,
+probe credential, and deployment-evidence findings. The starred API already
+requires Supabase auth; its GitHub authority was the mismatch. Missing explicit
+OAuth scopes does not establish every issued token's actual grants. The policy
+is settled, while consent design remains open. New AUTH-002 / VERIFY-003 work
+addresses page/starred shared-token reads and exact probe credentials; independent
+review is still required. Go summary cache retention, remaining token consumers,
+malformed-issuer parity, quota and live release evidence are not closed here.
+
+
 ## REVIEW-004: Codex review, 2026-10-13
 
 Reviewed at base `905c1d9`, before AUTH-001: GO-005a/b (contributions fixtures,

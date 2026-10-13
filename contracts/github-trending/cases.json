@@ -1,0 +1,1586 @@
+{
+  "contract_version": 1,
+  "route": "GET /api/github/trending",
+  "recorded_from": "7e0820c",
+  "notes": "Fixed clock/timezone/random inputs characterize the unchanged Next handler. Defects need owner-approved changes before a behavioral fix.",
+  "cases": [
+    {
+      "id": "daily-default",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "weekly",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=weekly",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-06&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "monthly",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=monthly",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-09-13&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "empty-defaults",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=&language=",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "any-language",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?language=any",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "go-language",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?language=Go",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12%2Blanguage%3AGo&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "cpp-language",
+      "disposition": "defect",
+      "reason": "Query separators are literal plus signs inside the encoded search query; verify real GitHub parsing before cutover.",
+      "request": "/api/github/trending?language=C%2B%2B",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12%2Blanguage%3AC%2B%2B&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "invalid-period",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=yearly",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "case-sensitive-period",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=Daily",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "slash-language",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?language=a%2Fb",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "long-language",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "space-language",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?language=a+b",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "csharp-rejected",
+      "disposition": "defect",
+      "reason": "The catalog supports C# but this route rejects its language filter.",
+      "request": "/api/github/trending?language=C%23",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid parameters"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "duplicate-parameter-first",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=weekly&since=yearly&language=Go&language=C%23",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-06%2Blanguage%3AGo&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "monthly-overflow",
+      "disposition": "defect",
+      "reason": "setMonth rolls February overflow into March instead of clamping the end of month.",
+      "request": "/api/github/trending?since=monthly",
+      "now": "2026-03-31T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-03&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "leap-monthly-overflow",
+      "disposition": "defect",
+      "reason": "Leap-year month overflow is preserved.",
+      "request": "/api/github/trending?since=monthly",
+      "now": "2024-03-31T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2024-03-02&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "dst-local-calendar",
+      "disposition": "defect",
+      "reason": "Local calendar subtraction then UTC formatting changes the since date across DST.",
+      "request": "/api/github/trending?since=daily",
+      "now": "2026-03-08T23:30:00.000Z",
+      "timezone": "America/New_York",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-08&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "same-instant-utc",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=daily",
+      "now": "2026-03-08T23:30:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-07&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "india-timezone",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending?since=weekly",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "Asia/Kolkata",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-06&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "random-min",
+      "disposition": "defect",
+      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 50,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "random-mid",
+      "disposition": "defect",
+      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "random-max",
+      "disposition": "defect",
+      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.999999,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 549,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "ranking-boundaries",
+      "disposition": "defect",
+      "reason": "Random starsToday and heatLevel based on array position, not measured activity.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo0",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 2,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo1",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 3,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo2",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 4,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo3",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 5,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo4",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 6,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo5",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 7,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo6",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 8,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo7",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 9,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo8",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 10,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo9",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 11,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "repo10",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "repo0",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 2,
+            "author": "octo",
+            "name": "repo1",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 3,
+            "author": "octo",
+            "name": "repo2",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 4,
+            "author": "octo",
+            "name": "repo3",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 5,
+            "author": "octo",
+            "name": "repo4",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 6,
+            "author": "octo",
+            "name": "repo5",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 7,
+            "author": "octo",
+            "name": "repo6",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 8,
+            "author": "octo",
+            "name": "repo7",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 9,
+            "author": "octo",
+            "name": "repo8",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 10,
+            "author": "octo",
+            "name": "repo9",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 11,
+            "author": "octo",
+            "name": "repo10",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 11
+      }
+    },
+    {
+      "id": "fallback-fields",
+      "disposition": "defect",
+      "reason": "Random starsToday retained; null description/language use display fallbacks.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": null,
+              "language": null,
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "No description provided",
+            "language": "Unknown",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "unknown-color",
+      "disposition": "defect",
+      "reason": "Random starsToday retained; unknown language uses gray.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Zig",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Zig",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "prototype-color",
+      "disposition": "defect",
+      "reason": "Language-color lookup reads inherited properties; __proto__ serializes as an object.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "__proto__",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__proto__",
+            "languageColor": {},
+            "stars": 123,
+            "forks": 4,
+            "starsToday": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 1
+      }
+    },
+    {
+      "id": "missing-owner",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": null,
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "missing-items",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {}
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "null-items",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": null
+        }
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "malformed-json",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 200,
+        "raw_body": "{broken"
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "rate-limit",
+      "disposition": "defect",
+      "reason": "Rate limiting is flattened to a generic 500 without retry information.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 429,
+        "body": {
+          "message": "slow down"
+        }
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "upstream-503",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "status": 503,
+        "body": {}
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "network-failure",
+      "disposition": "preserve",
+      "reason": "Preserve the existing response and upstream request.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "random": 0.5,
+      "upstream": {
+        "network_error": true
+      },
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    }
+  ]
+}
