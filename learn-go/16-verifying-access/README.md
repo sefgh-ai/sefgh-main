@@ -31,13 +31,74 @@ stop. It is important not to confuse those outcomes.
 ## Giving an operation a deadline
 
 ```go
-ctx, cancel := context.WithTimeout(r.Context(), 4*time.Second)
+const DefaultTimeout = 4 * time.Second
+
+timeout := v.Timeout
+if timeout == 0 {
+	timeout = DefaultTimeout
+}
+ctx, cancel := context.WithTimeout(r.Context(), timeout)
 defer cancel()
 ```
 
 Both identity calls share this deadline. `NewRequestWithContext` passes it to
 the HTTP client. `defer cancel()` releases the timer when verification ends.
 Cancellation also propagates from a caller who disconnects.
+
+The `Timeout` field is there for tests. A test that had to wait four real
+seconds to see the deadline work would be slow, so it sets 30 milliseconds.
+Zero is Go's value for "nobody set this", which is why zero means "use the
+default". A second test checks that the default is still four seconds, and a
+test in `cmd/api` checks that four seconds of verification plus the slowest
+handler still fit inside the time the server allows for one reply.
+
+## Check a reply field by field
+
+Supabase and GitHub answer in JSON. A struct would say "the reply looks like
+this" and fail on anything else. This code must refuse a strange reply the
+same way the JavaScript check does, case by case, so it decodes into `any`
+and asks about each field, as lesson 05 describes:
+
+```go
+user, _ := reply.(map[string]any)
+identities, isList := user["identities"].([]any)
+if !truthy(user["id"]) || truthy(user["is_anonymous"]) || !isList {
+	return "", 403
+}
+for _, entry := range identities {
+	identity, _ := entry.(map[string]any)
+	if id, isText := identity["id"].(string); identity["provider"] == "github" && isText && id != "" {
+		linked[id] = true
+	}
+}
+```
+
+Three checks in that loop each close a door. The provider must be `github`:
+an account linked through another provider with the same number is not this
+GitHub account. The id must be text, and not empty. An entry that is `null`
+or the wrong shape is skipped, because asking a `nil` map for a key is safe.
+
+`truthy` and `safeInteger` are two small functions below `Resolve`. They
+answer the way JavaScript's `if (value)` and `Number.isSafeInteger(value)`
+do, so both backends agree on every case in `contracts/github-access/`.
+
+## Test the wiring that runs
+
+`newHandler` in `cmd/api/main.go` builds everything the server serves. `run`
+calls it, and so do the tests:
+
+```go
+func newHandler(logger *slog.Logger) http.Handler {
+	verifier := githubaccess.Verifier{ /* from the environment */ }
+	return markBackend(verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) }))
+}
+```
+
+The `""` is the important character pair: handlers for callers without
+credentials get no token at all. An earlier test built this line again inside
+the test. It passed even when the real line was changed to hand out the
+server's own token, because it was checking its own copy. A test proves
+something about the code it calls and nothing about code that looks similar.
 
 ## Copy settings, never share private results
 

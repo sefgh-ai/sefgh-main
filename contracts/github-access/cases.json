@@ -283,6 +283,501 @@
         }
       ],
       "status": 403
+    },
+    {
+      "id": "other-provider-same-id",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "gitlab",
+                "id": "101"
+              }
+            ]
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "user-without-id",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "user-reply-is-null",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": null
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "user-reply-is-text",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": "ok"
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "identities-not-a-list",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": {
+              "provider": "github",
+              "id": "101"
+            }
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "null-identity-entry",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              null
+            ]
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "identity-id-is-a-number",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": 101
+              }
+            ]
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "empty-identity-id",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": ""
+              }
+            ]
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "later-identity-matches",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              null,
+              {
+                "provider": "google",
+                "id": "999"
+              },
+              {
+                "provider": "github",
+                "id": "55"
+              },
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 101
+          }
+        }
+      ],
+      "status": 200,
+      "token": "gh-a"
+    },
+    {
+      "id": "github-id-is-text",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": "101"
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "github-id-zero",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "0"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 0
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "github-id-negative",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "-5"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": -5
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "github-id-fraction",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101.5"
+              },
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": {
+            "id": 101.5
+          }
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "github-reply-is-a-list",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 200,
+          "body": [
+            {
+              "id": 101
+            }
+          ]
+        }
+      ],
+      "status": 403
+    },
+    {
+      "id": "supabase-refuses-with-403",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 403,
+          "body": {}
+        }
+      ],
+      "status": 401
+    },
+    {
+      "id": "github-refuses-with-403",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 403,
+          "body": {}
+        }
+      ],
+      "status": 401
+    },
+    {
+      "id": "supabase-answers-201",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 201,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        }
+      ],
+      "status": 503
+    },
+    {
+      "id": "github-answers-201",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "status": 201,
+          "body": {
+            "id": 101
+          }
+        }
+      ],
+      "status": 503
+    },
+    {
+      "id": "supabase-unreachable",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "network_error": true
+        }
+      ],
+      "status": 503
+    },
+    {
+      "id": "github-unreachable",
+      "headers": {
+        "Authorization": "Bearer session-a",
+        "X-GitHub-Token": "gh-a"
+      },
+      "calls": [
+        {
+          "service": "supabase",
+          "status": 200,
+          "body": {
+            "id": "a",
+            "identities": [
+              {
+                "provider": "github",
+                "id": "101"
+              }
+            ]
+          }
+        },
+        {
+          "service": "github",
+          "network_error": true
+        }
+      ],
+      "status": 503
     }
   ]
 }

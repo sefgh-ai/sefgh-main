@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 )
@@ -41,6 +42,10 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	if githubrepos.DetailTimeout >= writeTimeout {
 		t.Errorf("githubrepos.DetailTimeout is %v, which is not below the server's write timeout of %v", githubrepos.DetailTimeout, writeTimeout)
+	}
+	// A request with credentials is verified first, and that time counts too.
+	if total := githubaccess.DefaultTimeout + githubrepos.DetailTimeout; total >= writeTimeout {
+		t.Errorf("identity check plus detail route can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
 }
 

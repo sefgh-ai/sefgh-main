@@ -127,6 +127,11 @@ responses carry Cache-Control: private, no-store. Public summaries retain their
 cache. See [the access contract](../contracts/github-access/README.md) for errors,
 tests and the separate private-UI integration still needed.
 
+`newHandler` in `cmd/api/main.go` builds everything the server serves, and the
+tests call that same function, so they check the wiring that runs. Handlers
+for callers without credentials are built with no token; `wiring_test.go`
+fails if the server's own `GITHUB_TOKEN` ever reaches GitHub.
+
 .github/workflows/backend-verification.yml runs Linux contracts, the race detector,
 vet/formatting, lesson solutions and production forwarding. It has read-only
 permissions and no deployment credentials. Its presence is not evidence of a

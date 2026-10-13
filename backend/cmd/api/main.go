@@ -65,17 +65,24 @@ func run(logger *slog.Logger) error {
 		return err
 	}
 
+	srv := &http.Server{
+		Addr: addr, Handler: newHandler(logger), ReadHeaderTimeout: 5 * time.Second,
+		WriteTimeout: writeTimeout, IdleTimeout: 60 * time.Second,
+	}
+	return serve(logger, srv, addr)
+}
+
+// newHandler builds everything the server serves, from the environment. The
+// tests call it too, so the wiring they check is the wiring that runs:
+// handlers for callers without credentials get no token at all, and a
+// verified caller's handlers get only that caller's own token.
+func newHandler(logger *slog.Logger) http.Handler {
 	verifier := githubaccess.Verifier{
 		SupabaseURL: os.Getenv("NEXT_PUBLIC_SUPABASE_URL"),
 		SupabaseKey: os.Getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 		GitHubURL:   envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
 	}
-	mux := verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) })
-	srv := &http.Server{
-		Addr: addr, Handler: markBackend(mux), ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout: writeTimeout, IdleTimeout: 60 * time.Second,
-	}
-	return serve(logger, srv, addr)
+	return markBackend(verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) }))
 }
 
 // Public settings never use GITHUB_TOKEN. Private muxes live for one request.

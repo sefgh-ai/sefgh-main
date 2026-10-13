@@ -68,6 +68,8 @@ test('starred revalidates saved metadata, scopes rows and never sends shared cre
     {id:1,user_id:'alice',repo_full_name:'octo/public',notes:'keep',repo_data:{description:'stale'}},
     {id:2,user_id:'alice',repo_full_name:'octo/hidden',repo_data:{description:'old private text'}},
     {id:3,user_id:'alice',repo_full_name:'octo/../escape',repo_data:{description:'untrusted'}},
+    // Three parts is not a repository name, even though the first two are one.
+    {id:4,user_id:'alice',repo_full_name:'octo/public/extra',repo_data:{description:'another repository'}},
   ];
   const snapshot=structuredClone(rows);
   const db=stubClient({id:'alice'},rows);
@@ -82,10 +84,11 @@ test('starred revalidates saved metadata, scopes rows and never sends shared cre
   assert.equal(response.status,200);
   assert.equal(response.headers.get('cache-control'),'private, no-store');
   const body=await response.json();
-  assert.equal(body.count,3);
+  assert.equal(body.count,4);
   assert.deepEqual(body.repos[0],{...rows[0],repo_data:{description:'fresh',stargazers_count:3}});
   assert.equal(body.repos[1].repo_data,null);
   assert.equal(body.repos[2].repo_data,null);
+  assert.equal(body.repos[3].repo_data,null);
   assert.deepEqual(rows,snapshot,'do not mutate or persist stored rows');
   assert.deepEqual(db,[['from','repo_collections'],['select','*'],['eq','user_id','alice'],['order','created_at',{ascending:false}]]);
   assert.equal(calls.length,2);

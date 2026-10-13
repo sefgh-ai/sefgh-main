@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: AI-001b / AI-001c / AI policy proposal handoff.
+Last updated: 2026-10-13 (Asia/Calcutta), by Claude Code: AI-002a handoff.
 
 ## Start here
 
@@ -11,11 +11,154 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released AI-001b / AI-001c / AI policy proposal. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`) and GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: AUTH-001, AUTH-002, CI-001, VERIFY-002, VERIFY-003. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. Every Phase 2 route has fixtures: the eight GitHub reads are ported, the three AI routes are recorded and wait for four owner decisions (see the ADR). Hosted CI, including the race detector, passed at `259ff7b`; later commits have not been checked there by an agent. No route is cut over and no new deployment evidence exists.
+- **Active writer:** none. Claude Code completed and released AI-002a. REVIEW-006 and AI-002a are both uncommitted at handoff. No deployment or cutover by an agent.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eight of 25 API routes are implemented in Go (32% of routes, not of the whole migration); rewrites off by default. The three AI routes are at contract version 2 in Next.js, with the owner's sign-in rule, limits and safety fixes; their Go ports are next (AI-002b, AI-002c). Hosted CI, including the race detector, passed at `9480ef9`; the work since has not run there. No route is cut over and no new deployment evidence exists.
 
-## Latest handoff: AI-001b / AI-001c / AI policy proposal (Claude Code, 2026-10-13)
+## Latest handoff: AI-002a, with REVIEW-006 still uncommitted beneath it (Claude Code, 2026-10-13)
+
+Status: **implementation complete in Next.js with version 2 fixtures; awaiting independent review; not deployed by an agent; no Go route added or switched on**.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 9480ef9f407571fe333bae48eb824181acfdba5e. The working tree holds two finished tasks: REVIEW-006 (its own record follows this one) and AI-002a. The Git Agent had not acted on REVIEW-006's signal when AI-002a began.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `9480ef9`).
+
+Owner decisions this implements (2026-10-13, in the ADR decisions log): chat for signed-in users only with limits; the two search helpers public with limits; three safety defects fixed in every implementation. Only Next.js implements these routes today, so Next.js and the fixtures changed together.
+
+What changed in behaviour:
+- `POST /api/ai/chat`: 401 without a signed-in user (a bearer token verified online with Supabase, or the app's own session cookie); 503 if that check cannot be made; 429 with Retry-After past 30 requests in five minutes per user; messages must be `user` or `assistant` with text content; only `role` and `content` are forwarded; the most recent 20 messages and 8,000 characters are kept; every failure is the fixed 500 sentence.
+- `POST /api/ai/suggestions`: fixed 500 sentence; 400 over 500 characters; past 30 AI calls in five minutes per address the built-in list answers.
+- `POST /api/ai/enhance-query`: 400 over 500 characters; past the same allowance the basic enhancement answers.
+These are live Next.js handlers on main. Whether Vercel deploys main automatically has not been inspected.
+
+Judgment calls, for review:
+- Chat drops the oldest messages beyond the limits and refuses only a newest message that is itself over 8,000 characters. The browser sends the whole conversation each time, so refusing would break every long chat. Consequence the owner should know: with long AI answers, 8,000 characters is roughly the last two or three exchanges of context. The numbers are constants in src/lib/ai/guard.js.
+- The search helpers fall back to their built-in answers past the allowance; they do not answer 429. The allowance protects provider spend, and the search box keeps working.
+- The allowance is counted per server process. On a platform that runs several instances it is weaker than its number says. A shared counter needs a store.
+- A caller's address is the first entry of X-Forwarded-For. That is right behind a proxy that sets it and wrong if the server is reachable directly.
+- src/lib/github/access.js now exports its one identity call as `askIssuer` so the chat sign-in check shares it. Behaviour is unchanged; the access tests still pass.
+
+Changed files for AI-002a:
+- New: src/lib/ai/{guard.js,session.js}, src/lib/supabase/verify-bearer.js, scripts/contracts/{ai-fixture-common.mjs,ai-chat-loader.mjs,ai-guard.test.mjs}.
+- Changed: src/app/api/ai/{chat,suggestions,enhance-query}/route.js, src/lib/github/access.js, scripts/contracts/{chat-fixture.mjs,enhance-fixture.mjs,suggestions-fixture.mjs,ai-chat.test.mjs,ai-enhance-query.test.mjs,ai-suggestions.test.mjs}.
+- Fixtures at version 2: contracts/ai-chat (42 -> 78 cases, 3 defect), contracts/ai-enhance-query (62 -> 73, 10 defect, no earlier case changed), contracts/ai-suggestions (35 -> 44, 7 defect); their READMEs.
+- docs/{coordination.md,backend-map.md,adr/0002-go-backend.md}.
+No Go and no lesson changed in AI-002a.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 688 of 688.
+- Every version 1 case whose answer changed was printed while re-recording: 13 in chat and 4 in suggestions, each one of the approved fixes; 1 chat case removed as a duplicate of another after the fix; none in enhance-query.
+- 59 deliberate changes to the new code, applied in memory: 58 noticed at first; the miss got a case (`type-is-checked-before-length`) and is now noticed.
+- ESLint on scripts/contracts, src/lib/ai, src/lib/supabase/verify-bearer.js, src/lib/github/access.js, src/app/api/ai and next.config.mjs: clean. `git diff --check`: exit 0.
+- Production Next.js build with these handlers, through the forwarding probe: compiled successfully; 55 of 55 identical, exit 0.
+- Go: unchanged by AI-002a. REVIEW-006's results stand: 9 packages, 19 lesson packages. `npm run handoff` reruns them.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: a real Supabase project or AI provider; the chat page in a browser; Vercel.
+
+Remaining gates: independent review of AI-002a and of REVIEW-006's fixes; a browser check of chat signed in and signed out; live-provider checks; the browser must send a bearer token before chat can be served by Go; hosting, Vercel forwarding, measurements, rollback.
+Next bounded action: AI-002b, Go ports of suggestions and enhance-query against these version 2 fixtures, with the limiter and UTF-16 counting in Go and a lesson. Then AI-002c, chat. QUOTA-001 is approved and not started; the owner still has to create the public-only token.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: AI-002a (Claude Code, 2026-10-13)
+
+Earlier note: Claude Code owned this task; reviewer unassigned. Base main @ 9480ef9. REVIEW-006 below is finished and handed off but still uncommitted: `agent-handoff.mjs --status` said READY_VERIFIED for several minutes and the Git Agent did not act, so this task's files sit on top of REVIEW-006's 21 in the working tree. Hosted CI on 9480ef9 is green.
+Owner decisions received today through four direct questions, now in the ADR decisions log: chat is for signed-in users only with limits; the two search helpers stay public with limits; fix three safety defects in Next.js and Go together; a public-only server token for anonymous GitHub reads is approved (QUOTA-001, not started).
+Objective of AI-002a: contract version 2 of the three AI routes, in the only implementation that exists (Next.js), with fixtures. That is the contract the Go ports (AI-002b, AI-002c) must then meet.
+Plan: 1) shared limits and message checks in src/lib/ai/guard.js; 2) session check for chat (bearer verified online, or the app's own cookie session); 3) the three handlers; 4) harnesses and re-recorded fixtures, every changed case listed; 5) in-memory handler changes to check the fixtures notice; 6) READMEs, full contracts, lint, handoff. No Go change in this task, so no lesson and no probe.
+Nothing of AI-002a written yet beyond this checkpoint and the ADR decisions rows. Milestone 1 (AI-002a): handlers, shared modules, harnesses and version 2 fixtures are written and pass. New source: src/lib/ai/{guard.js,session.js}, src/lib/supabase/verify-bearer.js. Changed source: the three src/app/api/ai/*/route.js handlers; src/lib/github/access.js (its one identity call is now the exported askIssuer, shared with verify-bearer; behaviour unchanged, access tests 43 of 43). New test files: scripts/contracts/{ai-fixture-common.mjs,ai-chat-loader.mjs,ai-guard.test.mjs}; changed: the three AI harnesses and runners. Fixtures re-recorded at version 2: ai-chat 42 -> 78 (3 defect), ai-enhance-query 62 -> 72 (10 defect, no earlier case changed), ai-suggestions 35 -> 44 (7 defect). Every changed case was printed and is one of the three approved fixes. Focused run of the three AI test files: 201 of 201. Judgment call: chat drops the oldest messages beyond 20 messages or 8,000 characters and refuses only a newest message that is itself too long, because the browser sends the whole conversation each time and a refusal would break every long chat. Still to do: fixture sensitivity, the three contract READMEs, full contracts, lint, a production build, handoff. If interrupted: the v1 fixture files are saved outside the repository; nothing else is half-written.
+No processes running. Account usage is not visible to Claude Code.
+
+## Handoff: REVIEW-006 (Claude Code, 2026-10-13)
+
+Status: **review complete with fixes; awaiting an independent look at the fixes; not deployed; no route switched on**.
+Owner: Claude Code. This task is the independent review of Codex's AUTH-001 and AUTH-002. Nobody has reviewed the fixes it made.
+History: stopped at the owner's instruction part-way through and resumed the same day from the checkpoint below. Nothing was committed in between.
+Branch main; base 9480ef9f407571fe333bae48eb824181acfdba5e.
+Resulting commit: uncommitted; the Git Agent synchronizes after the handoff hook.
+
+Verdict: the access design holds; I found no way for a caller to get another user's data or the server's token. The tests did not hold, and that is what this batch fixes. Full record: REVIEW-006 in claude-review.md.
+
+Deliberate breaks before any fix: Next.js 42 tried, 12 unnoticed; Go 27 that compiled, 13 unnoticed. The worst: in Go, giving the public handlers the server's GITHUB_TOKEN passed every test.
+After the fixes: Next.js 46 of 46 noticed; Go 38 of 39, and the one left changes no behaviour.
+
+What changed:
+- backend/cmd/api/main.go: `newHandler` builds the server; `run()` and the tests both call it.
+- backend/cmd/api/wiring_test.go (new): all five routes through `newHandler`, signed in and not, with a decoy server token; the credential on every request to GitHub is checked; a verified caller's token never follows a redirect.
+- backend/cmd/api/{access_test.go,main_test.go}: the isolation test uses `newHandler`; the write-timeout guard adds the four seconds of verification.
+- backend/internal/githubaccess/access.go: issuer replies read with jscompat.DecodeJSON and checked field by field as the Next.js check does; `DefaultTimeout` named; a `Timeout` field for tests.
+- backend/internal/githubaccess/{access_test.go,review_test.go}, backend/internal/githubrepos/review_test.go: the missing tests.
+- src/lib/github/access.js: a malformed identity entry is skipped; an identity id must be non-empty text; only status 200 is an answer; the deadline is `IDENTITY_DEADLINE_MS`.
+- contracts/github-access/cases.json 15 -> 35; contracts/public-repository-reads/cases.json 14 -> 15; scripts/contracts/{github-access.test.mjs,public-repository-reads.test.mjs}.
+- learn-go/16-verifying-access/README.md explains the changed Go. No exercise.go changed.
+- docs/{coordination.md,claude-review.md,backend-map.md,adr/0002-go-backend.md}, backend/README.md, both contract READMEs.
+Contract or decision changes: no version changed and no earlier case changed. Behaviour changed only for malformed issuer replies, where the two implementations used to disagree; none of those ever let a caller in.
+
+Final checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` 9 packages pass; `go build -o bin/api.exe ./cmd/api` ok.
+- learn-go: gofmt -l empty; go vet clean with and without the solution tag; `go test -count=1 -tags solution ./...` 19 packages pass.
+- `npm run test:contracts`: 615 of 615.
+- ESLint on scripts/contracts, src/lib/github/access.js and next.config.mjs: clean. `git diff --check`: exit 0.
+- Production forwarding probe on the rebuilt binary: 55 of 55 identical, exit 0.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: live Supabase or GitHub, Vercel, a hosted CI run for this batch.
+
+Remaining gates: independent review of these fixes and of CI-001, VERIFY-002, VERIFY-003; live-provider checks of the access boundary; the owner's four AI decisions; anonymous GitHub quota; hosting, Vercel forwarding, measurements, rollback.
+Next bounded action that needs no decision: REVIEW-007, CI-001, VERIFY-002 and VERIFY-003 by the same method. With the owner's AI answers: AI-002.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: REVIEW-006 resumed (Claude Code, 2026-10-13)
+
+Earlier note: the owner said "continue the implementation". Claude Code read the checkpoint below, found main still at 9480ef9 with the same 15 changed files and no other writer, and reclaimed the role.
+Doing the five items the checkpoint lists, in order: full checks on the tree as it stands; rebuild and production probe; REVIEW-006 record in claude-review.md; contract READMEs, ADR, backend-map and task table; completed handoff.
+No file changed yet since the pause except this one. No processes running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: REVIEW-006 as it stood when the owner asked for a stop (Claude Code, 2026-10-13)
+
+Earlier status, since resolved: stopped by the owner, who said "stop and save a checkpoint here". Implementation stopped at once. Not ready for synchronization: `npm run handoff` was NOT run for this task and must not be run until it is finished.
+Task: REVIEW-006, the independent review of Codex's AUTH-001 and AUTH-002 by deliberate breaks, with fixes for what the breaks showed.
+Owner: Claude Code until this checkpoint; writer released below. Reviewer of these fixes: nobody yet.
+Branch main; base and current HEAD 9480ef9f407571fe333bae48eb824181acfdba5e. All changes below are uncommitted. Nothing is deployed and no route is switched on.
+
+Working tree, exactly (`git status --short`):
+- Modified: backend/cmd/api/{access_test.go,main.go,main_test.go}, backend/internal/githubaccess/{access.go,access_test.go}, contracts/github-access/cases.json, contracts/public-repository-reads/cases.json, docs/coordination.md, learn-go/16-verifying-access/README.md, scripts/contracts/{github-access.test.mjs,public-repository-reads.test.mjs}, src/lib/github/access.js.
+- New: backend/cmd/api/wiring_test.go, backend/internal/githubaccess/review_test.go, backend/internal/githubrepos/review_test.go.
+- No exercise.go changed.
+
+Finished:
+- Deliberate breaks before any fix. Next.js side (access.js, repoData.js, starred route), 42 applied in memory: 30 noticed, 12 not. Go side (githubaccess, cmd/api wiring, githubrepos), 29 in a scratch copy: 14 noticed, 13 not, 2 of the breaks themselves did not compile.
+- The worst miss: in Go, giving the public handlers the server's GITHUB_TOKEN, or giving a verified caller's handlers no token, passed every test, because the isolation test built its own copy of the wiring and never ran the server's.
+- Fixes written: `newHandler` in cmd/api/main.go is now what both `run()` and the tests use; wiring_test.go checks the credential on every upstream request for all five routes, signed in and not, with a decoy server token, and that a verified caller's token never follows a redirect. githubaccess checks each field of an issuer reply as the Next.js check does (through jscompat.DecodeJSON), with DefaultTimeout as a named constant and a Timeout field for tests. src/lib/github/access.js skips a malformed identity entry, requires a non-empty text id, treats only status 200 as an answer, and names its deadline IDENTITY_DEADLINE_MS. Shared access cases 15 -> 35; public-repository-reads cases 14 -> 15 and one more row in the starred test. The write-timeout guard now adds the four seconds of verification. Lesson 16 explains the changed Go.
+- Deliberate breaks after the fixes: Next.js 46 of 46 noticed. Go 37 of 39: one of my breaks did not compile ("identities that are not a list"; the shared case of that name covers it), and one survived ("identity reply size unlimited"), which is an equivalent change, because the reader already stops one byte past the limit and the cut-off JSON fails to decode.
+
+Checks actually run on the fixes, and when:
+- `npm run test:contracts`: 615 of 615, and backend `go test -count=1 ./...` 9 packages, gofmt and vet clean. These ran BEFORE two later edits: the `github-id-fraction` case was tightened and lesson 16 was edited.
+- After those edits only this was rerun: scripts/contracts/github-access.test.mjs 41 of 41, and `go test -count=1 ./internal/githubaccess` ok.
+
+NOT done, in order:
+1. Rerun on the tree as it stands: `npm run test:contracts`; in backend `gofmt -l .`, `go vet ./...`, `go test -count=1 ./...`; in learn-go `go vet ./...`, `go vet -tags solution ./...`, `go test -count=1 -tags solution ./...`; `npx eslint scripts/contracts src/lib/github/access.js`; `git diff --check`.
+2. Rebuild `backend/bin/api.exe` and run `node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api.exe --production` (expected 55 of 55). Go changed, so the probe is needed.
+3. Insert the REVIEW-006 record into docs/claude-review.md. It is drafted outside the repository and not yet in any committed file; if the draft is lost, this checkpoint has every fact it contains.
+4. Update contracts/github-access/README.md (35 cases; the aligned rules) and contracts/public-repository-reads/README.md (15 cases); add a short note to the ADR and backend-map.md; update the task table row for REVIEW-006.
+5. Turn this checkpoint into a completed handoff, then `npm run handoff`.
+
+Known failures: none known. No test is known to fail on the current tree, but item 1 has not been run in full since the last two edits.
+Processes: none running. The background runs have ended.
+Remaining gates, unchanged: owner's four AI decisions; anonymous GitHub quota; hosting; live Supabase and GitHub checks; Vercel forwarding; measurements; rollback. Independent review still missing for CI-001, VERIFY-002, VERIFY-003 and for these fixes.
+Account usage is not visible to Claude Code; no remaining percentage is claimed.
+
+Pickup prompt: "Read AGENTS.md and the REVIEW-006 PAUSED / INCOMPLETE checkpoint at the top of docs/coordination.md. Run git status --short and git diff, confirm Active writer is none, claim the writer role, then do the five NOT done items in order."
+
+Recorded on arrival, still true: the Git Agent committed the two earlier batches as b5745b3 and 9480ef9, and `node scripts/agent-handoff.mjs --status --ci` reported the Backend verification run 38360938461 on 9480ef9 as completed, success. That run includes `go test -race` on Linux. Claude Code read the status through the script and did not open the logs.
+
+## Earlier working notes for REVIEW-006 (superseded by the checkpoint above)
+
+Earlier note: Claude Code owns this task; it is itself the independent review of Codex's AUTH-001 and AUTH-002. Base/current main @ 9480ef9; tree clean at start; previous writer released.
+Recorded on arrival: the Git Agent committed the last two batches as b5745b3 and 9480ef9. `node scripts/agent-handoff.mjs --status --ci` reported the Backend verification run 38360938461 on 9480ef9 as completed, success. That run includes `go test -race` on Linux and covers both batches. Claude Code read the status through the script and did not open the logs.
+Plan: 1) read the current access code and AUTH-002's changes; 2) deliberate breaks of access.js in memory and of access.go in a scratch copy; 3) fix only what the breaks or reading show, with tests; 4) REVIEW-006 record; 5) checks and handoff.
+Milestone 1: deliberate breaks run; no repository file changed yet. Next.js side (access.js, repoData.js, starred route), 42 breaks applied in memory: 30 noticed, 12 not. Go side (githubaccess, cmd/api wiring, githubrepos), 29 breaks in a scratch copy: 14 noticed, 13 not, 2 of my own breaks did not compile. The important misses: in Go, giving the public handlers the server GITHUB_TOKEN, or giving private handlers no token, passes every test, because the isolation test builds its own wiring and never runs the server's; in both, accepting an identity from any provider, a user with no id, an unchecked GitHub id, oversized credentials, missing configuration, a missing public key header, an oversized identity reply and a longer deadline all pass. Reading also confirmed two mismatches on malformed issuer replies (an identity id that is a number; a null identity entry).
+Milestone 2: fixes written. Changed: backend/internal/githubaccess/access.go (replies checked field by field as the Next.js check does; DefaultTimeout and a Timeout field), backend/cmd/api/main.go (newHandler, used by run() and by tests), backend/cmd/api/{access_test.go,main_test.go}, backend/internal/githubaccess/access_test.go, src/lib/github/access.js (only a 200 is an answer; malformed identity entries skipped; deadline constant), scripts/contracts/{github-access.test.mjs,public-repository-reads.test.mjs}, contracts/github-access/cases.json (15 -> 35), contracts/public-repository-reads/cases.json (14 -> 15). New: backend/cmd/api/wiring_test.go, backend/internal/githubaccess/review_test.go, backend/internal/githubrepos/review_test.go.
+Next: rerun both sets of deliberate breaks; lesson 16 text; REVIEW-006 record; full checks and production probe; handoff. If interrupted: `git diff` shows any partial edit; the scratch scripts are outside the repository. No processes running. Account usage is not visible to Claude Code.
+
+## Handoff: AI-001b / AI-001c / AI policy proposal (Claude Code, 2026-10-13)
 
 Status: **fixtures and documentation complete; awaiting independent review; no source, Go or route change; not deployed**.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1305,8 +1448,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `FIX-003` | Repository input validation and lesson 14 | Committed 3f4c7dd; reviewed in REVIEW-004 | Cutover gates |
 | `FIX-004` | Non-UTF-8 text and shared detail deadline | Committed 905c1d9; reviewed in REVIEW-004 | Cutover gates |
 | `VERIFY-001` | Development forwarding and race preparation | Committed 905c1d9; reviewed in REVIEW-004; dev 46/46 | Hosted race and Vercel preview |
-| `AUTH-001` | Two-token verification & private repo isolation across 5 dynamic GitHub routes + Lesson 16 | Committed 7e0820c | Independent review |
-| `AUTH-002` | Public repository page & starred enrichment isolation (18 tests) | Implementation complete & verified (387/387) | Independent review |
+| `AUTH-001` | Two-token verification & private repo isolation across 5 dynamic GitHub routes + Lesson 16 | Committed 7e0820c; reviewed in REVIEW-006, with fixes | Live Supabase and GitHub checks; private UI; cutover gates |
+| `AUTH-002` | Public repository page & starred enrichment isolation | Committed 7831c0b; reviewed in REVIEW-006 | Anonymous quota decision; cutover gates |
 | `VERIFY-003` | Exact credentials & wrong-session 401 forwarding check (50/50 production probe) | Implementation complete & verified | Independent review |
 | `GO-006a` | Characterize trending with fixed clock/random inputs; no production fix | Committed 7831c0b; 34 fixtures after REVIEW-005 | Independent review before cutover |
 | `FIX-002` | Make the navbar's "Most Stars" and "Recently Updated" work. Offered to the owner as the real task in `learn-go/02-structs-and-maps`. Do not fix it unasked: it is the owner's exercise | Reserved for Owner | Owner |
@@ -1318,10 +1461,14 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `GO-007b` | Trending-developers Go port and lesson 18 | Committed b5745b3; reviewed in REVIEW-005 | Hosted CI run; anonymous quota decision; cutover gates |
 | `AI-001a` | Fixtures for `POST /api/ai/suggestions`, AI call stubbed | Committed b5745b3; 35 fixtures/8 defects; reviewed in REVIEW-005 | Owner's AI decisions before any port |
 | `REVIEW-005` | Claude Code review of GO-007b, lesson 18, AI-001a, with fixes | Committed b5745b3 | Codex has not seen the fixes |
-| `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, provider call stubbed | 62 fixtures/10 defects; uncommitted at handoff | Independent review; owner's AI decisions before any port |
-| `AI-001c` | Fixtures for `POST /api/ai/chat` with the real helper, provider call stubbed | 42 fixtures/16 defects; uncommitted at handoff | Independent review; owner's AI decisions before any port |
-| `AI-002` | Session check and limits for AI routes in Go, then the three AI ports | Not started | Owner's four decisions in the ADR |
-| `REVIEW-006` | Independent review of AUTH-001 and AUTH-002, with full suites and deliberate breaks | Not started; next task that needs no decision | Nothing |
+| `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, provider call stubbed | Committed 9480ef9; 62 fixtures/10 defects | Independent review; owner's AI decisions before any port |
+| `AI-001c` | Fixtures for `POST /api/ai/chat` with the real helper, provider call stubbed | Committed 9480ef9; 42 fixtures/16 defects | Independent review; owner's AI decisions before any port |
+| `AI-002a` | AI contract version 2 in Next.js: sign-in for chat, limits, three safety fixes, fixtures | Complete; uncommitted at handoff | Independent review; browser check of chat |
+| `AI-002b` | Go ports of suggestions and enhance-query against version 2, with a lesson | Not started; next | Nothing |
+| `AI-002c` | Go port of chat with the session check and limits, with a lesson | Not started | AI-002b |
+| `QUOTA-001` | Public-only server token for anonymous GitHub reads, in Next.js and Go, with a check that refuses a private-capable token | Not started | Owner creates the token before it can be used live |
+| `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Complete; uncommitted at handoff | Someone other than Claude Code to look at the fixes |
+| `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
 
 Suggested ownership: whichever agent is available takes the writer role for one task and records it under "Current state"; the other reviews.
 
@@ -1329,11 +1476,11 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
 - How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval. Two options and a recommendation are in "Hosting proposal" in `adr/0002-go-backend.md`.
-- **AI routes: four decisions**, before any AI port: who may call each route, limits, keys and providers, and which recorded defects to fix. Options and a recommendation for each are in "AI routes: decisions needed before a port" in `adr/0002-go-backend.md`. Today chat is an open relay to the model on the server's token. Playground-key policy is separate and still open, before Phase 3.
+- **AI routes: decided on 2026-10-13.** Chat for signed-in users only, the search helpers public, both with limits, and three safety defects to fix. See the ADR decisions log. Playground-key policy is separate and still open, before Phase 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
 - **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.
-- **Anonymous GitHub quota.** Search, summary, trending and trending developers call GitHub without a credential. GitHub allows 60 requests an hour per address that way, and one trending-developers call uses up to 21. Decide whether anonymous traffic may use a server credential that can read only public data. Until then these routes will run out under modest use, in Next.js as well as in Go.
+- **Anonymous GitHub quota: decided on 2026-10-13.** A server token that can read only public data may be used for anonymous reads. The owner still has to create that token and set it; the code is `QUOTA-001`, not started.
 
 ## State of the owner's machine
 

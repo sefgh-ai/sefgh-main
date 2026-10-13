@@ -1,8 +1,8 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "POST /api/ai/enhance-query",
-  "recorded_from": "b5745b32d68a75d3bddf4926ae098da4d7cf23cc",
-  "boundary": "Global fetch and the two provider keys are replaced. No provider is contacted and no real key is read.",
+  "recorded_from": "9480ef9f407571fe333bae48eb824181acfdba5e plus the uncommitted AI-002a change",
+  "boundary": "Global fetch, the two provider keys and the clock are replaced. No provider is contacted and no real key is read.",
   "cases": [
     {
       "id": "missing-query",
@@ -1954,6 +1954,367 @@
             }
           }
         ]
+      }
+    },
+    {
+      "id": "query-at-the-length-limit",
+      "disposition": "preserve",
+      "reason": "Version 2: a query may be at most 500 characters.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "k",
+            500
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": {
+            "$repeat": [
+              "k",
+              500
+            ]
+          },
+          "source": "basic-enhancement"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "query-over-the-length-limit",
+      "disposition": "preserve",
+      "reason": "Version 2: a query may be at most 500 characters.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "k",
+            501
+          ]
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "query-over-the-length-limit-with-a-key",
+      "disposition": "preserve",
+      "reason": "Version 2: a query may be at most 500 characters.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "k",
+            501
+          ]
+        }
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "query-length-counts-utf16-units",
+      "disposition": "preserve",
+      "reason": "A character is one UTF-16 unit, as JavaScript counts: 251 emoji are 502.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "😀",
+            251
+          ]
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "type-is-checked-before-length",
+      "disposition": "preserve",
+      "reason": "A query that is not text is \"required\", whatever length it claims.",
+      "body": {
+        "query": {
+          "length": 501
+        }
+      },
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "thirtieth-ai-call-allowed",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the basic enhancement answers and no provider is called.",
+      "body": {
+        "query": "web charts"
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "earlier_requests": 29,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "web charts topic:visualization"
+              }
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts topic:visualization",
+          "source": "ai-powered"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.openai.com/v1/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-openai-key",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-3.5-turbo",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a GitHub search query optimizer. Your task is to take a user's search query and enhance it to make it more effective for searching GitHub repositories. \n          \nRules:\n- Add relevant keywords that would help find better results\n- Use GitHub search operators when appropriate (stars:, language:, topic:, etc.)\n- Keep the query concise and focused\n- Don't change the core intent of the search\n- Return ONLY the enhanced query, nothing else\n- Don't add quotes or explanations"
+                },
+                {
+                  "role": "user",
+                  "content": "web charts"
+                }
+              ],
+              "max_tokens": 100,
+              "temperature": 0.7
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "thirty-first-ai-call-uses-basic-enhancement",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the basic enhancement answers and no provider is called.",
+      "body": {
+        "query": "web charts"
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "earlier_requests": 30,
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts web application",
+          "source": "basic-enhancement"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "ai-calls-allowed-again-after-five-minutes",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the basic enhancement answers and no provider is called.",
+      "body": {
+        "query": "web charts"
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "earlier_requests": 30,
+      "earlier_age_seconds": 300,
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "web charts"
+              }
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts",
+          "source": "ai-powered"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.openai.com/v1/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-openai-key",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-3.5-turbo",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a GitHub search query optimizer. Your task is to take a user's search query and enhance it to make it more effective for searching GitHub repositories. \n          \nRules:\n- Add relevant keywords that would help find better results\n- Use GitHub search operators when appropriate (stars:, language:, topic:, etc.)\n- Keep the query concise and focused\n- Don't change the core intent of the search\n- Return ONLY the enhanced query, nothing else\n- Don't add quotes or explanations"
+                },
+                {
+                  "role": "user",
+                  "content": "web charts"
+                }
+              ],
+              "max_tokens": 100,
+              "temperature": 0.7
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "another-address-is-not-limited",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the basic enhancement answers and no provider is called.",
+      "body": {
+        "query": "web charts"
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "address": "203.0.113.9",
+      "earlier_requests": 30,
+      "earlier_key": "unknown",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "web charts"
+              }
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts",
+          "source": "ai-powered"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.openai.com/v1/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-openai-key",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-3.5-turbo",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a GitHub search query optimizer. Your task is to take a user's search query and enhance it to make it more effective for searching GitHub repositories. \n          \nRules:\n- Add relevant keywords that would help find better results\n- Use GitHub search operators when appropriate (stars:, language:, topic:, etc.)\n- Keep the query concise and focused\n- Don't change the core intent of the search\n- Return ONLY the enhanced query, nothing else\n- Don't add quotes or explanations"
+                },
+                {
+                  "role": "user",
+                  "content": "web charts"
+                }
+              ],
+              "max_tokens": 100,
+              "temperature": 0.7
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "first-forwarded-address-is-the-caller",
+      "disposition": "preserve",
+      "reason": "The first address in X-Forwarded-For identifies the caller.",
+      "body": {
+        "query": "web charts"
+      },
+      "env": {
+        "OPENAI_API_KEY": "fixture-openai-key"
+      },
+      "address": "203.0.113.9, 10.0.0.1",
+      "earlier_requests": 30,
+      "earlier_key": "203.0.113.9",
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts web application",
+          "source": "basic-enhancement"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
+      }
+    },
+    {
+      "id": "no-key-does-not-use-the-allowance",
+      "disposition": "preserve",
+      "reason": "Without a key no AI call is made, so the allowance is not touched.",
+      "body": {
+        "query": "web charts"
+      },
+      "earlier_requests": 30,
+      "expect": {
+        "status": 200,
+        "body": {
+          "enhancedQuery": "web charts web application",
+          "source": "basic-enhancement"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": []
       }
     }
   ]

@@ -5,7 +5,7 @@ by the repository page and `/api/repo/starred`. This implements the owner's
 chosen rule: a visitor cannot borrow the server credential's private access.
 These consumers do not yet provide verified private GitHub credentials.
 
-The 14 JSON cases cover public/private/unknown visibility, upstream failures,
+The 15 JSON cases cover public/private/unknown visibility, upstream failures,
 redirect status, and invalid identifiers. Four additional executable tests in
 `scripts/contracts/public-repository-reads.test.mjs` cover the actual starred
 handler with only Supabase and GitHub stubbed: authentication, user-scoped
@@ -33,3 +33,10 @@ handler, remove historical database snapshots, audit all token consumers, or
 enable private UI. Renamed repositories require a canonical name because
 redirects are refused. Supabase RLS definitions remain unverified; no database
 migration is authorized by these tests. The response contract has no Go port yet.
+
+REVIEW-006 (Claude Code, 2026-10-13) added `error-status-with-public-body`: an
+error status is not a public repository even when its body says
+`private: false`. The starred test gained a stored name with three parts,
+which is not a repository name and gets no metadata. Fourteen deliberate
+changes were tried on `repoData.js` and the starred route. Twelve were noticed
+before these two additions and all fourteen after.

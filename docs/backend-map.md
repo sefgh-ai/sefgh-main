@@ -240,3 +240,25 @@ the three checks the caller or limits use. Fixtures: `contracts/ai-suggestions`
 (35), `contracts/ai-enhance-query` (62), `contracts/ai-chat` (42). No provider
 was contacted and no live key, usage or deployment was inspected. The Go
 inventory is unchanged at eight routes.
+
+## REVIEW-006 update (2026-10-13)
+
+`backend/cmd/api/main.go` builds the whole server in `newHandler`; `run` and the
+tests both call it. `backend/internal/githubaccess` reads issuer replies with
+`jscompat.DecodeJSON` and checks them field by field, matching
+`src/lib/github/access.js`, which now skips malformed identity entries and
+treats only status 200 as an answer. Shared access cases: 35. No route, browser,
+Supabase, worker or deployment boundary changed. Details in `claude-review.md`
+under REVIEW-006.
+
+## AI-002a update (2026-10-13)
+
+The three AI handlers changed in Next.js; none is ported. `ai/chat` now needs
+a signed-in user: `src/lib/ai/session.js` verifies a bearer token online with
+Supabase through `src/lib/supabase/verify-bearer.js`, or falls back to the
+app's cookie session. `src/lib/ai/guard.js` holds the limits, a per-process
+request counter, and the check that reduces chat messages to `role` and
+`content`. `src/lib/github/access.js` exports `askIssuer`, the one bounded
+identity call both checks share. Contracts: `ai-chat` 78 cases, `ai-enhance-query`
+73, `ai-suggestions` 44, all version 2. No Go, browser, database or deployment
+boundary changed. The browser still calls chat with its cookie.

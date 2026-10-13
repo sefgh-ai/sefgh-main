@@ -10,6 +10,7 @@
     {"id":"rate-limited","owner":"octo","repo":"demo","status":403,"body":{},"calls":1,"expect":null},
     {"id":"unauthorized-no-retry","owner":"octo","repo":"demo","status":401,"body":{},"calls":1,"expect":null},
     {"id":"redirect-denied","owner":"octo","repo":"demo","status":301,"body":{},"calls":1,"expect":null},
+    {"id":"error-status-with-public-body","owner":"octo","repo":"demo","status":500,"body":{"id":1,"private":false},"calls":1,"expect":null},
     {"id":"network-failure","owner":"octo","repo":"demo","network_error":true,"calls":1,"expect":null},
     {"id":"path-in-owner","owner":"octo/other","repo":"demo","calls":0,"expect":null},
     {"id":"query-in-name","owner":"octo","repo":"demo?x=y","calls":0,"expect":null},

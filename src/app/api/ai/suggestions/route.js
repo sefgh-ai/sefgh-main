@@ -1,4 +1,5 @@
 import { generateAIResponse } from '@/lib/ai/github'
+import { AI_LIMITS, clientAddress, searchLimiter } from '@/lib/ai/guard'
 import { NextResponse } from 'next/server'
 
 // Predefined popular search terms (fallback when AI is unavailable)
@@ -62,10 +63,14 @@ const POPULAR_SEARCHES = [
 
 export async function POST(request) {
   try {
-    const { query } = await request.json()
+    const { query } = (await request.json()) ?? {}
 
     if (!query || query.trim().length < 2) {
       return NextResponse.json({ suggestions: [] })
+    }
+
+    if (query.length > AI_LIMITS.queryCharacters) {
+      return NextResponse.json({ error: 'Query is too long' }, { status: 400 })
     }
 
     const lowerQuery = query.toLowerCase().trim()
@@ -80,6 +85,15 @@ export async function POST(request) {
       return NextResponse.json({ 
         suggestions: predefinedMatches.slice(0, 5),
         source: 'predefined'
+      })
+    }
+
+    // AI calls have an allowance per address. Past it, the built-in list
+    // still answers, so the search box keeps working.
+    if (searchLimiter.take(clientAddress(request)) > 0) {
+      return NextResponse.json({
+        suggestions: predefinedMatches.slice(0, 5),
+        source: 'predefined-fallback'
       })
     }
 
@@ -149,9 +163,10 @@ Suggestions:`
     }
 
   } catch (error) {
+    // The cause goes to the server log. The caller gets a fixed sentence.
     console.error('Suggestions API error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to generate suggestions' },
+      { error: 'Failed to generate suggestions' },
       { status: 500 }
     )
   }

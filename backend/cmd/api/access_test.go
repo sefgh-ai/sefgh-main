@@ -11,8 +11,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-
-	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 )
 
 func TestPrivateRepositoryIsolation(t *testing.T) {
@@ -78,9 +76,11 @@ func TestPrivateRepositoryIsolation(t *testing.T) {
 	defer upstream.Close()
 	t.Setenv("GITHUB_API_URL", upstream.URL)
 	t.Setenv("GITHUB_TOKEN", "owner-private-token-must-never-be-used")
+	t.Setenv("NEXT_PUBLIC_SUPABASE_URL", upstream.URL)
+	t.Setenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-key")
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	v := githubaccess.Verifier{SupabaseURL: upstream.URL, SupabaseKey: "public-key", GitHubURL: upstream.URL}
-	handler := v.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) })
+	// newHandler is what run() serves, so this is the server's own wiring.
+	handler := newHandler(logger)
 	// httptest's real socket includes the direct backend surface, not a Next gate.
 	server := httptest.NewServer(handler)
 	defer server.Close()

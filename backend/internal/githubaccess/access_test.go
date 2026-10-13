@@ -3,6 +3,7 @@ package githubaccess
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -49,6 +50,7 @@ func TestContract(t *testing.T) {
 				Service string          `json:"service"`
 				Status  int             `json:"status"`
 				Body    json.RawMessage `json:"body"`
+				Network bool            `json:"network_error"`
 			} `json:"calls"`
 		} `json:"cases"`
 	}
@@ -72,6 +74,20 @@ func TestContract(t *testing.T) {
 				}
 				if r.URL.String() != wantURL || r.Header.Get("Authorization") != wantToken {
 					t.Error("wrong identity destination or credential")
+				}
+				// The public key goes to Supabase and nowhere else.
+				wantKey := "public-key"
+				if step.Service == "github" {
+					wantKey = ""
+				}
+				if r.Header.Get("apikey") != wantKey {
+					t.Errorf("apikey sent to %s = %q, want %q", step.Service, r.Header.Get("apikey"), wantKey)
+				}
+				if step.Service == "github" && (r.Header.Get("Accept") != "application/vnd.github+json" || r.Header.Get("User-Agent") != "SEFGH") {
+					t.Error("GitHub identity request lacks its Accept or User-Agent header")
+				}
+				if step.Network {
+					return nil, errors.New("offline")
 				}
 				return &http.Response{StatusCode: step.Status, Body: io.NopCloser(strings.NewReader(string(step.Body))), Header: http.Header{}}, nil
 			})}

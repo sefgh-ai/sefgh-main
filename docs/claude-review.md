@@ -1,5 +1,51 @@
 # Claude Code review and reconciliation
 
+## REVIEW-006: Claude Code review of AUTH-001 and AUTH-002, 2026-10-13
+
+Scope: Codex's access boundary, base `9480ef9`. AUTH-001: `src/lib/github/access.js`, `backend/internal/githubaccess`, the server wiring in `backend/cmd/api`, and the token handling in `backend/internal/githubrepos`. AUTH-002: `src/lib/repo/repoData.js` and `src/app/api/repo/starred/route.js`. Method: read the code, then change it on purpose and see whether the tests notice. This is the independent review those two tasks were waiting for. It does not cover CI-001, VERIFY-002 or VERIFY-003, and it used no live Supabase or GitHub.
+
+### Verdict
+
+The design holds: I found no way for a caller to obtain another user's data or the server's token. The tests did not hold: they would have let several such mistakes through. That is fixed in this batch. Accepted with routing off; live-provider checks remain before any cutover.
+
+### Deliberate breaks, before any fix
+
+| Target | Breaks | Noticed | Not noticed |
+|---|---|---|---|
+| Next.js: `access.js`, `repoData.js`, starred route (applied in memory) | 42 | 30 | 12 |
+| Go: `githubaccess`, `cmd/api` wiring, `githubrepos` (scratch copy) | 27 that compiled | 14 | 13 |
+
+### Findings
+
+| # | Severity | Finding | Outcome |
+|---|---|---|---|
+| 1 | High | In Go, giving the public handlers the server's `GITHUB_TOKEN`, or giving a verified caller's handlers no token, passed every test. `TestPrivateRepositoryIsolation` built its own copy of the wiring line and never ran the server's. The one property AUTH-001 exists for was not protected against a change in `run()` | Fixed. `newHandler` builds what the server serves; `run()` and the tests both call it. A new test sends each of the five routes through it, signed in and not, with a decoy server token, and checks the credential on every request that reaches GitHub |
+| 2 | High | In both implementations, accepting a linked identity from any provider passed every test. So did accepting a user with no id | Fixed with shared cases: `other-provider-same-id`, `user-without-id` and 18 more, 35 in all, passed by both |
+| 3 | Medium | The two implementations disagreed on malformed issuer replies. An identity id that is a number: Next.js 403, Go 503. A `null` identity entry: Next.js 503, Go 403. A GitHub id written `101.0`: Next.js accepted, Go 503. A reply with status 201: Next.js read it, Go 503. None let anyone in | Fixed. Go now checks each field as the Next.js check does, through `jscompat.DecodeJSON`; Next.js skips a malformed entry and treats only 200 as an answer. Each case is pinned for both |
+| 4 | Medium | Not noticed in either: no length limit on credentials, missing configuration treated as usable, the public key not sent to Supabase, an identity reply over 1 MiB accepted, a deadline ten times longer. In Go also: repeated headers accepted, and a verified caller's token following a redirect on search and contributions | Fixed with tests in both. The deadline is a named constant in each, a test in each requires four seconds, and a short deadline is injected to test the cut-off itself |
+| 5 | Low | The write-timeout guard compared only the 25-second detail route with the 30-second limit, not the four seconds of verification before it | Fixed: the guard adds them |
+| 6 | Low | A private summary bypasses the shared cache twice over: the handler's own rule and a new handler per request. Removing the handler's rule passed every test | A test now pins the handler's rule on its own |
+| 7 | Low | AUTH-002: an error status with a public-looking body, and a stored name with three parts, were not covered | One case and one row added |
+
+### What the review could not establish
+
+- Anything about the live providers: the shape of Supabase's `/auth/v1/user` reply for this project, how soon it refuses a signed-out session, or which GitHub token a browser would hold. The application requests no GitHub scopes at sign-in, so no token it obtains today can read a private repository.
+- Behaviour behind Vercel's routing.
+- Cost: every credentialed request makes two identity calls first. Nothing limits how often a caller can make the server ask Supabase.
+
+### Still open, for the owner
+
+- **Anonymous quota.** AUTH-001 and AUTH-002 removed the server token from every public read. The repository page now asks GitHub on each view with no cache, and I believe twice per view, because `generateMetadata` and the page each call it and a request with a timeout signal is not shared between them. That was read from the source, not measured. GitHub allows 60 unauthenticated requests an hour per address.
+- A cached public summary outlives the repository being made private (REVIEW-005 and the alignment report). Unchanged.
+
+### After the fixes
+
+The same breaks again, with new ones for the changed code. Next.js: 46 of 46 noticed. Go: 38 of 39 noticed. The one left changes nothing: without Go's explicit "identities must be a list" check, the reply still yields no linked account and is refused by the next check, with the same status and no call to GitHub.
+
+Two things the second round improved further. The first size-limit test did not notice the limit being removed, because reading already stops one byte past it and cut-off JSON fails to decode; a complete reply followed by white space is now tested in both implementations and does notice. And the fraction case was changed so that it bites in Go as well as in Next.js.
+
+Final check results for this batch are in coordination.md.
+
 ## REVIEW-005: Claude Code review, 2026-10-13
 
 Scope: Codex's uncommitted batch at base `259ff7b`: GO-007b (trending developers in Go), lesson 18 and AI-001a (AI suggestions fixtures). Claude Code took the batch over at the owner's instruction when Codex stopped on a usage limit. The same checks reached into GO-006b (trending in Go) and used GO-007a's fixtures. This was a review with fixes in the same batch, not a read-through.

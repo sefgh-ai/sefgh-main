@@ -6,14 +6,22 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 )
 
 const Message = "GitHub authorization failed"
+
+// DefaultTimeout bounds both identity calls together. A test in cmd/api
+// checks that it and the slowest handler still fit inside the server's write
+// timeout.
+const DefaultTimeout = 4 * time.Second
 
 var bearer = regexp.MustCompile(`(?i)^Bearer ([A-Za-z0-9._~+/\-]+=*)$`)
 var credential = regexp.MustCompile(`^[A-Za-z0-9._~+/\-]+=*$`)
@@ -21,11 +29,18 @@ var credential = regexp.MustCompile(`^[A-Za-z0-9._~+/\-]+=*$`)
 type Verifier struct {
 	SupabaseURL, SupabaseKey, GitHubURL string
 	Client                              *http.Client
+	// Timeout replaces DefaultTimeout when it is not zero. Tests shorten it.
+	Timeout time.Duration
 }
 
 // Resolve returns only a verified per-user token, or an empty public identity.
 // Supabase Auth verifies the session with its configured signing key and expiry.
 // GitHub checks token validity; each resource request checks repository access.
+//
+// Both replies are decoded as "whatever arrived" and then checked field by
+// field, so a reply of the wrong shape is refused exactly as the Next.js
+// check in src/lib/github/access.js refuses it. The shared fixtures in
+// contracts/github-access pin each case for both.
 func (v Verifier) Resolve(r *http.Request) (string, int) {
 	auth, token := r.Header.Get("Authorization"), r.Header.Get("X-GitHub-Token")
 	if auth == "" && token == "" {
@@ -38,27 +53,27 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 	if v.SupabaseURL == "" || v.SupabaseKey == "" {
 		return "", 503
 	}
-	ctx, cancel := context.WithTimeout(r.Context(), 4*time.Second)
-	defer cancel()
-	var user struct {
-		ID         string `json:"id"`
-		Anonymous  bool   `json:"is_anonymous"`
-		Identities []struct {
-			Provider string `json:"provider"`
-			ID       string `json:"id"`
-		} `json:"identities"`
+	timeout := v.Timeout
+	if timeout == 0 {
+		timeout = DefaultTimeout
 	}
-	status := v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session[1], "apikey": v.SupabaseKey}, &user)
+	ctx, cancel := context.WithTimeout(r.Context(), timeout)
+	defer cancel()
+	reply, status := v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session[1], "apikey": v.SupabaseKey})
 	if status != 200 {
 		return "", status
 	}
-	if user.ID == "" || user.Anonymous {
+	user, _ := reply.(map[string]any)
+	identities, isList := user["identities"].([]any)
+	if !truthy(user["id"]) || truthy(user["is_anonymous"]) || !isList {
 		return "", 403
 	}
+	// Only an identity Supabase itself recorded for the GitHub provider counts.
 	linked := make(map[string]bool)
-	for _, identity := range user.Identities {
-		if identity.Provider == "github" && identity.ID != "" {
-			linked[identity.ID] = true
+	for _, entry := range identities {
+		identity, _ := entry.(map[string]any)
+		if id, isText := identity["id"].(string); identity["provider"] == "github" && isText && id != "" {
+			linked[id] = true
 		}
 	}
 	if len(linked) == 0 {
@@ -68,23 +83,56 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 	if base == "" {
 		base = "https://api.github.com"
 	}
-	var github struct {
-		ID int64 `json:"id"`
-	}
-	status = v.get(ctx, strings.TrimRight(base, "/")+"/user", map[string]string{"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "User-Agent": "SEFGH"}, &github)
+	reply, status = v.get(ctx, strings.TrimRight(base, "/")+"/user", map[string]string{"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "User-Agent": "SEFGH"})
 	if status != 200 {
 		return "", status
 	}
-	if github.ID <= 0 || github.ID > 9007199254740991 || !linked[strconv.FormatInt(github.ID, 10)] {
+	account, _ := reply.(map[string]any)
+	id, ok := safeInteger(account["id"])
+	if !ok || id <= 0 || !linked[strconv.FormatInt(id, 10)] {
 		return "", 403
 	}
 	return token, 200
 }
 
-func (v Verifier) get(ctx context.Context, target string, headers map[string]string, value any) int {
+// truthy reports whether JavaScript would treat a decoded JSON value as true.
+func truthy(value any) bool {
+	switch v := value.(type) {
+	case nil:
+		return false
+	case bool:
+		return v
+	case string:
+		return v != ""
+	case json.Number:
+		f, err := v.Float64()
+		return err != nil || f != 0
+	default:
+		return true
+	}
+}
+
+// safeInteger is JavaScript's Number.isSafeInteger for a decoded JSON value:
+// a number with no fraction that a float64 holds exactly.
+func safeInteger(value any) (int64, bool) {
+	number, isNumber := value.(json.Number)
+	if !isNumber {
+		return 0, false
+	}
+	f, err := number.Float64()
+	if err != nil || f != math.Trunc(f) || math.Abs(f) > 9007199254740991 {
+		return 0, false
+	}
+	return int64(f), true
+}
+
+// get makes one identity call and returns the decoded reply with 200, or a
+// status to answer with: 401 when the issuer refused the credential, 503 when
+// the issuer could not be asked or did not answer as expected.
+func (v Verifier) get(ctx context.Context, target string, headers map[string]string) (any, int) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
 	if err != nil {
-		return 503
+		return nil, 503
 	}
 	for key, val := range headers {
 		req.Header.Set(key, val)
@@ -97,20 +145,24 @@ func (v Verifier) get(ctx context.Context, target string, headers map[string]str
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	resp, err := client.Do(req)
 	if err != nil {
-		return 503
+		return nil, 503
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		return 401
+		return nil, 401
 	}
 	if resp.StatusCode != 200 {
-		return 503
+		return nil, 503
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, (1<<20)+1))
-	if err != nil || len(body) > 1<<20 || json.Unmarshal(body, value) != nil {
-		return 503
+	if err != nil || len(body) > 1<<20 {
+		return nil, 503
 	}
-	return 200
+	value, err := jscompat.DecodeJSON(body)
+	if err != nil {
+		return nil, 503
+	}
+	return value, 200
 }
 
 // Wrap checks direct backend requests too. Private handlers are created per

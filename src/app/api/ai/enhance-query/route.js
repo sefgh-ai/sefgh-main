@@ -1,3 +1,4 @@
+import { AI_LIMITS, clientAddress, searchLimiter } from "@/lib/ai/guard";
 import { NextResponse } from "next/server";
 
 /**
@@ -12,10 +13,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
+    if (query.length > AI_LIMITS.queryCharacters) {
+      return NextResponse.json({ error: "Query is too long" }, { status: 400 });
+    }
+
     // Check if AI API key is configured
     const apiKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY;
 
-    if (!apiKey) {
+    // AI calls have an allowance per address. Past it, the basic enhancement
+    // still answers, so the button keeps working.
+    if (!apiKey || searchLimiter.take(clientAddress(request)) > 0) {
       // Fallback: provide basic query enhancement without AI
       const enhancedQuery = enhanceQueryBasic(query);
       return NextResponse.json({

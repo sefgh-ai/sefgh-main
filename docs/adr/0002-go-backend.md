@@ -91,14 +91,14 @@ The table above is dated 2026-10-11. This is where Phase 1 stood after `VERIFY-0
 | Fixture parity, old and new, for search, summary, detail and contents | Met locally: every case passes against both | Done; repeat on each change |
 | Invalid-input and upstream-failure tests | Met. Input rules approved by the owner and applied in `FIX-003` | Done |
 | Explicit timeout and cache behaviour | Met in code. Production cache behaviour is not chosen | Owner, with hosting |
-| Review findings (REVIEW-002) | 1 to 10 addressed; AUTH-001 implements per-user credentials for finding 11, pending independent review | Reviewer |
+| Review findings (REVIEW-002) | 1 to 10 addressed; AUTH-001 implements per-user credentials for finding 11 and was reviewed in REVIEW-006 | Done locally; live-provider checks remain |
 | Who may see private repositories | **Decided:** signed-in users, only their own GitHub account's access. API implemented; private UI and live OAuth checks remain | Agents; no repeated owner policy decision |
 | Rewrite forwards requests unchanged | VERIFY-002 extends the probe to production and 49 requests including bearer forwarding and mismatch denial. Not checked on Vercel | Agent on an approved preview |
 | Race detector | First hosted result recorded: run 38351494790 on `259ff7b`, success, read through `agent-handoff.mjs --status --ci` on 2026-10-13. Later commits each need their own run | GitHub Actions on each push |
 | Hosting for the Go service | **Open.** Proposal below | Owner |
 | Staging latency and resource comparison | Not started. Needs hosting | Owner, then an agent |
 | Tested rollback | Met locally. Not tested under real traffic | Needs hosting |
-| Peer review | REVIEW-004: Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a. REVIEW-005: Claude Code reviewed GO-007b, lesson 18 and AI-001a, and the logging and decoding of GO-006b. AUTH-001, AUTH-002, CI-001, VERIFY-002 and VERIFY-003 await independent review | Assigned reviewer |
+| Peer review | REVIEW-004: Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a. REVIEW-005: Claude Code reviewed GO-007b, lesson 18 and AI-001a, and the logging and decoding of GO-006b. REVIEW-006: Claude Code reviewed AUTH-001 and AUTH-002 by deliberate breaks and fixed the gaps. CI-001, VERIFY-002 and VERIFY-003, the rest of GO-006b, and the fixes made in REVIEW-005 and REVIEW-006 await independent review | Assigned reviewer |
 
 ## Recorded differences between Go and Next.js
 
@@ -129,6 +129,8 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | 2026-10-12 | Owner approved input validation for the repository routes (REVIEW-002 finding 1). Applied in `FIX-003`: repository contract version 3, Next.js and Go together |
 | 2026-10-12 | Corrected earlier interpretation: the owner chose private access for signed-in users only to repositories their own GitHub account can access. This does not authorize sharing the server token's permissions |
 | 2026-10-13 | Owner authorized implementing Codex's recommendations, including CI-001 and API authorization. Contracts change in Next and Go together. No deployment or route cutover is implied |
+| 2026-10-13 | Owner decided the AI policy, answering the four questions in "AI routes: decisions needed before a port". Chat: signed-in users only, 30 requests per five minutes per user, the most recent 20 messages and 8,000 characters per request. Suggestions and enhance-query: anyone, 30 AI calls per five minutes per address, queries of at most 500 characters. Fix three recorded defects in Next.js and Go together: internal and provider error text returned to callers; a caller's system message replacing the application's; unchecked message shapes. Other recorded defects stay |
+| 2026-10-13 | Owner approved a server token for anonymous GitHub reads, on condition that it can read only public data. It is a new variable, separate from `GITHUB_TOKEN`. Not implemented yet (`QUOTA-001`) |
 | 2026-10-12 | Owner stated hosting: Next.js on Vercel, database on Supabase, and that the owner holds the GitHub, Vercel and Supabase accounts. Token permissions are not yet verified |
 | 2026-10-12 | Owner set the budget: free tier only. No paid resource is to be created without the owner's approval |
 | 2026-10-11 | Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go` (version 1.27.2, official archive, checksum verified, user PATH updated). No administrator rights were used |
@@ -169,7 +171,9 @@ Either way, in this order. Step 1 is done; every later step waits for the owner'
 
 Nothing here needs a paid resource according to the documentation. That is a reading of the pricing pages, not a measurement; check the usage page after the first preview.
 
-## AI routes: decisions needed before a port (proposal, not decided)
+## AI routes: decisions needed before a port (decided 2026-10-13)
+
+**Decided.** The owner answered all four questions on 2026-10-13; the answers are in the decisions log above and took the recommendation in each row below. AI-002a applied them to the Next.js handlers and raised the three AI contracts to version 2. The Go ports, AI-002b and AI-002c, follow. The rest of this section is the proposal as it was put to the owner.
 
 Written by Claude Code on 2026-10-13. All three AI routes are now recorded as fixtures: suggestions (AI-001a, 35 cases), enhance-query (AI-001b, 62) and chat (AI-001c, 42). No provider was contacted, and nothing about the live site, its keys or its usage was inspected. The Go ports wait for the four answers below, because each one changes what the port has to do.
 
@@ -311,3 +315,22 @@ the provider request is pinned too. Every Phase 2 route now has fixtures; the
 three AI ports wait for the owner's answers in the proposal above. Next work
 that needs no decision: independent review of AUTH-001, AUTH-002, CI-001,
 VERIFY-002 and VERIFY-003.
+
+REVIEW-006 (2026-10-13): Claude Code reviewed AUTH-001 and AUTH-002 by changing
+the code on purpose. The design held; the tests did not: in Go, handing the
+public handlers the server's own token passed every test. The server is now
+built by `newHandler`, which the tests call, and the shared access cases grew
+from 15 to 35 with both implementations aligned on them. No contract version
+changed. Live Supabase and GitHub behaviour is still unchecked.
+
+AI-002a (2026-10-13): the three AI contracts are at version 2 in Next.js.
+Chat needs a signed-in user and allows 30 requests in five minutes per user.
+The search helpers allow 30 AI calls in five minutes per address and fall
+back to their built-in answers past that. Queries are at most 500 characters.
+Chat forwards only checked `role` and `content`, the most recent 20 messages
+and 8,000 characters, and never returns internal or provider error text.
+Limits live in `src/lib/ai/guard.js` and are counted per server process.
+One difference is planned for the Go port and recorded here in advance: the
+Next.js chat handler also accepts its own session cookie, which is how the
+browser calls it today; Go will accept a bearer token only, so the browser
+must send one before chat is served by Go.

@@ -1,7 +1,8 @@
-# AI enhance-query characterization (AI-001b)
+# AI enhance-query contract
 
-Version 1 records what `POST /api/ai/enhance-query` does today, before any
-port. There are 62 cases, 10 marked `defect`, plus an integrity check. The
+**Version 2** (AI-002a, 2026-10-13) is current: 73 cases, 10 marked `defect`,
+plus an integrity check. Read "Version 2" at the end first. Version 1 recorded
+the route as it was, with 62 cases; none of those cases changed. The
 caller is `src/components/search/SearchBox.jsx`. No production source changed.
 
 ```text
@@ -65,3 +66,40 @@ the provider request in full: address, method, headers and body.
 
 A fix to a marked defect changes these fixtures and every implementation in
 one commit, with the owner's approval, and raises the version.
+
+## Version 2 (AI-002a, 2026-10-13)
+
+The owner decided on 2026-10-13 that the search-box helpers stay open to
+everyone, with limits. The Next.js handler and these fixtures changed
+together. No earlier case changed. No Go port exists yet.
+
+- A query longer than 500 characters is 400 `Query is too long`. The type is
+  checked first: a query that is not text is still `Query is required`.
+- Each address may make 30 AI calls in five minutes, shared with
+  suggestions. Past that the basic enhancement answers, with the source
+  `basic-enhancement`, and no provider is called. The caller is not refused,
+  so the button keeps working.
+- The address is the first one in `X-Forwarded-For`, or `unknown` without the
+  header. It is only as trustworthy as the proxy in front of the server.
+- With no key configured no AI call is made and the allowance is not touched.
+
+This route never returned provider error text, so the three safety fixes did
+not apply to it. Its ten `defect` cases are unchanged; none was approved for
+fixing.
+
+Fixture conventions added in version 2, shared by the three AI contracts
+(`scripts/contracts/ai-fixture-common.mjs`):
+
+- The clock is fixed at 2026-10-13T12:00:00Z, so an allowance and its
+  `Retry-After` do not depend on when the test runs.
+- `earlier_requests` says how many requests the same caller already made, and
+  `earlier_age_seconds` how long before the fixed moment. `earlier_key` names
+  another caller when the point is that theirs do not count.
+- `address` sets `X-Forwarded-For`.
+- Long text is written `{ "$repeat": ["a", 8000] }` in request bodies and in
+  expected provider requests. A runner expands it before sending or comparing.
+- A "character" is one UTF-16 unit, which is what a JavaScript string length
+  counts. An emoji is two. A Go implementation has to count the same way.
+
+The allowance is counted in the server process. Another instance has its own
+count and a restart forgets it. It slows a caller down; it is not a balance.

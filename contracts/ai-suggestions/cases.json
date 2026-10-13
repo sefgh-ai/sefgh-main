@@ -1,7 +1,7 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "POST /api/ai/suggestions",
-  "recorded_from": "259ff7ba125bfb367e3fbba211e277a05f41476d",
+  "recorded_from": "9480ef9f407571fe333bae48eb824181acfdba5e plus the uncommitted AI-002a change",
   "boundary": "generateAIResponse is stubbed; provider integration/auth/quota are not implemented or verified",
   "cases": [
     {
@@ -131,7 +131,7 @@
     {
       "id": "numeric-query",
       "disposition": "defect",
-      "reason": "Wrong input type returns internal trim error instead of validation response.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
       "body": {
         "query": 42
       },
@@ -139,7 +139,7 @@
       "expect": {
         "status": 500,
         "body": {
-          "error": "query.trim is not a function"
+          "error": "Failed to generate suggestions"
         },
         "calls": [],
         "content_type": "application/json",
@@ -149,7 +149,7 @@
     {
       "id": "array-query",
       "disposition": "defect",
-      "reason": "Array query returns an internal method error.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
       "body": {
         "query": [
           "react"
@@ -159,7 +159,7 @@
       "expect": {
         "status": 500,
         "body": {
-          "error": "query.trim is not a function"
+          "error": "Failed to generate suggestions"
         },
         "calls": [],
         "content_type": "application/json",
@@ -169,7 +169,7 @@
     {
       "id": "object-query",
       "disposition": "defect",
-      "reason": "Object query returns an internal method error.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
       "body": {
         "query": {}
       },
@@ -177,7 +177,7 @@
       "expect": {
         "status": 500,
         "body": {
-          "error": "query.trim is not a function"
+          "error": "Failed to generate suggestions"
         },
         "calls": [],
         "content_type": "application/json",
@@ -186,15 +186,15 @@
     },
     {
       "id": "json-reader-failure",
-      "disposition": "defect",
-      "reason": "Request JSON errors are exposed verbatim as 500.",
+      "disposition": "preserve",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log.",
       "body": {},
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "json_error": "fixture invalid JSON",
       "expect": {
         "status": 500,
         "body": {
-          "error": "fixture invalid JSON"
+          "error": "Failed to generate suggestions"
         },
         "calls": [],
         "content_type": "application/json",
@@ -905,6 +905,257 @@
           "suggestions": []
         },
         "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "null-body",
+      "disposition": "preserve",
+      "reason": "A JSON body of null has no query, so it is answered like an empty one.",
+      "body": null,
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": []
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "query-at-the-length-limit",
+      "disposition": "preserve",
+      "reason": "Version 2: a query may be at most 500 characters.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "k",
+            500
+          ]
+        }
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "query-over-the-length-limit",
+      "disposition": "preserve",
+      "reason": "Version 2: a query may be at most 500 characters.",
+      "body": {
+        "query": {
+          "$repeat": [
+            "k",
+            501
+          ]
+        }
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "thirtieth-ai-call-allowed",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the built-in list answers and the AI is not called.",
+      "body": {
+        "query": "obscure thing"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "earlier_requests": 29,
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"obscure thing\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "thirty-first-ai-call-uses-the-built-in-list",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the built-in list answers and the AI is not called.",
+      "body": {
+        "query": "obscure thing"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "earlier_requests": 30,
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [],
+          "source": "predefined-fallback"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "limited-caller-still-gets-built-in-matches",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the built-in list answers and the AI is not called.",
+      "body": {
+        "query": "react n"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "earlier_requests": 30,
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "react native apps"
+          ],
+          "source": "predefined-fallback"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "built-in-answers-do-not-use-the-allowance",
+      "disposition": "preserve",
+      "reason": "A query answered from the built-in list makes no AI call, so the allowance is not consulted.",
+      "body": {
+        "query": "rea"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "earlier_requests": 30,
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "react components",
+            "react native apps"
+          ],
+          "source": "predefined"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "ai-calls-allowed-again-after-five-minutes",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the built-in list answers and the AI is not called.",
+      "body": {
+        "query": "obscure thing"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "earlier_requests": 30,
+      "earlier_age_seconds": 300,
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"obscure thing\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "another-address-is-not-limited",
+      "disposition": "preserve",
+      "reason": "Version 2: each address may make 30 AI calls in five minutes across the two search helpers. Past that the built-in list answers and the AI is not called.",
+      "body": {
+        "query": "obscure thing"
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "address": "203.0.113.9",
+      "earlier_requests": 30,
+      "earlier_key": "unknown",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"obscure thing\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
         "content_type": "application/json",
         "cache_control": null
       }
