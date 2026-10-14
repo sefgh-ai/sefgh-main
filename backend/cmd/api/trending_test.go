@@ -21,7 +21,7 @@ func TestTrendingStaysPublicWithoutForwardingCredentials(t *testing.T) {
 	t.Setenv("GITHUB_TOKEN", "must-not-leak")
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	verifier := githubaccess.Verifier{} // no Auth configuration is needed
-	h := verifier.Wrap(githubMux(logger, ""), func(string) http.Handler {
+	h := verifier.Wrap(githubMux(logger, "", nil), func(string) http.Handler {
 		t.Error("public trending selected a private handler")
 		return http.NotFoundHandler()
 	})

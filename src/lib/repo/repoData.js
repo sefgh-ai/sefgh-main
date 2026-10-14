@@ -1,4 +1,5 @@
 import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers';
+import { publicGitHubFetch } from '@/lib/github/public-token';
 
 /**
  * Public metadata only. The page and collection UI do not yet carry verified
@@ -8,7 +9,7 @@ import { isValidOwner, isValidRepoName } from '@/lib/github/repo-identifiers';
 export async function fetchRepoFromGitHub(owner, repo) {
   if (!isValidOwner(owner) || !isValidRepoName(repo)) return null;
   try {
-    const response = await fetch(
+    const response = await publicGitHubFetch(
       `https://api.github.com/repos/${owner}/${repo}`,
       {
         headers: {

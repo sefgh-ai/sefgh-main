@@ -289,3 +289,18 @@ same-origin `/api/ai/chat` only. It is the first browser code to send a
 Supabase token to this application's own API. Next.js already accepted it,
 and still falls back to its cookie when none is sent. Conversations are
 still stored by the browser Supabase client; no database boundary changed.
+
+## QUOTA-001 and Phase 6 update (2026-10-14)
+
+Signed-out GitHub reads can use a server token of their own,
+`GITHUB_PUBLIC_READ_TOKEN`, distinct from `GITHUB_TOKEN`, once GitHub confirms
+it is a classic token with no scopes. Next.js: `src/lib/github/public-token.js`,
+used by `githubFetch` for signed-out callers, by the trending and
+trending-developers routes, and by `src/lib/repo/repoData.js`. Go:
+`backend/internal/publictoken`, a transport on the signed-out handlers'
+clients only. Unset, every path is as before. Contributions is not covered.
+The GitHub token boundary is now: a verified caller's own token for their
+reads; the checked public token, or none, for signed-out reads; `GITHUB_TOKEN`
+only for GitHub Models.
+
+The plan gained Phase 6, bugs and broken UI/UX, recorded in `bug-register.md`.

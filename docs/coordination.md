@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: AI-002c handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: PLAN-001 / BUG-001 / QUOTA-001 handoff.
 
 ## Start here
 
@@ -11,11 +11,85 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released AI-002c. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Hosted CI, including the race detector, passed at `81f1044` (AI-002b); AI-002c has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Claude Code completed and released PLAN-001 / BUG-001 / QUOTA-001. Uncommitted at handoff. No deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 48 entries and nothing fixed yet. Hosted CI, including the race detector, passed at `5750ee5` (AI-002c); the PLAN-001 / BUG-001 / QUOTA-001 batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: AI-002c (Claude Code, 2026-10-14)
+## Latest handoff: PLAN-001 / BUG-001 / QUOTA-001 (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed**. The public read token is off until the owner sets `GITHUB_PUBLIC_READ_TOKEN`; with it unset, every path behaves as before. The Next.js changes are live code once synchronized.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 5750ee5.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `5750ee5`).
+History: paused at the owner's request with a checkpoint (below) and resumed the same day; nothing was committed in between.
+
+Done:
+- PLAN-001: Phase 6, bugs and broken UI/UX, in the ADR (table row, gate, "Phase 6" rules section, decisions log). Retiring old logic is Phase 7 and waits for Phase 6's gate. AGENTS.md: reading order item 5 and a "Bugs and broken UI/UX (Phase 6)" section for both agents.
+- BUG-001: docs/bug-register.md, 48 entries (3 High, 23 Medium, 22 Low), R-001 to R-048, from recorded evidence, the lint run and a static scan of the source. Status: R-031 fixed in code (takes effect with the owner's token), R-048 fixed; the rest open.
+- QUOTA-001: `GITHUB_PUBLIC_READ_TOKEN` for signed-out GitHub reads in Next.js and Go, used only when GitHub confirms a classic token with no scopes; contract contracts/public-read-token (20 cases) passed by both; lesson 21.
+
+Changed files: the list in the checkpoint below, unchanged since, plus this record.
+
+Things a reviewer should know:
+- How "can read only public data" is checked: `GET /user` must answer 200 with an empty `X-OAuth-Scopes`. Only a classic token with no scopes does that. Fine-grained tokens are refused because they cannot be checked this way. Every reply is checked again; scopes or a 401 make the reply be discarded and the request repeated without the token.
+- In Go it is an `http.RoundTripper` on the signed-out handlers' clients only (`githubMux` gained a transport argument). The handlers did not change.
+- Contributions is not covered, on purpose (register R-032).
+- The Go wiring test caught a bug in the first version that the package tests missed (Opaque URLs; see the checkpoint). Lesson 21 explains it.
+- `.env.example` documents the new variable and no longer claims `GITHUB_TOKEN` raises GitHub API limits (R-048).
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2): the quick checks in the checkpoint below ran on this tree (backend 16 packages, learn-go 22 solution packages, contracts 733 of 733, ESLint and diff check clean) and no code changed after them. Then: `go build -o bin/api.exe ./cmd/api` ok; production forwarding probe on that binary: production build compiled, 69 of 69 identical, exit 0. Deliberate breaks: Go 26 of 27 and Next.js 19 of 20 noticed; each one left is an equivalent change (details in the checkpoint).
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: a real GitHub token; `go test -race` (hosted CI after synchronization); Vercel; any page in a browser.
+
+Remaining gates: independent review of this batch; a hosted CI run for it; the owner's token, then a look at the server log to see whether it is accepted; BUG-002's walk-through (needs a test account); every earlier cutover gate.
+Next bounded action: BUG-003, first fixes from the register that need no owner choice and no contract change: R-001 (navbar /downloads link), R-003 (newsletter privacy link), R-006 (profile usage card shows generated data instead of /api/activity) and R-043 (the ten `set-state-in-effect` lint errors, so `npm run lint` can pass). Each with a check that would catch it again. BUG-002 when the owner can provide a test account.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: PLAN-001 / BUG-001 / QUOTA-001, PAUSED / INCOMPLETE (Claude Code, 2026-10-14)
+
+Resumed later the same day: the owner said "continue from where you stopped". Claude Code found HEAD 5750ee5 and the same 24 changed entries, writer none, reclaimed the role, and did the two NOT done steps; see the handoff above.
+Earlier status: paused / incomplete. The owner asked to stop (not immediately) and save a checkpoint. Implementation stopped after the quick checks below.
+
+Where it stands (the milestones further down give the detail):
+- PLAN-001 and BUG-001: written, nothing left but review. ADR Phase 6 and Phase 7; AGENTS.md section; docs/bug-register.md with 48 entries (R-048, a stale `.env.example` comment about `GITHUB_TOKEN`, was found and fixed during QUOTA-001).
+- QUOTA-001: code, tests, lesson 21, deliberate breaks and documentation done. NOT done: the production forwarding probe and the handoff record.
+
+Working tree on 5750ee5, all uncommitted (`git status --short`):
+- Modified: .env.example, AGENTS.md, backend/README.md, backend/cmd/api/{ai_wiring_test.go,main.go,main_test.go,trending_test.go,wiring_test.go}, docs/{adr/0002-go-backend.md,backend-map.md,coordination.md}, learn-go/16-verifying-access/README.md, learn-go/README.md, scripts/contracts/go-forwarding-probe.mjs, src/app/api/github/{trending,trending-developers}/route.js, src/lib/github/access.js, src/lib/repo/repoData.js.
+- New: docs/bug-register.md, contracts/public-read-token/{cases.json,README.md}, src/lib/github/public-token.js, scripts/contracts/public-read-token.test.mjs, backend/internal/publictoken/{transport.go,contract_test.go}, backend/cmd/api/publictoken_wiring_test.go, learn-go/21-wrapping-every-request/{README.md,lesson.go,exercise.go,solution.go,exercise_test.go}.
+- No existing exercise.go changed. No fixture of an existing contract changed.
+
+Checks run on this exact tree, last thing before pausing (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` 16 tested packages pass.
+- learn-go: gofmt -l empty; go vet clean with and without the solution tag; `go test -count=1 -tags solution ./...` 22 packages pass; lesson 21 as shipped fails its four tests without panicking.
+- `npm run test:contracts`: 733 of 733 (705 before plus 28 in public-read-token.test.mjs).
+- ESLint on src/lib/github, src/lib/repo/repoData.js, the two trending routes, scripts/contracts, next.config.mjs: clean. `git diff --check`: exit 0. (Git warns AGENTS.md uses CRLF; the committed file already did on every line, and the added lines match.)
+- Deliberate breaks, QUOTA-001. Go, in a scratch copy: 27; 26 noticed; the one left (giving a verified caller's handlers the public transport) changes nothing today, because every request those handlers send carries the caller's own Authorization and the transport leaves such requests alone. One break of mine first did not compile and was rewritten; it is noticed. Next.js, in memory: 20; 19 noticed; the one left (dropping `.trim()` on the scopes header) changes nothing, because the Fetch Headers class already strips surrounding white space.
+- The Go wiring test caught a real bug in the first version: URLs built by jscompat.FetchURL keep the path in Opaque, and `u.String()` then drops the host, so repository, contents and developers reads did not get the token. Fixed by reading Scheme and Host directly; pinned by `TestRequestsBuiltByFetchURLGetTheToken`.
+
+NOT done, in order:
+1. Rebuild and probe: in backend `go build -o bin/api.exe ./cmd/api`, then from the root `node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api.exe --production`. Expected 69 of 69: the probe now empties GITHUB_PUBLIC_READ_TOKEN for both servers, and no route's forwarded behaviour changed. Next.js code changed, so this is needed.
+2. Turn this checkpoint into a handoff record (status "implementation complete; awaiting independent review; not deployed"), set the task table rows for PLAN-001, BUG-001 and QUOTA-001 to complete and uncommitted, then run `npm run handoff`.
+
+Known failures: none. Not checked: a real GitHub token (whether GitHub sends an empty X-OAuth-Scopes header for a classic no-scope token is from its documentation; if not, the check refuses the token and reads continue without one); `go test -race` (no C compiler here; hosted CI runs it after a commit); Vercel; any page in a browser.
+Owner actions this needs, when convenient: create a classic personal access token with no scopes and set it as GITHUB_PUBLIC_READ_TOKEN for Next.js (and the Go service once hosted); provide a test account for BUG-002's signed-in walk-through.
+Processes: none running. The scratch copies used for breaks are outside the repository. Account usage is not visible to Claude Code; no percentage is claimed.
+
+Pickup prompt: "Read AGENTS.md and the PAUSED / INCOMPLETE checkpoint at the top of docs/coordination.md. Run `git status --short` and `node scripts/agent-handoff.mjs --status`, confirm Active writer is none, claim the writer role, then do the two NOT done steps in order."
+
+Earlier status: active. Owner: Claude Code.
+Branch main; base and HEAD 5750ee5 (the Git Agent committed AI-002c). Tree clean at start; previous writer released.
+Recorded on arrival: `node scripts/agent-handoff.mjs --status --ci` reported run 38512059829 on 5750ee5 as completed, success, which includes `go test -race` for AI-002c. Read through the script; logs not opened.
+Owner instruction (2026-10-14): continue the implementation, and add a new phase in which all bugs and broken UI/UX are recorded and fixed before the cleanup phase.
+Plan:
+1. PLAN-001: a new Phase 6, "bugs and broken UI/UX", in the ADR, before retiring old logic (which becomes Phase 7); decisions log; the rule in AGENTS.md that every agent records a bug it finds.
+2. BUG-001: `docs/bug-register.md`, one register, filled from what is already recorded (contract defect cases, review findings, backend-map findings, the lint baseline) plus static checks of the source (internal links and API calls that lead nowhere). No fixes in this task.
+3. QUOTA-001: a public-only server token for anonymous GitHub reads, in Next.js and Go, off unless set, with a check that refuses a token able to read private data; tests, lesson, docs.
+Milestone 1 (PLAN-001 and BUG-001 written; documentation only): ADR phase table gains "6: bugs and broken UI/UX" with its gate, retiring old logic is now Phase 7 and waits for it, a "Phase 6" section gives the rules, and the decisions log records the owner's instruction. AGENTS.md: reading order item 5 and a "Bugs and broken UI/UX (Phase 6)" section. docs/bug-register.md opened with 47 entries (3 High, 22 Medium, 22 Low), IDs R-001 to R-047. Sources: all 124 contract `defect` cases grouped into entries, backend-map findings, review notes, the lint run (10 errors, 16 warnings, the same as the 2026-10-11 baseline), and a static scan of src/ for links and API calls that match no page or route. New findings from that scan: the navbar's /downloads link is a 404 (R-001); the newsletter Subscribe button has no handler (R-002); its privacy link is "#" (R-003); the profile page shows generated mock usage for 2025 (R-006); six chat menu items only say "Coming soon" (R-008). No page was opened in a browser; that is BUG-002, which needs a test account from the owner for the signed-in half. Task table updated (AI-002b and AI-002c committed; PLAN-001, BUG-001, BUG-002 added). Next: QUOTA-001.
+Milestone 2 (QUOTA-001 code written and passing): new variable GITHUB_PUBLIC_READ_TOKEN, off when unset. Rules (contracts/public-read-token, 20 cases, both implementations): only a classic token whose GET /user reply has an empty X-OAuth-Scopes header is used; a pass counts ten minutes, a refusal one; a reply showing scopes or a 401 is discarded and the request repeated without the token; only GET requests to the GitHub API origin without an Authorization of their own get it. Next.js: src/lib/github/public-token.js (`createPublicReader`, `publicGitHubFetch`); access.js `githubFetch` uses it when signed out; trending, trending-developers and repoData.js use it. Go: backend/internal/publictoken `Transport`, an http.RoundTripper given only to the public mux's clients in cmd/api/main.go (`githubMux` gains a transport argument). Contributions is deliberately left out: it refuses before calling GitHub without a caller's token, and changing that changes its contract. Tests: scripts/contracts/public-read-token.test.mjs (28); publictoken/contract_test.go; cmd/api/publictoken_wiring_test.go, which caught a real bug in the first version (URLs built by jscompat.FetchURL keep the path in Opaque, and u.String() then drops the host, so repository, contents and developers reads did not get the token; fixed by reading Scheme and Host directly, with a package test). The write-timeout guard adds the 4-second check. The probe empties the variable for both servers. Checks so far: `npm run test:contracts` 733 of 733; backend `go test` for cmd/api and publictoken pass; gofmt and vet clean. Still to do: lesson 21, deliberate breaks, docs (ADR, backend README, backend-map, register status), full checks, production probe, handoff.
+No processes running. Account usage is not visible to Claude Code.
+
+## Handoff: AI-002c (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed; `ai-chat` off by default**. The browser change is live Next.js code once synchronized; Next.js already accepted the bearer it now sends, so Next.js behaviour should be unchanged, but that has not been checked in a browser.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1584,9 +1658,13 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `AI-001b` | Fixtures for `POST /api/ai/enhance-query`, provider call stubbed | Committed 9480ef9; 62 fixtures/10 defects | Independent review; owner's AI decisions before any port |
 | `AI-001c` | Fixtures for `POST /api/ai/chat` with the real helper, provider call stubbed | Committed 9480ef9; 42 fixtures/16 defects | Independent review; owner's AI decisions before any port |
 | `AI-002a` | AI contract version 2 in Next.js: sign-in for chat, limits, three safety fixes, fixtures | Committed d2320c2 | Independent review; browser check of chat |
-| `AI-002b` | Go ports of suggestions and enhance-query against version 2, with lesson 19 | Complete; uncommitted at handoff | Independent review; hosted CI run |
-| `AI-002c` | Go port of chat with the session check and limits, with a lesson; the browser sends a bearer token | Not started; next | Nothing |
-| `QUOTA-001` | Public-only server token for anonymous GitHub reads, in Next.js and Go, with a check that refuses a private-capable token | Not started | Owner creates the token before it can be used live |
+| `AI-002b` | Go ports of suggestions and enhance-query against version 2, with lesson 19 | Committed 81f1044; hosted run 38451803995 succeeded | Independent review |
+| `AI-002c` | Go port of chat with the session check and limits, with lesson 20; the browser sends a bearer token | Committed 5750ee5; hosted run 38512059829 succeeded | Independent review; browser check of chat |
+| `QUOTA-001` | Public-only server token for anonymous GitHub reads, in Next.js and Go, with a check that refuses a private-capable token | Complete; uncommitted at handoff | Independent review; owner creates and sets the token before it is used live |
+| `PLAN-001` | Phase 6, bugs and broken UI/UX, added to the ADR before retiring old logic (now Phase 7); the recording rule in AGENTS.md | Complete; uncommitted at handoff | Independent review |
+| `BUG-001` | `docs/bug-register.md` opened and filled from recorded evidence and static source checks; no fixes | Complete (48 entries); uncommitted at handoff | Independent review |
+| `BUG-003` | First register fixes needing no decision: R-001, R-003, R-006, R-043 | Not started; next | Nothing |
+| `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
 
@@ -1600,7 +1678,8 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
 - **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.
-- **Anonymous GitHub quota: decided on 2026-10-13.** A server token that can read only public data may be used for anonymous reads. The owner still has to create that token and set it; the code is `QUOTA-001`, not started.
+- **Anonymous GitHub quota: decided on 2026-10-13, implemented in QUOTA-001 (2026-10-14).** The owner still has to create a classic personal access token with no scopes and set it as `GITHUB_PUBLIC_READ_TOKEN`; a fine-grained token is refused by design. Never paste it into a chat or a shared document.
+- **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options.
 
 ## State of the owner's machine
 

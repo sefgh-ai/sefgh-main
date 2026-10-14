@@ -182,11 +182,13 @@ try {
   const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key',
     // Never let a real key from the surrounding shell reach a real provider:
     // the keys are emptied and every provider address points at the stand-in.
-    OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic` });
+    OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic`,
+    // The public read token's rules have their own contract; here it is off.
+    GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
   const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

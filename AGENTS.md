@@ -8,6 +8,7 @@ These instructions are shared by Codex and Claude Code. User instructions take p
 2. `docs/backend-map.md` for observed architecture and source pointers.
 3. `docs/adr/0002-go-backend.md` for the accepted Go migration, how a route moves, and the gates.
 4. `docs/claude-review.md` for review findings and reconciled differences.
+5. `docs/bug-register.md` for known bugs and broken UI/UX (Phase 6).
 
 `docs/adr/0001-rust-backend.md` is superseded and kept only as a record. Do not implement it.
 
@@ -37,6 +38,13 @@ Check `git status --short` and the current commit before editing. The architectu
 - Before calling a bounded task finished, update `docs/coordination.md` in the same change with the task ID, owner/reviewer, base and resulting commit (or explicitly uncommitted state), changed files, checks and outcomes, remaining gates, next action, and writer release. Distinguish implementation complete, review complete, and deployed; none implies the others. Keep prior results attributed to the agent that ran them.
 - Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
 - Keep the reviewer read-only unless the user or the current task explicitly assigns implementation. Do not recursively launch more agents by default.
+
+## Bugs and broken UI/UX (Phase 6)
+
+- When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one.
+- Fix entries in bounded `BUG-0NN` tasks. Fixing recorded bugs is approved. If an entry's Needs column says `owner`, write the options and ask before fixing. Only the owner defers an entry.
+- A fix to contract-pinned behaviour follows "Change a contract" below. Every fix ships with something that would catch the bug again, and updates the entry's status with the task and commit.
+- Phase 7 (retiring old logic) does not start until Phase 6's gate in ADR-0002 is met.
 
 ## Low-capacity checkpoint (owner requirement)
 

@@ -73,7 +73,7 @@ func aiServer(t *testing.T, env map[string]string) (http.Handler, *aiUpstream) {
 	t.Setenv("SEFGH_ANTHROPIC_URL", backend.URL+"/anthropic")
 	t.Setenv("NEXT_PUBLIC_SUPABASE_URL", backend.URL)
 	t.Setenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-key")
-	for _, name := range []string{"GITHUB_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"} {
+	for _, name := range []string{"GITHUB_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GITHUB_PUBLIC_READ_TOKEN"} {
 		t.Setenv(name, env[name])
 	}
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil))), upstream

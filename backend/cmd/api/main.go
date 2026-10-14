@@ -27,6 +27,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 )
 
 // writeTimeout is how long the server allows for writing one response. Every
@@ -87,7 +88,15 @@ func newHandler(logger *slog.Logger) http.Handler {
 		SupabaseKey: os.Getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 		GitHubURL:   envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
 	}
-	github := verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) })
+	// Signed-out reads may use the server's public read token (QUOTA-001),
+	// once GitHub has confirmed it can read only public data. A verified
+	// caller's handlers never see it: they get the plain transport.
+	public := &publictoken.Transport{
+		Token:  os.Getenv("GITHUB_PUBLIC_READ_TOKEN"),
+		Origin: publictoken.Origin(envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL)),
+		Logger: logger,
+	}
+	github := verifier.Wrap(githubMux(logger, "", public), func(token string) http.Handler { return githubMux(logger, token, nil) })
 	// The AI routes have their own rules about who may call them, so they sit
 	// beside the GitHub access check, not behind it.
 	top := http.NewServeMux()
@@ -138,21 +147,25 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 }
 
 // Public settings never use GITHUB_TOKEN. Private muxes live for one request.
-func githubMux(logger *slog.Logger, token string) *http.ServeMux {
+// transport carries every GitHub request; nil means Go's default. Only the
+// public mux is given the public read token's transport.
+func githubMux(logger *slog.Logger, token string, transport http.RoundTripper) *http.ServeMux {
 	mux := http.NewServeMux()
-	client := &http.Client{Timeout: githubsearch.DefaultTimeout}
+	client := &http.Client{Timeout: githubsearch.DefaultTimeout, Transport: transport}
 	if token != "" {
 		client.CheckRedirect = func(*http.Request, []*http.Request) error { return errors.New("authenticated redirect refused") }
 	}
 	githublanguages.Register(mux)
 	mux.Handle("GET /api/github/trending-developers", &githubdevelopers.Handler{
+		Client:  &http.Client{Timeout: githubsearch.DefaultTimeout, Transport: transport},
 		BaseURL: envOr("GITHUB_API_URL", githubdevelopers.DefaultBaseURL),
 		Logger:  logger,
 	})
 	// Trending remains public-only, like its Next.js implementation. Never
-	// pass the verified caller token or a shared environment token to it.
+	// pass the verified caller token or GITHUB_TOKEN to it. The public read
+	// token, which can read only public data, may reach it through transport.
 	mux.Handle("GET /api/github/trending", &githubtrending.Handler{
-		Client:  &http.Client{Timeout: githubtrending.Timeout},
+		Client:  &http.Client{Timeout: githubtrending.Timeout, Transport: transport},
 		BaseURL: envOr("GITHUB_API_URL", githubtrending.DefaultBaseURL),
 		Logger:  logger,
 	})

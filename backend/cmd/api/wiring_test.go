@@ -78,6 +78,8 @@ func serverUnderTest(t *testing.T, upstream *upstreamLog) http.Handler {
 	t.Setenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-key")
 	// A decoy. If it ever reaches GitHub, a caller borrowed the owner's access.
 	t.Setenv("GITHUB_TOKEN", "owner-private-token-must-never-be-used")
+	// Not set here, whatever the shell says; publictoken_wiring_test.go sets it.
+	t.Setenv("GITHUB_PUBLIC_READ_TOKEN", "")
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil)))
 }
 

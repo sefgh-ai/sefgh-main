@@ -1,3 +1,5 @@
+import { publicGitHubFetch } from '@/lib/github/public-token';
+
 // Verify each bearer pair with its issuer. Never decode unverified JWT claims,
 // trust user_metadata, parse SSR cookies, or fall back to the owner's token.
 const tokenPattern = /^[A-Za-z0-9._~+\/-]+=*$/;
@@ -73,9 +75,12 @@ export function withGitHubAccess(handler) {
 
 export function githubFetch(url, token, init = {}) {
   if (token && new URL(url).origin !== 'https://api.github.com') throw new Error('Untrusted GitHub URL');
+  // Signed out: the server's public-only token, when one is set and checked
+  // (QUOTA-001). Without it this is the plain fetch it always was.
+  if (!token) return publicGitHubFetch(url, { ...init, headers: { ...init.headers } });
   return fetch(url, {
     ...init,
-    ...(token ? { next: undefined, cache: 'no-store', redirect: 'error' } : {}),
-    headers: { ...init.headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    next: undefined, cache: 'no-store', redirect: 'error',
+    headers: { ...init.headers, Authorization: `Bearer ${token}` },
   });
 }

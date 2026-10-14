@@ -78,9 +78,28 @@ Never dual-write to compare stateful implementations. Compare read fixtures or s
 | 3: user data | Browser conversation, history, profile, notification and other domain operations behind Go; repo interaction, sharing and playground routes | Two-user isolation tests; RLS and ownership equivalence; revoked and private share behaviour; atomic conversation writes; realtime parity; hashed key lifecycle and server-side accounting | Not started. Blocked on database definitions |
 | 4: jobs and storage | Trending refresh with staging and atomic promotion, avatar workflow, RepoSync ingestion | Idempotency, retries, checkpoints, partial-failure recovery, separate worker privileges, storage authorization tests | Not started |
 | 5: analysis and search workers | The chosen RepoAnalyser pipeline and semantic-search orchestration | Model, dimension, vector-column and RPC agreement; fixed-corpus retrieval evaluation; result mapping; ingestion throughput and recovery parity | Not started |
-| 6: retire old logic | Remove replaced handlers, direct browser business-data calls and temporary adapters | Caller audit; no dual writes; rollback observation period complete; remaining Next.js and managed-service boundaries documented | Not started |
+| 6: bugs and broken UI/UX | Record every known bug and broken UI/UX path in `../bug-register.md`, including a walk-through of every page; fix every entry | Every register entry fixed with a check that would catch it again, or deferred by the owner by name; `npm run lint` passes; the walk-through repeated after the fixes finds nothing new at High or Medium | Added 2026-10-14 by the owner. Register opened with 47 entries (BUG-001); walk-through not done |
+| 7: retire old logic | Remove replaced handlers, direct browser business-data calls and temporary adapters | Phase 6 gate met; caller audit; no dual writes; rollback observation period complete; remaining Next.js and managed-service boundaries documented | Not started |
 
 A read-only Phase 1 route does not wait for unrelated schema work. No database mutation moves before its own schema and policy gate passes.
+
+### Phase 6: bugs and broken UI/UX (added 2026-10-14)
+
+The owner added this phase on 2026-10-14: every bug and every broken piece of UI or UX is to be recorded and fixed before the cleanup phase. Retiring old logic deletes the Next.js handlers the contracts compare against and touches many files at once, so the behaviour it must preserve should already be the corrected behaviour, and each fix should still have both implementations to test against.
+
+When it runs:
+
+- **Recording starts now and never stops.** Any agent that finds a bug or a broken UI/UX path adds it to `../bug-register.md` in the same change, even if it does not fix it. The register says how entries are numbered, rated and marked.
+- **Fixes can land at any time**, in bounded tasks named `BUG-0NN`, alongside the other phases. Phase 7 does not start until this phase's gate is met.
+- **The walk-through** (task BUG-002) opens every page in `src/app` signed out and signed in, at phone width (375 px) and desktop width, and records broken links and controls, console errors, failed requests, layout that breaks, and states with no feedback (loading, empty, error). Signed-in pages need a test account that the owner provides; agents never ask for a password.
+
+How a fix is made:
+
+- The owner's direction of 2026-10-14 approves fixing the recorded bugs. Where the right behaviour is a product choice (the entry says `owner`), the agent writes the options with a recommendation and asks before fixing. Only the owner defers an entry.
+- A fix to behaviour that a contract pins is a contract change: the fixtures and every implementation change in one commit and the version is raised, as in "How a route moves".
+- Every fix comes with something that would catch the bug again: a contract case, a unit test, or, for a purely visual fix, written steps and the result of following them. The register entry records the task and commit.
+- Entries marked `schema` wait for the database definitions that Phase 3 also needs.
+- Dead code is not a bug. The register lists it separately for Phase 7.
 
 ### Phase 1 gates on 2026-10-12
 
@@ -138,6 +157,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | 2026-10-13 | Owner authorized implementing Codex's recommendations, including CI-001 and API authorization. Contracts change in Next and Go together. No deployment or route cutover is implied |
 | 2026-10-13 | Owner decided the AI policy, answering the four questions in "AI routes: decisions needed before a port". Chat: signed-in users only, 30 requests per five minutes per user, the most recent 20 messages and 8,000 characters per request. Suggestions and enhance-query: anyone, 30 AI calls per five minutes per address, queries of at most 500 characters. Fix three recorded defects in Next.js and Go together: internal and provider error text returned to callers; a caller's system message replacing the application's; unchecked message shapes. Other recorded defects stay |
 | 2026-10-13 | Owner approved a server token for anonymous GitHub reads, on condition that it can read only public data. It is a new variable, separate from `GITHUB_TOKEN`. Not implemented yet (`QUOTA-001`) |
+| 2026-10-14 | Owner added a phase in which all bugs and broken UI/UX are recorded and fixed before the cleanup phase. It is Phase 6; retiring old logic becomes Phase 7 and waits for it. Fixing recorded bugs is approved; product choices are still asked; contract fixes follow the usual rule. See "Phase 6" under Phases and gates |
 | 2026-10-12 | Owner stated hosting: Next.js on Vercel, database on Supabase, and that the owner holds the GitHub, Vercel and Supabase accounts. Token permissions are not yet verified |
 | 2026-10-12 | Owner set the budget: free tier only. No paid resource is to be created without the owner's approval |
 | 2026-10-11 | Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go` (version 1.27.2, official archive, checksum verified, user PATH updated). No administrator rights were used |
@@ -365,3 +385,23 @@ only, because Go's `(?i)` also let two non-ASCII letters through where
 JavaScript does not. Four rows were added to the recorded differences; one of
 them, OPTIONS answered 405, was already true of the two search helpers.
 Lesson 20. No route is switched on, and every Phase 2 cutover gate remains.
+
+PLAN-001 and BUG-001 (2026-10-14): the owner added Phase 6, bugs and broken
+UI/UX, before retiring old logic, which is now Phase 7. `../bug-register.md`
+opened with 47 entries from recorded evidence and a static scan of the source.
+No page has been walked through in a browser yet (BUG-002).
+
+QUOTA-001 (2026-10-14): the public read token the owner approved on
+2026-10-13 is implemented in Next.js (`src/lib/github/public-token.js`) and Go
+(`backend/internal/publictoken`), with one contract for both,
+`../../contracts/public-read-token`. How "can read only public data" is made
+checkable: the token must be a classic personal access token with no scopes,
+which GitHub reports as an empty `X-OAuth-Scopes` header on `GET /user`. A
+fine-grained token cannot be checked that way and is refused. Every reply is
+checked again, and one that shows scopes or a 401 is discarded and the request
+repeated without the token. It applies to signed-out reads of search,
+repository summary, detail, contents, trending and trending developers, and
+the repository page; not to contributions, whose contract would change. In Go
+it is an `http.RoundTripper` given only to the signed-out handlers' clients.
+No existing fixture changed. Unset, behaviour is unchanged; live use waits for
+the owner to create and set the token. Lesson 21.

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { publicGitHubFetch } from '@/lib/github/public-token';
 
 export async function GET(request) {
   try {
@@ -14,7 +15,7 @@ export async function GET(request) {
     // We'll use GitHub search API to find active developers
     const sinceDate = getSinceDate(since);
     
-    const response = await fetch(
+    const response = await publicGitHubFetch(
       `https://api.github.com/search/users?q=followers:>100+created:>${sinceDate}&sort=followers&order=desc&per_page=30`,
       {
         headers: {
@@ -34,7 +35,7 @@ export async function GET(request) {
     const developers = await Promise.all(
       data.items.slice(0, 20).map(async (user, index) => {
         // Fetch user's popular repo
-        const reposResponse = await fetch(
+        const reposResponse = await publicGitHubFetch(
           `https://api.github.com/users/${user.login}/repos?sort=stars&per_page=1`,
           {
             headers: {

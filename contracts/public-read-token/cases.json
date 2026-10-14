@@ -1,0 +1,278 @@
+{
+  "contract_version": 1,
+  "subject": "The server's public read token for signed-out GitHub reads (QUOTA-001)",
+  "origin": "https://api.github.test",
+  "token": "fixture-public-token",
+  "boundary": "The stand-in answers GET {origin}/user from `user`. Any other request sent with the public token gets `reply_with_token` (default: status 200, scopes header empty) and the body \"public\". Every other request gets status 200, no scopes header, and the body \"plain\". `calls` lists every request the stand-in received, as [method, url, Authorization or null]. A `scopes` key, even an empty one, means the reply carries X-OAuth-Scopes with that value; no key means no such header.",
+  "cases": [
+    {
+      "id": "no-token-set",
+      "disposition": "preserve",
+      "reason": "Without the variable nothing changes: no check, no credential.",
+      "token": null,
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "classic-token-without-scopes-is-used",
+      "disposition": "preserve",
+      "reason": "A classic token with no scopes can read only public data, and GitHub says so with an empty X-OAuth-Scopes header.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/search/repositories?q=go",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/search/repositories?q=go", "Bearer fixture-public-token"]] } }
+      ]
+    },
+    {
+      "id": "scopes-of-white-space-count-as-none",
+      "disposition": "preserve",
+      "reason": "White space around an empty list is still an empty list.",
+      "user": { "status": 200, "scopes": "  " },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", "Bearer fixture-public-token"]] } }
+      ]
+    },
+    {
+      "id": "repo-scope-is-refused",
+      "disposition": "preserve",
+      "reason": "The repo scope reads private repositories. The token is not used.",
+      "user": { "status": 200, "scopes": "repo" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "public-repo-scope-is-refused",
+      "disposition": "preserve",
+      "reason": "public_repo can write to public repositories. Only a token with no scopes at all is used.",
+      "user": { "status": 200, "scopes": "public_repo" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "read-user-scope-is-refused",
+      "disposition": "preserve",
+      "reason": "read:user reads private profile data.",
+      "user": { "status": 200, "scopes": "read:user" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "token-without-a-scopes-header-is-refused",
+      "disposition": "preserve",
+      "reason": "A fine-grained token or an app token sends no X-OAuth-Scopes, so what it can read cannot be checked. It is not used.",
+      "user": { "status": 200 },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "rejected-token-is-refused",
+      "disposition": "preserve",
+      "reason": "GitHub refuses the token, for example because it was revoked.",
+      "user": { "status": 401, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "check-failing-is-refused",
+      "disposition": "preserve",
+      "reason": "Any status but 200 means the check did not pass.",
+      "user": { "status": 500, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "check-unreachable-is-refused",
+      "disposition": "preserve",
+      "reason": "If GitHub cannot be asked, the token is not used.",
+      "user": { "network_error": true },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "a-callers-own-credential-is-kept",
+      "disposition": "preserve",
+      "reason": "A signed-in caller's request already carries their token. It is sent as it is, and the public token is not even checked.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/private", "authorization": "Bearer caller-token",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/repos/octo/private", "Bearer caller-token"]] } }
+      ]
+    },
+    {
+      "id": "another-origin-gets-nothing",
+      "disposition": "preserve",
+      "reason": "The token goes only to the GitHub API origin.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://elsewhere.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://elsewhere.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "same-host-without-tls-gets-nothing",
+      "disposition": "preserve",
+      "reason": "Another scheme is another origin.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "http://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "http://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "only-get-requests-carry-it",
+      "disposition": "preserve",
+      "reason": "Signed-out reads are GET requests. Anything else is sent as it is.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "POST", "url": "https://api.github.test/graphql",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["POST", "https://api.github.test/graphql", null]] } }
+      ]
+    },
+    {
+      "id": "a-passed-check-lasts-ten-minutes",
+      "disposition": "preserve",
+      "reason": "One check is enough for ten minutes; the eleventh minute asks again.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/a",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/a", "Bearer fixture-public-token"]] } },
+        { "at_seconds": 599, "method": "GET", "url": "https://api.github.test/repos/octo/b",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/repos/octo/b", "Bearer fixture-public-token"]] } },
+        { "at_seconds": 600, "method": "GET", "url": "https://api.github.test/repos/octo/c",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/c", "Bearer fixture-public-token"]] } }
+      ]
+    },
+    {
+      "id": "a-failed-check-is-repeated-after-a-minute",
+      "disposition": "preserve",
+      "reason": "A refusal is remembered for one minute, so a refused token costs at most one check a minute.",
+      "user": { "status": 200, "scopes": "repo" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/a",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/a", null]] } },
+        { "at_seconds": 59, "method": "GET", "url": "https://api.github.test/repos/octo/b",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/repos/octo/b", null]] } },
+        { "at_seconds": 60, "method": "GET", "url": "https://api.github.test/repos/octo/c",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/c", null]] } }
+      ]
+    },
+    {
+      "id": "a-reply-showing-scopes-is-thrown-away",
+      "disposition": "preserve",
+      "reason": "If a reply shows the token has gained scopes since it was checked, that reply could hold private data. It is discarded, the request is sent again without the token, and the token is refused for a minute.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/search/repositories?q=x",
+          "reply_with_token": { "status": 200, "scopes": "repo" },
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/search/repositories?q=x", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/search/repositories?q=x", null]] } },
+        { "at_seconds": 1, "method": "GET", "url": "https://api.github.test/repos/octo/b",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/repos/octo/b", null]] } },
+        { "at_seconds": 61, "method": "GET", "url": "https://api.github.test/repos/octo/c",
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/c", "Bearer fixture-public-token"]] } }
+      ]
+    },
+    {
+      "id": "a-reply-refusing-the-token-is-retried-without-it",
+      "disposition": "preserve",
+      "reason": "A 401 means the token stopped working since it was checked. The caller still gets an answer, from a request without it.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "reply_with_token": { "status": 401, "scopes": "" },
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } },
+        { "at_seconds": 1, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "expect": { "status": 200, "body": "plain", "calls": [
+            ["GET", "https://api.github.test/repos/octo/demo", null]] } }
+      ]
+    },
+    {
+      "id": "a-reply-without-a-scopes-header-is-used",
+      "disposition": "preserve",
+      "reason": "Some replies, such as a raw README, may carry no scopes header. The token was checked less than ten minutes ago, so the reply is used.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo/readme",
+          "reply_with_token": { "status": 200 },
+          "expect": { "status": 200, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo/readme", "Bearer fixture-public-token"]] } }
+      ]
+    },
+    {
+      "id": "other-failures-are-passed-on",
+      "disposition": "preserve",
+      "reason": "A rate limit or a missing repository is GitHub's answer to the request, not a sign the token is unsafe. It is passed on as it is.",
+      "user": { "status": 200, "scopes": "" },
+      "requests": [
+        { "at_seconds": 0, "method": "GET", "url": "https://api.github.test/repos/octo/demo",
+          "reply_with_token": { "status": 403, "scopes": "" },
+          "expect": { "status": 403, "body": "public", "calls": [
+            ["GET", "https://api.github.test/user", "Bearer fixture-public-token"],
+            ["GET", "https://api.github.test/repos/octo/demo", "Bearer fixture-public-token"]] } },
+        { "at_seconds": 1, "method": "GET", "url": "https://api.github.test/repos/octo/gone",
+          "reply_with_token": { "status": 404, "scopes": "" },
+          "expect": { "status": 404, "body": "public", "calls": [
+            ["GET", "https://api.github.test/repos/octo/gone", "Bearer fixture-public-token"]] } }
+      ]
+    }
+  ]
+}

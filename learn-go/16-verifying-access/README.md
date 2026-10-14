@@ -92,12 +92,18 @@ calls it, and so do the tests:
 ```go
 func newHandler(logger *slog.Logger) http.Handler {
 	verifier := githubaccess.Verifier{ /* from the environment */ }
-	return markBackend(verifier.Wrap(githubMux(logger, ""), func(token string) http.Handler { return githubMux(logger, token) }))
+	public := &publictoken.Transport{ /* the public read token, from the environment */ }
+	github := verifier.Wrap(githubMux(logger, "", public), func(token string) http.Handler { return githubMux(logger, token, nil) })
+	// ... the AI routes are served beside github, then markBackend wraps it all
 }
 ```
 
 The `""` is the important character pair: handlers for callers without
-credentials get no token at all. An earlier test built this line again inside
+credentials get no caller token at all. The only credential their requests
+can carry is the server's public read token, which `public` adds only after
+GitHub confirms it can read nothing private (lesson 21). The handlers for a
+verified caller get `nil`, the plain transport, so the two never mix. An
+earlier test built this line again inside
 the test. It passed even when the real line was changed to hand out the
 server's own token, because it was checking its own copy. A test proves
 something about the code it calls and nothing about code that looks similar.

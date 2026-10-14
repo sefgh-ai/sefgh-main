@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { publicGitHubFetch } from '@/lib/github/public-token';
 
 export async function GET(request) {
   try {
@@ -24,7 +25,7 @@ export async function GET(request) {
     const languageQuery = language && language !== 'any' ? `+language:${language}` : '';
     const query = `stars:>100+created:>${sinceDate}${languageQuery}`;
     
-    const response = await fetch(
+    const response = await publicGitHubFetch(
       `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=30`,
       {
         headers: {

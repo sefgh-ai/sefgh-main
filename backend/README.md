@@ -42,6 +42,7 @@ go run ./cmd/api
 | `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification, for private GitHub reads and for chat. Without it chat answers 503 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
+| `GITHUB_PUBLIC_READ_TOKEN` | none | Optional token for GitHub reads made for signed-out callers. Used only if GitHub confirms it is a classic token with no scopes; see "Public read token" below |
 
 Go does not read `.env.local`. Set variables in the shell that starts the server.
 
@@ -210,3 +211,24 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Public read token (QUOTA-001)
+
+`GITHUB_PUBLIC_READ_TOKEN` lets signed-out reads of search, repository
+summary, detail, contents, trending and trending developers use a server
+token instead of sharing GitHub's 60 requests an hour per address. Unset, it
+changes nothing.
+
+It must be a classic personal access token with no scopes selected.
+`internal/publictoken` asks GitHub (`GET /user`) before using it and uses it
+only if the `X-OAuth-Scopes` header comes back empty; any scope, or a
+fine-grained token, which sends no such header, is refused. A pass counts for
+ten minutes, a refusal for one. A reply that shows scopes or a 401 is thrown
+away and the request is sent again without the token. The rules are the
+contract in `../contracts/public-read-token/`, which the Next.js side passes
+too.
+
+It is an `http.RoundTripper` given only to the clients of the signed-out
+handlers in `cmd/api/main.go`; a verified caller's handlers use the default
+transport. `cmd/api/publictoken_wiring_test.go` checks every route. Contributions
+is not covered: without a caller's token it answers 500 before calling GitHub.
