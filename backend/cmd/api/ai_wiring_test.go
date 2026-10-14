@@ -9,21 +9,38 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aichat"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 )
 
-// aiUpstream stands in for the three AI providers and for the GitHub API,
-// and records every request with the credential it carried.
+// aiUpstream stands in for the three AI providers, Supabase Auth and the
+// GitHub API, and records every request with the credential it carried.
 type aiUpstream struct {
 	mu   sync.Mutex
-	seen []string // "METHOD path|Authorization|x-api-key"
+	seen []string // "METHOD path|Authorization|x-api-key", plus "|apikey" when one was sent
 }
 
 func (u *aiUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	call := r.Method + " " + r.URL.Path + "|" + r.Header.Get("Authorization") + "|" + r.Header.Get("X-Api-Key")
+	if key := r.Header.Get("apikey"); key != "" {
+		call += "|" + key
+	}
 	u.mu.Lock()
-	u.seen = append(u.seen, r.Method+" "+r.URL.Path+"|"+r.Header.Get("Authorization")+"|"+r.Header.Get("X-Api-Key"))
+	u.seen = append(u.seen, call)
 	u.mu.Unlock()
 	w.Header().Set("Content-Type", "application/json")
 	switch r.URL.Path {
+	case "/auth/v1/user":
+		users := map[string]string{"Bearer session-a": "user-a", "Bearer session-b": "user-b"}
+		if id, known := users[r.Header.Get("Authorization")]; known && r.Header.Get("apikey") == "public-key" {
+			io.WriteString(w, `{"id":"`+id+`"}`)
+			return
+		}
+		w.WriteHeader(401)
+		io.WriteString(w, `{}`)
 	case "/models":
 		io.WriteString(w, `{"choices":[{"message":{"content":"[\"one\",\"two\",\"three\"]"}}]}`)
 	case "/openai":
@@ -175,19 +192,112 @@ func TestAIRoutesSitBesideTheGitHubCheck(t *testing.T) {
 
 func TestAIRoutesAcceptOnlyPost(t *testing.T) {
 	handler, upstream := aiServer(t, map[string]string{"GITHUB_TOKEN": "models-token", "OPENAI_API_KEY": "openai-key"})
-	for _, path := range []string{"/api/ai/suggestions", "/api/ai/enhance-query"} {
+	for _, path := range []string{"/api/ai/suggestions", "/api/ai/enhance-query", "/api/ai/chat"} {
 		rec := httptest.NewRecorder()
-		handler.ServeHTTP(rec, httptest.NewRequest("GET", path, nil))
+		req := httptest.NewRequest("GET", path, nil)
+		req.Header.Set("Authorization", "Bearer session-a")
+		handler.ServeHTTP(rec, req)
 		if rec.Code != 405 {
 			t.Errorf("GET %s: %d, want 405", path, rec.Code)
 		}
 	}
-	rec := httptest.NewRecorder()
-	handler.ServeHTTP(rec, httptest.NewRequest("POST", "/api/ai/chat", strings.NewReader(`{}`)))
-	if rec.Code != 404 {
-		t.Errorf("POST /api/ai/chat, which is not ported: %d, want 404", rec.Code)
+	if got := upstream.take(); len(got) != 0 {
+		t.Errorf("a refused request reached a provider or Supabase: %q", got)
+	}
+}
+
+const chatBody = `{"messages":[{"role":"user","content":"hi"}]}`
+
+// Chat asks Supabase who is calling, with the caller's session and the
+// public key, and then GitHub Models, with the models token. Neither
+// credential reaches the other service, and a caller's GitHub token goes
+// nowhere.
+func TestChatCredentialsGoOnlyToTheirOwnService(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"GITHUB_TOKEN": "models-token"})
+	rec := postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-a", "X-GitHub-Token": "gh-user"})
+	if rec.Code != 200 || !strings.Contains(rec.Body.String(), `"response"`) {
+		t.Fatalf("signed in: %d %s", rec.Code, rec.Body)
+	}
+	want := []string{"GET /auth/v1/user|Bearer session-a||public-key", "POST /models|Bearer models-token|"}
+	if got := upstream.take(); strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("chat reached\n%q\nwant\n%q", got, want)
+	}
+	if rec.Header().Get("X-Sefgh-Backend") != "go" || rec.Header().Get("Cache-Control") != "" {
+		t.Errorf("headers: %v", rec.Header())
+	}
+}
+
+// Without a session nothing is called at all. A session Supabase refuses
+// costs one question to Supabase and no provider call.
+func TestChatNeedsASignedInUser(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"GITHUB_TOKEN": "models-token"})
+	if rec := postJSON(handler, "/api/ai/chat", chatBody, nil); rec.Code != 401 || !strings.Contains(rec.Body.String(), "Sign in to use chat") {
+		t.Errorf("no session: %d %s", rec.Code, rec.Body)
 	}
 	if got := upstream.take(); len(got) != 0 {
-		t.Errorf("a refused request reached a provider: %q", got)
+		t.Errorf("no session, yet %q", got)
+	}
+	if rec := postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer expired"}); rec.Code != 401 {
+		t.Errorf("refused session: %d %s", rec.Code, rec.Body)
+	}
+	if got := upstream.take(); len(got) != 1 || !strings.HasPrefix(got[0], "GET /auth/v1/user|") {
+		t.Errorf("refused session reached %q", got)
+	}
+	// Without the Supabase settings nobody can be verified: an outage.
+	t.Setenv("NEXT_PUBLIC_SUPABASE_URL", "")
+	unconfigured := newHandler(slog.New(slog.NewTextHandler(io.Discard, nil)))
+	if rec := postJSON(unconfigured, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-a"}); rec.Code != 503 {
+		t.Errorf("no Supabase settings: %d %s", rec.Code, rec.Body)
+	}
+	if got := upstream.take(); len(got) != 0 {
+		t.Errorf("no Supabase settings, yet %q", got)
+	}
+}
+
+// The two counters are different objects. Chat counts by user id and the
+// helpers by address, so sharing one would look the same in every request
+// above, but the two would then share one memory of 10,000 callers, and
+// heavy search traffic could make it forget a chat user's count.
+func TestChatHasItsOwnCounter(t *testing.T) {
+	mux := aiMux(slog.New(slog.NewTextHandler(io.Discard, nil)), githubaccess.Verifier{})
+	handler := func(path string) http.Handler {
+		h, _ := mux.Handler(httptest.NewRequest("POST", path, nil))
+		return h
+	}
+	chat, isChat := handler("/api/ai/chat").(*aichat.Handler)
+	suggestions, isSuggestions := handler("/api/ai/suggestions").(*aisuggestions.Handler)
+	enhance, isEnhance := handler("/api/ai/enhance-query").(*aienhance.Handler)
+	if !isChat || !isSuggestions || !isEnhance {
+		t.Fatal("an AI route is not served by its package's handler")
+	}
+	if chat.Limiter == nil || chat.Limiter == suggestions.Limiter || suggestions.Limiter != enhance.Limiter {
+		t.Error("chat must have a counter of its own, and the two helpers must share theirs")
+	}
+}
+
+// Each user has 30 chat requests. Chat's allowance and the search helpers'
+// are separate: using up one leaves the other whole.
+func TestChatAllowanceIsPerUserAndSeparate(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"GITHUB_TOKEN": "models-token"})
+	address := map[string]string{"X-Forwarded-For": "203.0.113.9"}
+	for i := 0; i < 30; i++ {
+		postJSON(handler, "/api/ai/suggestions", `{"query":"obscure thing"}`, address)
+	}
+	userA := map[string]string{"Authorization": "Bearer session-a", "X-Forwarded-For": "203.0.113.9"}
+	for i := 0; i < 30; i++ {
+		if rec := postJSON(handler, "/api/ai/chat", chatBody, userA); rec.Code != 200 {
+			t.Fatalf("chat request %d after the search allowance was used: %d", i+1, rec.Code)
+		}
+	}
+	upstream.take()
+	if rec := postJSON(handler, "/api/ai/chat", chatBody, userA); rec.Code != 429 || rec.Header().Get("Retry-After") != "300" {
+		t.Errorf("chat request 31: %d, Retry-After %q", rec.Code, rec.Header().Get("Retry-After"))
+	}
+	if got := upstream.take(); len(got) != 1 {
+		t.Errorf("past the allowance, after asking Supabase: %q", got)
+	}
+	// Another user from the same address still has a whole allowance.
+	if rec := postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-b", "X-Forwarded-For": "203.0.113.9"}); rec.Code != 200 {
+		t.Errorf("another user: %d", rec.Code)
 	}
 }

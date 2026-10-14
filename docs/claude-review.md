@@ -1,5 +1,15 @@
 # Claude Code review and reconciliation
 
+## Note from AI-002c: one finding in the access check, 2026-10-14
+
+Not a review. While porting chat, Claude Code reused the bearer pattern in `backend/internal/githubaccess/access.go` and compared it with the JavaScript one.
+
+| Severity | Finding | Outcome |
+|---|---|---|
+| Low | Go's pattern began with `(?i)`. Go applies that flag with Unicode's rules to every letter, so the token class `[A-Za-z]` also matched the long s (U+017F) and the Kelvin sign (U+212A). JavaScript's `/i` does not. Go then asked Supabase about a session Next.js refuses on sight. Both answered 401, so no caller got in; only the identity call differed. REVIEW-006's breaks did not include this | Fixed for `Resolve` and the new `SignedInUser` together: the pattern spells `[Bb][Ee][Aa][Rr][Ee][Rr]` and keeps the token ASCII. Tests in `review_test.go` and `session_test.go` pin both letters; with the old pattern restored, both fail |
+
+The shared access fixtures cannot carry this case: a header with those letters is not a valid `Headers` value in Node, and Next.js receives such bytes decoded as Latin-1, which its pattern refuses anyway.
+
 ## REVIEW-006: Claude Code review of AUTH-001 and AUTH-002, 2026-10-13
 
 Scope: Codex's access boundary, base `9480ef9`. AUTH-001: `src/lib/github/access.js`, `backend/internal/githubaccess`, the server wiring in `backend/cmd/api`, and the token handling in `backend/internal/githubrepos`. AUTH-002: `src/lib/repo/repoData.js` and `src/app/api/repo/starred/route.js`. Method: read the code, then change it on purpose and see whether the tests notice. This is the independent review those two tasks were waiting for. It does not cover CI-001, VERIFY-002 or VERIFY-003, and it used no live Supabase or GitHub.

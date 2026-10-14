@@ -52,6 +52,11 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	if total := githubaccess.DefaultTimeout + githubrepos.DetailTimeout; total >= writeTimeout {
 		t.Errorf("identity check plus detail route can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
+	// Chat asks Supabase first, then makes one provider call: a chat reply
+	// or a title, never both.
+	if total := githubaccess.DefaultTimeout + aiprovider.Timeout; total >= writeTimeout {
+		t.Errorf("sign-in check plus a chat call can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
 }
 
 func TestListenAddr(t *testing.T) {

@@ -10,6 +10,7 @@ import {
   updateConversationTitle,
 } from "@/lib/supabase/conversations";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
+import { postChat } from "@/lib/ai/chat-request";
 
 export function useChatMessages(
   user,
@@ -65,13 +66,9 @@ export function useChatMessages(
       // Generate title for first message
       if (isFirstMessage) {
         try {
-          const titleResponse = await fetch("/api/ai/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              messages: [{ role: "user", content: userMessageContent }],
-              action: "generate_title",
-            }),
+          const titleResponse = await postChat({
+            messages: [{ role: "user", content: userMessageContent }],
+            action: "generate_title",
           });
 
           if (titleResponse.ok) {
@@ -95,11 +92,7 @@ export function useChatMessages(
         content: m.content,
       }));
 
-      const aiResponse = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: chatHistory }),
-      });
+      const aiResponse = await postChat({ messages: chatHistory });
 
       if (!aiResponse.ok) {
         throw new Error("Failed to get AI response");
@@ -184,11 +177,7 @@ export function useChatMessages(
             content: m.content,
           }));
 
-          const aiResponse = await fetch("/api/ai/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages: chatHistory }),
-          });
+          const aiResponse = await postChat({ messages: chatHistory });
 
           if (!aiResponse.ok) {
             throw new Error("Failed to get AI response");
@@ -237,11 +226,7 @@ export function useChatMessages(
         content: m.content,
       }));
 
-      const aiResponse = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: chatHistory }),
-      });
+      const aiResponse = await postChat({ messages: chatHistory });
 
       if (!aiResponse.ok) {
         throw new Error("Failed to regenerate response");

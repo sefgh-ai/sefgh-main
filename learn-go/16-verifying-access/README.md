@@ -33,14 +33,16 @@ stop. It is important not to confuse those outcomes.
 ```go
 const DefaultTimeout = 4 * time.Second
 
-timeout := v.Timeout
-if timeout == 0 {
-	timeout = DefaultTimeout
+func (v Verifier) deadline(r *http.Request) (context.Context, context.CancelFunc) {
+	timeout := v.Timeout
+	if timeout == 0 {
+		timeout = DefaultTimeout
+	}
+	return context.WithTimeout(r.Context(), timeout)
 }
-ctx, cancel := context.WithTimeout(r.Context(), timeout)
-defer cancel()
 ```
 
+`Resolve` starts with `ctx, cancel := v.deadline(r)` and then `defer cancel()`.
 Both identity calls share this deadline. `NewRequestWithContext` passes it to
 the HTTP client. `defer cancel()` releases the timer when verification ends.
 Cancellation also propagates from a caller who disconnects.
@@ -137,3 +139,18 @@ GitHub token, matching its Next.js handler; this is not private search.
 
 GO-007b adds public-only `/api/github/trending-developers`, ignoring caller
 credentials and forwarding no token. Lesson 18 explains its bounded workers.
+
+## The Supabase half on its own (AI-002c)
+
+Chat needs to know who is calling but needs no GitHub token. `SignedInUser`
+in `session.go` asks Supabase only, and shares three small pieces with
+`Resolve`: `sessionToken` reads the bearer, `deadline` is the function above,
+and `askSupabase` makes the call. Its rules differ in one way: an anonymous
+account is 401 here, where `Resolve` answers 403, because the chat contract
+says so. Lesson 20 shows how the chat handler is given it.
+
+The bearer pattern used to start with `(?i)`, Go's "ignore case". Go applies
+that to every letter in the pattern, using Unicode's rules, so `[A-Za-z]`
+also matched the long s (U+017F) and the Kelvin sign (U+212A). JavaScript's
+`/i` does not. The pattern now spells the word out, `[Bb][Ee][Aa][Rr][Ee][Rr]`,
+and leaves the token's letters as plain ASCII.

@@ -274,3 +274,18 @@ and answers 404 from Go. New packages: `backend/internal/ailimit`,
 `JSON.parse`. The Go server reads `GITHUB_TOKEN` (GitHub Models only),
 `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`. No browser, database or deployment
 boundary changed.
+
+## AI-002c update (2026-10-14)
+
+Eleven Go routes exist: the eight GitHub reads and all three AI routes. All
+remain opt-in; `ai/chat` is `ai-chat`. New package `backend/internal/aichat`;
+`githubaccess.Verifier.SignedInUser` asks Supabase Auth who a bearer belongs
+to; `jscompat.UTF16` holds text as JavaScript does.
+
+One browser boundary changed: `src/hooks/chat/useChatMessages.js` now calls
+chat through `src/lib/ai/chat-request.js`, which reads the Supabase session
+in the browser and sends its access token as `Authorization: Bearer`, to the
+same-origin `/api/ai/chat` only. It is the first browser code to send a
+Supabase token to this application's own API. Next.js already accepted it,
+and still falls back to its cookie when none is sent. Conversations are
+still stored by the browser Supabase client; no database boundary changed.

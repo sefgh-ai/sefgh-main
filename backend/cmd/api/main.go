@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aichat"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
@@ -90,7 +91,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	// The AI routes have their own rules about who may call them, so they sit
 	// beside the GitHub access check, not behind it.
 	top := http.NewServeMux()
-	top.Handle("/api/ai/", aiMux(logger))
+	top.Handle("/api/ai/", aiMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -98,8 +99,9 @@ func newHandler(logger *slog.Logger) http.Handler {
 // aiMux serves the AI routes. GITHUB_TOKEN is the credential for GitHub
 // Models here, exactly as it is in src/lib/ai/github.js. It is sent to the
 // models endpoint and never to a GitHub API route: githubMux above still gets
-// no token for callers without credentials.
-func aiMux(logger *slog.Logger) *http.ServeMux {
+// no token for callers without credentials. verifier is used only for its
+// Supabase half, to say who is calling chat.
+func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 	mux := http.NewServeMux()
 	models := &aiprovider.Client{
 		HTTP:     &http.Client{Timeout: aiprovider.Timeout},
@@ -123,6 +125,14 @@ func aiMux(logger *slog.Logger) *http.ServeMux {
 		AnthropicURL: envOr("SEFGH_ANTHROPIC_URL", aienhance.DefaultAnthropicURL),
 		Limiter:      searchAllowance,
 		Logger:       logger,
+	})
+	// Chat is for signed-in users only: a Supabase bearer verified online,
+	// and an allowance per user that is separate from the search helpers'.
+	mux.Handle("POST /api/ai/chat", &aichat.Handler{
+		SignIn:  verifier.SignedInUser,
+		Models:  models,
+		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
+		Logger:  logger,
 	})
 	return mux
 }

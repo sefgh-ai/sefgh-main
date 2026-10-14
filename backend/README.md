@@ -18,6 +18,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `POST /api/ai/suggestions` | `internal/aisuggestions` | `../contracts/ai-suggestions/` |
 | `POST /api/ai/enhance-query` | `internal/aienhance` | `../contracts/ai-enhance-query/` |
+| `POST /api/ai/chat` | `internal/aichat` | `../contracts/ai-chat/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -38,7 +39,7 @@ go run ./cmd/api
 | `GITHUB_TOKEN` | none | The credential for GitHub Models, used by the AI routes only, as in `src/lib/ai/github.js`. It is never sent to a GitHub API route: those get no token for callers without credentials, and a test fails if that changes |
 | `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | none | Keys for enhance-query. OpenAI is used when its key is set, otherwise Anthropic, otherwise the built-in word lists and no provider |
 | `SEFGH_AI_MODELS_URL`, `SEFGH_OPENAI_URL`, `SEFGH_ANTHROPIC_URL` | the providers' real addresses | For pointing the three AI providers at a stub in tests and in the forwarding probe |
-| `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification |
+| `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification, for private GitHub reads and for chat. Without it chat answers 503 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
 
@@ -183,4 +184,29 @@ provider's words.
 `internal/aiprovider/prompt.go`, `internal/aienhance/prompts.go` and
 `internal/aisuggestions/terms.go` are generated from the contracts and from
 the Next.js source, so their text is not a retyped copy. The contract cases
-compare every provider request in full and fail if either side drifts.
+compare every provider request in full and fail if either side drifts. The
+three files' headers refer to a generator script, but none is in the
+repository (checked in AI-002c). To change a prompt, change the Next.js
+source and re-record the contract, then the Go constant; the contract tests
+confirm the three agree.
+
+## AI chat (AI-002c)
+
+Opt-in name: `ai-chat`, off by default. Signed-in users only: the request
+must carry `Authorization: Bearer <Supabase access token>`, which
+`githubaccess.Verifier.SignedInUser` checks online with Supabase Auth. Go
+does not read the Next.js session cookie, so the browser sends the bearer
+(`../src/lib/ai/chat-request.js`); enable this route only with a frontend
+that does. An anonymous Supabase account is refused.
+
+Each user may make 30 requests in five minutes, title requests included, in
+an allowance separate from the search helpers'. The count is per process, as
+for the helpers. At most the 20 most recent messages and 8,000 characters
+are forwarded; older messages are dropped, not refused.
+
+A request body may be up to 4 MiB, because the browser sends the whole
+conversation every time. The sign-in check (4 seconds) and one provider call
+(25 seconds) fit inside the 30-second write timeout, and a test in `cmd/api`
+keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
+it, which can leave half an emoji; `jscompat.UTF16` writes that half as
+JavaScript does.

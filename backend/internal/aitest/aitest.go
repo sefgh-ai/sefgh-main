@@ -5,6 +5,7 @@ package aitest
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -44,10 +45,54 @@ func Expand(value any) any {
 // comparison go through it, so numbers and key order cannot differ by form.
 func Decode(raw []byte) (any, error) {
 	var value any
-	if err := json.Unmarshal(raw, &value); err != nil {
+	if err := json.Unmarshal(keepLoneHalves(raw), &value); err != nil {
 		return nil, err
 	}
 	return Expand(value), nil
+}
+
+// keepLoneHalves rewrites each escape of half a surrogate pair that has no
+// partner, such as \ud83d, as the six characters it is written with.
+// json.Unmarshal would turn it into U+FFFD on both sides of a comparison
+// alike, and a reply that wrote U+FFFD where JavaScript writes \ud83d would
+// then pass. An escaped pair, and every other escape, is left as it is.
+func keepLoneHalves(raw []byte) []byte {
+	out := make([]byte, 0, len(raw))
+	inString := false
+	for i := 0; i < len(raw); i++ {
+		c := raw[i]
+		switch {
+		case !inString:
+			inString = c == '"'
+		case c == '"':
+			inString = false
+		case c == '\\' && i+1 < len(raw):
+			if unit, ok := escapedUnit(raw, i); ok && unit >= 0xD800 && unit <= 0xDFFF {
+				if low, ok := escapedUnit(raw, i+6); ok && unit <= 0xDBFF && low >= 0xDC00 && low <= 0xDFFF {
+					out = append(out, raw[i:i+12]...)
+					i += 11
+					continue
+				}
+				out = append(out, '\\')
+			}
+			// The escaped character is copied with its backslash, so an
+			// escaped quotation mark does not end the string.
+			out = append(out, c, raw[i+1])
+			i++
+			continue
+		}
+		out = append(out, c)
+	}
+	return out
+}
+
+// escapedUnit reads the \uXXXX escape at raw[i], if there is one.
+func escapedUnit(raw []byte, i int) (rune, bool) {
+	if i+6 > len(raw) || raw[i] != '\\' || raw[i+1] != 'u' {
+		return 0, false
+	}
+	unit, err := strconv.ParseUint(string(raw[i+2:i+6]), 16, 16)
+	return rune(unit), err == nil
 }
 
 // Plain converts any value to the same plain form by encoding and decoding it.

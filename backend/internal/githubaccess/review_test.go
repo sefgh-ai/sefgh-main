@@ -48,6 +48,10 @@ func TestCredentialsRefusedBeforeAnyCall(t *testing.T) {
 		"token one character too long":   signedRequest("session-a", long),
 		"two Authorization headers":      repeated,
 		"two X-GitHub-Token headers":     repeatedToken,
+		// Go's (?i) would let these stand for s and k; JavaScript's /i does not.
+		// Built from code points so this file stays ASCII.
+		"a long s in the session":      signedRequest("ab"+string(rune(0x017F)), "gh-a"),
+		"a Kelvin sign in the session": signedRequest(string(rune(0x212A))+"ey", "gh-a"),
 	}
 	for name, r := range refused {
 		if token, status := v.Resolve(r); status != 401 || token != "" {

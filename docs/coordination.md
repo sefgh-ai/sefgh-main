@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: AI-002b handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: AI-002c handoff.
 
 ## Start here
 
@@ -11,11 +11,77 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released AI-002b. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Ten of 25 API routes are implemented in Go (40% of routes, not of the whole migration); rewrites off by default. Phase 2 has one route left to port, `ai/chat` (AI-002c); its contract is at version 2 in Next.js. Hosted CI, including the race detector, passed at `9480ef9`; the work since has not been checked there by an agent. No route is cut over and no new deployment evidence exists.
+- **Active writer:** none. Claude Code completed and released AI-002c. Uncommitted at handoff. No deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Hosted CI, including the race detector, passed at `81f1044` (AI-002b); AI-002c has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: AI-002b (Claude Code, 2026-10-14)
+## Latest handoff: AI-002c (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed; `ai-chat` off by default**. The browser change is live Next.js code once synchronized; Next.js already accepted the bearer it now sends, so Next.js behaviour should be unchanged, but that has not been checked in a browser.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 81f1044.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `81f1044`).
+
+Done: `POST /api/ai/chat` is ported to Go against contract version 2 and passes every case, including those marked defect. Eleven of 25 routes now exist in Go; Phase 2 has no route left to port. The browser sends the Supabase access token as a bearer with every chat request, which is what Go requires. Lesson 20.
+
+What was added or changed:
+- backend/internal/githubaccess: session.go `SignedInUser`, the Supabase half of the access check with chat's rules (an anonymous account is 401, the id must be text). access.go shares `sessionToken`, `deadline` and `askSupabase` with it. The bearer pattern now matches "Bearer" in ASCII only (finding below). Tests: session_test.go; review_test.go gains two rows.
+- backend/internal/jscompat: utf16.go `UTF16`, text as UTF-16 units, written as JSON.stringify writes it, so half an emoji survives as `\ud83d`. Expected values checked against Node.
+- backend/internal/aiprovider: `Undefined` for a reply with no `content` field (JavaScript answers `{}` for it, `{"response":null}` for null); title.go `TitleMessages` and `TitleOptions`, checked against the contract's recorded title request.
+- backend/internal/aichat (new): handler.go, messages.go (the checks of src/lib/ai/guard.js), title.go (the cleanup and fallback of src/lib/ai/github.js). contract_test.go runs every case in memory and over a socket, with the real verifier and provider client behind one stand-in transport, as chat-fixture.mjs does. handler_test.go and title_test.go cover what fixtures cannot carry.
+- backend/internal/aitest: `Decode` keeps a lone surrogate escape visible, so a reply with U+FFFD where JavaScript writes `\ud83d` fails. aitest_test.go (new).
+- backend/cmd/api: `aiMux(logger, verifier)` serves chat with its own per-user counter; ai_wiring_test.go gains four chat tests (credentials reach only their own service; no session means no call at all; separate allowances; a counter of its own); main_test.go checks sign-in plus one provider call fits the write timeout.
+- next.config.mjs and scripts/contracts/go-rewrites.test.mjs: switch name `ai-chat`.
+- scripts/contracts/go-forwarding-probe.mjs: six chat scenarios, a /models stand-in, and a per-scenario expected Cache-Control.
+- Browser: src/lib/ai/chat-request.js (new) `postChat`; src/hooks/chat/useChatMessages.js uses it for all four chat calls. scripts/contracts/ai-chat-browser.test.mjs (new, 3 tests); ai-chat-loader.mjs also replaces the browser Supabase client.
+- Fixtures, additive, recorded from the unchanged Next.js handler: contracts/ai-chat 78 -> 84 cases, 3 -> 7 defect. No version change; existing bytes unchanged (414 insertions, 0 deletions at recording).
+- learn-go/20-text-as-javascript-counts-it (new); learn-go/README.md; lessons 06 and 16 updated for the changed code. No existing exercise.go changed.
+- docs/{coordination.md,adr/0002-go-backend.md,backend-map.md,claude-review.md}, backend/README.md, contracts/ai-chat/README.md.
+
+Things a reviewer should know:
+- Finding in reviewed code: Go's bearer pattern began with `(?i)`, which in Go also lets the long s and the Kelvin sign match `s` and `k`. Go asked Supabase about sessions Next.js refuses on sight; both answered 401. Fixed for `Resolve` and `SignedInUser`; recorded in claude-review.md.
+- The fallback title can cut an emoji in half, as JavaScript does. Recorded as a defect fixture and reproduced, not fixed. It may matter: a lone surrogate might not survive being saved as the conversation title in Postgres. That was not checked; it is a candidate defect fix for the owner.
+- Chat's body limit is 4 MiB, not the 1 MiB of the search helpers, because the browser sends the whole conversation every time. Recorded in the ADR.
+- Four rows added to the ADR's recorded differences: lone surrogate escapes in a request read as U+FFFD (all AI routes); OPTIONS answered 405 where Next.js answers 204 (all AI routes, already true of the helpers); bearer only for chat; the 4 MiB limit.
+- The three "generated" Go files name a generator that is not in the repository. backend/README.md now says so and how to change a prompt.
+- The editing tool turned `\u` escapes in two Go test files into raw characters; they are rebuilt from code points. Every new or changed Go file is ASCII.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` passes 15 tested packages; `go build -o bin/api.exe ./cmd/api` ok.
+- learn-go: gofmt -l empty; go vet clean with and without the solution tag; `go test -count=1 -tags solution ./...` passes 21 packages; lesson 20 as shipped fails its test without panicking.
+- `npm run test:contracts`: 705 of 705.
+- ESLint on next.config.mjs, scripts/contracts, src/lib/ai, src/hooks/chat/useChatMessages.js, src/lib/supabase/verify-bearer.js: clean. `git diff --check`: exit 0; new files have no trailing white space or CRLF.
+- Production forwarding probe on the rebuilt binary: production build compiled; 69 of 69 identical, exit 0. The six chat cases answered 200, 200, 400, 500, 401, 401 through Next.js and directly; Supabase was asked once where a bearer was sent, the provider only for the two signed-in successes.
+- Deliberate breaks of the new and changed Go, in a scratch copy: 59. First round: 54 noticed, 1 did not compile (my break), 4 not noticed. Of those four, one was a faulty break of mine (it did not log the messages), and three were real gaps: the 4 MiB limit's value (the test measured against the constant itself), the byte-order mark on a request body, and chat sharing the helpers' counter. Three tests were added; all 59 are now noticed.
+- Deliberate breaks of src/lib/ai/chat-request.js, in memory: 8 of 8 noticed.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: a real Supabase project, AI provider or key; chat in a browser, signed in or out; `go test -race` (no C compiler here; it runs in hosted CI after synchronization); Vercel.
+
+Remaining gates: independent review of AI-002a, AI-002b and AI-002c; a hosted CI run for this batch; a browser check of chat signed in, signed out and after a token refresh; live-provider checks; a decision on a shared counter before any allowance is relied on across instances; hosting, Vercel forwarding, measurements, rollback.
+Next bounded action: QUOTA-001, the public-only server token for anonymous GitHub reads, approved by the owner. The owner has to create that token before it can be used live. Independent reviews of the AI batches can run alongside it.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: AI-002c (Claude Code, 2026-10-14)
+
+Earlier status: active. Owner: Claude Code. Reviewer: unassigned.
+Branch main; base and HEAD 81f1044 (the Git Agent committed AI-002b). Tree clean at start; previous writer released.
+Recorded on arrival: `node scripts/agent-handoff.mjs --status --ci` reported run 38451803995 on 81f1044 as completed, success. That run includes `go test -race`, so AI-002b's counter has now passed the race detector in hosted CI. Read through the script; logs not opened.
+Objective: the Go port of `POST /api/ai/chat` against contract version 2, off by default, and the browser sending the Supabase bearer that Go requires.
+Plan:
+1. githubaccess: `SignedInUser`, the Supabase half of the access check, answering as src/lib/supabase/verify-bearer.js does.
+2. jscompat: text held as UTF-16 units and written as JSON.stringify writes it, because the fallback title can cut an emoji in two.
+3. aiprovider: the title request; a reply with no `content` field kept distinct from `null` (JavaScript answers `{}` for the first).
+4. backend/internal/aichat with contract tests in memory and over a socket, using the real verifier and provider client behind a stub transport.
+5. Additive fixtures recorded from the unchanged Next.js handler for anything the port shows is unpinned.
+6. Server wiring with its own per-user allowance, wiring and time-budget tests, switch name `ai-chat`, rewrite test, chat cases in the forwarding probe.
+7. Browser: chat requests carry `Authorization: Bearer <access token>`; Next.js accepts it today, so behaviour is unchanged there.
+8. Lesson 20. 9. Deliberate breaks. 10. Docs, full checks, production probe, handoff.
+Milestone 1 (steps 1-3 written and passing their package tests): githubaccess/session.go `SignedInUser` with session_test.go, whose 21 reply cases and header cases were produced by running the real verify-bearer.js; access.go now shares `sessionToken`, `deadline` and `askSupabase` with it, and its bearer pattern matches "Bearer" in ASCII only, because Go's (?i) let a long s or Kelvin sign through where JavaScript does not (an identity call Next.js never makes; same 401). jscompat/utf16.go `UTF16` writes JSON as JSON.stringify does, values checked against Node. aitest.Decode keeps a lone surrogate escape visible instead of turning it into U+FFFD on both sides. aiprovider returns `Undefined` for a missing content field and has title.go (`TitleMessages`, `TitleOptions`), checked against the contract's recorded title request. Not yet started: aichat, fixtures, wiring, browser, lesson. If interrupted: `go test -count=1 ./...` in backend is expected to pass as the tree stands.
+Milestone 2 (steps 4-7 written and passing): backend/internal/aichat (handler.go, messages.go, title.go; contract_test.go runs every case in memory and over a socket with the real verifier and provider client behind one stand-in transport; handler_test.go, title_test.go with values checked in Node). Fixtures, additive, recorded from the unchanged Next.js handler: ai-chat 78 -> 84 (reply-without-content and reply-message-is-text, defect, answer {}; title-fallback-cuts-a-character-in-two, defect, a lone surrogate escape; title-only-quotation-marks, defect; title-trimmed-as-javascript-trims; dropped-message-is-still-checked). No existing byte changed. cmd/api: `aiMux(logger, verifier)` serves POST /api/ai/chat with its own per-user allowance; ai_wiring_test.go gains three chat tests; main_test.go checks sign-in plus one provider call fits the write timeout. next.config.mjs `ai-chat`; rewrite test; probe has six chat scenarios and a /models stand-in. Browser: src/lib/ai/chat-request.js `postChat` sends `Authorization: Bearer <access token>`; useChatMessages.js uses it for all four calls; scripts/contracts/ai-chat-browser.test.mjs (3 tests) with ai-chat-loader.mjs replacing the browser client. Checks so far: backend package tests for githubaccess, jscompat, aitest, aiprovider, aisuggestions, aienhance, aichat, cmd/api pass; gofmt and vet clean; node chat + browser + rewrite tests 93 of 93; ESLint clean on changed JS. Not yet run: full suites, production probe. Still to do: lesson 20, deliberate breaks, docs, full checks, handoff.
+Milestone 3: lesson 20 (learn-go/20-text-as-javascript-counts-it) written; as shipped it fails its test without panicking, and `go test -count=1 -tags solution ./...` passes 21 lesson packages; lessons 06 and 16 and the lesson index updated. Docs updated: contracts/ai-chat/README.md, backend/README.md, ADR (three recorded differences, AI-002c note), backend-map.md, claude-review.md (the bearer-pattern finding). Browser breaks in memory: 8 of 8 noticed. Go breaks in a scratch copy: running in the background; of the first 28, one did not compile (my break; rewritten) and one was not noticed (the 4 MiB body limit, because the test measured against the constant itself; the test now pins the value). The editing tool turned `\u` escapes in two Go test files into raw characters; they are rebuilt from code points and every new or changed Go file is ASCII. Still to do: rest of the breaks and a rerun of the misses, full checks, production probe, handoff record.
+Then: the background break run finished, the misses were fixed and rerun, and the full checks and production probe ran; results are in the handoff above. No process is running.
+
+## Handoff: AI-002b (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed; both new routes off by default**.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

@@ -75,6 +75,53 @@ func TestRequestMatchesTheChatContract(t *testing.T) {
 	}
 }
 
+// The same for a title request: its own system message, the first user
+// message between quotation marks, and the title settings.
+func TestTitleRequestMatchesTheChatContract(t *testing.T) {
+	raw, err := os.ReadFile("../../../contracts/ai-chat/cases.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var contract struct {
+		Cases []struct {
+			ID     string `json:"id"`
+			Expect struct {
+				Calls []recordedCall `json:"calls"`
+			} `json:"expect"`
+		} `json:"cases"`
+	}
+	if err = json.Unmarshal(raw, &contract); err != nil {
+		t.Fatal(err)
+	}
+	var want *recordedCall
+	for _, c := range contract.Cases {
+		if c.ID == "title-success" {
+			want = &c.Expect.Calls[0]
+		}
+	}
+	if want == nil {
+		t.Fatal("title-success is missing from the chat contract")
+	}
+	var got recordedCall
+	client := &Client{Token: "fixture-models-token", HTTP: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		got.URL, got.Method, got.Headers = r.URL.String(), r.Method, map[string]string{}
+		for name, values := range r.Header {
+			got.Headers[strings.ToLower(name)] = strings.Join(values, ", ")
+		}
+		body, _ := io.ReadAll(r.Body)
+		if err := json.Unmarshal(body, &got.Body); err != nil {
+			t.Error(err)
+		}
+		return reply(200, `{"choices":[{"message":{"content":"Deploying Next.js to Vercel"}}]}`)
+	})}}
+	if _, err := client.Generate(context.Background(), TitleMessages("How do I deploy Next.js to Vercel?"), TitleOptions); err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(got, *want) {
+		t.Errorf("title request differs from the contract\n got: %+v\nwant: %+v", got, *want)
+	}
+}
+
 func TestPromptsMatchTheContract(t *testing.T) {
 	if !strings.HasPrefix(SystemPrompt, "You are SEFGH AI") || !strings.Contains(SystemPrompt, "```repos-json") {
 		t.Errorf("SystemPrompt does not look like the application's instructions: %.60q", SystemPrompt)
@@ -135,6 +182,9 @@ func TestReplies(t *testing.T) {
 		{"text", 200, `{"choices":[{"message":{"content":"hello"}}]}`, "hello", false},
 		{"first of several choices", 200, `{"choices":[{"message":{"content":"first"}},{"message":{"content":"second"}}]}`, "first", false},
 		{"null content is passed on", 200, `{"choices":[{"message":{"content":null}}]}`, nil, false},
+		{"no content field is undefined, not null", 200, `{"choices":[{"message":{"role":"assistant"}}]}`, Undefined, false},
+		{"a message that is text has no content", 200, `{"choices":[{"message":"hello"}]}`, Undefined, false},
+		{"a message that is a list has no content", 200, `{"choices":[{"message":["hello"]}]}`, Undefined, false},
 		{"object content is passed on", 200, `{"choices":[{"message":{"content":{"a":1}}}]}`, map[string]any{"a": json.Number("1")}, false},
 		{"leading byte-order mark", 200, "\xef\xbb\xbf" + `{"choices":[{"message":{"content":"hello"}}]}`, "hello", false},
 		{"choices as an object with a field 0", 200, `{"choices":{"0":{"message":{"content":"hello"}}}}`, "hello", false},

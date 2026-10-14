@@ -155,3 +155,7 @@ pattern, `mux.Handle("POST /api/ai/suggestions", ...)`, so a GET to the same
 address is answered 405 by the router itself. They sit in their own small
 router beside the GitHub routes, because who may call them is decided by
 different rules. Lesson 19 explains how they count requests.
+
+AI-002c adds `POST /api/ai/chat` to the same small router. Its sign-in check
+is handed over as a method, without calling it: `SignIn:
+verifier.SignedInUser`. Lesson 20 explains that line.

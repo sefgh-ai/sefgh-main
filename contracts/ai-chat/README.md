@@ -1,7 +1,8 @@
 # AI chat contract
 
-**Version 2** (AI-002a, 2026-10-13) is current: 78 cases, 3 marked `defect`,
+**Version 2** (AI-002a, 2026-10-13) is current: 84 cases, 7 marked `defect`,
 plus an integrity check and four tests of the Next.js-only cookie session.
+Next.js and Go (`backend/internal/aichat`, AI-002c) both pass every case.
 Read "Version 2" at the end first. The sections in between describe version 1,
 which recorded the route as it was, with 42 cases, 16 marked `defect`. The caller is
 `src/hooks/chat/useChatMessages.js`. No production source changed.
@@ -153,3 +154,27 @@ Fixture conventions added in version 2, shared by the three AI contracts
 
 The allowance is counted in the server process. Another instance has its own
 count and a restart forgets it. It slows a caller down; it is not a balance.
+
+## Added for the Go port (AI-002c, 2026-10-14)
+
+Six cases, recorded from the unchanged Next.js handler, pin what the port
+showed was not pinned. No version change and no earlier case changed.
+
+| Case | What it pins |
+|---|---|
+| `reply-without-content` (defect) | A provider message with no `content` field answers `{}`: JavaScript reads the field as `undefined`, and JSON leaves an undefined field out. A port must not write `null` |
+| `reply-message-is-text` (defect) | A message that is text, not an object, also has no `content`: `{}`, not a failure |
+| `title-fallback-cuts-a-character-in-two` (defect) | The fallback title is cut at 30 UTF-16 units, which can fall inside an emoji and keep only its first half. JSON carries that half as the escape `\ud83d`. A port must write that escape, not U+FFFD |
+| `title-only-quotation-marks` (defect) | An AI title of only quotation marks becomes empty; the fallback is not used |
+| `title-trimmed-as-javascript-trims` | The title is trimmed as JavaScript trims: a byte-order mark goes, a next-line character (U+0085) stays |
+| `dropped-message-is-still-checked` | Every message is checked before the limits drop any, so an invalid oldest message is still refused |
+
+The browser now sends `Authorization: Bearer <access token>` with every chat
+request (`src/lib/ai/chat-request.js`), so the cookie path above is no longer
+what a signed-in browser uses. `scripts/contracts/ai-chat-browser.test.mjs`
+checks that the header is sent and that the sign-in check accepts it.
+
+The Go runner (`backend/internal/aichat/contract_test.go`) compares replies
+with a decoder that keeps a lone surrogate escape visible
+(`aitest.Decode`), because Go's own JSON decoder would turn `\ud83d` into
+U+FFFD on both sides and hide the difference.

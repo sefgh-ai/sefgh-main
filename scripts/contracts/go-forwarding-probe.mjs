@@ -125,8 +125,9 @@ const scenarios = [
   { path: '/api/github/search?q=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-other' }, status: 403 },
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer wrong-session', 'X-GitHub-Token': 'fixture-user' }, status: 401 },
-  // POST bodies through the rewrite. No AI key is configured for these, and
-  // none of them reaches an AI call, so no provider is involved.
+  // POST bodies through the rewrite. No OpenAI or Anthropic key is set, and
+  // the suggestion cases never reach an AI call. Chat does: its provider is
+  // the stand-in's /models, and its sign-in check the stand-in's Supabase.
   { path: '/api/ai/suggestions', body: '{"query":"rea"}' },
   { path: '/api/ai/suggestions', body: '{"query":"a"}' },
   { path: '/api/ai/suggestions', body: '{broken' },
@@ -135,6 +136,13 @@ const scenarios = [
   { path: '/api/ai/enhance-query', body: '{"query":"  \u65e5\u672c\u8a9e web  "}' },
   { path: '/api/ai/enhance-query', body: '{"query":""}' },
   { path: '/api/ai/enhance-query', body: JSON.stringify({ query: 'k'.repeat(501) }) },
+  // Chat answers per user and sets no Cache-Control, so `cache` is null.
+  { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"hi"}]}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"How do I deploy?"}],"action":"generate_title"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/ai/chat', body: '{"messages":[]}', headers: { Authorization: 'Bearer session-a' }, status: 400, cache: null },
+  { path: '/api/ai/chat', body: '{broken', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
+  { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"hi"}]}', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
+  { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"hi"}]}' },
 ];
 
 try {
@@ -156,6 +164,7 @@ try {
         if (!id) { res.writeHead(401); res.end('{}'); return; }
         res.end(JSON.stringify({ id }));
       }
+      else if (req.url === '/models') res.end(JSON.stringify({ choices: [{ message: { content: 'Hello!' } }] }));
       else if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
       else if (req.url.startsWith("/search/")) res.end(JSON.stringify({ total_count: 0, items: [] }));
       else if (req.url.endsWith("/languages")) res.end('{"Go":42}');
@@ -175,7 +184,7 @@ try {
     // the keys are emptied and every provider address points at the stand-in.
     OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic` });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -202,7 +211,7 @@ try {
 
   let same = 0;
   const different = [];
-  for (const { path, headers, status, body } of scenarios) {
+  for (const { path, headers, status, body, cache = 'private, no-store' } of scenarios) {
     // Via Next first, then direct. On the cached summary route the second
     // request makes no upstream call, so those are compared on the reply
     // only; the reply carries the upstream path in full_name.
@@ -210,7 +219,7 @@ try {
     const direct = await ask(goPort, path, headers, body);
     const cached = !headers && path.startsWith("/api/github/repo?");
     const equal = viaNext.status === direct.status && viaNext.body === direct.body && viaNext.backend === "go" &&
-      (!headers || (viaNext.status === status && viaNext.cache === 'private, no-store')) &&
+      (!headers || (viaNext.status === status && viaNext.cache === cache)) &&
       (cached || JSON.stringify(viaNext.upstream) === JSON.stringify(direct.upstream));
     if (equal) same++;
     else different.push({ path, viaNext, direct });

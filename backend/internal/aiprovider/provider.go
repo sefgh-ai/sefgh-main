@@ -53,9 +53,18 @@ type request struct {
 	MaxTokens   int       `json:"max_tokens"`
 }
 
+// Undefined is what Generate returns when the first choice's message has no
+// content field at all. JavaScript reads that field as undefined, and
+// JSON.stringify leaves an undefined field out, so chat answers {} for it and
+// {"response":null} for a content of null. A nil would lose the difference.
+var Undefined any = undefined{}
+
+type undefined struct{}
+
 // Generate sends a conversation and returns the content of the first choice.
 // The content is returned as it arrived: usually text, but the provider
-// decides, and callers check. A nil error does not mean it is a string.
+// decides, and callers check. A nil error does not mean it is a string, and
+// a missing content field is Undefined, not nil.
 func (c *Client) Generate(ctx context.Context, messages []Message, options Options) (any, error) {
 	if options.Model == "" {
 		options.Model = "gpt-4o"
@@ -128,7 +137,14 @@ func (c *Client) Generate(ctx context.Context, messages []Message, options Optio
 	if message == nil {
 		return nil, errors.New("provider reply has no message")
 	}
-	return Field(message, "content"), nil
+	// A message that is not an object, such as a string, has no fields, so
+	// its content is undefined too, as it is in JavaScript.
+	object, _ := message.(map[string]any)
+	content, present := object["content"]
+	if !present {
+		return Undefined, nil
+	}
+	return content, nil
 }
 
 // Field is value[name] for a decoded JSON value: the field of an object, and

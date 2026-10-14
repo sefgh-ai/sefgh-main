@@ -122,6 +122,10 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | AI routes: a request body is limited to 1 MiB, a provider reply to 4 MiB and a provider call to 25 seconds | The Next.js handlers set none of these. A backend must bound what it reads and how long it waits; 25 seconds stays inside the 30-second write limit |
 | AI routes: a failure is logged with its stage and the provider's status, never the query or the provider's words | Next.js logs the whole error with `console.error`, which can repeat what a user typed |
 | AI routes: lower-casing follows Go except for the dotted capital I, which is written as JavaScript writes it | Only that character could make a query match the built-in ASCII lists differently. The Greek final sigma also differs and cannot |
+| AI routes: half of a surrogate pair written alone as a JSON escape in a request, such as `\ud83d`, is read as U+FFFD; JavaScript keeps it | Go's JSON decoder replaces it, and a decoder of our own is not worth the risk. Lengths agree, one unit either way, and text a person types does not contain one. Only what reaches the provider differs |
+| AI routes: any method but POST gets Go's 405, OPTIONS included; Next.js answers OPTIONS itself with 204 and an Allow header (checked in `next/dist/.../auto-implement-methods.js`) | The browser calls these routes from the same origin, so it never sends a preflight. Recorded in AI-002c; it was already true of the two search helpers |
+| Chat: only a Supabase bearer signs a caller in; Next.js also accepts its own session cookie | Go must not parse Supabase SSR cookies (see Authentication above). The browser sends the bearer since AI-002c |
+| Chat: a request body may be up to 4 MiB, where the search helpers allow 1 MiB | The browser sends the whole conversation every time. 4 MiB stays below the 4.5 MB a Vercel function accepts, which is the limit Next.js meets there |
 
 ## Decisions log
 
@@ -346,3 +350,18 @@ request counter, tested step for step against the JavaScript one),
 routes are served beside the GitHub access check. `GITHUB_TOKEN` is read by
 the Go server again, as the GitHub Models credential only; the test that
 forbids it on GitHub API routes still holds. Lesson 19. Next: AI-002c, chat.
+
+AI-002c (2026-10-14): `ai/chat` is ported to Go against contract version 2,
+off unless `ai-chat` is enabled. Eleven of 25 routes now exist in Go, and
+Phase 2 has no route left to port. The sign-in check is
+`githubaccess.Verifier.SignedInUser`, the Supabase half of the access check
+with chat's rules. The browser now sends the Supabase access token as a
+bearer with every chat request (`src/lib/ai/chat-request.js`); Next.js
+accepted that already, so its behaviour is unchanged. Six fixtures were added
+from the unchanged Next.js handler, four of them `defect`, including a
+fallback title that keeps half of an emoji, which Go reproduces with
+`jscompat.UTF16`. The shared bearer pattern now matches "Bearer" in ASCII
+only, because Go's `(?i)` also let two non-ASCII letters through where
+JavaScript does not. Four rows were added to the recorded differences; one of
+them, OPTIONS answered 405, was already true of the two search helpers.
+Lesson 20. No route is switched on, and every Phase 2 cutover gate remains.

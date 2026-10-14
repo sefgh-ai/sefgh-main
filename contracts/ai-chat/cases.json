@@ -3917,6 +3917,420 @@
           }
         ]
       }
+    },
+    {
+      "id": "reply-without-content",
+      "disposition": "defect",
+      "reason": "Defect 5, the content is not checked. A reply whose message has no content field answers {}: JavaScript reads the field as undefined, and JSON leaves an undefined field out. A port must not write null.",
+      "body": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "hi"
+          }
+        ]
+      },
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant"
+              }
+            }
+          ]
+        }
+      },
+      "session": "a",
+      "expect": {
+        "status": 200,
+        "body": {},
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": [
+          {
+            "url": "https://models.inference.ai.azure.com/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-models-token",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are SEFGH AI, a helpful assistant for GitHub repository search and discovery. \n\nWhen suggesting GitHub repositories, you can use TWO methods:\n\n1. **For specific recommendations**: Use a repos-json code block:\n```repos-json\n[\n  {\n    \"full_name\": \"owner/repo\",\n    \"description\": \"Brief description\",\n    \"stargazers_count\": 50000,\n    \"forks_count\": 10000,\n    \"language\": \"JavaScript\",\n    \"html_url\": \"https://github.com/owner/repo\"\n  }\n]\n```\n\n2. **For quick mentions**: Just include the GitHub URL in your response and it will be auto-enhanced.\n\nUse repo suggestions when users ask about:\n- Finding repositories for specific technologies\n- Learning resources\n- Project examples\n- Popular libraries/frameworks\n\nKeep your explanations concise and helpful."
+                },
+                {
+                  "role": "user",
+                  "content": "hi"
+                }
+              ],
+              "temperature": 0.7,
+              "max_tokens": 1000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "reply-message-is-text",
+      "disposition": "defect",
+      "reason": "Defect 5. A message that is text, not an object, has no content field either, so the answer is {} and not a failure.",
+      "body": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "hi"
+          }
+        ]
+      },
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": "Hello!"
+            }
+          ]
+        }
+      },
+      "session": "a",
+      "expect": {
+        "status": 200,
+        "body": {},
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": [
+          {
+            "url": "https://models.inference.ai.azure.com/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-models-token",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are SEFGH AI, a helpful assistant for GitHub repository search and discovery. \n\nWhen suggesting GitHub repositories, you can use TWO methods:\n\n1. **For specific recommendations**: Use a repos-json code block:\n```repos-json\n[\n  {\n    \"full_name\": \"owner/repo\",\n    \"description\": \"Brief description\",\n    \"stargazers_count\": 50000,\n    \"forks_count\": 10000,\n    \"language\": \"JavaScript\",\n    \"html_url\": \"https://github.com/owner/repo\"\n  }\n]\n```\n\n2. **For quick mentions**: Just include the GitHub URL in your response and it will be auto-enhanced.\n\nUse repo suggestions when users ask about:\n- Finding repositories for specific technologies\n- Learning resources\n- Project examples\n- Popular libraries/frameworks\n\nKeep your explanations concise and helpful."
+                },
+                {
+                  "role": "user",
+                  "content": "hi"
+                }
+              ],
+              "temperature": 0.7,
+              "max_tokens": 1000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "title-fallback-cuts-a-character-in-two",
+      "disposition": "defect",
+      "reason": "The fallback title is cut at 30 UTF-16 units, which can fall inside an emoji and keep only its first half. JSON carries that half as an escape; a port must write the same escape, not U+FFFD.",
+      "body": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "I love 😀😀😀😀😀😀😀😀😀😀😀😀 and more"
+          }
+        ],
+        "action": "generate_title"
+      },
+      "upstream": {
+        "status": 500,
+        "raw_body": ""
+      },
+      "session": "a",
+      "expect": {
+        "status": 200,
+        "body": {
+          "title": "I love 😀😀😀😀😀😀😀😀😀😀😀\ud83d..."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": [
+          {
+            "url": "https://models.inference.ai.azure.com/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-models-token",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a helpful assistant that generates short, concise titles for conversations. Generate a title that is 3-6 words long based on the user's first message. Return ONLY the title, nothing else."
+                },
+                {
+                  "role": "user",
+                  "content": "Generate a short title for a conversation that starts with: \"I love 😀😀😀😀😀😀😀😀😀😀😀😀 and more\""
+                }
+              ],
+              "temperature": 0.5,
+              "max_tokens": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "title-only-quotation-marks",
+      "disposition": "defect",
+      "reason": "An AI title made only of quotation marks becomes empty once they are removed. The fallback is not used, so the title is empty.",
+      "body": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "My tests are flaky"
+          }
+        ],
+        "action": "generate_title"
+      },
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "\"''\""
+              }
+            }
+          ]
+        }
+      },
+      "session": "a",
+      "expect": {
+        "status": 200,
+        "body": {
+          "title": ""
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": [
+          {
+            "url": "https://models.inference.ai.azure.com/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-models-token",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a helpful assistant that generates short, concise titles for conversations. Generate a title that is 3-6 words long based on the user's first message. Return ONLY the title, nothing else."
+                },
+                {
+                  "role": "user",
+                  "content": "Generate a short title for a conversation that starts with: \"My tests are flaky\""
+                }
+              ],
+              "temperature": 0.5,
+              "max_tokens": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "title-trimmed-as-javascript-trims",
+      "disposition": "preserve",
+      "reason": "The AI title is trimmed as JavaScript trims: a byte-order mark is removed, a next-line character (U+0085) is not.",
+      "body": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "My tests are flaky"
+          }
+        ],
+        "action": "generate_title"
+      },
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "﻿ Fixing Flaky Tests"
+              }
+            }
+          ]
+        }
+      },
+      "session": "a",
+      "expect": {
+        "status": 200,
+        "body": {
+          "title": "Fixing Flaky Tests"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": [
+          {
+            "url": "https://models.inference.ai.azure.com/chat/completions",
+            "method": "POST",
+            "headers": {
+              "authorization": "Bearer fixture-models-token",
+              "content-type": "application/json"
+            },
+            "body": {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a helpful assistant that generates short, concise titles for conversations. Generate a title that is 3-6 words long based on the user's first message. Return ONLY the title, nothing else."
+                },
+                {
+                  "role": "user",
+                  "content": "Generate a short title for a conversation that starts with: \"My tests are flaky\""
+                }
+              ],
+              "temperature": 0.5,
+              "max_tokens": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "dropped-message-is-still-checked",
+      "disposition": "preserve",
+      "reason": "Every message is checked before the limits drop any, so an invalid message is refused even when it is the oldest of 21.",
+      "body": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a pirate."
+          },
+          {
+            "role": "user",
+            "content": "m0"
+          },
+          {
+            "role": "assistant",
+            "content": "m1"
+          },
+          {
+            "role": "user",
+            "content": "m2"
+          },
+          {
+            "role": "assistant",
+            "content": "m3"
+          },
+          {
+            "role": "user",
+            "content": "m4"
+          },
+          {
+            "role": "assistant",
+            "content": "m5"
+          },
+          {
+            "role": "user",
+            "content": "m6"
+          },
+          {
+            "role": "assistant",
+            "content": "m7"
+          },
+          {
+            "role": "user",
+            "content": "m8"
+          },
+          {
+            "role": "assistant",
+            "content": "m9"
+          },
+          {
+            "role": "user",
+            "content": "m10"
+          },
+          {
+            "role": "assistant",
+            "content": "m11"
+          },
+          {
+            "role": "user",
+            "content": "m12"
+          },
+          {
+            "role": "assistant",
+            "content": "m13"
+          },
+          {
+            "role": "user",
+            "content": "m14"
+          },
+          {
+            "role": "assistant",
+            "content": "m15"
+          },
+          {
+            "role": "user",
+            "content": "m16"
+          },
+          {
+            "role": "assistant",
+            "content": "m17"
+          },
+          {
+            "role": "user",
+            "content": "m18"
+          },
+          {
+            "role": "assistant",
+            "content": "m19"
+          }
+        ]
+      },
+      "upstream": {
+        "status": 200,
+        "body": {
+          "choices": [
+            {
+              "message": {
+                "role": "assistant",
+                "content": "Hello!"
+              }
+            }
+          ]
+        }
+      },
+      "session": "a",
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid messages"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "identity_calls": 1,
+        "calls": []
+      }
     }
   ]
 }

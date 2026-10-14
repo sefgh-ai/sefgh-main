@@ -69,6 +69,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [17 Clocks and randomness](17-clocks-and-randomness/README.md) | Function injection, local calendar arithmetic, deterministic random fixtures | `backend/internal/githubtrending/handler.go` |
 | [18 Bounded parallel work](18-bounded-parallel-work/README.md) | Goroutines, semaphore channels, WaitGroup and ordered results | `backend/internal/githubdevelopers/handler.go` |
 | [19 Counting requests](19-counting-requests/README.md) | State shared by requests, locks, a clock you can pass in, and reading a POST body | `Limiter` in `backend/internal/ailimit/limit.go` |
+| [20 Text as JavaScript counts it](20-text-as-javascript-counts-it/README.md) | Bytes, runes and UTF-16 units, cutting text where JavaScript cuts it, `MarshalJSON`, methods as values | `fallbackTitle` in `backend/internal/aichat/title.go`, `UTF16` in `backend/internal/jscompat/utf16.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

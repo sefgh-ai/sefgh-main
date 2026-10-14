@@ -23,8 +23,16 @@ const Message = "GitHub authorization failed"
 // timeout.
 const DefaultTimeout = 4 * time.Second
 
-var bearer = regexp.MustCompile(`(?i)^Bearer ([A-Za-z0-9._~+/\-]+=*)$`)
+// bearer matches an Authorization header as the JavaScript checks do with
+// /^Bearer (...)$/i. The word is matched in either case, but only in ASCII:
+// Go's (?i) would also let the long s and the Kelvin sign stand for s and k
+// inside the token, which JavaScript's /i does not.
+var bearer = regexp.MustCompile(`^[Bb][Ee][Aa][Rr][Ee][Rr] ([A-Za-z0-9._~+/\-]+=*)$`)
 var credential = regexp.MustCompile(`^[A-Za-z0-9._~+/\-]+=*$`)
+
+// maxCredential is the longest session or token accepted, in bytes. The
+// patterns above allow only ASCII, so this is also the JavaScript length.
+const maxCredential = 8192
 
 type Verifier struct {
 	SupabaseURL, SupabaseKey, GitHubURL string
@@ -46,20 +54,16 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 	if auth == "" && token == "" {
 		return "", 200
 	}
-	session := bearer.FindStringSubmatch(auth)
-	if len(session) != 2 || !credential.MatchString(token) || len(session[1]) > 8192 || len(token) > 8192 || len(r.Header.Values("Authorization")) != 1 || len(r.Header.Values("X-GitHub-Token")) != 1 {
+	session, ok := sessionToken(r)
+	if !ok || !credential.MatchString(token) || len(token) > maxCredential || len(r.Header.Values("X-GitHub-Token")) != 1 {
 		return "", 401
 	}
 	if v.SupabaseURL == "" || v.SupabaseKey == "" {
 		return "", 503
 	}
-	timeout := v.Timeout
-	if timeout == 0 {
-		timeout = DefaultTimeout
-	}
-	ctx, cancel := context.WithTimeout(r.Context(), timeout)
+	ctx, cancel := v.deadline(r)
 	defer cancel()
-	reply, status := v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session[1], "apikey": v.SupabaseKey})
+	reply, status := v.askSupabase(ctx, session)
 	if status != 200 {
 		return "", status
 	}
@@ -93,6 +97,32 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 		return "", 403
 	}
 	return token, 200
+}
+
+// sessionToken reads the Supabase session from the request's one
+// Authorization header. It answers false for no header, a malformed or
+// over-long one, or more than one.
+func sessionToken(r *http.Request) (string, bool) {
+	match := bearer.FindStringSubmatch(r.Header.Get("Authorization"))
+	if len(match) != 2 || len(match[1]) > maxCredential || len(r.Header.Values("Authorization")) != 1 {
+		return "", false
+	}
+	return match[1], true
+}
+
+// deadline bounds every identity call made for one request together.
+func (v Verifier) deadline(r *http.Request) (context.Context, context.CancelFunc) {
+	timeout := v.Timeout
+	if timeout == 0 {
+		timeout = DefaultTimeout
+	}
+	return context.WithTimeout(r.Context(), timeout)
+}
+
+// askSupabase asks the project's Supabase Auth who a session belongs to. The
+// public key goes with it; no other service ever receives that key.
+func (v Verifier) askSupabase(ctx context.Context, session string) (any, int) {
+	return v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session, "apikey": v.SupabaseKey})
 }
 
 // truthy reports whether JavaScript would treat a decoded JSON value as true.

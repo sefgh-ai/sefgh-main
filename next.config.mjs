@@ -32,6 +32,9 @@ const goBackendRoutes = {
   "github-contents": "/api/github/contents/:owner/:repo",
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
+  // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
+  // The browser sends the bearer (src/lib/ai/chat-request.js).
+  "ai-chat": "/api/ai/chat",
 };
 
 function goBackendRewrites() {
