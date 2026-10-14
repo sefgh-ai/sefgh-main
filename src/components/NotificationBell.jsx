@@ -144,12 +144,12 @@ export function NotificationBell() {
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
 
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
   }, []);
 
   const formatTimestamp = useCallback((timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString("en-IN", {
       month: "short",
       day: "numeric",
       hour: "2-digit",

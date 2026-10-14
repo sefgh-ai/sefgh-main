@@ -7,7 +7,11 @@ node --test scripts/contracts/activity.test.mjs
 npm run test:contracts
 ```
 
-This is the first Phase 3 route to be recorded: it reads user data from the database. It is step 1 of "How a route moves" in `docs/adr/0002-go-backend.md`. There is no Go port yet. Phase 3 waits for the database definitions (the `activity_logs` table and its row-level security), which are not in this repository; a port would send the user's own token to the Supabase Data API so the same security applies.
+This is the first Phase 3 route to be recorded: it reads user data from the database. It is step 1 of "How a route moves" in `docs/adr/0002-go-backend.md`.
+
+**Go port (ACT-002, 2026-10-14):** `backend/internal/activity`, off by default (switch name `activity`). It passes all 12 cases with `go test -count=1 ./...` inside `backend/`, and sends the user's own token to the Supabase Data API, so the same row-level security applies. It is not turned on: Phase 3's gate still waits for the database definitions (the `activity_logs` table and its row-level security), which are not in this repository. Where Go differs outside these cases is listed in `backend/README.md`, "Activity (ACT-002)".
+
+How the Go runner reads a fixture: `user` becomes a bearer that a stand-in Supabase Auth accepts (answering with that user) or refuses; `client_throws` becomes a server without Supabase settings; `rows` and `query_error` are the stand-in Data API's reply (200 with the rows, or 403 with the message). `expect.query`, recorded from supabase-js, is turned into the URL postgrest-js sends for it and compared with the URL Go sent; the runner also checks that the database is asked with the user's own token. `backend/internal/activity/node_test.go` goes further: it runs this handler through `scripts/contracts/activity-run.mjs` on 400 generated inputs and compares every answer with Go's.
 
 ## What is replaced and what is real
 

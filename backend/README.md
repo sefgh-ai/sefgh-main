@@ -19,6 +19,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `POST /api/ai/suggestions` | `internal/aisuggestions` | `../contracts/ai-suggestions/` |
 | `POST /api/ai/enhance-query` | `internal/aienhance` | `../contracts/ai-enhance-query/` |
 | `POST /api/ai/chat` | `internal/aichat` | `../contracts/ai-chat/` |
+| `GET /api/activity` | `internal/activity` | `../contracts/activity/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -183,13 +184,12 @@ log gets the stage and the provider's status, never the query or the
 provider's words.
 
 `internal/aiprovider/prompt.go`, `internal/aienhance/prompts.go` and
-`internal/aisuggestions/terms.go` are generated from the contracts and from
+`internal/aisuggestions/terms.go` are copied from the contracts and from
 the Next.js source, so their text is not a retyped copy. The contract cases
-compare every provider request in full and fail if either side drifts. The
-three files' headers refer to a generator script, but none is in the
-repository (checked in AI-002c). To change a prompt, change the Next.js
-source and re-record the contract, then the Go constant; the contract tests
-confirm the three agree.
+compare every provider request in full and fail if either side drifts. There
+is no generator script; the files' headers used to name one (bug register
+R-047). To change a prompt, change the Next.js source and re-record the
+contract, then the Go constant; the contract tests confirm the three agree.
 
 ## AI chat (AI-002c)
 
@@ -211,6 +211,45 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Activity (ACT-002)
+
+Opt-in name: `activity`, off by default. This is the first route in Go that
+reads the database. It answers the caller's own activity over the last year,
+as the Next.js handler does, the two recorded defects included (bug
+register R-059). Turning it on needs the owner's go-ahead: Phase 3's gate
+in ADR-0002 (the table's definition and its row-level security, checked
+against the live project) still stands.
+
+The caller sends `Authorization: Bearer <Supabase access token>`, which
+`githubaccess.Verifier.User` checks online with Supabase Auth. An anonymous
+account counts as a user, as it does for `supabase.auth.getUser()`. The
+browser sends the bearer through `../src/lib/supabase/session-fetch.js`.
+
+The database is asked as the caller: one `GET /rest/v1/activity_logs` to
+the Supabase Data API with the caller's own token and the project's public
+key, the query supabase-js builds for the Next.js handler. No service key is
+used, so the table's row-level security decides which rows come back, as
+it does now.
+
+Where Go differs, all outside the contract's cases:
+
+- **Cookie.** Next.js reads its session cookie; Go reads the bearer only.
+- **Bounds.** The database call is abandoned after 10 seconds and a reply
+  over 8 MiB is refused, both answered `Failed to fetch activity data`;
+  redirects are not followed. Next.js sets none of these.
+- **Odd rows.** A count that is truthy but not a number, which JavaScript
+  would add as text, is answered 500 `Internal server error`. A Supabase
+  Auth reply whose `id` is not text is refused with 401.
+- **Same as Next.js, on purpose.** Supabase Auth being unreachable is 401
+  `Unauthorized`, as it is for `getUser()` (bug register R-063). Missing
+  Supabase settings are 500 `Internal server error`, the contract's
+  `client-fails` case. supabase-js's reading of odd Data API replies, such
+  as an empty 404 meaning "no rows", is copied (`readResult`).
+
+`internal/activity/node_test.go` also runs the real Next.js handler, through
+`../scripts/contracts/activity-run.mjs`, on 400 generated inputs and compares
+every answer. It needs Node and `npm ci`, as CI has; without them it skips.
 
 ## Public read token (QUOTA-001)
 

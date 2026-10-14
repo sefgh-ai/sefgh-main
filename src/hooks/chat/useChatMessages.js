@@ -63,28 +63,32 @@ export function useChatMessages(
         resultsCount: 1,
       });
 
-      // Generate title for first message
-      if (isFirstMessage) {
-        try {
-          const titleResponse = await postChat({
-            messages: [{ role: "user", content: userMessageContent }],
-            action: "generate_title",
-          });
+      // Name the chat from its first message. The answer is asked for at
+      // the same time, not after the name (bug register R-009); the name
+      // and the messages are different columns of the conversation row.
+      const naming = isFirstMessage
+        ? (async () => {
+            try {
+              const titleResponse = await postChat({
+                messages: [{ role: "user", content: userMessageContent }],
+                action: "generate_title",
+              });
 
-          if (titleResponse.ok) {
-            const { title } = await titleResponse.json();
-            await updateConversationTitle(conv.id, user.id, title);
-            setCurrentConversation((prev) => ({ ...prev, title }));
+              if (titleResponse.ok) {
+                const { title } = await titleResponse.json();
+                await updateConversationTitle(conv.id, user.id, title);
+                setCurrentConversation((prev) => ({ ...prev, title }));
 
-            // Update in conversations list
-            setConversations((prev) =>
-              prev.map((c) => (c.id === conv.id ? { ...c, title } : c))
-            );
-          }
-        } catch (error) {
-          console.error("Error generating title:", error);
-        }
-      }
+                // Update in conversations list
+                setConversations((prev) =>
+                  prev.map((c) => (c.id === conv.id ? { ...c, title } : c))
+                );
+              }
+            } catch (error) {
+              console.error("Error generating title:", error);
+            }
+          })()
+        : null;
 
       // Get AI response
       const chatHistory = [...messages, userMsg].map((m) => ({
@@ -109,7 +113,9 @@ export function useChatMessages(
       setMessages((prev) => [...prev, aiMsg]);
       setIsSending(false);
 
-      // Reload conversations
+      // Reload conversations once the name is saved, so the list does not
+      // bring back the old name.
+      await naming;
       await refreshConversations();
     } catch (error) {
       console.error("Error sending message:", error);

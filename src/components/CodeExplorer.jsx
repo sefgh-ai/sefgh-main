@@ -43,7 +43,7 @@ export function CodeExplorer({ repository, onClose }) {
 
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

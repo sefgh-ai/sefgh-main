@@ -126,6 +126,7 @@ export function useTrendingData(
           id: item.id,
           author: repo.owner?.login || "unknown",
           name: repo.name,
+          url: repo.html_url,
           description: repo.description || "No description available",
           language: repo.language || "Unknown",
           languageColor: getLanguageColor(repo.language),

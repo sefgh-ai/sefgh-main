@@ -58,7 +58,8 @@ test('no app code uses the mock usage generator', () => {
 
 test('the usage card asks /api/activity and the profile does not pin a year', () => {
   const card = readFileSync(join(root, 'src/components/usage-contributions/UsageContributionsCard.jsx'), 'utf8');
-  assert.match(card, /fetch\('\/api\/activity'/);
+  // With the session bearer, which the Go port needs (ACT-002).
+  assert.match(card, /fetchWithSession\('\/api\/activity'/);
   const profile = readFileSync(join(root, 'src/app/profile/page.js'), 'utf8');
   assert.doesNotMatch(profile, /<UsageContributionsCard[^>]*year=/);
 });

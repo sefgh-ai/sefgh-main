@@ -16,7 +16,7 @@ export function formatRelativeTime(timestamp) {
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
 
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
 }
 
 /**
@@ -26,7 +26,7 @@ export function formatRelativeTime(timestamp) {
  * @returns {string} Formatted date string
  */
 export function formatDate(date, options = {}) {
-  return new Date(date).toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString("en-IN", {
     year: "numeric",
     month: "long",
     day: "numeric",

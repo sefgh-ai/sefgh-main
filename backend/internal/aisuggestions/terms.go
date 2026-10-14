@@ -1,5 +1,5 @@
-// Code generated from src/app/api/ai/suggestions/route.js; DO NOT EDIT.
-// TestTermsMatchTheNextHandler fails if the two lists drift.
+// Copied from src/app/api/ai/suggestions/route.js, not retyped. There is no
+// generator script. TestTermsMatchTheNextHandler fails if the two lists drift.
 
 package aisuggestions
 

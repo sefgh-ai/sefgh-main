@@ -9,6 +9,7 @@ import UsageContributionsStats from './UsageContributionsStats'
 import UsageStreaksStats from './UsageStreaksStats'
 import { normalizeUsageDays, groupByWeeks, computeUsageStats, formatNumber, usageDaysFromActivity } from '@/lib/usageStats'
 import { useBrowserValue } from '@/hooks/useBrowser'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 // The view the user picked last time. UsageViewToggle saves it.
 function savedView() {
@@ -41,7 +42,8 @@ export default function UsageContributionsCard({ title, data }) {
   useEffect(() => {
     if (data) return
     const controller = new AbortController()
-    fetch('/api/activity', { signal: controller.signal })
+    // With the Supabase bearer, which the Go port of the route needs (ACT-002).
+    fetchWithSession('/api/activity', { signal: controller.signal })
       .then(async (response) => {
         if (response.status === 401) {
           setFetched({ status: 'signed-out', days: null })

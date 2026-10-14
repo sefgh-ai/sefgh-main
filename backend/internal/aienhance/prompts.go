@@ -1,6 +1,7 @@
-// Code generated from contracts/ai-enhance-query/cases.json; DO NOT EDIT.
-// The contract cases compare every provider request in full, so they fail if
-// this text and the Next.js handler's drift apart.
+// Copied from the provider requests recorded in
+// contracts/ai-enhance-query/cases.json, not retyped. There is no generator
+// script. The contract cases compare every provider request in full, so they
+// fail if this text and the Next.js handler's drift apart.
 
 package aienhance
 

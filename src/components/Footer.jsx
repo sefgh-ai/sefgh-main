@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/CookieBar";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -44,6 +45,8 @@ export default function Footer() {
               )}
             </div>
           ))}
+          <span className="text-muted-foreground/50">•</span>
+          <CookieSettingsButton className="hover:text-foreground transition-colors whitespace-nowrap" />
         </div>
       </div>
     </footer>

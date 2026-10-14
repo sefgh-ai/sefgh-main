@@ -226,7 +226,7 @@ export default function ApiKeysTab({ userId }) {
                           </Button>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Created {new Date(key.created_at).toLocaleDateString()}
+                          Created {new Date(key.created_at).toLocaleDateString("en-IN")}
                         </p>
                       </div>
                       <AlertDialog>

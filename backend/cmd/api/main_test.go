@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/activity"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
@@ -62,6 +63,10 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	// or a title, never both.
 	if total := githubaccess.DefaultTimeout + aiprovider.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in check plus a chat call can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	// Activity asks Supabase who is calling, then the database once.
+	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {
+		t.Errorf("sign-in check plus the activity query can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
 }
 

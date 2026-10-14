@@ -64,7 +64,7 @@ export function TrendingFilters({
         <div className="flex items-center justify-center gap-4 mt-4">
           {lastRefresh && (
             <span className="text-sm text-muted-foreground">
-              Last updated: {new Date(lastRefresh).toLocaleDateString()}
+              Last updated: {new Date(lastRefresh).toLocaleDateString("en-IN")}
             </span>
           )}
           {isDataStale && (

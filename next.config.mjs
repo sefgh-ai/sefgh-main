@@ -35,6 +35,10 @@ const goBackendRoutes = {
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
   // The browser sends the bearer (src/lib/ai/chat-request.js).
   "ai-chat": "/api/ai/chat",
+  // The caller's own activity, read from the database as the caller. Go
+  // accepts a Supabase bearer only; the browser sends one
+  // (src/lib/supabase/session-fetch.js).
+  "activity": "/api/activity",
 };
 
 function goBackendRewrites() {

@@ -45,7 +45,7 @@ export default function UsageHeatmap2D({ weeks, maxCount }) {
             {/* Month label above first week of month */}
             <div className="h-3 text-[10px] text-muted-foreground">
               {weekIndex === 0 || week[0]?.date.getDate() <= 7 
-                ? week[0]?.date.toLocaleDateString('en-US', { month: 'short' })
+                ? week[0]?.date.toLocaleDateString('en-IN', { month: 'short' })
                 : ''
               }
             </div>
@@ -70,7 +70,7 @@ export default function UsageHeatmap2D({ weeks, maxCount }) {
                       zIndex: isHovered ? 10 : 1,
                       border: isHovered ? '1px solid rgba(255,255,255,0.3)' : 'none'
                     }}
-                    title={`${day.count} actions on ${day.date.toLocaleDateString('en-US', { 
+                    title={`${day.count} actions on ${day.date.toLocaleDateString('en-IN', {
                       month: 'short', 
                       day: 'numeric', 
                       year: 'numeric' 
@@ -82,7 +82,7 @@ export default function UsageHeatmap2D({ weeks, maxCount }) {
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-background/90 text-foreground text-xs rounded whitespace-nowrap pointer-events-none z-20 border border-border">
                       <div className="font-semibold">{day.count} actions</div>
                       <div className="text-muted-foreground text-[10px]">
-                        {day.date.toLocaleDateString('en-US', { 
+                        {day.date.toLocaleDateString('en-IN', {
                           month: 'short', 
                           day: 'numeric', 
                           year: 'numeric' 

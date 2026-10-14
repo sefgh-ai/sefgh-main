@@ -5,7 +5,7 @@
  */
 export const formatSubmissionDate = (dateString) => {
   const date = new Date(dateString)
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-IN', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

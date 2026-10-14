@@ -1,5 +1,6 @@
-// Phase 6 guard (BUG-004): Google Analytics loads only after the visitor
-// accepts analytics cookies (bug register R-055, the owner's choice).
+// Phase 6 guard (BUG-004, revised in BUG-006): Google Analytics loads for
+// everyone who has not opted out, the owner's choice of 2026-10-14 (bug
+// register R-055); visitors can opt out and change their answer later (R-062).
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { register } from 'node:module';
@@ -51,13 +52,23 @@ test('visitors who pressed the old "Got it" are not asked again', () => {
   assert.equal(consent.readConsent(), 'accepted');
 });
 
-test('analytics is loaded only through the consent gate', () => {
+test('analytics loads for everyone except those who opt out', () => {
   const layout = read('src/app/layout.js');
   assert.doesNotMatch(layout, /googletagmanager|gtag\(/, 'the layout must not load Google Analytics itself');
   assert.match(layout, /<GoogleAnalytics \/>/);
   const component = read('src/components/GoogleAnalytics.jsx');
-  assert.match(component, /if \(consent !== "accepted"\) return null;/);
+  assert.match(component, /const optedOut = consent === "declined";/);
+  assert.match(component, /if \(consent === "server" \|\| optedOut\) return null;/);
+  // Opting out stops Google Analytics on the current page too.
+  assert.match(component, /window\[`ga-disable-\$\{MEASUREMENT_ID\}`\] = optedOut;/);
   const bar = read('src/components/CookieBar.jsx');
   assert.match(bar, /saveConsent\("declined"\)/);
   assert.match(bar, /saveConsent\("accepted"\)/);
+});
+
+test('both footers let a visitor change the answer', () => {
+  assert.match(read('src/components/CookieBar.jsx'), /onClick=\{\(\) => saveConsent\(""\)\}/);
+  for (const footer of ['src/components/ui/footer-newsletter.jsx', 'src/components/Footer.jsx']) {
+    assert.match(read(footer), /<CookieSettingsButton /, footer);
+  }
 });

@@ -62,3 +62,27 @@ test('the header the browser sends is one the sign-in check accepts', async () =
   assert.deepEqual(await verifySessionBearer(request, { fetch, supabaseURL: 'https://auth.test', supabaseKey: 'k' }), { status: 200, userId: 'user-a' });
   assert.equal(asked, `Bearer ${ACCESS_TOKEN}`);
 });
+
+// fetchWithSession is what postChat and the usage card send with. It keeps
+// the caller's own options, and never sends the session off this site.
+test('fetchWithSession keeps the request and adds only the bearer', async () => {
+  const { fetchWithSession } = await import('../../src/lib/supabase/session-fetch.js');
+  const original = globalThis.fetch;
+  const sent = [];
+  try {
+    globalThis.__chatBrowserSession = signedIn;
+    globalThis.fetch = async (url, init) => { sent.push({ url, ...init }); return Response.json({}); };
+    const signal = new AbortController().signal;
+    await fetchWithSession('/api/activity', { signal });
+    assert.equal(sent[0].url, '/api/activity');
+    assert.equal(sent[0].signal, signal);
+    assert.deepEqual(sent[0].headers, { Authorization: `Bearer ${ACCESS_TOKEN}` });
+    for (const elsewhere of ['https://evil.example/api/activity', '//evil.example/x', '/\\evil.example/x', 'api/activity', undefined]) {
+      await assert.rejects(fetchWithSession(elsewhere), /only to a path on this site/, String(elsewhere));
+    }
+    assert.equal(sent.length, 1, 'nothing was sent to another address');
+  } finally {
+    delete globalThis.__chatBrowserSession;
+    globalThis.fetch = original;
+  }
+});

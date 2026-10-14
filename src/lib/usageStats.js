@@ -227,7 +227,7 @@ export function formatDate(date) {
   if (!date) return ''
   
   const options = { month: 'short', day: 'numeric', year: 'numeric' }
-  return date.toLocaleDateString('en-US', options)
+  return date.toLocaleDateString('en-IN', options)
 }
 
 /**
@@ -242,8 +242,8 @@ export function formatDateRange(startDate, endDate) {
   const startOptions = { month: 'short', day: 'numeric' }
   const endOptions = { month: 'short', day: 'numeric' }
   
-  const start = startDate.toLocaleDateString('en-US', startOptions)
-  const end = endDate.toLocaleDateString('en-US', endOptions)
+  const start = startDate.toLocaleDateString('en-IN', startOptions)
+  const end = endDate.toLocaleDateString('en-IN', endOptions)
   
   return `${start} → ${end}`
 }

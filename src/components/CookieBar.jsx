@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { saveConsent, useConsent } from "@/lib/consent";
 
-// Shown until the visitor chooses (bug register R-055). Google Analytics
-// loads only after "Accept"; see src/components/GoogleAnalytics.jsx. Hidden
-// on the server, while the page hydrates, and when the browser blocks
-// storage, as before.
+// Tells visitors that SEFGH uses analytics cookies and lets them opt out
+// (bug register R-055, the owner's choice of 2026-10-14: analytics for
+// everyone for now). Shown until the visitor answers; "Cookie settings" in
+// the footer shows it again. Hidden on the server, while the page hydrates,
+// and when the browser blocks storage.
 export default function CookieBar() {
   const consent = useConsent();
   if (consent !== "") return null;
@@ -15,21 +16,31 @@ export default function CookieBar() {
     <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-auto">
       <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-background/90 backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 text-sm text-foreground">
-          May we use analytics cookies (Google Analytics) to see how SEFGH is
-          used? The site works the same either way.
+          We use analytics cookies (Google Analytics) to see how SEFGH is used
+          and make it better. You can opt out at any time.
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
             <a href="/cookie-policy">Cookie Policy</a>
           </Button>
           <Button variant="outline" size="sm" onClick={() => saveConsent("declined")}>
-            Decline
+            Opt out
           </Button>
           <Button size="sm" onClick={() => saveConsent("accepted")}>
-            Accept
+            Got it
           </Button>
         </div>
       </div>
     </div>
+  );
+}
+
+// For the footers: shows the bar again so the visitor can change the answer
+// (bug register R-062).
+export function CookieSettingsButton({ className }) {
+  return (
+    <button type="button" onClick={() => saveConsent("")} className={className}>
+      Cookie settings
+    </button>
   );
 }

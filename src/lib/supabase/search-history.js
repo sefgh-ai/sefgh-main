@@ -102,7 +102,7 @@ export async function getSearchHistoryGrouped(userId, options = {}) {
 
   // Group by date
   const grouped = history.reduce((acc, item) => {
-    const date = new Date(item.created_at).toLocaleDateString("en-US", {
+    const date = new Date(item.created_at).toLocaleDateString("en-IN", {
       year: "numeric",
       month: "long",
       day: "numeric",

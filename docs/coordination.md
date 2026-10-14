@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-004 / BUG-005 / ACT-001 handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-006 / ACT-002 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,52 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released BUG-004 / BUG-005 / ACT-001. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 62 entries, 14 fixed (one waits for the owner's token). Phase 3 has its first contract, `GET /api/activity` (ACT-001), and no port. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Claude Code released BUG-006 / ACT-002 on 2026-10-14; see the handoff below.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
+## Latest handoff: BUG-006 / ACT-002 (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed**. BUG-006 changes live Next.js and browser code once synchronized (analytics for everyone, cookie settings, en-IN dates, the Star link, chat, search paging). ACT-002 adds a Go route that is off by default and changes nothing live except that the usage card and chat now send the Supabase bearer through one helper.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base fac5be5. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instructions carried out (2026-10-14, ADR decisions log): fix each bug once (AGENTS.md); Google Analytics for everyone with an opt-out; dates as the agent judged best (en-IN, one locale); cookie settings; the Star button links to GitHub; pace up the migration. Mandatory GitHub sign-in was raised as a question and is **not** implemented: a recommendation was given to the owner in chat, awaiting their answer.
+
+Done:
+- BUG-006 (browser code, which stays in React):
+  - R-055 revised: Google Analytics loads for every visitor who has not opted out. The bar says so, with "Opt out" and "Got it"; opting out sets Google's own `ga-disable` switch at once and GA is not loaded on later pages; Do Not Track still honoured.
+  - R-062: "Cookie settings" in both footers asks again.
+  - R-061: every date call is en-IN, the 20 `en-US` ones and the four locale-free ones.
+  - R-060: Star opens the repository on GitHub; only a `https://github.com/` address is used.
+  - R-009: the first chat message asks for the name and the answer together; the conversation list reloads after both.
+  - R-018: page buttons (the same fault, on the live search page) and "load more" stop at the last page GitHub serves, checked against GitHub: page 34 of 30 answered, page 35 refused.
+  - R-046, R-047: stale contract README lines and the three Go headers that named a generator script that does not exist.
+- ACT-002 (migration, Phase 3 step 2): `backend/internal/activity` ports `GET /api/activity` at contract version 1, defects included, off by default (switch `activity`). It asks the Supabase Data API with the caller's own token and the public key, so row-level security decides as it does now; no service key. `Verifier.User` (anonymous accounts count, as for getUser) hands back the bearer for that call. `jscompat.ToFixed` copies JavaScript's rounding (Go rounds a tie to even). Browser: `src/lib/supabase/session-fetch.js` adds the bearer; chat and the usage card use it. Lesson 22.
+- Found and recorded: R-063 (activity answers 401 when Supabase Auth is unreachable; Go copies it, fix once in Go after cutover), R-064 (a busy year could pass the Data API's row limit, if the table allows several rows a day; needs the schema).
+
+Changed files: AGENTS.md; docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}; next.config.mjs; src/lib/consent.js; src/components/{GoogleAnalytics,CookieBar,Footer}.jsx; src/components/ui/footer-newsletter.jsx; date calls in src/app/history/page.js, src/components/{CodeExplorer,NotificationBell}.jsx, src/components/chat/MessageList.jsx, src/components/notifications/NotificationList.jsx, src/components/playground/{ApiKeysTab,MonitoringTab,UsageTab}.jsx, src/components/search/SearchHistoryDropdown.jsx, src/components/settings/AccountTab.jsx, src/components/trending/TrendingFilters.jsx, src/components/usage-contributions/{UsageHeatmap2D,UsageIsometricChart}.jsx, src/lib/supabase/search-history.js, src/lib/usageStats.js, src/lib/utils/formatters.js, src/lib/utils/profile/profileHelpers.js, src/lib/utils/submissions/submissionHelpers.js; src/components/trending/TrendingRepositoryCard.jsx; src/hooks/trending/useTrendingData.js; src/hooks/chat/useChatMessages.js; src/components/search/SearchResults.jsx; src/hooks/search/useGitHubSearch.js; src/lib/ai/chat-request.js; src/components/usage-contributions/UsageContributionsCard.jsx; contracts/{github-repositories,activity}/README.md; backend/README.md; backend/cmd/api/{main.go,main_test.go}; backend/internal/githubaccess/{session.go,session_test.go}; backend/internal/{aiprovider/prompt.go,aienhance/prompts.go,aisuggestions/terms.go} (headers only); scripts/contracts/{consent,usage-activity,ai-chat-browser,go-rewrites}.test.mjs; scripts/contracts/go-forwarding-probe.mjs; learn-go/{README.md,16-verifying-access/README.md}.
+New files: backend/internal/activity/{handler,grid,rows}.go with {contract,handler,node}_test.go; backend/internal/jscompat/tofixed{,_test}.go; backend/cmd/api/activity_wiring_test.go; learn-go/22-reading-rows-as-the-user/{README.md,lesson.go,exercise.go,solution.go,exercise_test.go}; src/lib/supabase/session-fetch.js; src/lib/github/search-pages.js; src/lib/utils/trending/githubLink.js; scripts/contracts/{date-format,trending-star,chat-first-reply,search-pages,docs-claims}.test.mjs; scripts/contracts/{chat-stub-loader,activity-run}.mjs. No existing exercise.go changed.
+
+Things a reviewer should know:
+- Every new guard was run against the old code, or with the fix broken on purpose, and failed there: dates, Star link, chat (runs the real handleSend), search paging, the docs claims. For ACT-002: Go's own rounding in place of `ToFixed` fails 24 of the 400 generated cases (the 12 contract cases do not notice), and a streak counted from the wrong end fails 8 contract cases.
+- `currentStreak`: the Next.js handler sorts squares with dates and squares without (NaN comparisons); V8's TimSort leaves the padding last, so Go counts back from the last real day. node_test.go compares this, and everything else, with the real handler on 400 generated inputs.
+- `readResult` copies postgrest-js 2.78's reading of Data API replies; all 17 table rows were checked by running postgrest-js itself.
+- The cookie choice still lives under the old key; "accepted" now means "Got it" and "declined" means opted out.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` 17 packages pass, including activity's 12 contract cases and 400 generated comparisons with Node. Not run here: `-race` (needs cgo on this machine); CI runs it.
+- learn-go: `go test -count=1 -tags solution ./...` 23 packages pass; vet clean; gofmt empty. Lesson 22's exercise fails until the owner writes it, as intended.
+- `npm run test:contracts`: 789 of 789. `npm run lint`: 0 errors, 16 warnings (unchanged, all recorded). `git diff --check`: clean; new files have no trailing spaces or CRLF.
+- Production forwarding probe (`--production`): built, 72 of 72 identical, including three activity requests (200 with the bearer, 401 refused, 401 without).
+- Headless Chrome against that production build: first visit shows the bar and requests Google Analytics; "Opt out" stores "declined" and sets `ga-disable`, and a reload requests nothing from Google; "Cookie settings" shows the bar again; "Got it" stores "accepted" and GA loads again. No exceptions.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: signed-in pages in a browser (chat, profile card, Sessions tab); dates on signed-in pages; the activity route against a real Supabase project; Vercel.
+
+Remaining gates: independent review; a hosted CI run for this batch; for turning `activity` on, Phase 3's gate (the `activity_logs` definition and its row-level security, checked against the live project) and hosting; the owner's answer on mandatory GitHub sign-in.
+Next bounded action: with no decision needed, REVIEW-007 (CI-001, VERIFY-002, VERIFY-003). For the migration, the next Phase 3 contract can be recorded now (step 1 needs no database access), and ports can be turned on once hosting is chosen and the Supabase connector (read-only) or a schema-only dump is available.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. Live Next.js changes once synchronized, including the trending reply's new shape (contract version 2) and the cookie bar.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -353,7 +394,7 @@ Status: **review complete with fixes; awaiting an independent look at the fixes;
 Owner: Claude Code. This task is the independent review of Codex's AUTH-001 and AUTH-002. Nobody has reviewed the fixes it made.
 History: stopped at the owner's instruction part-way through and resumed the same day from the checkpoint below. Nothing was committed in between.
 Branch main; base 9480ef9f407571fe333bae48eb824181acfdba5e.
-Resulting commit: uncommitted; the Git Agent synchronizes after the handoff hook.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `fac5be5`).
 
 Verdict: the access design holds; I found no way for a caller to get another user's data or the server's token. The tests did not hold, and that is what this batch fixes. Full record: REVIEW-006 in claude-review.md.
 
@@ -1753,8 +1794,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `BUG-004` | The owner decisions of 2026-10-14: R-049, R-053, R-055; R-058 found on the way | Complete; uncommitted at handoff | Independent review |
 | `BUG-005` | R-020: a real measure in place of the random "stars today", trending contract version 2 in Next.js and Go | Complete; uncommitted at handoff | Independent review |
 | `ACT-001` | `GET /api/activity`: fix R-056 and R-057, then contract fixtures (Phase 3 step 1) | Complete; uncommitted at handoff | Independent review |
-| `ACT-002` | Port `GET /api/activity` to Go with the user's own token | Not started | Database definitions for `activity_logs` (Supabase connector or schema dump from the owner) |
-| `BUG-006` | Register fixes needing no decision: R-009, R-018, R-046, R-047 | Not started; next | Nothing |
+| `ACT-002` | Port `GET /api/activity` to Go with the user's own token | Complete, off by default; uncommitted at handoff | Independent review; Phase 3 gate (definitions of `activity_logs` and its policies) and hosting before it is turned on |
+| `BUG-006` | R-009, R-018, R-046, R-047, and the owner's answers of 2026-10-14: R-055 revised, R-060, R-061, R-062 | Complete; uncommitted at handoff | Independent review |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
@@ -1770,7 +1811,8 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
 - **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.
 - **Anonymous GitHub quota: decided on 2026-10-13, implemented in QUOTA-001 (2026-10-14).** The owner still has to create a classic personal access token with no scopes and set it as `GITHUB_PUBLIC_READ_TOKEN`; a fine-grained token is refused by design. Never paste it into a chat or a shared document.
-- **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options. Asked after BUG-005: R-061 (Indian date format too?), R-062 (where to let visitors change their cookie choice), R-060 (what the trending card's "Star" button should do). R-049, R-053, R-055 and R-020 were answered on 2026-10-14 and are fixed.
+- **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options. R-049, R-053, R-055 and R-020 were answered on 2026-10-14 and are fixed; R-060, R-061, R-062 and a revised R-055 (analytics for everyone, with an opt-out) were answered the same day and fixed in BUG-006.
+- **Mandatory GitHub sign-in (raised by the owner on 2026-10-14, not decided):** Claude Code recommended against making it mandatory for the whole site and gave the reasons in chat; nothing is implemented until the owner answers.
 - **Phase 3 database definitions:** needed before any user-data route moves to Go (first: ACT-002, `GET /api/activity`). The owner can connect the Supabase connector (read-only is enough) or add a schema-only dump (`supabase db dump --schema-only`) to the repository. No service-role key or database password is needed or wanted.
 
 ## State of the owner's machine

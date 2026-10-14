@@ -32,7 +32,7 @@ function groupByDate(notifications) {
     } else if (date > thisWeek) {
       groupKey = "This week";
     } else {
-      groupKey = date.toLocaleDateString("en-US", { 
+      groupKey = date.toLocaleDateString("en-IN", {
         month: "long", 
         year: "numeric" 
       });

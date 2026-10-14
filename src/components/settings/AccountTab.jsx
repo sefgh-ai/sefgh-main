@@ -221,7 +221,7 @@ export default function AccountTab() {
             </p>
             <p className="text-sm font-semibold">
               {user?.created_at
-                ? new Date(user.created_at).toLocaleDateString("en-US", {
+                ? new Date(user.created_at).toLocaleDateString("en-IN", {
                     month: "long",
                     year: "numeric",
                   })

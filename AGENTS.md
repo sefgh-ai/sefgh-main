@@ -44,6 +44,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one.
 - Fix entries in bounded `BUG-0NN` tasks. Fixing recorded bugs is approved. If an entry's Needs column says `owner`, write the options and ask before fixing. Only the owner defers an entry.
 - A fix to contract-pinned behaviour follows "Change a contract" below. Every fix ships with something that would catch the bug again, and updates the entry's status with the task and commit.
+- Fix each bug once (owner, 2026-10-14). Browser code stays in React, so UI bugs are fixed there. A backend bug is fixed in Go, after its route is cut over and the Next.js handler retired. A port first reproduces the Next.js behaviour, defects included, so the two can be compared before cutover; it does not fix them on the way. Do not fix a backend bug in a Next.js handler and then again in Go. The exception is a security, privacy or data-loss bug in live Next.js code, which is fixed where it is live, at once.
 - Phase 7 (retiring old logic) does not start until Phase 6's gate in ADR-0002 is met.
 
 ## Low-capacity checkpoint (owner requirement)

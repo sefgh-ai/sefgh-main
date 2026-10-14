@@ -223,7 +223,7 @@ export default function UsageIsometricChart({ weeks, maxCount }) {
         >
           <div className="font-semibold">{hoveredCube.count} actions</div>
           <div className="text-xs text-muted-foreground">
-            {hoveredCube.date.toLocaleDateString('en-US', {
+            {hoveredCube.date.toLocaleDateString('en-IN', {
               month: 'short',
               day: 'numeric',
               year: 'numeric'

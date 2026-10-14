@@ -1,6 +1,7 @@
 "use client";
 
 import { formatNumber } from "@/lib/utils/formatters";
+import { githubRepoUrl } from "@/lib/utils/trending/githubLink";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -122,10 +123,20 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
                 </div>
               </div>
             )}
-            <Button variant="outline" size="sm">
-              <Star className="w-4 h-4 mr-1" />
-              Star
-            </Button>
+            {/* Starring happens on GitHub (R-060). */}
+            {githubRepoUrl(repo) && (
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href={githubRepoUrl(repo)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Star ${repo.author}/${repo.name} on GitHub`}
+                >
+                  <Star className="w-4 h-4 mr-1" />
+                  Star
+                </a>
+              </Button>
+            )}
           </div>
         </div>
 

@@ -3,13 +3,14 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * The visitor's cookie choice (bug register R-055, the owner's choice of
- * 2026-10-14): Google Analytics loads only after "accepted".
+ * The visitor's cookie choice. Google Analytics loads for everyone unless
+ * the visitor opts out (the owner's choice of 2026-10-14, for growth data;
+ * consent before loading will come later, as the user base grows). The
+ * cookie bar tells visitors and offers the opt-out; "Cookie settings" in the
+ * footer asks again.
  *
- * Values: "accepted", "declined", "" (not answered yet), or "unavailable"
- * when the browser blocks storage, which is treated as no consent. The old
- * single "Got it" button stored "accepted", so visitors who pressed it are
- * not asked again.
+ * Values: "accepted" ("Got it"), "declined" (opted out), "" (not answered
+ * yet), or "unavailable" when the browser blocks storage.
  */
 export const CONSENT_KEY = "sefgh-cookie-consent";
 const CONSENT_EVENT = "sefgh-consent-change";

@@ -1,16 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
 import Script from "next/script";
 import { useConsent } from "@/lib/consent";
 
 const MEASUREMENT_ID = "G-3J37CNB3YE";
 
-// Google Analytics, loaded only once the visitor has accepted analytics
-// cookies in the cookie bar (bug register R-055). It used to load on every
-// page for everyone, before any choice. Do Not Track is still honoured.
+// Google Analytics for every visitor who has not opted out (the owner's
+// choice of 2026-10-14; bug register R-055). It loads once the page is in
+// the browser, never during server rendering. Opting out stops it at once
+// through Google's own switch, and on later pages it is not loaded at all.
+// Do Not Track is still honoured.
 export default function GoogleAnalytics() {
   const consent = useConsent();
-  if (consent !== "accepted") return null;
+  const optedOut = consent === "declined";
+
+  useEffect(() => {
+    window[`ga-disable-${MEASUREMENT_ID}`] = optedOut;
+  }, [optedOut]);
+
+  if (consent === "server" || optedOut) return null;
 
   return (
     <>

@@ -143,6 +143,10 @@ const scenarios = [
   { path: '/api/ai/chat', body: '{broken', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
   { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"hi"}]}', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
   { path: '/api/ai/chat', body: '{"messages":[{"role":"user","content":"hi"}]}' },
+  // Activity reads the database as the caller; it sets no Cache-Control.
+  { path: '/api/activity', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/activity', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
+  { path: '/api/activity' },
 ];
 
 try {
@@ -158,6 +162,13 @@ try {
           res.writeHead(401); res.end('{}'); return;
         }
         res.end(JSON.stringify({ id: 'a', identities: [{ provider: 'github', id: '101' }] }));
+      }
+      // The Data API answers only the caller's own session, with the public key.
+      else if (req.url.startsWith('/rest/v1/activity_logs?')) {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') {
+          res.writeHead(401); res.end('{}'); return;
+        }
+        res.end(JSON.stringify([{ activity_date: new Date().toISOString().slice(0, 10), activity_count: 3 }]));
       }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
@@ -186,7 +197,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

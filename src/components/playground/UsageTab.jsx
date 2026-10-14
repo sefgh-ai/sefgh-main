@@ -83,7 +83,7 @@ export default function UsageTab({ userId }) {
     });
 
     return Object.values(dayMap).map(day => ({
-      date: new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: new Date(day.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
       requests: day.requests,
       success: day.success,
       errors: day.errors,

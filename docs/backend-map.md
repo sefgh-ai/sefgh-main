@@ -323,3 +323,20 @@ replaced `starsToday`, in both backends. Google Analytics now loads from a
 client component, `src/components/GoogleAnalytics.jsx`, only after consent
 stored by `src/lib/consent.js`. The Sessions tab calls Supabase's
 `signOut({ scope: "global" })`; every other sign-out uses `"local"`.
+
+## BUG-006 / ACT-002 update (2026-10-14)
+
+`GET /api/activity` has a Go port, `backend/internal/activity`, off by default
+(switch `activity`). It is the first Go route that reads the database: one
+`GET /rest/v1/activity_logs` to the Supabase Data API, with the caller's own
+access token and the project's public key, so the table's row-level security
+applies as it does to the Next.js handler's cookie-session client. No service
+key exists in either backend. `githubaccess.Verifier.User` verifies the
+bearer and hands it back for that call. The browser's usage card and chat
+both send the bearer through `src/lib/supabase/session-fetch.js`.
+
+Browser-only changes (BUG-006): Google Analytics loads for every visitor who
+has not opted out (`src/lib/consent.js` value "declined"), and both footers
+have "Cookie settings". Dates are formatted en-IN everywhere. Search paging
+stops at the last page GitHub serves (`src/lib/github/search-pages.js`).
+The trending Star button links to GitHub (`src/lib/utils/trending/githubLink.js`).

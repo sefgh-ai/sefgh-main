@@ -1,6 +1,7 @@
-// Code generated from contracts/ai-chat/cases.json; DO NOT EDIT.
-// Regenerate with the script named in backend/README.md when the contract's
-// prompts change. TestPromptsMatchTheContract fails if the two drift.
+// Copied from the prompts recorded in contracts/ai-chat/cases.json, not
+// retyped. There is no generator script: to change a prompt, change the
+// Next.js source, re-record the contract, then this text.
+// TestPromptsMatchTheContract fails if the two drift.
 
 package aiprovider
 

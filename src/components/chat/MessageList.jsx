@@ -222,7 +222,7 @@ export function MessageList({
 
                         <div className="flex items-center gap-2 mt-2">
                           <p className="text-xs opacity-70">
-                            {new Date(message.timestamp).toLocaleTimeString()}
+                            {new Date(message.timestamp).toLocaleTimeString("en-IN")}
                           </p>
                           {message.edited && (
                             <Badge

@@ -165,3 +165,48 @@ func TestSignedInUserOutages(t *testing.T) {
 		t.Errorf("gave up after %v, want about 30ms", waited)
 	}
 }
+
+// User reads the same replies as SignedInUser, with one difference: an
+// anonymous account is a user, as it is for supabase.auth.getUser(). It
+// also hands back the session, for the caller to ask the database with.
+func TestUserCountsAnonymousAccounts(t *testing.T) {
+	tests := []struct {
+		name   string
+		status int
+		reply  string
+		want   string
+		answer int
+	}{
+		{"a user", 200, `{"id":"user-a"}`, "user-a", 200},
+		{"anonymous", 200, `{"id":"user-x","is_anonymous":true}`, "user-x", 200},
+		{"empty id", 200, `{"id":""}`, "", 401},
+		{"numeric id", 200, `{"id":101}`, "", 401},
+		{"null reply", 200, `null`, "", 401},
+		{"refused", 401, `{}`, "", 401},
+		{"not JSON", 200, `{broken`, "", 503},
+		{"server error", 500, `{"id":"user-a"}`, "", 503},
+	}
+	for _, tt := range tests {
+		calls := 0
+		v := Verifier{SupabaseURL: "https://auth.test/", SupabaseKey: "public-key", Client: supabaseAnswers(t, &calls, tt.status, tt.reply)}
+		id, session, status := v.User(chatRequest("Bearer session-a"))
+		wantSession := ""
+		if tt.answer == 200 {
+			wantSession = "session-a"
+		}
+		if id != tt.want || session != wantSession || status != tt.answer || calls != 1 {
+			t.Errorf("%s: User = %q, %q, %d after %d calls; want %q, %q, %d after 1", tt.name, id, session, status, calls, tt.want, wantSession, tt.answer)
+		}
+	}
+	// Refused on sight, before Supabase is asked.
+	calls := 0
+	v := Verifier{SupabaseURL: "https://auth.test/", SupabaseKey: "public-key", Client: supabaseAnswers(t, &calls, 200, `{"id":"user-a"}`)}
+	for _, r := range []*http.Request{chatRequest(), chatRequest("Basic abc"), chatRequest("Bearer a", "Bearer b")} {
+		if id, session, status := v.User(r); id != "" || session != "" || status != 401 {
+			t.Errorf("User(%q) = %q, %q, %d; want 401", r.Header.Values("Authorization"), id, session, status)
+		}
+	}
+	if calls != 0 {
+		t.Errorf("Supabase was asked %d times for requests refused on sight", calls)
+	}
+}

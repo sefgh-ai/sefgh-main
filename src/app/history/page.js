@@ -55,7 +55,7 @@ export default function HistoryPage() {
 
   // Group by date
   const groupedHistory = filteredHistory.reduce((groups, item) => {
-    const date = new Date(item.created_at).toLocaleDateString("en-US", {
+    const date = new Date(item.created_at).toLocaleDateString("en-IN", {
       weekday: "long",
       year: "numeric",
       month: "long",

@@ -13,9 +13,9 @@ inside `backend/`. No test calls live GitHub or uses real credentials.
 
 | Route | Fixture route | Behavior |
 |---|---|---|
-| `GET /api/github/repo?owner=...&name=...` | `summary` | Selects 20 fields; omits missing fields; keeps explicit nulls; optional server bearer token; `next.revalidate: 3600` |
-| `GET /api/github/repo/:owner/:repo` | `detail` | Fetches repo, its languages URL, then README; full repository JSON; no token; languages HTTP failures become `{}`, README failures become null |
-| `GET /api/github/contents/:owner/:repo?path=...` | `contents` | Passes through contents JSON; checks and percent-encodes the path; no token |
+| `GET /api/github/repo?owner=...&name=...` | `summary` | Selects 20 fields; omits missing fields; keeps explicit nulls; the caller's verified GitHub token, if any; `next.revalidate: 3600` |
+| `GET /api/github/repo/:owner/:repo` | `detail` | Fetches repo, its languages URL, then README; full repository JSON; the caller's verified GitHub token, if any; languages HTTP failures become `{}`, README failures become null |
+| `GET /api/github/contents/:owner/:repo?path=...` | `contents` | Passes through contents JSON; checks and percent-encodes the path; the caller's verified GitHub token, if any |
 
 Detail and contents return rate-limit header strings or null. All three set
 JSON content type and no explicit cache-control or retry-after response header.
@@ -97,10 +97,13 @@ the summary route. Local cache tests are not a production parity claim.
   not checked. The URL-input defects recorded in versions 1 and 2 are fixed.
 - A path with a trailing slash, such as `src/`, is now rejected. It used to be
   sent on. No caller in this checkout sends one.
-- The summary and search routes send the server token for any caller. If that
-  token can read private repositories, their details are returned to anyone.
-  The owner has said the token is not to be limited to public data, and has not
-  yet decided who may see private repositories. This is a cutover gate.
+- Since AUTH-001 no route here sends `GITHUB_TOKEN`. A signed-in caller's
+  own GitHub token is used after it is verified; anyone else gets public data
+  only, read with the public-only token of QUOTA-001 when one is set. See
+  [the access contract](../github-access/README.md) and
+  [the public read token contract](../public-read-token/README.md). (This
+  line used to say the summary and search routes sent the server token for
+  any caller; bug register R-046.)
 - Malformed successful JSON shapes may be accepted. Detail trusts GitHub's
   `languages_url`; no token is sent to that URL.
 - Rate-limit statuses here still become 500; search has a different contract.

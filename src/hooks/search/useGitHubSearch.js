@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ActivityLogger } from "@/lib/activity-logger";
 import { logError } from "@/lib/error-tracking";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
+import { lastSearchPage } from "@/lib/github/search-pages";
 
 const CACHE_KEY = "sefgh_search_cache";
 const CACHE_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
@@ -310,7 +311,8 @@ export function useGitHubSearch(userId) {
     [loadingMore, searchQuery, sort, language, stars, currentPage]
   );
 
-  const hasMore = searchResults.length < totalCount;
+  // Pages are 30 results; GitHub serves only the first 1,000 (R-018).
+  const hasMore = currentPage < lastSearchPage(totalCount, 30);
 
   return {
     searchQuery,

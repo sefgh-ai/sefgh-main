@@ -155,6 +155,11 @@ and `askSupabase` makes the call. Its rules differ in one way: an anonymous
 account is 401 here, where `Resolve` answers 403, because the chat contract
 says so. Lesson 20 shows how the chat handler is given it.
 
+ACT-002 moved the shared part of `SignedInUser` into `account`, and added
+`User` beside it for the activity route: there an anonymous account is a
+user, and the session itself is handed back so the database can be asked
+as that user. Lesson 22 uses it.
+
 The bearer pattern used to start with `(?i)`, Go's "ignore case". Go applies
 that to every letter in the pattern, using Unicode's rules, so `[A-Za-z]`
 also matched the long s (U+017F) and the Kelvin sign (U+212A). JavaScript's

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/CookieBar";
 import Image from "next/image";
 import { Instagram, Twitter } from "lucide-react";
 
@@ -157,6 +158,9 @@ export default function FooterNewsletter() {
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <CookieSettingsButton className="text-muted-foreground hover:text-foreground transition-colors text-sm" />
+                </li>
               </ul>
             </div>
 

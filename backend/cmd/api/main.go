@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/activity"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aichat"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
@@ -101,8 +102,26 @@ func newHandler(logger *slog.Logger) http.Handler {
 	// beside the GitHub access check, not behind it.
 	top := http.NewServeMux()
 	top.Handle("/api/ai/", aiMux(logger, verifier))
+	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
+}
+
+// activityMux serves the caller's own activity. It asks the Supabase Data
+// API as the caller, with their own token and the public key: no server
+// credential is involved, so row-level security decides, as it does for
+// the Next.js handler. GitHub credentials play no part, so it too sits
+// beside the GitHub access check.
+func activityMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/activity", &activity.Handler{
+		User:        verifier.User,
+		Client:      &http.Client{Timeout: activity.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	})
+	return mux
 }
 
 // aiMux serves the AI routes. GITHUB_TOKEN is the credential for GitHub

@@ -1,6 +1,7 @@
 "use client";
 
 import { formatNumber, formatCompactNumber } from "@/lib/utils/formatters";
+import { GITHUB_SEARCH_RESULT_LIMIT, lastSearchPage } from "@/lib/github/search-pages";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
 import {
@@ -141,7 +142,10 @@ export function SearchResults({
   itemsPerPage = 30,
   setView,
 }) {
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  // GitHub serves only the first 1,000 results (R-018).
+  const totalPages = lastSearchPage(totalCount, itemsPerPage);
+  const capped = totalCount > GITHUB_SEARCH_RESULT_LIMIT;
+  const loadable = Math.min(totalCount, totalPages * itemsPerPage);
   const showPagination = totalPages > 1 && onPageChange;
 
   // Generate page numbers to show
@@ -331,12 +335,13 @@ export function SearchResults({
           {/* Page Info */}
           <span className="text-sm text-muted-foreground">
             Page {currentPage} of {formatNumber(totalPages)}
+            {capped && " · GitHub shows the first 1,000 results"}
           </span>
         </div>
       )}
 
       {/* Load More Button (fallback if no pagination handler) */}
-      {!showPagination && hasMore && searchResults.length < totalCount && (
+      {!showPagination && hasMore && searchResults.length < loadable && (
         <div className="flex justify-center mt-8">
           <Button
             variant="outline"
@@ -354,7 +359,7 @@ export function SearchResults({
               <>
                 Load More Results
                 <span className="ml-2 text-muted-foreground">
-                  ({totalCount - searchResults.length} remaining)
+                  ({formatNumber(loadable - searchResults.length)} remaining)
                 </span>
               </>
             )}
