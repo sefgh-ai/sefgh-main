@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-006 / ACT-002 handed off; writer released.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: OPS-002 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,34 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released BUG-006 / ACT-002 on 2026-10-14; see the handoff below.
+- **Active writer:** none. Claude Code released OPS-002 on 2026-10-14; see the handoff below.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
 - **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: BUG-006 / ACT-002 (Claude Code, 2026-10-14)
+## Latest handoff: OPS-002 (Claude Code, 2026-10-14)
+
+Status: **implementation complete (repository side); nothing deployed**. The owner creates the Vercel project by following `hosting-setup.md`; agents cannot sign in to Vercel. No route is switched on anywhere.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base c51c29d. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-14): go ahead with hosting option A, free, with detailed steps. The owner also offered full Supabase access; Claude Code asked for read-only and wrote the steps (Owner decisions pending, "Phase 3 database definitions").
+
+Done:
+- `backend/vercel.json`: Vercel's Go preset for a project rooted at `backend/`.
+- `scripts/check-go-deployment.mjs`: checks a deployed Go service from outside with no credentials (health, marker and security headers, languages, activity and chat refused without sign-in, chat refuses GET; `--github` adds one search). It recognizes a deployment hidden behind Vercel's sign-in.
+- `hosting-setup.md`: the owner's guide (create the project, check it, connect the website preview with one route, roll back, what comes later and what never to add).
+- ADR: hosting decided (gate row, proposal heading, decisions log); backend README "On Vercel"; this file's owner-decision bullets.
+- Vercel facts were read from its documentation that day by a web-fetch agent. They include the Go preset, entry point `cmd/api/main.go`, the Root Directory limits, the Hobby limits and the non-commercial term, Standard Protection, and redeploying after env changes. Nothing was tried on the owner's account.
+
+Changed files: backend/vercel.json (new), scripts/check-go-deployment.mjs (new), docs/hosting-setup.md (new), backend/README.md, docs/adr/0002-go-backend.md, docs/coordination.md. No Go code changed, so no lesson changed.
+
+Checks (Claude Code, Windows): the check script against the local Go server built from this tree passed 7 of 7. Against a closed port it fails with ECONNREFUSED; a bad argument prints usage (exit 2). `npm run test:contracts` passed 789 of 789. `npm run lint` gave 0 errors and 16 warnings (unchanged). `git diff --check` was clean. Every new relative link resolves. npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: anything on Vercel. Unknowns to watch on the first deployment: whether Vercel's Go preset accepts Go 1.27.2; whether a Next.js rewrite to the Go project passes the caller's address in X-Forwarded-For (the AI allowances use it); timings.
+
+Remaining gates: the owner creates `sefgh-api` and the preview switch (guide parts A to C); then an agent verifies (check script, the probe's paths against the preview, measurements, a practised rollback), which is ADR hosting steps 3 to 5. Each live route still waits for its own gates and the owner's approval. Supabase read-only connection by the owner, for Phase 3.
+Next bounded action: VERIFY-004, once the owner gives the production address: run `node scripts/check-go-deployment.mjs <address>` and record the result; then the preview route check.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: BUG-006 / ACT-002 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. BUG-006 changes live Next.js and browser code once synchronized (analytics for everyone, cookie settings, en-IN dates, the Star link, chat, search paging). ACT-002 adds a Go route that is off by default and changes nothing live except that the usage card and chat now send the Supabase bearer through one helper.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -56,7 +79,7 @@ Remaining gates: independent review; a hosted CI run for this batch; for turning
 Next bounded action: with no decision needed, REVIEW-007 (CI-001, VERIFY-002, VERIFY-003). For the migration, the next Phase 3 contract can be recorded now (step 1 needs no database access), and ports can be turned on once hosting is chosen and the Supabase connector (read-only) or a schema-only dump is available.
 Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
 
-## Previous handoff: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
+## Earlier handoff: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. Live Next.js changes once synchronized, including the trending reply's new shape (contract version 2) and the cookie bar.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -983,7 +1006,7 @@ Status: implementation complete; review pending; not deployed. No hosting
   account was touched and nothing was created anywhere.
 Base commit / branch / worktree: 3f4c7dd / main / main checkout, on top of
   the uncommitted FIX-004 and VERIFY-001 changes.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `c51c29d`).
 Changed files:
   backend/cmd/api/main.go: listenAddr(getenv) chooses the address.
     SEFGH_API_ADDR wins; else PORT, on every interface; else 127.0.0.1:8787.
@@ -1796,6 +1819,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `ACT-001` | `GET /api/activity`: fix R-056 and R-057, then contract fixtures (Phase 3 step 1) | Complete; uncommitted at handoff | Independent review |
 | `ACT-002` | Port `GET /api/activity` to Go with the user's own token | Complete, off by default; uncommitted at handoff | Independent review; Phase 3 gate (definitions of `activity_logs` and its policies) and hosting before it is turned on |
 | `BUG-006` | R-009, R-018, R-046, R-047, and the owner's answers of 2026-10-14: R-055 revised, R-060, R-061, R-062 | Complete; uncommitted at handoff | Independent review |
+| `OPS-002` | Hosting option A: repository side and the owner's setup guide | Complete; uncommitted at handoff; nothing deployed | The owner creates the Vercel project; VERIFY-004 checks it |
+| `VERIFY-004` | Check the owner's Go deployment from outside, then the preview route | Not started | The production address of the Go project from the owner |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
@@ -1805,7 +1830,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 ## Owner decisions pending
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
-- How to host the Go service within Vercel's free tier, before anything is deployed. The owner has said: Vercel for Next.js, Supabase for the database, free tier only, no paid resource without approval. Two options and a recommendation are in "Hosting proposal" in `adr/0002-go-backend.md`.
+- **Hosting: decided on 2026-10-14, option A** (a second Vercel project rooted at `backend/`, free Hobby plan, preview first). The owner creates the project by following `hosting-setup.md`; agents cannot sign in to Vercel. Still the owner's to judge: Vercel's Hobby plan is for non-commercial use only, which already applies to the Next.js project.
 - **AI routes: decided on 2026-10-13.** Chat for signed-in users only, the search helpers public, both with limits, and three safety defects to fix. See the ADR decisions log. Playground-key policy is separate and still open, before Phase 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
@@ -1813,7 +1838,11 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - **Anonymous GitHub quota: decided on 2026-10-13, implemented in QUOTA-001 (2026-10-14).** The owner still has to create a classic personal access token with no scopes and set it as `GITHUB_PUBLIC_READ_TOKEN`; a fine-grained token is refused by design. Never paste it into a chat or a shared document.
 - **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options. R-049, R-053, R-055 and R-020 were answered on 2026-10-14 and are fixed; R-060, R-061, R-062 and a revised R-055 (analytics for everyone, with an opt-out) were answered the same day and fixed in BUG-006.
 - **Mandatory GitHub sign-in (raised by the owner on 2026-10-14, not decided):** Claude Code recommended against making it mandatory for the whole site and gave the reasons in chat; nothing is implemented until the owner answers.
-- **Phase 3 database definitions:** needed before any user-data route moves to Go (first: ACT-002, `GET /api/activity`). The owner can connect the Supabase connector (read-only is enough) or add a schema-only dump (`supabase db dump --schema-only`) to the repository. No service-role key or database password is needed or wanted.
+- **Phase 3 database definitions (Connecting Supabase):** needed before any user-data route is switched on in Go (first: `activity`). On 2026-10-14 the owner offered full access; Claude Code asked for read-only, because only definitions are needed (tables, row-level security policies, functions, triggers) and read-only means neither a mistake nor text planted in user data can change the live database. Any change an agent finds necessary is written as a migration file for the owner to approve. How the owner connects, with no secret passing through a chat:
+  1. Find the project ID: Supabase dashboard, Project Settings, General ("Project ID"), the part before `.supabase.co` in the project URL. It is not secret.
+  2. In the VS Code terminal: `claude mcp add --scope user --transport http supabase-readonly "https://mcp.supabase.com/mcp?read_only=true&project_ref=PROJECT_ID"`.
+  3. In Claude Code, type `/mcp`, choose `supabase-readonly`, then **Authenticate**. A browser opens; sign in to Supabase and allow access. In the same `/mcp` list, disable `plugin:supabase:supabase`, the plugin's server, which has full access to every project in the account.
+  4. Tell the agent it is connected. The alternative remains a schema-only dump (`supabase db dump --schema-only`) added to the repository. No service-role key or database password is needed or wanted.
 
 ## State of the owner's machine
 

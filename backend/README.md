@@ -106,6 +106,16 @@ curl.exe -i "http://localhost:3000/api/github/search?q=%20"
 
 A header `x-sefgh-backend: go` means Go answered. Without it, Next.js did. In PowerShell type `curl.exe`; plain `curl` is a different command there.
 
+### On Vercel (OPS-002)
+
+The hosted setup is a second Vercel project whose Root Directory is `backend/`, following `../docs/hosting-setup.md`. `vercel.json` here selects Vercel's Go preset, which builds `cmd/api` and starts it with `PORT` set. Files outside `backend/` are not available to that build, and the server needs none. The Next.js project then points `SEFGH_GO_API_URL` at the Go project's production address, because preview addresses sit behind Vercel's sign-in. To check a deployment from outside, with no credentials, run this from the repository root:
+
+```
+node scripts/check-go-deployment.mjs https://<go project>.vercel.app
+```
+
+The in-memory parts of the server (the summary cache and the AI allowances) belong to one running copy, and Vercel may run several copies at once. Each copy counts and caches on its own.
+
 ## Where it differs from the Next.js handler on purpose
 
 - **Timeout.** A call to GitHub is abandoned after 10 seconds and answered as a generic failure. The repository detail route, which makes three calls, is bounded to 25 seconds in total. The Next.js handlers have no timeout.
