@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: OPS-002 handed off; writer released.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: OPS-003 (where the live site comes from) handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,36 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released OPS-002 on 2026-10-14; see the handoff below.
+- **Active writer:** none. Claude Code released OPS-003 on 2026-10-14; see the handoff below.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
 - **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: OPS-002 (Claude Code, 2026-10-14)
+## Latest handoff: OPS-003, account and deployment audit (Claude Code, 2026-10-14)
+
+Status: **audit complete; nothing changed outside this repository's documents**. Owner: Claude Code. Reviewer: unassigned. Branch main; base 7303b61; resulting commit: uncommitted at handoff.
+Owner request (2026-10-14, with a screenshot of the Vercel project `sefgh-ui`): the deployed site is in the "sefgh" GitHub and Vercel accounts, not the owner's personal one; look at the Vercel account; "rectify and clear everything".
+
+Findings (Claude Code, 2026-10-14, from public sources only: Git history, GitHub's public API, public DNS and RDAP, the live site's public pages; no account was signed in to):
+- **The live site is built from another repository.** Vercel team "sefghai's projects", project `sefgh-ui` (owner's screenshot), deploys `github.com/sefgh-ai/sefgh-nextjs`. That repository is public; its last real commit is "sd" on 2026-05-24. Production is the 2026-05-20 build (`d9d0b59`); the 2026-05-24 build failed. `https://sefgh-ui.vercel.app` answers 200 with that old version.
+- **All work since September is in a different, private repository**, `github.com/Adeel0-0/sefgh-nextjs-main` (this checkout's `origin`). It began on 2026-09-12 as a copy of the deployed one without its history: at its first commit, 267 of the deployed repository's 370 files were identical and 52 changed. The 51 files found only in the deployed repository look old or replaced (examples, `middleware.js` that became `src/proxy.js`, an older settings panel); this checkout builds without them. None of this repository's work (the Go backend, the Phase 6 fixes) is live.
+- **sefgh.org has expired and is down.** RDAP: registrar Hostinger; status "auto renew period"; last changed 2026-10-06, the anniversary; nameservers `ns1.dns-expired.com` and `ns2.dns-expired.com` (parking). With DNSSEC still signed, Google DNS answers SERVFAIL for sefgh.org and www.sefgh.org; without the check it gives a parking address, not Vercel. Visitors cannot reach the site by its name.
+- **The database is the same.** The live site and this checkout use the same Supabase project, `kohwfuxqbllsmvmsfqci`. That ID is public: it is in browser code and in the public repository's `.vscode/mcp.json`, which holds no credentials.
+- Commits here are authored as `sefgh-ai`, with the owner's e-mail, and pushed to the `Adeel0-0` repository. Vercel's GitHub integration and the agents' Git Agent therefore point at different repositories.
+
+**Hold OPS-002's setup** (`hosting-setup.md`) until the repository question is settled. Its part C assumed the website project builds this repository, and it does not.
+
+Proposed (not done; each step needs the owner):
+1. Renew sefgh.org at Hostinger now, while the renewal grace period lasts; it is a paid renewal. Then restore the DNS records Vercel's Domains page asks for. If the nameservers move to Vercel, turn DNSSEC off at Hostinger first.
+2. One home for the code: transfer `Adeel0-0/sefgh-nextjs-main` to the `sefgh-ai` account (GitHub keeps history and redirects the old address), and archive `sefgh-ai/sefgh-nextjs` as the record of the May version. Do not delete it.
+3. Point `sefgh-ui` at the transferred repository, with the Production Branch set to a branch that does not exist yet (for example `release`), so pushes make previews only. Test a preview; then release by creating that branch, with the owner's approval. Instant Rollback stays available.
+4. Then OPS-002: the Go project in the same Vercel team, from the same repository.
+Owner action that lets agents see more: authorize the Vercel connector (`/mcp`, `plugin:vercel:vercel`, Authenticate, sign in to the **sefgh** Vercel account). Agents would only read (env var names, the 2026-05-24 build log, domain settings) and ask before any change.
+
+Checks: `git diff --check` clean; relative links resolve. No code changed.
+Next bounded action: after the owner's answers, OPS-004 carries out steps 2 and 3 with them; VERIFY-004 follows.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: OPS-002 (Claude Code, 2026-10-14)
 
 Status: **implementation complete (repository side); nothing deployed**. The owner creates the Vercel project by following `hosting-setup.md`; agents cannot sign in to Vercel. No route is switched on anywhere.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -38,7 +63,7 @@ Remaining gates: the owner creates `sefgh-api` and the preview switch (guide par
 Next bounded action: VERIFY-004, once the owner gives the production address: run `node scripts/check-go-deployment.mjs <address>` and record the result; then the preview route check.
 Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
 
-## Previous handoff: BUG-006 / ACT-002 (Claude Code, 2026-10-14)
+## Earlier handoff: BUG-006 / ACT-002 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. BUG-006 changes live Next.js and browser code once synchronized (analytics for everyone, cookie settings, en-IN dates, the Star link, chat, search paging). ACT-002 adds a Go route that is off by default and changes nothing live except that the usage card and chat now send the Supabase bearer through one helper.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1067,7 +1092,7 @@ Status: forwarding check complete for `next dev`. Race detector NOT run.
   Nothing deployed. No route switched on.
 Base commit / branch / worktree: 3f4c7dd / main / main checkout. Started while
   FIX-004 was still uncommitted, so both tasks' files are in the working tree.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `7303b61`).
 Changed files:
   scripts/contracts/go-forwarding-probe.mjs: new. Optional; it starts servers,
     so it is not part of npm run test:contracts.
@@ -1820,6 +1845,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `ACT-002` | Port `GET /api/activity` to Go with the user's own token | Complete, off by default; uncommitted at handoff | Independent review; Phase 3 gate (definitions of `activity_logs` and its policies) and hosting before it is turned on |
 | `BUG-006` | R-009, R-018, R-046, R-047, and the owner's answers of 2026-10-14: R-055 revised, R-060, R-061, R-062 | Complete; uncommitted at handoff | Independent review |
 | `OPS-002` | Hosting option A: repository side and the owner's setup guide | Complete; uncommitted at handoff; nothing deployed | The owner creates the Vercel project; VERIFY-004 checks it |
+| `OPS-003` | Where the live site comes from: repositories, Vercel project, domain | Complete (audit); uncommitted at handoff | Owner answers; see the handoff |
+| `OPS-004` | Bring code, Vercel and domain together (transfer, relink, release branch) | Not started | Owner: domain renewal, choice of home account, Vercel connector |
 | `VERIFY-004` | Check the owner's Go deployment from outside, then the preview route | Not started | The production address of the Go project from the owner |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
@@ -1830,6 +1857,7 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 ## Owner decisions pending
 
 - Navbar sort (`FIX-002`): teach the API the navbar's names, or change the navbar to the API's names.
+- **Live site and accounts (OPS-003, 2026-10-14):** sefgh.org has expired at Hostinger (renew now); the live Vercel project `sefgh-ui` builds the old public repository `sefgh-ai/sefgh-nextjs`, not this one. Proposal in the OPS-003 handoff: renew, transfer this repository to `sefgh-ai`, relink `sefgh-ui` with a release branch, then host Go beside it.
 - **Hosting: decided on 2026-10-14, option A** (a second Vercel project rooted at `backend/`, free Hobby plan, preview first). The owner creates the project by following `hosting-setup.md`; agents cannot sign in to Vercel. Still the owner's to judge: Vercel's Hobby plan is for non-commercial use only, which already applies to the Next.js project.
 - **AI routes: decided on 2026-10-13.** Chat for signed-in users only, the search helpers public, both with limits, and three safety defects to fix. See the ADR decisions log. Playground-key policy is separate and still open, before Phase 3.
 - Contributions route: the owner chose on 2026-10-12 to port it although nothing calls it, and it is ported with its defects reproduced. Still to decide: the seven groups of `defect` cases in `contracts/github-contributions/README.md`, the first being whether its date range should be computed in UTC.

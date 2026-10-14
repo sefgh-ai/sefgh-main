@@ -1,5 +1,7 @@
 # Hosting the Go backend on Vercel (free)
 
+> **On hold (OPS-003, 2026-10-14).** Your live Vercel project, `sefgh-ui` in the "sefgh" account, builds the old repository `sefgh-ai/sefgh-nextjs`, not `Adeel0-0/sefgh-nextjs-main`, where this work is. Part C below assumes the website project builds this repository. Settle that first; see the OPS-003 handoff in `coordination.md`. Once it is settled, create the Go project in the same Vercel account as `sefgh-ui`, and import the repository that holds this code.
+
 For the owner. This sets up option A of the hosting proposal in `adr/0002-go-backend.md`: a second Vercel project that runs only the Go server in `backend/`, next to the Next.js project you already have. Written 2026-10-14 (task OPS-002) from Vercel's documentation as read that day. Nobody has tried these steps on your account yet, so screens may be worded a little differently.
 
 When you finish, the website's **preview** sends one route, the languages list, to Go. The live site does not change. Every route stays in Next.js until you and an agent switch it on, one at a time.
