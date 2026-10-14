@@ -1,16 +1,13 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState, useEffect, memo } from "react";
+import { Suspense, memo } from "react";
+import { useIsClient } from "@/hooks/useBrowser";
 import ParticleField from "./ParticleField";
 
 // Memoized to prevent unnecessary re-renders
 const ThreeBackground = memo(function ThreeBackground() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
 
   if (!isClient) return null;
 

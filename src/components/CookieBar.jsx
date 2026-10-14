@@ -1,26 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useBrowserValue } from "@/hooks/useBrowser";
 
 const STORAGE_KEY = "sefgh-cookie-consent";
 
-export default function CookieBar() {
-  const [visible, setVisible] = useState(false);
+// localStorage throws outright in a private window or when site data is
+// blocked. Then the bar stays hidden, silently, as it always has.
+function consentAlreadyGiven() {
+  try {
+    return Boolean(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return true;
+  }
+}
 
-  useEffect(() => {
-    // localStorage throws outright in a private window or when site data is
-    // blocked. Unwrapped, that error escapes the effect and takes the tree
-    // down with it.
-    let stored = null;
-    try {
-      stored = localStorage.getItem(STORAGE_KEY);
-    } catch {
-      // Treat unavailable storage as "not yet accepted" but stay silent.
-      return;
-    }
-    if (!stored) setVisible(true);
-  }, []);
+export default function CookieBar() {
+  // Hidden on the server and while the page hydrates, as before.
+  const given = useBrowserValue(consentAlreadyGiven, true);
+  const [dismissed, setDismissed] = useState(false);
+  const visible = !given && !dismissed;
 
   const accept = () => {
     try {
@@ -28,7 +28,7 @@ export default function CookieBar() {
     } catch {
       // Non-fatal: the bar reappears next visit.
     }
-    setVisible(false);
+    setDismissed(true);
   };
 
   if (!visible) return null;

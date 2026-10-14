@@ -83,7 +83,7 @@ export default function LinksPage() {
       icon: Code,
       name: "API Reference",
       description: "Integrate SEFGH into your applications",
-      url: "/docs/api",
+      url: "/api-reference",
     },
     {
       icon: FileText,
@@ -95,7 +95,7 @@ export default function LinksPage() {
       icon: Heart,
       name: "Changelog",
       description: "See what's new in SEFGH",
-      url: "/changelog",
+      url: "/versions#changelog",
     },
   ];
 

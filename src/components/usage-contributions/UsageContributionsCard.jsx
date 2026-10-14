@@ -7,89 +7,90 @@ import UsageIsometricChart from './UsageIsometricChart'
 import UsageHeatmap2D from './UsageHeatmap2D'
 import UsageContributionsStats from './UsageContributionsStats'
 import UsageStreaksStats from './UsageStreaksStats'
-import { normalizeUsageDays, groupByWeeks, computeUsageStats, formatNumber } from '@/lib/usageStats'
-import { loadMockUsageForYear } from '@/lib/mockUsageData'
+import { normalizeUsageDays, groupByWeeks, computeUsageStats, formatNumber, usageDaysFromActivity } from '@/lib/usageStats'
+import { useBrowserValue } from '@/hooks/useBrowser'
+
+// The view the user picked last time. UsageViewToggle saves it.
+function savedView() {
+  try {
+    return localStorage.getItem('sefghUsageView') === '3d' ? '3d' : '2d'
+  } catch {
+    return '2d'
+  }
+}
 
 /**
- * Main container for SEFGH Usage Contributions visualization
- * Shows activity data as 2D/3D charts with statistics
- * 
- * PRODUCTION NOTE:
- * Replace mock data with real API call. Example:
- * 
- * const response = await fetch('/api/activity')
- * const apiData = await response.json()
- * const usageDays = apiData.grid.flat().map(day => ({
- *   date: day.date,
- *   count: day.count
- * }))
- * 
+ * The signed-in user's real activity over the last year, from GET
+ * /api/activity, as 2D/3D charts with statistics.
+ *
+ * It used to show generated mock activity for a fixed year whenever no data
+ * was passed in, which is what the profile page did (bug register R-006). It
+ * never invents data now: while loading, when signed out, or when the request
+ * fails, it says so instead.
+ *
  * @param {Object} props
  * @param {string} props.title - Card title (optional, will be generated if not provided)
- * @param {number} props.year - Year to display (default: current year)
- * @param {Array} props.data - Optional raw usage data array of {date, count}
+ * @param {Array} props.data - Optional usage data of {date, count}; when given, nothing is fetched
  */
-export default function UsageContributionsCard({ title, year, data }) {
-  const [currentYear, setCurrentYear] = useState(year || 2025)
-  const [view, setView] = useState('2d')
-  const [isClient, setIsClient] = useState(false)
+export default function UsageContributionsCard({ title, data }) {
+  const [fetched, setFetched] = useState({ status: 'loading', days: null })
+  const remembered = useBrowserValue(savedView, '2d')
+  const [picked, setPicked] = useState(null)
+  const view = picked ?? remembered
 
-  // SSR safety - only run on client
   useEffect(() => {
-    setIsClient(true)
-    
-    // Set current year on client only
-    if (!year) {
-      setCurrentYear(new Date().getFullYear())
-    }
-    
-    // Load saved view preference from localStorage
-    if (typeof window !== 'undefined') {
-      const savedView = localStorage.getItem('sefghUsageView')
-      if (savedView === '2d' || savedView === '3d') {
-        setView(savedView)
-      }
-    }
-  }, [year])
+    if (data) return
+    const controller = new AbortController()
+    fetch('/api/activity', { signal: controller.signal })
+      .then(async (response) => {
+        if (response.status === 401) {
+          setFetched({ status: 'signed-out', days: null })
+        } else if (!response.ok) {
+          setFetched({ status: 'error', days: null })
+        } else {
+          setFetched({ status: 'ready', days: usageDaysFromActivity(await response.json()) })
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') setFetched({ status: 'error', days: null })
+      })
+    return () => controller.abort()
+  }, [data])
 
-  // Process data
+  const status = data ? 'ready' : fetched.status
+  const days = data ?? fetched.days
+
   const { weeks, stats, maxCount } = useMemo(() => {
-    // Use provided data or load mock data
-    const rawData = data || loadMockUsageForYear(currentYear)
-    
-    // Normalize and compute statistics
-    const normalizedDays = normalizeUsageDays(rawData)
-    const computedStats = computeUsageStats(normalizedDays)
-    const weekGroups = groupByWeeks(normalizedDays)
-    
-    // Find max count for color/height scaling
-    const max = normalizedDays.reduce((max, day) => Math.max(max, day.count), 0)
-    
+    const normalizedDays = normalizeUsageDays(days || [])
     return {
-      weeks: weekGroups,
-      stats: computedStats,
-      maxCount: max
+      weeks: groupByWeeks(normalizedDays),
+      stats: computeUsageStats(normalizedDays),
+      // Find max count for color/height scaling
+      maxCount: normalizedDays.reduce((max, day) => Math.max(max, day.count), 0),
     }
-  }, [data, currentYear])
+  }, [days])
 
-  // Generate title if not provided
-  const cardTitle = title || `${formatNumber(stats.totalCount)} SEFGH usage in ${currentYear}`
-
-  if (!isClient) {
-    // SSR fallback
+  if (status !== 'ready') {
+    const message = {
+      loading: ['Loading activity data...', 'Please wait'],
+      'signed-out': ['Sign in to see your activity', 'Your activity is only shown to you'],
+      error: ['Your activity could not be loaded', 'Please try again later'],
+    }[status]
     return (
       <Card className="glass-premium border-border">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Loading activity data...</CardTitle>
-              <CardDescription>Please wait</CardDescription>
+              <CardTitle>{message[0]}</CardTitle>
+              <CardDescription>{message[1]}</CardDescription>
             </div>
           </div>
         </CardHeader>
       </Card>
     )
   }
+
+  const cardTitle = title || `${formatNumber(stats.totalCount)} SEFGH usage in the last year`
 
   return (
     <Card className="glass-premium border-border shadow-premium">
@@ -101,10 +102,10 @@ export default function UsageContributionsCard({ title, year, data }) {
               Your activity across all SEFGH features
             </CardDescription>
           </div>
-          <UsageViewToggle view={view} onChange={setView} />
+          <UsageViewToggle view={view} onChange={setPicked} />
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Main Chart */}
         <div className="w-full rounded-xl border border-border/60 bg-background/20 overflow-hidden">
@@ -137,9 +138,7 @@ export default function UsageContributionsCard({ title, year, data }) {
           <div>
             {stats.activeDays} active days out of {stats.totalDays} total days
           </div>
-          <div>
-            {data ? 'Live data' : 'Mock data (replace with real API)'}
-          </div>
+          <div>Last 12 months</div>
         </div>
       </CardContent>
     </Card>

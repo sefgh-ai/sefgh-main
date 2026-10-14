@@ -68,7 +68,7 @@ export default function FooterNewsletter() {
                     I agree to receive personalized communications, targeted
                     advertising, and campaign updates related to SEFGH.
                     <Link
-                      href="#"
+                      href="/privacy"
                       className="text-primary hover:text-primary hover:underline transition-colors ml-1"
                     >
                       SEFGH Privacy Statement

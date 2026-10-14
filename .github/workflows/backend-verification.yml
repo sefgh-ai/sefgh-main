@@ -36,6 +36,10 @@ jobs:
           go-version-file: backend/go.mod
           cache: false # Standard library only; no go.sum to cache.
       - run: npm ci
+      # Errors fail the run (bug register R-043 fixed the last ones in
+      # BUG-003). The remaining warnings are open register entries.
+      - name: Lint
+        run: npm run lint
       - run: npm run test:contracts
       - name: Backend race detector and vet
         working-directory: backend

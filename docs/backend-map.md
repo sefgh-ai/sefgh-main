@@ -304,3 +304,12 @@ reads; the checked public token, or none, for signed-out reads; `GITHUB_TOKEN`
 only for GitHub Models.
 
 The plan gained Phase 6, bugs and broken UI/UX, recorded in `bug-register.md`.
+
+## BUG-003 update (2026-10-14)
+
+No route or data boundary changed. The profile's usage card now reads the
+signed-in user's activity from `GET /api/activity` instead of generating mock
+data; that route, which reads `activity_logs` with the user's own Supabase
+session, has its first browser caller. `src/hooks/useBrowser.js` holds the
+hooks the UI uses to read browser-only values (localStorage, media queries)
+without setting state inside an effect.

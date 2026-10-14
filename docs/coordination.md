@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: PLAN-001 / BUG-001 / QUOTA-001 handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-003 handoff.
 
 ## Start here
 
@@ -11,11 +11,49 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released PLAN-001 / BUG-001 / QUOTA-001. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 48 entries and nothing fixed yet. Hosted CI, including the race detector, passed at `5750ee5` (AI-002c); the PLAN-001 / BUG-001 / QUOTA-001 batch has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Claude Code completed and released BUG-003. Uncommitted at handoff. No deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 57 entries; BUG-003 fixed five of them (six are fixed in all), and `npm run lint` now passes and runs in CI. Hosted CI, including the race detector, passed at `654d993` (PLAN-001 / BUG-001 / QUOTA-001); BUG-003 has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: PLAN-001 / BUG-001 / QUOTA-001 (Claude Code, 2026-10-14)
+## Latest handoff: BUG-003 (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed**. These are live Next.js changes once synchronized.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 654d993.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `654d993`).
+
+Fixed (bug register): R-001 (Downloads links in the navbar and the footer went to /downloads), R-003 (newsletter privacy link was "#"), R-050 (/links pointed to /docs/api and /changelog), R-006 (profile usage card showed generated data; it now reads /api/activity and says when it is loading, signed out or failed), R-043 (the ten set-state-in-effect lint errors; `npm run lint` passes).
+Added: R-049 (High: the Sessions tab shows invented sessions and its "Terminate" ends nothing), R-051 to R-057. Register: 57 entries, 6 fixed.
+
+Changed files: as listed in Milestone 1 of the checkpoint below, plus docs/{bug-register.md,adr/0002-go-backend.md,backend-map.md,coordination.md}. No Go, no contract fixture, no route handler changed.
+
+Things a reviewer should know:
+- `src/hooks/useBrowser.js` (`useBrowserValue`, `useIsClient`, `useMediaQuery`) replaces "useState plus an effect that sets it at once". Values are the same on the server and during hydration as before; the browser value follows.
+- LanguageContext keeps showing the current language while a new one downloads, as before; the saved-language read moved out of the effect. A nonsense saved value still gives English.
+- SessionsTab still shows the placeholder data, unchanged, moved out of the effect and labelled in a comment; fixing it is R-049, an owner choice.
+- Canvas uses the "compare with the last prop during render" pattern; the two debug console.log lines that printed user content were removed.
+- CI now runs `npm run lint`. The 16 remaining warnings are register entries (R-019, R-044, R-045).
+- The guards are static scans of the source: they cannot see links built at run time. The browser spot check found the footer link the first scan missed, and the guard now reads `href:` and `url:` lists too.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1): `npm run test:contracts` 740 of 740; `npm run lint` exit 0 (0 errors, 16 warnings); `git diff --check` exit 0, and no file changed its line endings; production forwarding probe: production build compiled, 69 of 69 identical, exit 0. Runtime: headless Chrome against local builds with placeholder Supabase settings (details in the checkpoint below). Go unchanged, so its suites only rerun in `npm run handoff`.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: any signed-in page in a browser (profile, settings, chat): there is no test account; Vercel; a phone-width layout.
+
+Remaining gates: independent review; a hosted CI run, which now includes lint; BUG-002 (needs a test account); the owner entries in the register.
+Next bounded action: BUG-004, fixes needing no owner choice: R-009 (first chat reply waits for the title), R-018 (load more past 1,000 results), R-056 and R-057 (/api/activity error text and dates), R-046 and R-047 (documentation). Owner questions to put alongside, most urgent first: R-049 (Sessions tab), R-055 (analytics before consent), R-053 (which number format to show), R-020 (random "stars today").
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: BUG-003 (Claude Code, 2026-10-14)
+
+Earlier status: active. Owner: Claude Code. Reviewer: unassigned.
+Branch main; base and HEAD 654d993 (the Git Agent committed PLAN-001 / BUG-001 / QUOTA-001). Tree clean at start; previous writer released. Recorded on arrival: `agent-handoff.mjs --status --ci` reported run 38526169800 on 654d993 as completed, success (includes `go test -race`). Read through the script; logs not opened.
+Owner instruction (2026-10-14): "yes yes go ahead start", answering the proposal of BUG-003.
+Objective: the first Phase 6 fixes, needing no owner choice and no contract change: R-001 (navbar /downloads link), R-003 (newsletter privacy link "#"), R-006 (profile usage card shows generated data), R-043 (ten `react-hooks/set-state-in-effect` lint errors). Each fix ships with a check that would catch it again.
+Plan: 1) a contract-suite test that fails on internal links, navigation targets and API calls that reach no page or route, and on `href="#"`, with the open R-004 listed by name; 2) R-001 and R-003; 3) R-006 from /api/activity; 4) R-043 file by file without changing behaviour, then `npm run lint` passing and a lint step in CI; 5) build, contracts, register statuses, handoff.
+Milestone 1 (all fixes written; final checks not yet run): steps 1-4 done. ESLint on the whole repo: 0 errors, 16 warnings (the same warnings as before; `npm run lint` exit 0). New: src/hooks/useBrowser.js, scripts/contracts/{internal-paths,usage-activity}.test.mjs. Changed: src/app/page.js, src/components/{3d/ThreeBackground.jsx,Canvas.jsx,CookieBar.jsx,AnimatedNavbar.jsx,Footer.jsx,ui/footer-newsletter.jsx,settings/AccountTab.jsx,settings/SessionsTab.jsx,usage-contributions/UsageContributionsCard.jsx}, src/contexts/LanguageContext.js, src/lib/usageStats.js, src/app/profile/page.js, src/app/links/page.js, .github/workflows/backend-verification.yml (lint step), docs. Runtime evidence: headless Chrome (CDP, scratch script) against a local production build and a dev build with placeholder Supabase settings: cookie bar shown on a first visit, hidden after "Got it" and on the next visit; a saved Spanish language shows Spanish, a nonsense value English; no exception on the home page. The /trending hydration error (#418) is pre-existing: the dev message shows locale formatting ("1,20,000" against "120,000"), now R-053. A baseline build of 654d993 for comparison could not be made (Turbopack refuses a linked node_modules outside the project; webpack's font loader fails on it), so that question was settled from the dev message instead. Register: 57 entries; R-001, R-003, R-006, R-043, R-050 fixed in this task; R-049 to R-057 added. Next: full contracts, lint, production probe, handoff.
+No processes running (both local Next.js servers stopped). Account usage is not visible to Claude Code.
+
+## Handoff: PLAN-001 / BUG-001 / QUOTA-001 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. The public read token is off until the owner sets `GITHUB_PUBLIC_READ_TOKEN`; with it unset, every path behaves as before. The Next.js changes are live code once synchronized.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1663,7 +1701,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `QUOTA-001` | Public-only server token for anonymous GitHub reads, in Next.js and Go, with a check that refuses a private-capable token | Complete; uncommitted at handoff | Independent review; owner creates and sets the token before it is used live |
 | `PLAN-001` | Phase 6, bugs and broken UI/UX, added to the ADR before retiring old logic (now Phase 7); the recording rule in AGENTS.md | Complete; uncommitted at handoff | Independent review |
 | `BUG-001` | `docs/bug-register.md` opened and filled from recorded evidence and static source checks; no fixes | Complete (48 entries); uncommitted at handoff | Independent review |
-| `BUG-003` | First register fixes needing no decision: R-001, R-003, R-006, R-043 | Not started; next | Nothing |
+| `BUG-003` | First register fixes needing no decision: R-001, R-003, R-006, R-043, and R-050 found on the way; guards in the contract suite; lint in CI | Complete; uncommitted at handoff | Independent review |
+| `BUG-004` | Register fixes needing no decision: R-009, R-018, R-046, R-047, R-056, R-057 | Not started; next | Nothing |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |

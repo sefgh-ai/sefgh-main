@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import en from "@/locales/en.json";
+import { useBrowserValue } from "@/hooks/useBrowser";
 
 const LanguageContext = createContext(null);
 
@@ -44,50 +45,41 @@ function isSupported(locale) {
   return Object.prototype.hasOwnProperty.call(translations, locale);
 }
 
+// The language saved in this browser, or English. An unrecognised value (a
+// stale key, a region code like "en-US") used to reach translations[locale]()
+// and throw "is not a function", which tore down the whole provider tree.
+function savedLocale() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved && isSupported(saved) ? saved : DEFAULT_LOCALE;
+  } catch {
+    // Private mode / blocked storage.
+    return DEFAULT_LOCALE;
+  }
+}
+
 export function LanguageProvider({ children }) {
-  const [locale, setLocale] = useState(DEFAULT_LOCALE);
-  // English ships in the initial bundle, so there is never a null-messages
-  // window. The landing page used to render a blocking "Loading..." spinner
-  // until a dynamic import resolved.
-  const [messages, setMessages] = useState(en);
+  // English on the server and while the page hydrates, then the saved one.
+  const saved = useBrowserValue(savedLocale, DEFAULT_LOCALE);
+  const [chosen, setChosen] = useState(null);
+  const locale = chosen ?? saved;
+  // What to show while a language that is not loaded yet downloads: the text
+  // already on screen. English ships in the initial bundle, so there is never
+  // a null-messages window.
+  const [whileLoading, setWhileLoading] = useState(en);
+  const messages = translationCache[locale] ?? whileLoading;
 
   useEffect(() => {
-    let saved;
-    try {
-      saved = localStorage.getItem(STORAGE_KEY);
-    } catch {
-      // Private mode / blocked storage.
-      return;
-    }
-    // An unrecognised value (a stale key, a region code like "en-US") used to
-    // reach translations[locale]() and throw "is not a function" from inside an
-    // effect, which tore down the whole provider tree.
-    if (saved && isSupported(saved) && saved !== DEFAULT_LOCALE) {
-      setLocale(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isSupported(locale)) {
-      setLocale(DEFAULT_LOCALE);
-      return;
-    }
-
-    const cached = translationCache[locale];
-    if (cached) {
-      setMessages(cached);
-      return;
-    }
-
+    if (translationCache[locale]) return;
     let active = true;
     translations[locale]()
       .then((loaded) => {
         translationCache[locale] = loaded;
-        if (active) setMessages(loaded);
+        if (active) setWhileLoading(loaded);
       })
       .catch((error) => {
         console.error(`[i18n] failed to load "${locale}", using English:`, error);
-        if (active) setMessages(en);
+        if (active) setWhileLoading(en);
       });
 
     return () => {
@@ -95,15 +87,19 @@ export function LanguageProvider({ children }) {
     };
   }, [locale]);
 
-  const changeLanguage = useCallback((next) => {
-    if (!isSupported(next)) return;
-    setLocale(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      // Non-fatal: the choice just won't persist.
-    }
-  }, []);
+  const changeLanguage = useCallback(
+    (next) => {
+      if (!isSupported(next)) return;
+      setWhileLoading(messages);
+      setChosen(next);
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // Non-fatal: the choice just won't persist.
+      }
+    },
+    [messages]
+  );
 
   const t = useCallback(
     (key) => {

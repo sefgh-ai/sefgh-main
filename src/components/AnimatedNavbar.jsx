@@ -206,7 +206,7 @@ export function AnimatedNavbar({ className }) {
                   title="Trending Repos"
                   icon={TrendingUp}
                 />
-                <ListItem href="/downloads" title="Downloads" icon={Download} />
+                <ListItem href="/download" title="Downloads" icon={Download} />
                 <ListItem href="/status" title="Status" icon={Activity} />
               </ul>
             </NavigationMenuContent>

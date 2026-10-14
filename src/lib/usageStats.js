@@ -4,6 +4,22 @@
  */
 
 /**
+ * The days in a reply from GET /api/activity, as {date, count}. The reply is
+ * a grid of weeks covering the last year; its last week is padded with days
+ * that have no date, and those are left out. Anything malformed counts as no
+ * activity rather than being invented.
+ * @param {Object} reply - The JSON body of a 200 reply from /api/activity
+ * @returns {Array} {date: 'YYYY-MM-DD', count: number} objects, oldest first
+ */
+export function usageDaysFromActivity(reply) {
+  const weeks = Array.isArray(reply?.grid) ? reply.grid : []
+  return weeks
+    .flat()
+    .filter((day) => typeof day?.date === 'string' && day.date !== '')
+    .map((day) => ({ date: day.date, count: Number.isFinite(day.count) ? day.count : 0 }))
+}
+
+/**
  * Normalize raw usage days into a consistent format with computed metadata
  * @param {Array} rawDays - Array of {date: string, count: number} objects
  * @returns {Array} Normalized days with Date objects and metadata

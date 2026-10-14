@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { ArrowLeft, FileText, Code, Paintbrush, Download, Copy, Play, Settings, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -53,27 +53,28 @@ hljs.registerLanguage('json', json)
 hljs.registerLanguage('markdown', markdown)
 hljs.registerLanguage('plaintext', plaintext)
 
+// Stands for "no prop value seen yet", so the first render takes the props.
+const NOT_SEEN = Symbol('not seen')
+
 export function Canvas({ content, onChange, onClose, initialLanguage = 'javascript' }) {
   const [activeTab, setActiveTab] = useState('code')
   const [code, setCode] = useState('// Start coding...')
   const [language, setLanguage] = useState('javascript')
   const [notes, setNotes] = useState('')
 
-  // Update code when content prop changes
-  useEffect(() => {
-    if (content) {
-      setCode(content)
-      console.log('Canvas: Content updated:', content.substring(0, 50) + '...')
-    }
-  }, [content])
-
-  // Update language when initialLanguage changes
-  useEffect(() => {
-    if (initialLanguage) {
-      setLanguage(initialLanguage)
-      console.log('Canvas: Language updated to:', initialLanguage)
-    }
-  }, [initialLanguage])
+  // When the content or language passed in changes, take it. React's way to
+  // do that is to remember the last value seen and compare during render,
+  // rather than copy it in an effect, which renders twice.
+  const [seenContent, setSeenContent] = useState(NOT_SEEN)
+  if (content !== seenContent) {
+    setSeenContent(content)
+    if (content) setCode(content)
+  }
+  const [seenLanguage, setSeenLanguage] = useState(NOT_SEEN)
+  if (initialLanguage !== seenLanguage) {
+    setSeenLanguage(initialLanguage)
+    if (initialLanguage) setLanguage(initialLanguage)
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code)

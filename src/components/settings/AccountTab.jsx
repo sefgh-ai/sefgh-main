@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Copy,
@@ -25,23 +25,18 @@ import { ActivityLogger } from "@/lib/activity-logger";
 export default function AccountTab() {
   const router = useRouter();
   const { user } = useAuth();
-  const [userId, setUserId] = useState("");
-  const [githubUsername, setGithubUsername] = useState("");
+  // Both come straight from the user, so they are worked out on each render
+  // rather than copied into state by an effect.
+  const userId = user?.id || "";
+  const githubUsername =
+    user?.user_metadata?.github_username ||
+    user?.user_metadata?.user_name ||
+    user?.identities?.find((id) => id.provider === "github")?.identity_data
+      ?.user_name ||
+    "";
 
   useEffect(() => {
-    if (user) {
-      setUserId(user.id || "");
-
-      const username =
-        user.user_metadata?.github_username ||
-        user.user_metadata?.user_name ||
-        user.identities?.find((id) => id.provider === "github")?.identity_data
-          ?.user_name ||
-        "";
-
-      setGithubUsername(username);
-      ActivityLogger.settingsView();
-    }
+    if (user) ActivityLogger.settingsView();
   }, [user]);
 
   const handleCopyUserId = () => {

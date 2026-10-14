@@ -10,7 +10,7 @@ export default function Footer() {
     { href: "/news", label: "Release Notes" },
     { href: "/research", label: "Research" },
     { href: "/sitemap-preview", label: "Sitemap" },
-    { href: "/downloads", label: "Downloads" },
+    { href: "/download", label: "Downloads" },
     { href: "/playground", label: "Playground" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },

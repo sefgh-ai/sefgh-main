@@ -78,7 +78,7 @@ Never dual-write to compare stateful implementations. Compare read fixtures or s
 | 3: user data | Browser conversation, history, profile, notification and other domain operations behind Go; repo interaction, sharing and playground routes | Two-user isolation tests; RLS and ownership equivalence; revoked and private share behaviour; atomic conversation writes; realtime parity; hashed key lifecycle and server-side accounting | Not started. Blocked on database definitions |
 | 4: jobs and storage | Trending refresh with staging and atomic promotion, avatar workflow, RepoSync ingestion | Idempotency, retries, checkpoints, partial-failure recovery, separate worker privileges, storage authorization tests | Not started |
 | 5: analysis and search workers | The chosen RepoAnalyser pipeline and semantic-search orchestration | Model, dimension, vector-column and RPC agreement; fixed-corpus retrieval evaluation; result mapping; ingestion throughput and recovery parity | Not started |
-| 6: bugs and broken UI/UX | Record every known bug and broken UI/UX path in `../bug-register.md`, including a walk-through of every page; fix every entry | Every register entry fixed with a check that would catch it again, or deferred by the owner by name; `npm run lint` passes; the walk-through repeated after the fixes finds nothing new at High or Medium | Added 2026-10-14 by the owner. Register opened with 47 entries (BUG-001); walk-through not done |
+| 6: bugs and broken UI/UX | Record every known bug and broken UI/UX path in `../bug-register.md`, including a walk-through of every page; fix every entry | Every register entry fixed with a check that would catch it again, or deferred by the owner by name; `npm run lint` passes; the walk-through repeated after the fixes finds nothing new at High or Medium | Added 2026-10-14 by the owner. Register opened with 47 entries (BUG-001); BUG-003 fixed five and found nine more (57 in all, 6 fixed); `npm run lint` passes and runs in CI. Walk-through not done |
 | 7: retire old logic | Remove replaced handlers, direct browser business-data calls and temporary adapters | Phase 6 gate met; caller audit; no dual writes; rollback observation period complete; remaining Next.js and managed-service boundaries documented | Not started |
 
 A read-only Phase 1 route does not wait for unrelated schema work. No database mutation moves before its own schema and policy gate passes.
@@ -405,3 +405,13 @@ the repository page; not to contributions, whose contract would change. In Go
 it is an `http.RoundTripper` given only to the signed-out handlers' clients.
 No existing fixture changed. Unset, behaviour is unchanged; live use waits for
 the owner to create and set the token. Lesson 21.
+
+BUG-003 (2026-10-14): the first Phase 6 fixes. Dead links (R-001, R-003,
+R-050), the profile's invented usage data (R-006, now read from
+`/api/activity`), and the ten lint errors (R-043). Effects that only copied a
+browser value into state now read it with `useSyncExternalStore` through
+`src/hooks/useBrowser.js`. `npm run lint` passes and CI runs it. Two guards
+joined the contract suite: `internal-paths.test.mjs` (links and API calls
+that lead nowhere) and `usage-activity.test.mjs`. No contract, route or Go
+code changed. A spot check of seven signed-out pages in headless Chrome, and
+reading the code the fixes touched, added R-049 to R-057.

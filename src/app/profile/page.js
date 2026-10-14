@@ -77,7 +77,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-6">
-          <UsageContributionsCard year={2025} />
+          <UsageContributionsCard />
         </div>
       </div>
     </div>

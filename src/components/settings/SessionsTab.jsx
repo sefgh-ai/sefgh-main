@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Monitor,
   Smartphone,
@@ -13,37 +13,36 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+// PLACEHOLDER, NOT REAL SESSIONS. Every user sees these, and "terminate"
+// ends nothing. Recorded as bug register R-049; what this tab should show
+// is the owner's choice. Kept unchanged here, only moved out of an effect.
+const PLACEHOLDER_CURRENT_SESSION = {
+  id: "current",
+  device: "Windows Desktop",
+  browser: "Chrome 120",
+  city: "Hyderabad",
+  region: "Telangana",
+  country: "India",
+  timezone: "Asia/Kolkata",
+  ip: "2405:201:****:****",
+  lastActive: "Now",
+  isCurrent: true,
+};
+const PLACEHOLDER_OTHER_SESSIONS = [
+  {
+    id: "1",
+    device: "iPhone 15",
+    browser: "Safari",
+    city: "Hyderabad",
+    country: "India",
+    lastActive: "2 hours ago",
+    isCurrent: false,
+  },
+];
+
 export default function SessionsTab() {
-  const [currentSession, setCurrentSession] = useState(null);
-  const [sessions, setSessions] = useState([]);
-
-  useEffect(() => {
-    // Simulate fetching session info
-    setCurrentSession({
-      id: "current",
-      device: "Windows Desktop",
-      browser: "Chrome 120",
-      city: "Hyderabad",
-      region: "Telangana",
-      country: "India",
-      timezone: "Asia/Kolkata",
-      ip: "2405:201:****:****",
-      lastActive: "Now",
-      isCurrent: true,
-    });
-
-    setSessions([
-      {
-        id: "1",
-        device: "iPhone 15",
-        browser: "Safari",
-        city: "Hyderabad",
-        country: "India",
-        lastActive: "2 hours ago",
-        isCurrent: false,
-      },
-    ]);
-  }, []);
+  const currentSession = PLACEHOLDER_CURRENT_SESSION;
+  const [sessions, setSessions] = useState(PLACEHOLDER_OTHER_SESSIONS);
 
   const handleTerminateSession = (sessionId) => {
     setSessions((prev) => prev.filter((s) => s.id !== sessionId));

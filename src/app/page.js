@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useIsClient, useMediaQuery } from "@/hooks/useBrowser";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
@@ -43,12 +44,11 @@ export default function Home() {
   const { t, messages, locale, changeLanguage, languages } = useLanguage();
   const { user } = useAuth();
   const [searchPlaceholder, setSearchPlaceholder] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [effectsReady, setEffectsReady] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)", false);
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const [allowMotion, setAllowMotion] = useState(true);
-  const reducedMotionQuery = useRef(null);
+  const allowMotion = !useMediaQuery("(prefers-reduced-motion: reduce)", false);
 
   const getUserInitials = () => {
     if (user?.user_metadata?.full_name) {
@@ -67,30 +67,6 @@ export default function Home() {
       user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"
     );
   };
-
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window !== "undefined") {
-      reducedMotionQuery.current = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      );
-      const onChange = () =>
-        setAllowMotion(!reducedMotionQuery.current.matches);
-      onChange();
-      reducedMotionQuery.current.addEventListener?.("change", onChange);
-      return () =>
-        reducedMotionQuery.current?.removeEventListener?.("change", onChange);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const media = window.matchMedia("(min-width: 1024px)");
-    const update = () => setIsDesktop(media.matches);
-    update();
-    media.addEventListener?.("change", update);
-    return () => media.removeEventListener?.("change", update);
-  }, []);
 
   // Defer heavy visual effects until after paint/idle to improve first render
   useEffect(() => {

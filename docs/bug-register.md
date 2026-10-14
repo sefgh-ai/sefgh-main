@@ -4,6 +4,8 @@ This is the one list of known bugs and broken UI/UX in SEFGH. It belongs to Phas
 
 Opened 2026-10-14 by Claude Code (task BUG-001). Every entry below came from evidence already in the repository or from reading the source. **No page was opened in a browser for this first pass.** A walk-through of every page, signed in and signed out, at phone and desktop width, is task BUG-002 and will add to this list.
 
+BUG-003 (2026-10-14) fixed R-001, R-003, R-006, R-043 and R-050 and added R-049 to R-057. Some of those came from loading seven signed-out pages (`/`, `/download`, `/privacy`, `/careers`, `/versions`, `/search`, `/trending`) in headless Chrome against a local build with placeholder Supabase settings. That was a spot check, not BUG-002's walk-through.
+
 ## How to read and keep this list
 
 - **ID** never changes and is never reused. A new entry takes the next number.
@@ -17,18 +19,24 @@ Opened 2026-10-14 by Claude Code (task BUG-001). Every entry below came from evi
 
 | ID | Sev | Problem | Evidence | Needs | Status |
 |---|---|---|---|---|---|
-| R-001 | Medium | The navbar's "Downloads" link goes to `/downloads`, which does not exist; the page is `/download`. The link is a 404 | `src/components/AnimatedNavbar.jsx:209` | — | open |
+| R-001 | Medium | The navbar's "Downloads" link goes to `/downloads`, which does not exist; the page is `/download`. The link is a 404 | `src/components/AnimatedNavbar.jsx:209`; also `src/components/Footer.jsx:13` (found in BUG-003 by loading pages in a browser). Guard: `scripts/contracts/internal-paths.test.mjs` | — | fixed (BUG-003, uncommitted at handoff) |
 | R-002 | Medium | The footer's newsletter "Subscribe" button does nothing. There is no form and no handler, so an address typed there goes nowhere, with no message to say so | `src/components/ui/footer-newsletter.jsx:52`, shown in `app-footer.jsx` | owner | open |
-| R-003 | Low | The newsletter consent text links "SEFGH Privacy Statement" to `#`. A `/privacy` page exists | `footer-newsletter.jsx:71` | — | open |
+| R-003 | Low | The newsletter consent text links "SEFGH Privacy Statement" to `#`. A `/privacy` page exists | `footer-newsletter.jsx:71`. Guard: `scripts/contracts/internal-paths.test.mjs` | — | fixed (BUG-003, uncommitted at handoff) |
 | R-004 | Medium | Every client error report in production is sent to `/api/log-error`, which does not exist. Each report is a 404 and nothing is recorded | `src/lib/error-tracking.js:32`; no such route | owner | open |
 | R-005 | Low | "Upgrade to Pro" sends the user to `/signup?plan=pro&billing=…`. The signup page ignores both values and there is no payment, so a signed-in user lands on a sign-up form | `src/components/search/UpgradeDialog.jsx:123` (marked TODO), `src/app/signup/page.js` | owner | open |
+| R-050 | Medium | On `/links`, "API Reference" went to `/docs/api` and "Changelog" to `/changelog`; neither page exists. Found in BUG-003 | `src/app/links/page.js`; guard `scripts/contracts/internal-paths.test.mjs` | — | fixed (BUG-003, uncommitted at handoff): now `/api-reference` and `/versions#changelog` |
+| R-051 | Low | On `/links`, "Blog RSS" goes to `/blog/rss.xml`; there is no feed. Found in BUG-003 | `src/app/links/page.js`; listed in `KNOWN` in `scripts/contracts/internal-paths.test.mjs` | owner | open: build a feed, or remove the link |
+| R-053 | Medium | Numbers are formatted with whichever locale the machine has (`toLocaleString()` with no locale), so the server and the browser can disagree. On `/trending` the server wrote "1,20,000" and Chrome "120,000"; React then throws away the server's HTML for that part of the page and logs a hydration error. Found in BUG-003 | 12 calls in 7 files, e.g. `src/components/trending/EditorsChoice.jsx:73`, `:78`; seen in a development build in headless Chrome | — | open |
+| R-054 | Low | On the home page, the content security policy blocks a Web Worker that some component creates from a `blob:` URL ("violates the following Content Security Policy directive: script-src"). Which component, and whether anything visible stops working, was not established. Found in BUG-003 | production build in headless Chrome; the policy is in `next.config.mjs` | — | open |
+| R-055 | Medium | Google Analytics loads on every page and sends page views and scroll events before the visitor answers the cookie bar, whose only button is "Got it". Whether consent is needed first depends on where visitors are; that is a legal and product choice. Found in BUG-003 | `src/app/layout.js` (Google Analytics script, `gtag('config', ...)`), `src/components/CookieBar.jsx` | owner | open |
 
 ## Profile and settings
 
 | ID | Sev | Problem | Evidence | Needs | Status |
 |---|---|---|---|---|---|
-| R-006 | High | The profile page's usage card shows invented activity. It is given no data, so it generates random mock usage, for a year fixed at 2025. `/api/activity`, which reads real activity, is not used | `src/app/profile/page.js:80`, `UsageContributionsCard.jsx` (`loadMockUsageForYear`), `src/lib/mockUsageData.js` | — | open |
+| R-006 | High | The profile page's usage card shows invented activity. It is given no data, so it generates random mock usage, for a year fixed at 2025. `/api/activity`, which reads real activity, is not used | `src/app/profile/page.js:80`, `UsageContributionsCard.jsx` (`loadMockUsageForYear`), `src/lib/mockUsageData.js` | — | fixed (BUG-003, uncommitted at handoff): the card reads `/api/activity` and says when it is loading, signed out or failed; guard `scripts/contracts/usage-activity.test.mjs` |
 | R-007 | Low | Two-factor authentication in Security settings only says "coming soon" | `src/components/settings/SecurityTab.jsx:33` | owner | open |
+| R-049 | High | The Sessions tab in settings shows the same invented sessions to every user ("Windows Desktop, Chrome 120, Hyderabad", a masked IP, an "iPhone 15"). Its "Terminate session" button removes the row and says "Session terminated" but ends nothing, so a user who lost a device would believe it is signed out. Found in BUG-003 | `src/components/settings/SessionsTab.jsx` (`PLACEHOLDER_CURRENT_SESSION`, `handleTerminateSession`) | owner | open: show only what Supabase can report (the current session, and "sign out everywhere"), or hide the tab |
 
 ## Chat
 
@@ -94,12 +102,15 @@ Opened 2026-10-14 by Claude Code (task BUG-001). Every entry below came from evi
 | R-040 | Medium | Comments and videos call `auth.admin.getUserById` with the ordinary public key. That call needs the service-role key, so it cannot succeed and commenter and uploader details are missing | `src/app/api/repo/comments/route.js:157`, `src/app/api/repo/videos/route.js:136`, `src/lib/utils/repo/commentHelpers.js:35`; backend-map finding 8 | owner | open |
 | R-041 | Medium | Avatar upload refers to `supabase/avatar-storage-setup.sql`, which is not in the repository; the storage policy it depends on is unknown | backend-map finding 1 | schema | open |
 | R-042 | Low | Nothing limits how often a caller can make the server ask Supabase (and GitHub) to verify credentials; each credentialed request costs up to two identity calls | `claude-review.md` REVIEW-006 "could not establish" | owner | open |
+| R-056 | Low | `GET /api/activity` sends the database's or the runtime's own error text to the browser on failure (`details: error.message`), the kind of leak the owner had fixed in the AI routes. Found in BUG-003, when the profile started calling it | `src/app/api/activity/route.js:44`, `:148` | — | open |
+| R-057 | Low | `GET /api/activity` builds its date range with the server's local calendar (`setDate`, `getDay`) and then writes dates in UTC (`toISOString`), so near midnight, or on a server outside UTC, days can shift by one and a week can start on the wrong day | `src/app/api/activity/route.js:22-30`, `:76` | — | open |
+| R-052 | Medium | `/api-reference` documents `GET /api/v1/search`, `POST /api/v1/chat` and `GET /api/v1/trending`, none of which exist; the page calls itself a mock. With R-039, the playground hands out keys for an API that is not there. Found in BUG-003 | `src/app/api-reference/page.js` | owner | open |
 
 ## Code health
 
 | ID | Sev | Problem | Evidence | Needs | Status |
 |---|---|---|---|---|---|
-| R-043 | Medium | `npm run lint` fails: ten places call `setState` directly inside an effect, which renders twice and can flicker | `react-hooks/set-state-in-effect` at `src/app/page.js:72`, `src/components/3d/ThreeBackground.jsx:12`, `src/components/Canvas.jsx:65`, `:73`, `src/components/CookieBar.jsx:22`, `src/components/settings/AccountTab.jsx:33`, `SessionsTab.jsx:22`, `src/components/usage-contributions/UsageContributionsCard.jsx:39`, `src/contexts/LanguageContext.js:66`, `:72` | — | open |
+| R-043 | Medium | `npm run lint` fails: ten places call `setState` directly inside an effect, which renders twice and can flicker | `react-hooks/set-state-in-effect` at `src/app/page.js:72`, `src/components/3d/ThreeBackground.jsx:12`, `src/components/Canvas.jsx:65`, `:73`, `src/components/CookieBar.jsx:22`, `src/components/settings/AccountTab.jsx:33`, `SessionsTab.jsx:22`, `src/components/usage-contributions/UsageContributionsCard.jsx:39`, `src/contexts/LanguageContext.js:66`, `:72` | — | fixed (BUG-003, uncommitted at handoff): `npm run lint` passes with 0 errors and CI now runs it |
 | R-044 | Low | Ten more effects or callbacks leave out what they read, so they can use stale values | `react-hooks/exhaustive-deps` at `src/app/chat/page.js:124`, `CodeExplorer.jsx:21`, playground `ApiKeysTab.jsx:29`, `LimitsTab.jsx:39`, `MonitoringTab.jsx:36`, `TestingTab.jsx:30`, `UsageTab.jsx:28`, `RepoVideoTab.jsx:32`, `useNotifications.js:35`, `useTrendingData.js:176` | — | open |
 | R-045 | Low | Two plain `<img>` elements, and one component the React compiler skips because it declares a class inline | `RepoDetailsLayout.jsx:82`, `RepoVideoTab.jsx:258`; `src/components/ui/particle-text-canvas.jsx:28` | — | open |
 
@@ -117,4 +128,4 @@ Dead code is not a bug, so it is not numbered above. Phase 7 removes it.
 
 - `src/lib/supabase/mcp.js`: a stub nothing imports.
 - `streamAIResponse` in `src/lib/ai/github.js`: only throws; nothing calls it.
-- `src/lib/mockUsageData.js`: goes once R-006 is fixed.
+- `src/lib/mockUsageData.js`: unused since R-006 was fixed in BUG-003; `scripts/contracts/usage-activity.test.mjs` fails if app code imports it again.
