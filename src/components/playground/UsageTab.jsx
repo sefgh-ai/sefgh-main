@@ -1,5 +1,6 @@
 'use client';
 
+import { formatNumber } from "@/lib/utils/formatters";
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
@@ -148,7 +149,7 @@ export default function UsageTab({ userId }) {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalRequests.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.totalRequests)}</div>
             <p className="text-xs text-muted-foreground">API calls in selected period</p>
           </CardContent>
         </Card>

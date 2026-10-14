@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber, formatCompactNumber } from "@/lib/utils/formatters";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
 import {
@@ -17,10 +18,6 @@ import { ViewToggle } from "@/components/search/ViewToggle";
 
 // Compact list item for list/compact views
 function RepositoryListItem({ repo, onSelect, compact = false }) {
-  const formatNumber = (num) => {
-    if (num >= 1000) return (num / 1000).toFixed(1) + "k";
-    return num.toString();
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -52,11 +49,11 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Star className="h-3 w-3" />
-            {formatNumber(repo.stargazers_count)}
+            {formatCompactNumber(repo.stargazers_count)}
           </span>
           <span className="flex items-center gap-1">
             <GitFork className="h-3 w-3" />
-            {formatNumber(repo.forks_count)}
+            {formatCompactNumber(repo.forks_count)}
           </span>
           <span className="hidden sm:flex items-center gap-1">
             <Clock className="h-3 w-3" />
@@ -113,11 +110,11 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
           )}
           <span className="flex items-center gap-1">
             <Star className="h-3.5 w-3.5" />
-            {formatNumber(repo.stargazers_count)}
+            {formatCompactNumber(repo.stargazers_count)}
           </span>
           <span className="flex items-center gap-1">
             <GitFork className="h-3.5 w-3.5" />
-            {formatNumber(repo.forks_count)}
+            {formatCompactNumber(repo.forks_count)}
           </span>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -205,7 +202,7 @@ export function SearchResults({
     <>
       <div className="mb-4 text-sm text-muted-foreground flex items-center justify-between">
         <span>
-          Showing {searchResults.length} of {totalCount.toLocaleString()}{" "}
+          Showing {searchResults.length} of {formatNumber(totalCount)}{" "}
           repositories
           {searchTime && <span className="ml-2">• Found in {searchTime}s</span>}
         </span>
@@ -333,7 +330,7 @@ export function SearchResults({
 
           {/* Page Info */}
           <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages.toLocaleString()}
+            Page {currentPage} of {formatNumber(totalPages)}
           </span>
         </div>
       )}

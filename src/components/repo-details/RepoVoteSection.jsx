@@ -1,5 +1,6 @@
 'use client'
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -99,19 +100,8 @@ export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
     }
   }
 
-  // Format vote count with K/M suffix (consistent for SSR)
-  const formatVotes = (count) => {
-    const n = Number(count)
-    if (isNaN(n)) return '0'
-    const absN = Math.abs(n)
-    if (absN >= 1000000) {
-      return (n < 0 ? '-' : '') + (Math.floor(absN / 100000) / 10) + 'M'
-    }
-    if (absN >= 1000) {
-      return (n < 0 ? '-' : '') + (Math.floor(absN / 100) / 10) + 'k'
-    }
-    return String(n)
-  }
+  // Vote counts in short Indian units (K, L, Cr), the same on server and browser.
+  const formatVotes = (count) => formatCompactNumber(count)
 
   return (
     <div className="flex items-center gap-2">

@@ -83,12 +83,16 @@ export const AuthProvider = ({ children }) => {
   // React Compiler cannot preserve a `user?.id` dep against an inferred `user`.
   const userId = user?.id;
 
-  const signOut = useCallback(async () => {
+  // scope "local" ends this browser's session only (Supabase revokes it on
+  // the server too); "global" ends every session of the account, on every
+  // device. Supabase's own default is "global", which made the ordinary
+  // "Sign out" button sign people out everywhere (bug register R-058).
+  const signOut = useCallback(async ({ scope = "local" } = {}) => {
     if (userId) {
       sessionStorage.removeItem(`onboarding_dismissed_session_${userId}`);
     }
 
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope });
     if (error) {
       // Surface it rather than navigating away while the session survives.
       console.error("[auth] signOut failed:", error.message);

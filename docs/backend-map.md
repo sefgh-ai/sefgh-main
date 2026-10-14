@@ -313,3 +313,13 @@ data; that route, which reads `activity_logs` with the user's own Supabase
 session, has its first browser caller. `src/hooks/useBrowser.js` holds the
 hooks the UI uses to read browser-only values (localStorage, media queries)
 without setting state inside an effect.
+
+## BUG-004 / BUG-005 / ACT-001 update (2026-10-14)
+
+`contracts/activity` records `GET /api/activity` (reads `activity_logs`
+through the user's cookie-session client), the first Phase 3 contract. The
+trending route's reply changed shape at contract version 2: `starsPerDay`
+replaced `starsToday`, in both backends. Google Analytics now loads from a
+client component, `src/components/GoogleAnalytics.jsx`, only after consent
+stored by `src/lib/consent.js`. The Sessions tab calls Supabase's
+`signOut({ scope: "global" })`; every other sign-out uses `"local"`.

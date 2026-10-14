@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/lib/utils/formatters";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,13 +76,13 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
               {/* Stars */}
               <div className="flex items-center gap-1 text-muted-foreground">
                 <Star className="w-4 h-4" />
-                <span>{repo.stars.toLocaleString()}</span>
+                <span>{formatNumber(repo.stars)}</span>
               </div>
 
               {/* Forks */}
               <div className="flex items-center gap-1 text-muted-foreground">
                 <GitFork className="w-4 h-4" />
-                <span>{repo.forks.toLocaleString()}</span>
+                <span>{formatNumber(repo.forks)}</span>
               </div>
 
               {/* Built by */}
@@ -103,21 +104,24 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
             </div>
           </div>
 
-          {/* Right Side - Stars Today */}
+          {/* Right Side - real stars per day since the repository was
+              created (R-020); hidden when GitHub gave no creation time. */}
           <div className="flex-shrink-0 flex flex-col items-end gap-3">
-            <div className="flex items-center gap-2">
-              <div className="text-right">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Star className="w-4 h-4" />
-                  <span className="font-semibold">
-                    {repo.starsToday.toLocaleString()}
+            {repo.starsPerDay !== null && repo.starsPerDay !== undefined && (
+              <div className="flex items-center gap-2">
+                <div className="text-right" title="Average since the repository was created">
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Star className="w-4 h-4" />
+                    <span className="font-semibold">
+                      {formatNumber(repo.starsPerDay)}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    stars a day
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  stars today
-                </span>
               </div>
-            </div>
+            )}
             <Button variant="outline" size="sm">
               <Star className="w-4 h-4 mr-1" />
               Star
@@ -125,22 +129,6 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
           </div>
         </div>
 
-        {/* Growth Progress Bar */}
-        {repo.starsToday > 0 && (
-          <div className="mt-4 pl-12">
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000"
-                style={{
-                  width: `${Math.min((repo.starsToday / repo.stars) * 100 * 10, 100)}%`,
-                }}
-              ></div>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Growth: {((repo.starsToday / repo.stars) * 100).toFixed(2)}% today
-            </p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

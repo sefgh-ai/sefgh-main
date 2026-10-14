@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/lib/utils/formatters";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
@@ -256,7 +257,7 @@ export default function HistoryPage() {
                                   {item.results_count > 0 &&
                                     item.source === "search" && (
                                       <span className="text-xs text-muted-foreground">
-                                        {item.results_count.toLocaleString()}{" "}
+                                        {formatNumber(item.results_count)}{" "}
                                         results
                                       </span>
                                     )}

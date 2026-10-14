@@ -1,5 +1,6 @@
 'use client'
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState, useEffect } from "react"
 import { ArrowLeft, Star, GitFork, Eye, ExternalLink, Copy, FileText, BarChart3, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -40,12 +41,6 @@ export function CodeExplorer({ repository, onClose }) {
     toast.success('Repository URL copied!')
   }
 
-  const formatNumber = (num) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k'
-    }
-    return num?.toString() || '0'
-  }
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -195,19 +190,19 @@ export function CodeExplorer({ repository, onClose }) {
                     <h3 className="text-lg font-semibold mb-4">Repository Activity</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 border rounded-lg">
-                        <div className="text-2xl font-bold">{formatNumber(repository.stargazers_count)}</div>
+                        <div className="text-2xl font-bold">{formatCompactNumber(repository.stargazers_count)}</div>
                         <div className="text-sm text-muted-foreground">Stars</div>
                       </div>
                       <div className="p-4 border rounded-lg">
-                        <div className="text-2xl font-bold">{formatNumber(repository.forks_count)}</div>
+                        <div className="text-2xl font-bold">{formatCompactNumber(repository.forks_count)}</div>
                         <div className="text-sm text-muted-foreground">Forks</div>
                       </div>
                       <div className="p-4 border rounded-lg">
-                        <div className="text-2xl font-bold">{formatNumber(repository.watchers_count)}</div>
+                        <div className="text-2xl font-bold">{formatCompactNumber(repository.watchers_count)}</div>
                         <div className="text-sm text-muted-foreground">Watchers</div>
                       </div>
                       <div className="p-4 border rounded-lg">
-                        <div className="text-2xl font-bold">{formatNumber(repository.open_issues_count)}</div>
+                        <div className="text-2xl font-bold">{formatCompactNumber(repository.open_issues_count)}</div>
                         <div className="text-sm text-muted-foreground">Open Issues</div>
                       </div>
                     </div>

@@ -10,6 +10,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import PageWrapper from "@/components/PageWrapper";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import CookieBar from "@/components/CookieBar";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { DynamicIslandNav } from "@/components/navigation/DynamicIslandNav";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -198,30 +199,8 @@ export default function RootLayout({ children }) {
       <body
         className="font-sans antialiased"
       >
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-3J37CNB3YE"
-          strategy="lazyOnload"
-        />
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-            if (navigator?.doNotTrack === '1') {
-              console.info('GA disabled by DNT');
-            } else {
-              const runGA = () => {
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'G-3J37CNB3YE');
-              };
-              if ('requestIdleCallback' in window) {
-                window.requestIdleCallback(runGA, { timeout: 2000 });
-              } else {
-                setTimeout(runGA, 1200);
-              }
-            }
-          `}
-        </Script>
+        {/* Google Analytics: only after the visitor accepts (R-055). */}
+        <GoogleAnalytics />
         <Script id="obelisk-loader" strategy="lazyOnload">
           {`
             (function() {

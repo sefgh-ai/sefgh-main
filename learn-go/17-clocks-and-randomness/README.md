@@ -1,27 +1,31 @@
 # 17. Pass in clocks and random numbers
 
 The trending handler in `backend/internal/githubtrending/handler.go` uses today's
-date and a random number. A test cannot predict either if it calls the real clock
-and random generator. The handler accepts functions instead:
+date. A test cannot predict it if the handler calls the real clock, so the handler
+accepts a function instead:
 
 ```go
 type Handler struct {
     // Other settings omitted here.
-    Now    func() time.Time
-    Random func() float64
+    Now func() time.Time
 }
 ```
 
 `func() time.Time` means a function taking no arguments and returning a time.
-In JavaScript you might pass `{ now: () => fixedDate, random: () => 0.5 }`.
+In JavaScript you might pass `{ now: () => fixedDate }`.
 In Go, assigning nil means the optional function was not supplied. The handler
-then uses `time.Now` and the standard library's `rand.Float64` from `math/rand/v2`.
-Tests pass their own functions. No package-wide clock needs to be replaced.
+then uses `time.Now`. Tests pass their own function. No package-wide clock needs
+to be replaced.
 
-The handler reads `now()` once per request and `random()` once for each returned
-repository. A test function can also count its calls. A production-injected
-function must be safe when requests run concurrently; the default random source
-already supports that. Test counters here are local to sequential requests.
+The handler reads `now()` once per request and uses that one moment twice: for
+the start of the search period, and to measure each repository's stars per day
+since it was created. A production-injected function must be safe when requests
+run concurrently.
+
+Until 2026-10-14 the handler also took `Random func() float64`, injected the same
+way, for a random number it showed as "stars today". That number is gone (see the
+end of this lesson), and so is the field. Passing randomness in works exactly like
+passing the clock in, if you ever need it.
 
 ## Calendar days are not always 24 hours
 
@@ -35,12 +39,25 @@ The Go port preserves that order. It also preserves month overflow: subtracting
 one month from March 31 can land in March, just like JavaScript's setMonth.
 The fixtures pin these surprising behaviors; a port cannot silently change them.
 
-## A passing port can preserve a known defect
+## A passing port can preserve a known defect, until the owner decides
 
-The old handler makes up `starsToday` with `Math.floor(Math.random()*500)+50`.
-Go mirrors it with `math.Floor(random()*500)+50`. This is recorded as a defect,
-not a trustworthy measure of daily stars. Fixed random inputs let both handlers
-pass the same fixtures while the owner considers a better product contract.
+The handlers used to make up `starsToday` with `Math.floor(Math.random()*500)+50`,
+and Go mirrored it with `math.Floor(random()*500)+50`. That was recorded as a
+defect, and a fixed random input let both handlers pass the same fixtures.
+
+On 2026-10-14 you chose a real measure instead. Contract version 2 replaces it
+with `starsPerDay`: the stars divided by the days since the repository was
+created, at least one day, rounded down. Both handlers compute it from the same
+injected clock, so the fixtures still pin it exactly. In Go:
+
+```go
+days := math.Max(1, float64(now.UnixMilli()-created.UnixMilli())/(24*60*60*1000))
+return math.Floor(count / days)
+```
+
+Counting in whole milliseconds matches JavaScript's `Date.now()`, so the two
+round down the same number. That is how a contract change works here: the
+fixtures, the Next.js handler and the Go handler change together.
 
 The route remains public-only and forwards no caller or server GitHub token.
 It stays off unless `github-trending` is selected in the Next.js Go-route switch.

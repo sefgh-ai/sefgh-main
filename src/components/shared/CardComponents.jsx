@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -75,13 +76,13 @@ export const RepoCard = memo(function RepoCard({
           {stars !== undefined && (
             <span className="flex items-center gap-1">
               <Star className="h-4 w-4" />
-              {stars.toLocaleString()}
+              {formatNumber(stars)}
             </span>
           )}
           {forks !== undefined && (
             <span className="flex items-center gap-1">
               <GitFork className="h-4 w-4" />
-              {forks.toLocaleString()}
+              {formatNumber(forks)}
             </span>
           )}
         </div>

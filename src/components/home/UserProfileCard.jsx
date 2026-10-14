@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,11 +39,6 @@ export function UserProfileCard({ user, loading: authLoading }) {
   };
 
   // Format large numbers (e.g., 4400 -> 4.4k)
-  const formatNumber = (num) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
-    return num?.toString() || "0";
-  };
 
   if (loading) {
     return (
@@ -141,7 +137,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
                 Followers
               </span>
               <span className="font-semibold text-primary">
-                {formatNumber(followers)}
+                {formatCompactNumber(followers)}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
@@ -150,7 +146,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
                 Projects
               </span>
               <span className="font-semibold text-primary">
-                {formatNumber(projects)}
+                {formatCompactNumber(projects)}
               </span>
             </div>
           </div>

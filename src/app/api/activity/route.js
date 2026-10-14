@@ -19,15 +19,18 @@ export async function GET(request) {
       )
     }
 
-    // Calculate date range (last 365 days starting from a Monday)
+    // Calculate date range (last 365 days starting from a Monday). Every step
+    // uses the UTC calendar, the one the dates are written in: mixing the
+    // server's local calendar with UTC dates shifted days by one on a server
+    // outside UTC (bug register R-057).
     const to = new Date()
-    const from = new Date()
-    from.setDate(to.getDate() - 365)
+    const from = new Date(to)
+    from.setUTCDate(from.getUTCDate() - 365)
     
     // Adjust 'from' to the previous Monday
-    const dayOfWeek = from.getDay()
+    const dayOfWeek = from.getUTCDay()
     const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-    from.setDate(from.getDate() - daysToMonday)
+    from.setUTCDate(from.getUTCDate() - daysToMonday)
 
     // Fetch activity data
     const { data: activityData, error: activityError } = await supabase
@@ -39,9 +42,11 @@ export async function GET(request) {
       .order('activity_date', { ascending: true })
 
     if (activityError) {
+      // The cause goes to the server log only; the database's own error
+      // text used to reach the browser (bug register R-056).
       console.error('Supabase error:', activityError)
       return NextResponse.json(
-        { error: 'Failed to fetch activity data', details: activityError.message },
+        { error: 'Failed to fetch activity data' },
         { status: 500 }
       )
     }
@@ -79,7 +84,7 @@ export async function GET(request) {
       if (count > maxCount) maxCount = count
       if (count > 0) activeDays++
 
-      const dayOfWeekIndex = currentDate.getDay() // 0 = Sunday, 6 = Saturday
+      const dayOfWeekIndex = currentDate.getUTCDay() // 0 = Sunday, 6 = Saturday
       
       currentWeek.push({
         date: dateStr,
@@ -96,7 +101,7 @@ export async function GET(request) {
         weekIndex++
       }
 
-      currentDate.setDate(currentDate.getDate() + 1)
+      currentDate.setUTCDate(currentDate.getUTCDate() + 1)
     }
     
     // Push any remaining days as the last incomplete week
@@ -145,7 +150,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('API error:', error)
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

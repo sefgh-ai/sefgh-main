@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/lib/utils/formatters";
 import { useState, useEffect, useRef } from "react";
 import { Clock, Trash2, Search, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -129,7 +130,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
                       <>
                         <span>•</span>
                         <span>
-                          {item.results_count.toLocaleString()} results
+                          {formatNumber(item.results_count)} results
                         </span>
                       </>
                     )}

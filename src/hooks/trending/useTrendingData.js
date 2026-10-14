@@ -9,6 +9,7 @@ import {
   TRENDING_TOPICS,
 } from "@/lib/trending";
 import { getLanguageColor } from "@/lib/utils/trending/trendingHelpers";
+import { starsPerDay, heatLevel } from "@/lib/utils/trending/trendingMeasure";
 
 export function useTrendingData(
   activeTab,
@@ -23,6 +24,9 @@ export function useTrendingData(
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
   const [isDataStale, setIsDataStale] = useState(false);
+  // Set when a list could not be loaded. The page says so; it used to show
+  // made-up repositories and developers instead (bug register R-020).
+  const [loadError, setLoadError] = useState(null);
 
   // Fetch custom curated trending data
   const fetchCustomTrendingData = async () => {
@@ -58,14 +62,12 @@ export function useTrendingData(
       if (spokenLanguage !== "any") params.set("spokenLanguage", spokenLanguage);
       const response = await fetch(`/api/github/trending?${params}`);
 
-      if (response.ok) {
-        const data = await response.json();
-        setRepositories(data);
-      } else {
-        setRepositories(getMockRepos());
-      }
-    } catch (error) {
-      setRepositories(getMockRepos());
+      if (!response.ok) throw new Error(`status ${response.status}`);
+      setRepositories(await response.json());
+      setLoadError(null);
+    } catch {
+      setRepositories([]);
+      setLoadError("Trending repositories could not be loaded right now. Please try again in a moment.");
     }
   };
 
@@ -76,14 +78,12 @@ export function useTrendingData(
         `/api/github/trending-developers?since=${dateRange}`
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        setDevelopers(data);
-      } else {
-        setDevelopers(getMockDevelopers());
-      }
-    } catch (error) {
-      setDevelopers(getMockDevelopers());
+      if (!response.ok) throw new Error(`status ${response.status}`);
+      setDevelopers(await response.json());
+      setLoadError(null);
+    } catch {
+      setDevelopers([]);
+      setLoadError("Trending developers could not be loaded right now. Please try again in a moment.");
     }
   };
 
@@ -131,13 +131,11 @@ export function useTrendingData(
           languageColor: getLanguageColor(repo.language),
           stars: repo.stargazers_count || 0,
           forks: repo.forks_count || 0,
-          starsToday: Math.floor(Math.random() * 500) + 100,
-          contributors: [
-            { avatar: "👨‍💻", name: "user1" },
-            { avatar: "👩‍💻", name: "user2" },
-            { avatar: "🧑‍💻", name: "user3" },
-          ],
-          heatLevel: 3,
+          starsPerDay: starsPerDay(repo.stargazers_count, repo.created_at),
+          contributors: repo.owner?.login
+            ? [{ avatar: repo.owner.avatar_url, name: repo.owner.login }]
+            : [],
+          heatLevel: heatLevel(starsPerDay(repo.stargazers_count, repo.created_at)),
           trending: true,
           topic: topic?.name || topicId,
           topicIcon: topic?.icon || "🔥",
@@ -183,95 +181,8 @@ export function useTrendingData(
     isRefreshing,
     lastRefresh,
     isDataStale,
+    loadError,
     handleRefreshTrending,
     getCustomTrendingRepos,
   };
-}
-
-// Mock data generators
-function getMockRepos() {
-  return [
-    {
-      id: 1,
-      author: "666ghi",
-      name: "BettaFish",
-      description:
-        "微模！人人可用的多Agent模拟分析助手，打破信息茧房，还原真相框架，预测未来走向，辅助决策！从0实现，不依赖任何框架。",
-      language: "Python",
-      languageColor: "#3572A5",
-      stars: 17779,
-      forks: 3465,
-      starsToday: 3224,
-      contributors: [
-        { avatar: "👨‍💻", name: "user1" },
-        { avatar: "👩‍💻", name: "user2" },
-        { avatar: "🧑‍💻", name: "user3" },
-      ],
-      heatLevel: 3,
-      trending: true,
-    },
-    {
-      id: 2,
-      author: "Skyvern-AI",
-      name: "skyvern",
-      description: "Automate browser based workflows with AI",
-      language: "Python",
-      languageColor: "#3572A5",
-      stars: 16673,
-      forks: 1414,
-      starsToday: 878,
-      contributors: [
-        { avatar: "👨‍💻", name: "user1" },
-        { avatar: "👩‍💻", name: "user2" },
-      ],
-      heatLevel: 3,
-      trending: true,
-    },
-    {
-      id: 3,
-      author: "facebook",
-      name: "react",
-      description:
-        "A declarative, efficient, and flexible JavaScript library for building user interfaces.",
-      language: "JavaScript",
-      languageColor: "#f1e05a",
-      stars: 228000,
-      forks: 46700,
-      starsToday: 245,
-      contributors: [
-        { avatar: "👨‍💻", name: "user1" },
-        { avatar: "👩‍💻", name: "user2" },
-        { avatar: "🧑‍💻", name: "user3" },
-      ],
-      heatLevel: 2,
-      trending: true,
-    },
-  ];
-}
-
-function getMockDevelopers() {
-  return [
-    {
-      id: 1,
-      rank: 1,
-      name: "John Developer",
-      username: "@johndoe",
-      avatar: "👨‍💻",
-      popularRepo: {
-        name: "awesome-project",
-        description: "An awesome open source project",
-      },
-    },
-    {
-      id: 2,
-      rank: 2,
-      name: "Jane Coder",
-      username: "@janecoder",
-      avatar: "👩‍💻",
-      popularRepo: {
-        name: "cool-framework",
-        description: "A modern JavaScript framework",
-      },
-    },
-  ];
 }

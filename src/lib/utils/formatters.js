@@ -34,25 +34,44 @@ export function formatDate(date, options = {}) {
   });
 }
 
+// Every number the app shows uses Indian grouping, the owner's choice of
+// 2026-10-14 (bug register R-053). The locale is written out, never left to
+// the machine: a server in India and a browser elsewhere used to disagree
+// ("1,20,000" against "120,000"), and React then discarded the server's HTML.
+const indian = new Intl.NumberFormat("en-IN");
+
 /**
- * Format a number with commas
+ * A number in full, with Indian grouping: 120000 → "1,20,000".
+ * Anything that is not a finite number shows as "0".
  * @param {number} num - The number to format
  * @returns {string} Formatted number string
  */
 export function formatNumber(num) {
-  return new Intl.NumberFormat("en-US").format(num);
+  const n = Number(num);
+  return Number.isFinite(n) ? indian.format(n) : "0";
 }
 
 /**
- * Format a number as a compact string (e.g., 1.2K, 3.4M)
+ * A number in short form, in Indian units: thousand (K), lakh (L), crore
+ * (Cr). 1234 → "1.2K", 120000 → "1.2L", 12345678 → "1.2Cr".
+ *
+ * Written out rather than left to Intl's compact notation, which for en-IN
+ * writes thousands as "T" (easily read as trillion) and depends on the ICU
+ * version, which can differ between the server and the browser. One decimal,
+ * cut rather than rounded, so 99,999 is "99.9K" and never "100K".
  * @param {number} num - The number to format
  * @returns {string} Compact formatted number string
  */
 export function formatCompactNumber(num) {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    compactDisplay: "short",
-  }).format(num);
+  const n = Number(num);
+  if (!Number.isFinite(n)) return "0";
+  for (const [size, unit] of [[1e7, "Cr"], [1e5, "L"], [1e3, "K"]]) {
+    if (Math.abs(n) >= size) {
+      const scaled = Math.trunc((n / size) * 10) / 10;
+      return `${indian.format(scaled)}${unit}`;
+    }
+  }
+  return indian.format(Math.trunc(n));
 }
 
 /**

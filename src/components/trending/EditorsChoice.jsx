@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Sparkles, Flame } from "lucide-react";
@@ -70,13 +71,8 @@ export function EditorsChoice({ items, onNavigate }) {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-300" />
-                  <span className="font-semibold">{repo.stars.toLocaleString()}</span>
+                  <span className="font-semibold">{formatNumber(repo.stars)}</span>
                   <span className="text-xs text-muted-foreground">stars</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-primary" />
-                  <span className="font-semibold">{repo.starsToday.toLocaleString()}</span>
-                  <span className="text-xs text-muted-foreground">today</span>
                 </div>
               </div>
             </CardContent>

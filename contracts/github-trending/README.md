@@ -1,5 +1,34 @@
 # GitHub trending characterization (GO-006a)
 
+## Version 2 (BUG-005, 2026-10-14): current
+
+The owner chose on 2026-10-14 to replace the random "stars today" with a real
+measure (bug register R-020). The Next.js handler, the Go handler and these
+fixtures changed together. 44 cases, 7 marked `defect`.
+
+- `starsToday` is gone. `starsPerDay` takes its place: the repository's
+  `stargazers_count` divided by the days since its `created_at`, at least
+  one day, rounded down. The search asks only for repositories created inside
+  the chosen period, so every one of their stars was earned in that period.
+  Days are counted in whole milliseconds, so both implementations round down
+  the same value.
+- `starsPerDay` is `null` when the count is not a finite number or
+  `created_at` is not in the form GitHub sends, `2026-10-12T08:00:00Z`
+  (a date alone, or an offset, is not read).
+- `heatLevel` comes from `starsPerDay`: 3 from 100 a day, 2 from 25,
+  otherwise 1 (including null). It used to be the position in the list.
+- Nothing is random. Every case expects `random_calls` 0, and the fixtures
+  no longer carry a `random` value.
+- Removed: `random-min`, `random-mid`, `random-max`, which pinned the random
+  number. `ranking-boundaries`, `fallback-fields` and `unknown-color` are no
+  longer defects. Added: 13 cases for the measure and the heat level. Every
+  other case is unchanged apart from those two fields.
+
+The rest of this file describes version 1. Where it mentions randomness or
+`starsToday`, version 2 above replaces it.
+
+## Version 1
+
 Version 1 pins the existing `GET /api/github/trending` handler at `7e0820c`.
 There are 34 cases, including 13 marked `defect`, plus a fixture integrity
 check. No production Next.js trending source was changed. The GO-006b update below records its later Go port.

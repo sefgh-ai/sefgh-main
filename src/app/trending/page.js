@@ -44,6 +44,7 @@ export default function TrendingPage() {
     isRefreshing,
     lastRefresh,
     isDataStale,
+    loadError,
     handleRefreshTrending,
     getCustomTrendingRepos,
   } = useTrendingData(
@@ -141,6 +142,13 @@ export default function TrendingPage() {
 
                 {/* Content */}
                 <div className="space-y-4 mt-4">
+                  {!loading && loadError && (
+                    <Card className="bg-card/50 border-border" role="status">
+                      <CardContent className="p-6 text-sm text-muted-foreground">
+                        {loadError}
+                      </CardContent>
+                    </Card>
+                  )}
                   {loading
                     ? // Loading skeleton
                       Array.from({ length: 5 }).map((_, i) => (

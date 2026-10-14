@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { publicGitHubFetch } from '@/lib/github/public-token';
+import { starsPerDay, heatLevel } from '@/lib/utils/trending/trendingMeasure';
 
 export async function GET(request) {
   try {
@@ -42,7 +43,7 @@ export async function GET(request) {
     const data = await response.json();
     
     // Transform GitHub API response to our format
-    const repositories = data.items.map((repo, index) => ({
+    const repositories = data.items.map((repo) => ({
       id: repo.id,
       author: repo.owner.login,
       name: repo.name,
@@ -51,11 +52,13 @@ export async function GET(request) {
       languageColor: getLanguageColor(repo.language),
       stars: repo.stargazers_count,
       forks: repo.forks_count,
-      starsToday: Math.floor(Math.random() * 500) + 50, // Mock data for today's stars
+      // Contract version 2 (bug register R-020, the owner's choice of
+      // 2026-10-14): a real measure replaces the random "starsToday".
+      starsPerDay: starsPerDay(repo.stargazers_count, repo.created_at),
       contributors: [
         { avatar: repo.owner.avatar_url, name: repo.owner.login },
       ],
-      heatLevel: index < 3 ? 3 : index < 10 ? 2 : 1,
+      heatLevel: heatLevel(starsPerDay(repo.stargazers_count, repo.created_at)),
       trending: true,
       url: repo.html_url,
     }));

@@ -1,5 +1,6 @@
 'use client'
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -39,17 +40,6 @@ export default function RepoDetailsLayout({
   const [canvasOpen, setCanvasOpen] = useState(false)
 
   // Format numbers (consistent for SSR)
-  const formatNumber = (num) => {
-    const n = Number(num)
-    if (isNaN(n)) return '0'
-    if (n >= 1000000) {
-      return Math.floor(n / 100000) / 10 + 'M'
-    }
-    if (n >= 1000) {
-      return Math.floor(n / 100) / 10 + 'k'
-    }
-    return String(n)
-  }
 
   // Format date (consistent for SSR)
   const formatDate = (dateString) => {
@@ -168,7 +158,7 @@ export default function RepoDetailsLayout({
               <div className="flex items-center justify-center mb-2 text-yellow-500">
                 <Star className="h-5 w-5" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(repoData.stargazers_count)}</div>
+              <div className="text-2xl font-bold">{formatCompactNumber(repoData.stargazers_count)}</div>
               <div className="text-sm text-muted-foreground">Stars</div>
             </Card>
 
@@ -176,7 +166,7 @@ export default function RepoDetailsLayout({
               <div className="flex items-center justify-center mb-2 text-blue-500">
                 <GitFork className="h-5 w-5" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(repoData.forks_count)}</div>
+              <div className="text-2xl font-bold">{formatCompactNumber(repoData.forks_count)}</div>
               <div className="text-sm text-muted-foreground">Forks</div>
             </Card>
 
@@ -184,7 +174,7 @@ export default function RepoDetailsLayout({
               <div className="flex items-center justify-center mb-2 text-green-500">
                 <Eye className="h-5 w-5" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(repoData.watchers_count)}</div>
+              <div className="text-2xl font-bold">{formatCompactNumber(repoData.watchers_count)}</div>
               <div className="text-sm text-muted-foreground">Watchers</div>
             </Card>
 

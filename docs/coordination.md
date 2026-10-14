@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-003 handoff.
+Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: BUG-004 / BUG-005 / ACT-001 handoff.
 
 ## Start here
 
@@ -11,11 +11,59 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed and released BUG-003. Uncommitted at handoff. No deployment or cutover.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 57 entries; BUG-003 fixed five of them (six are fixed in all), and `npm run lint` now passes and runs in CI. Hosted CI, including the race detector, passed at `654d993` (PLAN-001 / BUG-001 / QUOTA-001); BUG-003 has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Claude Code completed and released BUG-004 / BUG-005 / ACT-001. Uncommitted at handoff. No deployment or cutover.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Eleven of 25 API routes are implemented in Go (44% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 62 entries, 14 fixed (one waits for the owner's token). Phase 3 has its first contract, `GET /api/activity` (ACT-001), and no port. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: BUG-003 (Claude Code, 2026-10-14)
+## Latest handoff: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
+
+Status: **implementation complete; awaiting independent review; not deployed**. Live Next.js changes once synchronized, including the trending reply's new shape (contract version 2) and the cookie bar.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 500dbb7.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `500dbb7`).
+
+Done, carrying out the owner's four answers of 2026-10-14 (ADR decisions log):
+- BUG-004: R-053 Indian number format everywhere (one formatter; short forms K, L, Cr written out). R-049 Sessions tab: only this device's facts and Supabase's, plus "Sign out everywhere" with a confirmation. R-058, found on the way: the ordinary Sign out used Supabase's default "global" scope and ended every device's session; it is now "local". R-055: Accept and Decline on the cookie bar; Google Analytics loads only after Accept; the old "Got it" counts as Accept.
+- BUG-005: R-020 trending contract version 2 in Next.js and Go: `starsPerDay` (stars per day since created, at least one day, rounded down) replaces the random `starsToday`; `heatLevel` comes from it. The page no longer shows mock repositories or developers when a request fails, curated repositories use the real measure and owner, Editor's Choice lost its typed-in numbers, and the heat badge now shows the right level.
+- ACT-001 (migration, Phase 3 step 1): `GET /api/activity` fixed for R-056 (error text) and R-057 (UTC calendar), then recorded as contract version 1, 12 cases, 2 defect. No Go port: Phase 3 waits for the database definitions.
+
+Changed files: as in the milestones of the checkpoint below, plus contracts/activity/{cases.json,README.md}, scripts/contracts/{activity.test.mjs,activity-fixture.mjs,activity-loader.mjs}, src/app/api/activity/route.js, contracts/github-trending/README.md, learn-go/{17-clocks-and-randomness/README.md,README.md}, docs/{bug-register.md,adr/0002-go-backend.md,backend-map.md,coordination.md}. No exercise.go changed.
+
+Things a reviewer should know:
+- Contract change, owner-approved: github-trending version 2. The re-recording script compared every kept case and found no change outside `starsToday`/`starsPerDay` and `heatLevel`. Go and Next.js pass the same 44 cases.
+- `formatCompactNumber` is written out because Intl's en-IN compact form writes thousands as "T" and depends on the ICU version, which can differ between server and browser.
+- The consent state lives in localStorage under the key the old bar used; there is not yet a way to change the choice later (R-062).
+- `useSyncExternalStore` reads (useBrowserValue, useConsent) return strings, never new objects, as it requires.
+
+Checks on the tree being handed off (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- backend: gofmt -l empty; go vet clean; `go test -count=1 ./...` 16 packages pass; build ok. Trending: 88 of 88 subtests (44 cases in memory and over a socket).
+- learn-go: gofmt -l empty; vet clean both ways; `go test -count=1 -tags solution ./...` 22 packages pass.
+- `npm run test:contracts`: 778 of 778. `npm run lint`: exit 0 (0 errors, 16 warnings, unchanged). `git diff --check`: exit 0 (after removing one blank line at the end of useTrendingData.js).
+- Production forwarding probe: production build compiled; 69 of 69 identical, exit 0.
+- Headless Chrome against a local production build with placeholder Supabase settings: first visit shows the bar and requests nothing from Google; after Decline nothing, also after a reload; after Accept Google Analytics is requested at once; a stored "accepted" from the old bar is not asked again; /trending throws no exception (the earlier hydration error, R-053, is gone) and, its GitHub request failing in this sandbox, shows the error message and no mock data.
+- The old activity route, run through the same harness for comparison, returned `details` with the database text and mislabelled weekdays outside UTC; the new one does neither.
+- npm run handoff: run after this record was saved; a failure would be recorded here by a further edit.
+Not checked: signed-in pages in a browser (Sessions tab, profile, chat); the trending page with real GitHub data; Vercel.
+
+Remaining gates: independent review; a hosted CI run for this batch; owner choices R-060, R-061, R-062 and the other `owner` entries; database definitions for Phase 3; BUG-002 (test account).
+Next bounded action: BUG-006, fixes needing no decision: R-009 (first chat reply waits for the title), R-018 (load more past 1,000 results), R-046, R-047 (documentation). For the migration: once the owner connects the Supabase connector or adds a schema dump, ACT-002 can confirm `activity_logs` and its policies and port `GET /api/activity` to Go with the user's own token.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Historical checkpoint: BUG-004 / BUG-005 / ACT-001 (Claude Code, 2026-10-14)
+
+Earlier status: active. Owner: Claude Code. Reviewer: unassigned.
+Branch main; base and HEAD 500dbb7 (the Git Agent committed BUG-003). Tree clean at start; previous writer released. Recorded on arrival: `agent-handoff.mjs --status --ci` reported the hosted run on 500dbb7 as completed, success; it now includes the lint step. Read through the script; logs not opened.
+Owner decisions (2026-10-14), answering the four BUG-003 questions: R-049, the Sessions tab shows only what Supabase can report (this session) plus "sign out everywhere"; R-055, wait for consent before loading Google Analytics (the owner added "not sure"; done as the reversible, privacy-safe choice and explained to the owner); R-053, Indian number format everywhere; R-020, replace the random "stars today" with a real measure. And: continue the migration.
+Plan:
+1. BUG-004 (no contract change): R-053 one formatter, en-IN, for every number shown, with a guard; R-049 Sessions tab; R-055 cookie bar with a real choice, Google Analytics only after "Accept".
+2. BUG-005 (contract change, owner-approved): R-020 in the trending contract, Next.js and Go together, version raised; lesson 17 updated.
+3. ACT-001 (migration, Phase 3 step 1 for a read-only route): fix R-056 and R-057 in `GET /api/activity`, then record its behaviour as contract fixtures against the Next.js handler with Supabase stubbed. No Go port in this task: Phase 3 is gated on database definitions.
+4. Checks, register, docs, handoff.
+Milestone 1 (BUG-004 written; tests pass; browser check not yet run): R-053: src/lib/utils/formatters.js `formatNumber` (Intl en-IN, "1,20,000") and `formatCompactNumber` (written out K/L/Cr, because Intl's en-IN compact writes thousands as "T" and depends on the ICU version); usageStats.formatNumber delegates; 12 `toLocaleString()` calls and 8 hand-made abbreviators replaced in 14 files; guard scripts/contracts/number-format.test.mjs. R-049: SessionsTab shows this device (from the user agent, src/lib/utils/userAgent.js), sign-in method, last sign-in and time zone, and "Sign out everywhere" with a confirmation step; guard scripts/contracts/sessions-tab.test.mjs. Found and fixed on the way: R-058, AuthContext's `signOut()` used Supabase's default scope "global", so the ordinary Sign out ended every device's session; it now takes `{ scope = "local" }`. R-055: src/lib/consent.js, CookieBar with Accept and Decline, src/components/GoogleAnalytics.jsx loads GA only after "accepted" (old "Got it" counts as accepted); the layout no longer loads GA itself; guard scripts/contracts/consent.test.mjs. ESLint on the changed files: clean. Next: BUG-005 (R-020), then ACT-001.
+Milestone 2 (BUG-005 written; Next.js 45 of 45 and Go 88 of 88 trending subtests pass): contract github-trending version 2 (44 cases, 7 defect; random-min/mid/max removed, 13 measure cases added, every kept case unchanged apart from starsToday -> starsPerDay and heatLevel, checked by the re-recording script). `starsPerDay` = floor(stars / max(1, days since created_at)), null without a finite count or a created_at of the form 2026-10-12T08:00:00Z; heatLevel 3 from 100 a day, 2 from 25, else 1. Next.js: src/lib/utils/trending/trendingMeasure.js shared by the route and useTrendingData. Go: githubtrending `starsPerDay`, `heatLevel`, Random field and math/rand removed; handler_test.go updated. UI: TrendingRepositoryCard shows "stars a day" (growth bar removed, it was computed from the random number); getHeatIndicator takes the level (it used to receive the level where it expected a star count, so every badge was the lowest); sort "growth" uses starsPerDay; useTrendingData no longer falls back to mock repositories or developers (an error message instead), and curated repositories use the real measure and real owner; Editor's Choice's typed-in "today" numbers removed. Guards: scripts/contracts/trending-measure.test.mjs. Lesson 17 and the lesson index updated; no exercise.go changed. Found: R-060, the trending card's "Star" button has no handler. Next: ACT-001.
+No processes running. Account usage is not visible to Claude Code.
+
+## Handoff: BUG-003 (Claude Code, 2026-10-14)
 
 Status: **implementation complete; awaiting independent review; not deployed**. These are live Next.js changes once synchronized.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1702,7 +1750,11 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `PLAN-001` | Phase 6, bugs and broken UI/UX, added to the ADR before retiring old logic (now Phase 7); the recording rule in AGENTS.md | Complete; uncommitted at handoff | Independent review |
 | `BUG-001` | `docs/bug-register.md` opened and filled from recorded evidence and static source checks; no fixes | Complete (48 entries); uncommitted at handoff | Independent review |
 | `BUG-003` | First register fixes needing no decision: R-001, R-003, R-006, R-043, and R-050 found on the way; guards in the contract suite; lint in CI | Complete; uncommitted at handoff | Independent review |
-| `BUG-004` | Register fixes needing no decision: R-009, R-018, R-046, R-047, R-056, R-057 | Not started; next | Nothing |
+| `BUG-004` | The owner decisions of 2026-10-14: R-049, R-053, R-055; R-058 found on the way | Complete; uncommitted at handoff | Independent review |
+| `BUG-005` | R-020: a real measure in place of the random "stars today", trending contract version 2 in Next.js and Go | Complete; uncommitted at handoff | Independent review |
+| `ACT-001` | `GET /api/activity`: fix R-056 and R-057, then contract fixtures (Phase 3 step 1) | Complete; uncommitted at handoff | Independent review |
+| `ACT-002` | Port `GET /api/activity` to Go with the user's own token | Not started | Database definitions for `activity_logs` (Supabase connector or schema dump from the owner) |
+| `BUG-006` | Register fixes needing no decision: R-009, R-018, R-046, R-047 | Not started; next | Nothing |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |
@@ -1718,7 +1770,8 @@ Suggested ownership: whichever agent is available takes the writer role for one 
 - **Private access is decided:** signed-in users may see only repositories their own GitHub account can access. AUTH-001 implements the API boundary locally; independent review and private UI integration remain. This is not waiting on another policy answer.
 - **CI-001 needs nothing further from the owner.** It is committed and its hosted run on `259ff7b` succeeded.
 - **Anonymous GitHub quota: decided on 2026-10-13, implemented in QUOTA-001 (2026-10-14).** The owner still has to create a classic personal access token with no scopes and set it as `GITHUB_PUBLIC_READ_TOKEN`; a fine-grained token is refused by design. Never paste it into a chat or a shared document.
-- **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options.
+- **Phase 6 (2026-10-14):** entries in `bug-register.md` marked `owner` need a choice before they are fixed; agents will bring them as questions with options. Asked after BUG-005: R-061 (Indian date format too?), R-062 (where to let visitors change their cookie choice), R-060 (what the trending card's "Star" button should do). R-049, R-053, R-055 and R-020 were answered on 2026-10-14 and are fixed.
+- **Phase 3 database definitions:** needed before any user-data route moves to Go (first: ACT-002, `GET /api/activity`). The owner can connect the Supabase connector (read-only is enough) or add a schema-only dump (`supabase db dump --schema-only`) to the repository. No service-role key or database password is needed or wanted.
 
 ## State of the owner's machine
 

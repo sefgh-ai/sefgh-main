@@ -1,5 +1,5 @@
-// Package githubtrending ports the existing trending approximation, including
-// the defects explicitly recorded in contracts/github-trending.
+// Package githubtrending ports the trending route at contract version 2,
+// including the defects still recorded in contracts/github-trending.
 package githubtrending
 
 import (
@@ -9,7 +9,6 @@ import (
 	"io"
 	"log/slog"
 	"math"
-	"math/rand/v2"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -27,13 +26,12 @@ var languagePattern = regexp.MustCompile(`^[A-Za-z0-9._+\-]{1,50}$`)
 var defaultClient = &http.Client{Timeout: Timeout}
 
 // Handler always reads public data. It has no token field and never forwards
-// incoming credentials. Now and Random are injected only for deterministic
-// checks; callers supplying them must make them safe for concurrent requests.
+// incoming credentials. Now is injected only for deterministic checks; a
+// caller supplying it must make it safe for concurrent requests.
 type Handler struct {
 	Client  *http.Client
 	BaseURL string
 	Now     func() time.Time
-	Random  func() float64
 	// Logger receives one record for each request that fails. nil uses
 	// slog.Default().
 	Logger *slog.Logger
@@ -54,7 +52,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.Now != nil {
 		now = h.Now
 	}
-	date := now()
+	current := now()
+	date := current
 	switch since {
 	case "weekly":
 		date = date.AddDate(0, 0, -7)
@@ -117,12 +116,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "decode", errors.New("reply has no list of items"))
 		return
 	}
-	random := rand.Float64
-	if h.Random != nil {
-		random = h.Random
-	}
 	result := make([]map[string]any, 0, len(items))
-	for index, item := range items {
+	for _, item := range items {
 		repo, ok := item.(map[string]any)
 		if !ok || repo["owner"] == nil {
 			h.fail(w, "decode", errors.New("an item is not a repository with an owner"))
@@ -139,19 +134,60 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if color, present := languageColor(repo["language"]); present {
 			out["languageColor"] = color
 		}
-		out["starsToday"] = math.Floor(random()*500) + 50 // recorded defect; not actual daily stars
+		perDay := starsPerDay(repo["stargazers_count"], repo["created_at"], current)
+		out["starsPerDay"] = perDay
+		out["heatLevel"] = heatLevel(perDay)
 		contributor := map[string]any{}
 		copyField(contributor, "avatar", owner, "avatar_url")
 		copyField(contributor, "name", owner, "login")
 		out["contributors"] = []map[string]any{contributor}
-		if index < 3 {
-			out["heatLevel"] = 3
-		} else if index < 10 {
-			out["heatLevel"] = 2
-		}
 		result = append(result, out)
 	}
 	write(w, 200, result)
+}
+
+var createdAtPattern = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$`)
+
+// starsPerDay is the repository's stars per day since it was created, rounded
+// down, counting at least one day: contract version 2 (bug register R-020).
+// The search asks only for repositories created inside the chosen period, so
+// every one of their stars was earned in it. nil (JSON null) without a usable
+// count or creation time. Days are counted in whole milliseconds, as
+// JavaScript's Date.now() counts them, so both backends floor the same value.
+func starsPerDay(stars, createdAt any, now time.Time) any {
+	number, isNumber := stars.(json.Number)
+	if !isNumber {
+		return nil
+	}
+	count, err := number.Float64()
+	if err != nil || math.IsInf(count, 0) || math.IsNaN(count) {
+		return nil
+	}
+	text, isText := createdAt.(string)
+	if !isText || !createdAtPattern.MatchString(text) {
+		return nil
+	}
+	created, err := time.Parse(time.RFC3339, text)
+	if err != nil {
+		return nil
+	}
+	days := math.Max(1, float64(now.UnixMilli()-created.UnixMilli())/(24*60*60*1000))
+	return math.Floor(count / days)
+}
+
+// heatLevel is 3 from 100 stars a day, 2 from 25, otherwise 1. It used to be
+// the position in the list.
+func heatLevel(perDay any) int {
+	n, ok := perDay.(float64)
+	switch {
+	case !ok:
+		return 1
+	case n >= 100:
+		return 3
+	case n >= 25:
+		return 2
+	}
+	return 1
 }
 
 func copyField(dst map[string]any, name string, src map[string]any, key string) {

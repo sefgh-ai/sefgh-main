@@ -55,18 +55,15 @@ export function getLanguageColor(language) {
 }
 
 /**
- * Get heat indicator based on stars today
- * @param {number} starsToday - Number of stars gained today
+ * The badge for a trending repository's heat level, which the trending API
+ * derives from its real stars per day (3 from 100 a day, 2 from 25). The
+ * card used to pass this level to a version that expected a star count, so
+ * every repository showed the lowest badge (bug register R-020).
+ * @param {number} heatLevel - 1, 2 or 3
  * @returns {Object} Heat indicator with color and label
  */
-export function getHeatIndicator(starsToday) {
-  if (starsToday >= 1000)
-    return { color: "text-red-500", label: "🔥 On Fire!" };
-  if (starsToday >= 500)
-    return { color: "text-orange-500", label: "🔥 Hot" };
-  if (starsToday >= 100)
-    return { color: "text-yellow-500", label: "📈 Trending" };
-  if (starsToday >= 50)
-    return { color: "text-green-500", label: "⬆️ Rising" };
-  return { color: "text-blue-500", label: "✨ New" };
+export function getHeatIndicator(heatLevel) {
+  if (heatLevel >= 3) return { color: "text-orange-500", label: "🔥 Hot" };
+  if (heatLevel === 2) return { color: "text-yellow-500", label: "📈 Trending" };
+  return { color: "text-green-500", label: "⬆️ Rising" };
 }

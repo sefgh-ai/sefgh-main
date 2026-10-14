@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET /api/github/trending",
   "recorded_from": "7e0820c",
   "notes": "Fixed clock/timezone/random inputs characterize the unchanged Next handler. Defects need owner-approved changes before a behavioral fix.",
@@ -11,7 +11,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -42,7 +41,6 @@
       "request": "/api/github/trending?since=weekly",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -73,7 +71,6 @@
       "request": "/api/github/trending?since=monthly",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -104,7 +101,6 @@
       "request": "/api/github/trending?since=&language=",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -135,7 +131,6 @@
       "request": "/api/github/trending?language=any",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -166,7 +161,6 @@
       "request": "/api/github/trending?language=Go",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -197,7 +191,6 @@
       "request": "/api/github/trending?language=C%2B%2B",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -228,7 +221,6 @@
       "request": "/api/github/trending?since=yearly",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -253,7 +245,6 @@
       "request": "/api/github/trending?since=Daily",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -278,7 +269,6 @@
       "request": "/api/github/trending?language=a%2Fb",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -303,7 +293,6 @@
       "request": "/api/github/trending?language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -328,7 +317,6 @@
       "request": "/api/github/trending?language=a+b",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -353,7 +341,6 @@
       "request": "/api/github/trending?language=C%23",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -378,7 +365,6 @@
       "request": "/api/github/trending?since=weekly&since=yearly&language=Go&language=C%23",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -409,7 +395,6 @@
       "request": "/api/github/trending?since=monthly",
       "now": "2026-03-31T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -440,7 +425,6 @@
       "request": "/api/github/trending?since=monthly",
       "now": "2024-03-31T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -471,7 +455,6 @@
       "request": "/api/github/trending?since=daily",
       "now": "2026-03-08T23:30:00.000Z",
       "timezone": "America/New_York",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -502,7 +485,6 @@
       "request": "/api/github/trending?since=daily",
       "now": "2026-03-08T23:30:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -533,7 +515,6 @@
       "request": "/api/github/trending?since=weekly",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "Asia/Kolkata",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -558,211 +539,12 @@
       }
     },
     {
-      "id": "random-min",
-      "disposition": "defect",
-      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
-      "request": "/api/github/trending",
-      "now": "2026-10-13T12:00:00.000Z",
-      "timezone": "UTC",
-      "random": 0,
-      "upstream": {
-        "status": 200,
-        "body": {
-          "items": [
-            {
-              "id": 1,
-              "owner": {
-                "login": "octo",
-                "avatar_url": "https://example.test/avatar"
-              },
-              "name": "demo",
-              "description": "Demo",
-              "language": "Go",
-              "stargazers_count": 123,
-              "forks_count": 4,
-              "html_url": "https://github.com/octo/demo"
-            }
-          ]
-        }
-      },
-      "expect": {
-        "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "Go",
-            "languageColor": "#00ADD8",
-            "stars": 123,
-            "forks": 4,
-            "starsToday": 50,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 3,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          }
-        ],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 1
-      }
-    },
-    {
-      "id": "random-mid",
-      "disposition": "defect",
-      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
-      "request": "/api/github/trending",
-      "now": "2026-10-13T12:00:00.000Z",
-      "timezone": "UTC",
-      "random": 0.5,
-      "upstream": {
-        "status": 200,
-        "body": {
-          "items": [
-            {
-              "id": 1,
-              "owner": {
-                "login": "octo",
-                "avatar_url": "https://example.test/avatar"
-              },
-              "name": "demo",
-              "description": "Demo",
-              "language": "Go",
-              "stargazers_count": 123,
-              "forks_count": 4,
-              "html_url": "https://github.com/octo/demo"
-            }
-          ]
-        }
-      },
-      "expect": {
-        "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "Go",
-            "languageColor": "#00ADD8",
-            "stars": 123,
-            "forks": 4,
-            "starsToday": 300,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 3,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          }
-        ],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 1
-      }
-    },
-    {
-      "id": "random-max",
-      "disposition": "defect",
-      "reason": "starsToday is fabricated from Math.random, not measured GitHub activity.",
-      "request": "/api/github/trending",
-      "now": "2026-10-13T12:00:00.000Z",
-      "timezone": "UTC",
-      "random": 0.999999,
-      "upstream": {
-        "status": 200,
-        "body": {
-          "items": [
-            {
-              "id": 1,
-              "owner": {
-                "login": "octo",
-                "avatar_url": "https://example.test/avatar"
-              },
-              "name": "demo",
-              "description": "Demo",
-              "language": "Go",
-              "stargazers_count": 123,
-              "forks_count": 4,
-              "html_url": "https://github.com/octo/demo"
-            }
-          ]
-        }
-      },
-      "expect": {
-        "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "Go",
-            "languageColor": "#00ADD8",
-            "stars": 123,
-            "forks": 4,
-            "starsToday": 549,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 3,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          }
-        ],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 1
-      }
-    },
-    {
       "id": "ranking-boundaries",
-      "disposition": "defect",
-      "reason": "Random starsToday and heatLevel based on array position, not measured activity.",
+      "disposition": "preserve",
+      "reason": "Version 2: heatLevel no longer follows position. Without a creation time every repository has starsPerDay null and heatLevel 1, wherever it is in the list.",
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -925,14 +707,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -945,14 +727,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -965,14 +747,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -985,14 +767,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1005,14 +787,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1025,14 +807,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1045,14 +827,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1065,14 +847,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1085,14 +867,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1105,14 +887,14 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 2,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           },
@@ -1125,7 +907,7 @@
             "languageColor": "#00ADD8",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
@@ -1148,17 +930,16 @@
             }
           }
         ],
-        "random_calls": 11
+        "random_calls": 0
       }
     },
     {
       "id": "fallback-fields",
-      "disposition": "defect",
-      "reason": "Random starsToday retained; null description/language use display fallbacks.",
+      "disposition": "preserve",
+      "reason": "Version 2: a null description or language uses the display fallbacks. starsPerDay is null without a creation time.",
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -1191,14 +972,14 @@
             "languageColor": "#8b949e",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           }
@@ -1214,17 +995,16 @@
             }
           }
         ],
-        "random_calls": 1
+        "random_calls": 0
       }
     },
     {
       "id": "unknown-color",
-      "disposition": "defect",
-      "reason": "Random starsToday retained; unknown language uses gray.",
+      "disposition": "preserve",
+      "reason": "Version 2: an unknown language is gray. starsPerDay is null without a creation time.",
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -1257,14 +1037,14 @@
             "languageColor": "#8b949e",
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           }
@@ -1280,7 +1060,7 @@
             }
           }
         ],
-        "random_calls": 1
+        "random_calls": 0
       }
     },
     {
@@ -1290,7 +1070,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -1323,14 +1102,14 @@
             "languageColor": {},
             "stars": 123,
             "forks": 4,
-            "starsToday": 300,
+            "starsPerDay": null,
             "contributors": [
               {
                 "avatar": "https://example.test/avatar",
                 "name": "octo"
               }
             ],
-            "heatLevel": 3,
+            "heatLevel": 1,
             "trending": true,
             "url": "https://github.com/octo/demo"
           }
@@ -1346,7 +1125,7 @@
             }
           }
         ],
-        "random_calls": 1
+        "random_calls": 0
       }
     },
     {
@@ -1356,7 +1135,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -1400,7 +1178,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {}
@@ -1431,7 +1208,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "body": {
@@ -1464,7 +1240,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "raw_body": "{broken"
@@ -1495,7 +1270,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 429,
         "body": {
@@ -1528,7 +1302,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 503,
         "body": {}
@@ -1559,7 +1332,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "network_error": true
       },
@@ -1589,7 +1361,6 @@
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
-      "random": 0.5,
       "upstream": {
         "status": 200,
         "raw_body": "﻿{\"items\":[]}"
@@ -1597,6 +1368,863 @@
       "expect": {
         "status": 200,
         "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "stars-per-day-one-day-old",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): A repository one day old with 120 stars earns 120 a day: heat level 3.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 120,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-12T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 120,
+            "forks": 4,
+            "starsPerDay": 120,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "stars-per-day-under-a-day-counts-as-one",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): Less than a day old counts as one day, so a new repository is not inflated: 300 stars, two hours old, is 300 a day.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 300,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-13T10:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 300,
+            "forks": 4,
+            "starsPerDay": 300,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "stars-per-day-rounded-down",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): 100 stars over three days is 33.3, written 33: heat level 2.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 100,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-10T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 100,
+            "forks": 4,
+            "starsPerDay": 33,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "heat-level-two-from-twenty-five",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): Exactly 25 a day is heat level 2.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 150,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-07T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 150,
+            "forks": 4,
+            "starsPerDay": 25,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "heat-level-one-below-twenty-five",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): 24 a day is heat level 1.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 168,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-06T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 168,
+            "forks": 4,
+            "starsPerDay": 24,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "heat-level-three-from-one-hundred",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): Exactly 100 a day is heat level 3.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 200,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-11T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 200,
+            "forks": 4,
+            "starsPerDay": 100,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "heat-level-two-at-ninety-nine",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): 99 a day is heat level 2.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 198,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-11T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 198,
+            "forks": 4,
+            "starsPerDay": 99,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 2,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "stars-per-day-thirty-days",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): A month-old repository: 3000 stars over 30 days is 100 a day.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 3000,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-09-13T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 3000,
+            "forks": 4,
+            "starsPerDay": 100,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "created-in-the-future-counts-as-one-day",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): A creation time after now counts as one day.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 150,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-14T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 150,
+            "forks": 4,
+            "starsPerDay": 150,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 3,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "created-at-date-only-is-not-used",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): Only the full form GitHub sends (2026-10-12T12:00:00Z) is read; a date alone gives null and heat level 1.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 120,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-12"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 120,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "created-at-with-offset-is-not-used",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): A time with an offset is not the form GitHub sends; null, heat level 1.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 120,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-12T12:00:00+05:30"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 120,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "created-at-missing",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): Without a creation time the measure is null and the heat level 1.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": 120,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": 120,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "stars-not-a-number",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-020): A star count that is not a number gives null and heat level 1, even with a creation time.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 1,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "Go",
+              "stargazers_count": "120",
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo",
+              "created_at": "2026-10-12T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "Go",
+            "languageColor": "#00ADD8",
+            "stars": "120",
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
         "content_type": "application/json",
         "cache_control": null,
         "calls": [

@@ -10,7 +10,8 @@ export async function runTrendingFixture(GET, fixture) {
       constructor(...args) { super(...(args.length ? args : [fixture.now])); }
       static now() { return new original.Date(fixture.now).getTime(); }
     };
-    Math.random = () => { randomCalls++; return fixture.random; };
+    // Version 2 has no randomness; any call is counted, and fixtures expect none.
+    Math.random = () => { randomCalls++; return 0.5; };
     console.error = () => {};
     globalThis.fetch = async (url, init) => {
       calls.push({ url, headers: init.headers });

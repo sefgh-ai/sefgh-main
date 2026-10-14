@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useEffect, useState, useMemo } from "react";
 import { TrendingUp, Search, Users, Database } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -43,13 +44,7 @@ export function SearchStats() {
     return () => clearTimeout(timer);
   }, [supabase]);
 
-  const formatNumber = (num) => {
-    if (!num) return "0";
-    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + "B";
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-    return num.toString();
-  };
+  const formatNumber = (num) => formatCompactNumber(num);
 
   const statItems = [
     {

@@ -3,6 +3,8 @@
  * Used to compute statistics, streaks, and grid structure for contributions visualization
  */
 
+import { formatNumber as formatIndian } from '@/lib/utils/formatters'
+
 /**
  * The days in a reply from GET /api/activity, as {date, count}. The reply is
  * a grid of weeks covering the last year; its last week is padded with days
@@ -275,11 +277,12 @@ export function getContributionColor(count, maxCount) {
 }
 
 /**
- * Format large numbers with commas (e.g., 1234 → "1,234")
+ * Format large numbers with Indian grouping (e.g., 120000 → "1,20,000"),
+ * through the app's one formatter.
  * @param {number} num - Number to format
  * @returns {string} Formatted number string
  */
 export function formatNumber(num) {
   if (typeof num !== 'number') return '0'
-  return num.toLocaleString('en-US')
+  return formatIndian(num)
 }

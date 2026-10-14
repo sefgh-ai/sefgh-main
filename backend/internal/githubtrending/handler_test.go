@@ -48,11 +48,10 @@ type call struct {
 	Headers map[string]string `json:"headers"`
 }
 type fixture struct {
-	ID       string  `json:"id"`
-	Request  string  `json:"request"`
-	Now      string  `json:"now"`
-	Timezone string  `json:"timezone"`
-	Random   float64 `json:"random"`
+	ID       string `json:"id"`
+	Request  string `json:"request"`
+	Now      string `json:"now"`
+	Timezone string `json:"timezone"`
 	Upstream struct {
 		Status       int             `json:"status"`
 		Body         json.RawMessage `json:"body"`
@@ -92,7 +91,6 @@ func TestContracts(t *testing.T) {
 			t.Run(f.ID+"/"+mode, func(t *testing.T) {
 				var calls []call
 				seen := make(chan call, 4)
-				randomCalls := 0
 				location, err := time.LoadLocation(f.Timezone)
 				if err != nil {
 					t.Fatal(err)
@@ -101,7 +99,7 @@ func TestContracts(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				h := &Handler{Now: func() time.Time { return now.In(location) }, Random: func() float64 { randomCalls++; return f.Random }}
+				h := &Handler{Now: func() time.Time { return now.In(location) }}
 				h.Client = &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
 					seen <- call{r.URL.String(), map[string]string{"Accept": r.Header.Get("Accept"), "User-Agent": r.Header.Get("User-Agent")}}
 					if r.Header.Get("Authorization") != "" {
@@ -154,8 +152,10 @@ func TestContracts(t *testing.T) {
 				if !reflect.DeepEqual(calls, f.Expect.Calls) {
 					t.Fatalf("calls %#v; want %#v", calls, f.Expect.Calls)
 				}
-				if randomCalls != f.Expect.RandomCalls {
-					t.Fatalf("random calls %d; want %d", randomCalls, f.Expect.RandomCalls)
+				// Version 2 has no randomness. The fixtures record none, and
+				// the handler has nothing random to call.
+				if f.Expect.RandomCalls != 0 {
+					t.Fatalf("fixture expects %d random calls; version 2 has none", f.Expect.RandomCalls)
 				}
 				if header.Get("Content-Type") != f.Expect.ContentType || header.Get("Cache-Control") != "" {
 					t.Fatalf("unexpected headers %v", header)

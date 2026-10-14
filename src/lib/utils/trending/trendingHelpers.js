@@ -11,7 +11,8 @@ export const sortRepositories = (repos, sortBy) => {
     case "views":
       return sorted.sort((a, b) => (b.views || 0) - (a.views || 0));
     case "growth":
-      return sorted.sort((a, b) => b.starsToday - a.starsToday);
+      // Real stars per day; an unknown rate sorts last.
+      return sorted.sort((a, b) => (b.starsPerDay ?? -1) - (a.starsPerDay ?? -1));
     case "discussed":
       return sorted.sort((a, b) => (b.discussions || 0) - (a.discussions || 0));
     default:

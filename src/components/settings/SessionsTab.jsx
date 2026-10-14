@@ -1,214 +1,157 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Monitor,
   Smartphone,
+  Tablet,
   Globe,
   Clock,
-  MapPin,
+  KeyRound,
   CheckCircle2,
+  LogOut,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { useBrowserValue } from "@/hooks/useBrowser";
+import { describeUserAgent } from "@/lib/utils/userAgent";
 
-// PLACEHOLDER, NOT REAL SESSIONS. Every user sees these, and "terminate"
-// ends nothing. Recorded as bug register R-049; what this tab should show
-// is the owner's choice. Kept unchanged here, only moved out of an effect.
-const PLACEHOLDER_CURRENT_SESSION = {
-  id: "current",
-  device: "Windows Desktop",
-  browser: "Chrome 120",
-  city: "Hyderabad",
-  region: "Telangana",
-  country: "India",
-  timezone: "Asia/Kolkata",
-  ip: "2405:201:****:****",
-  lastActive: "Now",
-  isCurrent: true,
-};
-const PLACEHOLDER_OTHER_SESSIONS = [
-  {
-    id: "1",
-    device: "iPhone 15",
-    browser: "Safari",
-    city: "Hyderabad",
-    country: "India",
-    lastActive: "2 hours ago",
-    isCurrent: false,
-  },
-];
+// Only what can really be known (bug register R-049, the owner's choice of
+// 2026-10-14). This device is described from what the browser reports;
+// Supabase reports how the account signs in and when it last did. A browser
+// cannot list the account's other sessions, so none are invented: there is
+// one action instead, "sign out everywhere".
+
+const PROVIDER_NAMES = { github: "GitHub", google: "Google", email: "Email and password" };
+
+const DEVICE_ICONS = { phone: Smartphone, tablet: Tablet, computer: Monitor };
+const DEVICE_NAMES = { phone: "Phone", tablet: "Tablet", computer: "Computer" };
+
+function lastSignIn(timestamp) {
+  if (!timestamp) return "Not known";
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "Not known";
+  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
 
 export default function SessionsTab() {
-  const currentSession = PLACEHOLDER_CURRENT_SESSION;
-  const [sessions, setSessions] = useState(PLACEHOLDER_OTHER_SESSIONS);
+  const { user, signOut } = useAuth();
+  // Empty on the server and while the page hydrates; the browser's own after.
+  const userAgent = useBrowserValue(() => navigator.userAgent, "");
+  const timeZone = useBrowserValue(() => Intl.DateTimeFormat().resolvedOptions().timeZone ?? "", "");
+  const device = useMemo(() => describeUserAgent(userAgent), [userAgent]);
+  const DeviceIcon = DEVICE_ICONS[device.kind];
 
-  const handleTerminateSession = (sessionId) => {
-    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-    toast.success("Session terminated");
-  };
+  const [confirming, setConfirming] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
-  const getDeviceIcon = (device) => {
-    if (
-      device.toLowerCase().includes("iphone") ||
-      device.toLowerCase().includes("android") ||
-      device.toLowerCase().includes("mobile")
-    ) {
-      return Smartphone;
+  const provider = user?.app_metadata?.provider;
+  const signInMethod = PROVIDER_NAMES[provider] ?? (provider ? provider : "Not known");
+
+  const signOutEverywhere = async () => {
+    setSigningOut(true);
+    try {
+      // Ends every session of this account, on every device, this one too.
+      await signOut({ scope: "global" });
+    } catch {
+      toast.error("Could not sign out everywhere", { description: "Nothing was changed. Please try again." });
+      setSigningOut(false);
+      setConfirming(false);
     }
-    return Monitor;
   };
 
   return (
     <div className="space-y-8 max-w-3xl">
-      {/* Current Session */}
+      {/* This device */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-semibold">Current Session</h3>
+          <h3 className="text-lg font-semibold">This device</h3>
           <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Active
+            Signed in
           </Badge>
         </div>
 
-        {currentSession && (
-          <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 overflow-hidden">
-            {/* Visual Header */}
-            <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgMjAgMTAgTSAxMCAwIEwgMTAgMjAiIHN0cm9rZT0icmdiYSgxMDAsMTAwLDEwMCwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
-              <div className="relative flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-background/80 backdrop-blur shadow-lg">
-                  <Monitor className="w-8 h-8 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-foreground">
-                    {currentSession.device}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {currentSession.browser}
-                  </p>
-                </div>
+        <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 overflow-hidden">
+          <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent flex items-center justify-center">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-background/80 backdrop-blur shadow-lg">
+                <DeviceIcon className="w-8 h-8 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-foreground">
+                  {userAgent ? `${DEVICE_NAMES[device.kind]} · ${device.system}` : "This device"}
+                </p>
+                <p className="text-sm text-muted-foreground min-h-5">{userAgent && device.browser}</p>
               </div>
             </div>
+          </div>
 
-            {/* Session Details */}
-            <div className="p-6 bg-background/50 backdrop-blur-sm">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Location</p>
-                    <p className="text-sm text-muted-foreground">
-                      {currentSession.city}, {currentSession.country}
-                    </p>
-                  </div>
+          <div className="p-6 bg-background/50 backdrop-blur-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-start gap-3">
+                <KeyRound className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Signs in with</p>
+                  <p className="text-sm text-muted-foreground">{signInMethod}</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Last Active</p>
-                    <p className="text-sm text-muted-foreground">
-                      {currentSession.lastActive}
-                    </p>
-                  </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Last sign-in, on any device</p>
+                  <p className="text-sm text-muted-foreground">{lastSignIn(user?.last_sign_in_at)}</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Globe className="w-4 h-4 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Timezone</p>
-                    <p className="text-sm text-muted-foreground">
-                      {currentSession.timezone}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Monitor className="w-4 h-4 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">IP Address</p>
-                    <p className="text-xs font-mono text-muted-foreground">
-                      {currentSession.ip}
-                    </p>
-                  </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Globe className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Time zone of this device</p>
+                  <p className="text-sm text-muted-foreground">{timeZone || "Not known"}</p>
                 </div>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Other Sessions */}
+      {/* Every device */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Other Sessions</h3>
-          <span className="text-sm text-muted-foreground">
-            {sessions.length} device{sessions.length !== 1 ? "s" : ""}
-          </span>
-        </div>
+        <h3 className="text-lg font-semibold mb-2">Every device</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          SEFGH cannot list the other devices where you are signed in. If you
+          think someone else is using your account, sign out everywhere, then
+          change your password in the Security settings.
+        </p>
 
-        {sessions.length > 0 ? (
-          <div className="rounded-2xl border border-border/50 bg-card overflow-hidden divide-y divide-border/30">
-            {sessions.map((session) => {
-              const DeviceIcon = getDeviceIcon(session.device);
-              return (
-                <div
-                  key={session.id}
-                  className="p-5 flex items-center justify-between gap-4 hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-2.5 rounded-xl bg-muted/50">
-                      <DeviceIcon className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{session.device}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-muted-foreground">
-                          {session.browser}
-                        </span>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <span className="text-xs text-muted-foreground">
-                          {session.city}, {session.country}
-                        </span>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <span className="text-xs text-muted-foreground">
-                          {session.lastActive}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleTerminateSession(session.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    Terminate
-                  </Button>
-                </div>
-              );
-            })}
+        {confirming ? (
+          <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5 space-y-3">
+            <p className="text-sm">
+              This signs you out on every device, including this one. You will
+              need to sign in again.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="destructive" size="sm" onClick={signOutEverywhere} disabled={signingOut}>
+                <LogOut className="w-4 h-4 mr-2" />
+                {signingOut ? "Signing out..." : "Sign out everywhere"}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setConfirming(false)} disabled={signingOut}>
+                Cancel
+              </Button>
+            </div>
           </div>
         ) : (
-          <div className="p-12 rounded-2xl bg-muted/30 border border-dashed border-border/50 text-center">
-            <Smartphone className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground mb-1">
-              No other sessions
-            </p>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              You&apos;re only signed in on this device. When you sign in from other
-              devices, they&apos;ll appear here.
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => setConfirming(true)}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign out everywhere
+          </Button>
         )}
-      </div>
-
-      {/* Security Tip */}
-      <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 text-sm">
-        <p className="text-amber-600 dark:text-amber-400">
-          <strong>🔐 Security Tip:</strong> Don&apos;t recognize a session? Terminate
-          it immediately and consider changing your password in the Security
-          settings.
-        </p>
       </div>
     </div>
   );

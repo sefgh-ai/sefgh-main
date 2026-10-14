@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState } from "react";
 import {
   Star,
@@ -43,12 +44,6 @@ export function RepositoryCard({ repo, onSelect }) {
   const [isStarred, setIsStarred] = useState(false);
   const [isStarring, setIsStarring] = useState(false);
 
-  const formatNumber = (num) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "k";
-    }
-    return num.toString();
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -175,12 +170,12 @@ export function RepositoryCard({ repo, onSelect }) {
         <div className="flex items-center gap-1.5">
           <Star className="h-4 w-4 text-yellow-500" />
           <span className="font-medium">
-            {formatNumber(repo.stargazers_count)}
+            {formatCompactNumber(repo.stargazers_count)}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <GitFork className="h-4 w-4 text-blue-500" />
-          <span className="font-medium">{formatNumber(repo.forks_count)}</span>
+          <span className="font-medium">{formatCompactNumber(repo.forks_count)}</span>
         </div>
         {repo.language && (
           <Badge

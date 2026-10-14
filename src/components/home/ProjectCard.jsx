@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -140,9 +141,7 @@ export function ProjectCard({ project }) {
                 </span>
                 <span className="flex items-center gap-0.5">
                   <Eye className="w-3 h-3" />
-                  {project.views > 1000
-                    ? `${(project.views / 1000).toFixed(1)}k`
-                    : project.views}
+                  {formatCompactNumber(project.views)}
                 </span>
                 <span className="flex items-center gap-0.5">
                   <MessageSquare className="w-3 h-3" />
