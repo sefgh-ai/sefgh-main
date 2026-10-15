@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: STAR-001 handed off; writer released.
+Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: SEC-001 handed off (migration prepared, not applied); writer released.
 
 ## Start here
 
@@ -11,11 +11,39 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released STAR-001 on 2026-10-15. VERIFY-004 passed: Go trending answers real data at `https://sefgh-api.vercel.app`; switching it on for the website waits on the owner's two settings on `sefgh-main`.
+- **Active writer:** none. Claude Code released SEC-001 on 2026-10-15. Waiting on the owner: an explicit "apply" for the SEC-001 migration (after this change is live on `sefgh-main`), and the two trending settings on `sefgh-main` (VERIFY-004: Go trending answers real data at `https://sefgh-api.vercel.app`).
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 80 entries, 23 fixed, 5 in progress (SEC-001, waiting on the owner). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: STAR-001, `GET /api/repo/starred` (Claude Code, 2026-10-15)
+## Latest handoff: SEC-001, User-DB security review (Claude Code, 2026-10-15)
+
+Status: **app change complete; migration prepared and dry-run, NOT applied; awaiting the owner's approval and independent review**. Applying the migration changes the production database, so it waits for the owner's explicit "apply".
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 268d5b0. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-15): authorized the Supabase MCP with full access, "done do this and continue the migration".
+
+Done:
+- Read User-DB's live definitions with catalog queries only (tables, columns, policies, grants, functions and bodies, triggers, views, Storage policies, publication, migration history, security advisor). Recorded in `database/user-db.md`, secret-free: definitions and row counts, no data.
+- Found and recorded R-070 to R-080. Live exposures: anyone can read every user's email (R-070, 32 of 32); anyone can read (R-071) or write (R-072) any user's activity; any account can rewrite trending (R-073); owner-rights functions callable without signing in (R-074). Also missing `username` column (R-075), missing `get_repo_vote_stats` (R-076), trending refresh cannot write (R-077), unused loose tables (R-078), owner-rights views (R-079), leaked-password protection off (R-080). Updated R-039, R-041, R-064 with what the definitions settle.
+- Phase 3 evidence: `activity_logs` and `repo_collections` allow reading own rows only, which ACT-002 and STAR-001 assume. Recorded in the ADR and backend map. Not a cutover approval.
+- App change, safe before and after the migration: `src/lib/supabase/profile-columns.js` (`PROFILE_COLUMNS`, every column but email); `profiles.js` and `useProfileData.js` name their columns; the profile form takes email from Auth; `searchProfiles` (unused) searches names only.
+- Migration `supabase/migrations/20261015140000_sec_001_close_data_exposures.sql`, five sections: column grant on `profiles`; revoke the two activity read functions; `log_user_activity` runs as the caller and refuses other ids; drop the three `authenticated` write policies on `trending_repos`; revoke anonymous EXECUTE and fix `search_path` on the remaining owner-rights functions. `supabase/checks/sec_001_verify.sql` (read-only, 13 checks) and `sec_001_rollback.sql`. `supabase/README.md`.
+- Guard `scripts/contracts/profile-columns.test.mjs`: PROFILE_COLUMNS equals the migration's grant and leaves out email; code asks `profiles` only for granted columns (R-075's three files listed as KNOWN).
+
+Changed files: src/lib/supabase/profile-columns.js (new), src/lib/supabase/profiles.js, src/hooks/profile/useProfileData.js, scripts/contracts/profile-columns.test.mjs (new), supabase/{README.md,migrations/20261015140000_sec_001_close_data_exposures.sql,checks/sec_001_verify.sql,checks/sec_001_rollback.sql} (new), docs/database/user-db.md (new), docs/{bug-register.md,adr/0002-go-backend.md,backend-map.md,coordination.md}. No Go or learn-go change, so no lesson.
+
+Checks (Claude Code, Windows, Node 21.7.1):
+- Dry run on PGlite (Postgres 17.5) loaded with the live definitions, 17 of 17: the stand-in reproduced R-070 to R-073 first; afterwards the verify file passed, the public columns, profile and avatar updates, own-activity logging, the service role's trending write, the search counter and sharing still worked; sign-up and email change still fired the triggers without EXECUTE; rollback restored the old access, and the migration applied again. Scratch files, not committed.
+- `npm run test:contracts`: 806 of 806. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- Deliberate breaks, each caught by the guard, then restored: `select('*')` in `useProfileData.js`; `email` added to `PROFILE_COLUMNS`.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: the migration against the live database (by design, until approved); the pages in a browser; the old `sefgh-ui` project's code, which uses the same database and may still `select('*')` on profiles.
+
+Remaining gates: owner approval of the migration; this app change live on `sefgh-main` before it runs; independent review.
+Next bounded action: on the owner's "apply", SEC-001b: confirm `sefgh-main` serves this change, dry-run the migration on the live database inside a transaction that is rolled back, apply it with `apply_migration` (name `sec_001_close_data_exposures`), run `supabase/checks/sec_001_verify.sql`, check the profile and chat pages, record the result here and mark R-070 to R-074 fixed. Without that, continue the migration: record `GET /api/share/[token]`, or port the first write route against the definitions now recorded.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: STAR-001, `GET /api/repo/starred` (Claude Code, 2026-10-15)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the starred page sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1444,7 +1472,7 @@ Task / scope: GO-005b, Go port of GET /api/github/contributions against the
 Owner / reviewer: Claude Code / Codex (peer review NOT run).
 Status: implementation complete; review pending; not deployed.
 Base commit / branch / worktree: cd6ad67 / main / main checkout, clean at start.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `268d5b0`).
 Changed files:
   backend/internal/githubcontributions/{handler.go,dates.go,query.go,
     contract_test.go,dates_test.go,limits_test.go}: new package.

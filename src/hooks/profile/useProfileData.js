@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { PROFILE_COLUMNS } from '@/lib/supabase/profile-columns'
 import { toast } from 'sonner'
 import { logError } from '@/lib/error-tracking'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
@@ -37,7 +38,7 @@ export const useProfileData = (user, refreshUser) => {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select(PROFILE_COLUMNS)
       .eq('id', user.id)
       .single()
 
@@ -51,7 +52,8 @@ export const useProfileData = (user, refreshUser) => {
       setProfile(data)
       setFormData({
         fullName: data.full_name || '',
-        email: data.email || '',
+        // Browsers cannot read profiles.email; Auth has the user's own address.
+        email: user.email || '',
         bio: data.bio || '',
         website: data.website || '',
         avatarUrl: data.avatar_url || ''

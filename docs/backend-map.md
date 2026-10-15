@@ -159,7 +159,7 @@ The two vector-search implementations have different model families, vector colu
 
 ## Findings to account for before porting
 
-1. **Missing database source of truth:** no app schema, RLS policies, RPC definitions, trigger definitions, or bucket policies in this repo. The avatar handler refers to a missing `supabase/avatar-storage-setup.sql`.
+1. **Missing database source of truth:** no app schema, RLS policies, RPC definitions, trigger definitions, or bucket policies in this repo. The avatar handler refers to a missing `supabase/avatar-storage-setup.sql`. *SEC-001 (2026-10-15): User-DB's live definitions are now recorded in `database/user-db.md` (a snapshot, not a schema), and database changes go in `../supabase/migrations/`. Repo-DB is not yet reviewed.*
 2. **AI endpoint controls:** no auth/quotas/rate limits in the three inspected AI handlers; page protection does not cover them. Check deployed external controls before claiming production exposure.
 3. **Playground key lifecycle:** keys are stored/read in plaintext, usage logging is partly browser-written, and no source handler was found verifying these generated keys. A Go public API needs a real key-verification and server-side accounting design.
 4. **Session-sensitive paths:** existing SSR cookie refresh must keep working during a port; avoid replacing it with custom cookie parsing.
@@ -346,3 +346,19 @@ The trending Star button links to GitHub (`src/lib/utils/trending/githubLink.js`
 `GET /api/repo/starred` has a Go port, `backend/internal/starred`, off by default (switch `repo-starred`). It reads `repo_collections` (`select *`, the caller's rows, newest first) through `internal/supabaserest` with the caller's own token. It then reads each repository from GitHub through the signed-out transport, at most four at once, within a 14-second budget for the request. `internal/supabaserest` now holds the Data API request and the supabase-js reading of replies for both activity and starred. `githubrepos.ValidOwner` and `ValidRepoName` export the owner and name rules to other packages. The starred page sends the bearer through `src/lib/supabase/session-fetch.js`.
 
 Hosting (OPS-004): the website is Vercel project `sefgh-main` and the Go service is `sefgh-api` (`https://sefgh-api.vercel.app`). Both are in team "sefghai's projects" and built from `github.com/sefgh-ai/sefgh-main`. No route is switched to Go on the website yet.
+
+## SEC-001 update (2026-10-15)
+
+User-DB's definitions were read from the live project: `database/user-db.md`.
+Nothing about the request path changed. Two things are new:
+
+- `supabase/` holds database changes as migrations, each with a read-only
+  verify query and a rollback in `supabase/checks/`. The first,
+  `20261015140000_sec_001_close_data_exposures.sql`, is not applied; it
+  waits for the owner.
+- Browsers may read only some `profiles` columns once it is applied, so
+  profile reads name them through `src/lib/supabase/profile-columns.js`. A
+  Go route that reads profiles must name the same columns.
+
+`activity_logs` and `repo_collections` let a user read only their own rows,
+which is what the Go activity and starred ports assume.

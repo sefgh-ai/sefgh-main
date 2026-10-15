@@ -5,6 +5,7 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS } from "@/lib/supabase/profile-columns";
 
 // Module-level client - created once and reused
 const supabase = createClient();
@@ -15,7 +16,7 @@ const supabase = createClient();
 export async function getUserProfile(userId) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(PROFILE_COLUMNS)
     .eq("id", userId)
     .single();
 
@@ -33,7 +34,7 @@ export async function getUserProfile(userId) {
 export async function getAllProfiles(limit = 10) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(PROFILE_COLUMNS)
     .limit(limit);
 
   if (error) {
@@ -52,7 +53,7 @@ export async function updateProfile(userId, updates) {
     .from("profiles")
     .update(updates)
     .eq("id", userId)
-    .select()
+    .select(PROFILE_COLUMNS)
     .single();
 
   if (error) {
@@ -64,13 +65,13 @@ export async function updateProfile(userId, updates) {
 }
 
 /**
- * Search profiles by name or email
+ * Search profiles by name. Email is not searchable: browsers cannot read it.
  */
 export async function searchProfiles(searchTerm) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
-    .or(`full_name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
+    .select(PROFILE_COLUMNS)
+    .ilike("full_name", `%${searchTerm}%`);
 
   if (error) {
     console.error("Error searching profiles:", error);
