@@ -20,6 +20,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `POST /api/ai/enhance-query` | `internal/aienhance` | `../contracts/ai-enhance-query/` |
 | `POST /api/ai/chat` | `internal/aichat` | `../contracts/ai-chat/` |
 | `GET /api/activity` | `internal/activity` | `../contracts/activity/` |
+| `GET /api/repo/starred` | `internal/starred` | `../contracts/repo-starred/`, `../contracts/public-repository-reads/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -226,6 +227,15 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Starred (STAR-001)
+
+Opt-in name: `repo-starred`, off by default. The caller's saved repositories, each checked again with GitHub. It passes the 14 cases of `contracts/repo-starred` (recorded from the Next.js handler by `scripts/contracts/record-repo-starred.mjs`) and the 15 of `contracts/public-repository-reads`. Turning it on waits, like activity, for Phase 3's gate: the `repo_collections` definition and its row-level security, checked against the live project.
+
+- **The database** is asked as the caller with their own bearer, through `internal/supabaserest`, which activity now uses too: `Select` sends the request, `ReadResult` reads the reply as supabase-js does.
+- **GitHub** is asked through the transport of signed-out reads: no credential of the caller's, never `GITHUB_TOKEN`, only the public read token when one is set. A name must pass `githubrepos.ValidOwner` and `ValidRepoName` (the same rules, now exported) before it reaches a URL. Redirects are refused, each read has 10 seconds, at most four run at once, and a repository counts as public only with an explicit `private: false`.
+- **Values pass through** as written: `jscompat.ObjectFields` reads a row's fields in order with each value's own JSON text, using JavaScript's rule for a repeated name (first place, last value). A column added to the table reaches the browser without a code change, and very large numbers are not rounded.
+- **Differs from Next.js:** a Supabase bearer instead of the session cookie (the starred page now uses `fetchWithSession`). All GitHub reads of one request share a 14-second budget; a row not checked in time gets null metadata, as a failed read does. The Next.js handler has no bound. A test in `cmd/api` keeps sign-in, the database and this budget inside the 30-second write timeout. Rows that are not objects are spread as `{...repo}` spreads them; the expected answers were produced by the Next.js handler.
 
 ## Activity (ACT-002)
 

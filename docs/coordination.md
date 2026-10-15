@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: BRAND-001 handed off; writer released.
+Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: STAR-001 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,50 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released BRAND-001 on 2026-10-15. BUG-007 is handed off and waits for the Git Agent to push; OPS-004 waits on the owner.
+- **Active writer:** none. Claude Code released STAR-001 on 2026-10-15. VERIFY-004 passed: Go trending answers real data at `https://sefgh-api.vercel.app`; switching it on for the website waits on the owner's two settings on `sefgh-main`.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
 - **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: BRAND-001, new logo system (Claude Code, 2026-10-15)
+## Latest handoff: STAR-001, `GET /api/repo/starred` (Claude Code, 2026-10-15)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the starred page sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 044b63e. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-15): "continue the migration".
+
+Done:
+- VERIFY-004: after `03149a4` was pushed, Go trending on `https://sefgh-api.vercel.app` answered 200 with real data, and `check-go-deployment.mjs` passed 7 of 7. Switching it on for the website is the owner's step (`SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES=github-trending` on `sefgh-main`, then redeploy).
+- Contract `contracts/repo-starred` version 1, 14 cases, recorded from the Next.js handler by the new `scripts/contracts/record-repo-starred.mjs` through `starred-fixture.mjs`.
+  - The existing `starred-loader.mjs` is unchanged. It was overwritten by mistake for a moment, then restored with `git checkout` before anything ran.
+  - Node runner: `scripts/contracts/repo-starred.test.mjs`.
+- `backend/internal/supabaserest`: `Select` (the Data API request as the user), `ReadResult`, `Truthy`, `Describe`, `Param`. Activity now uses it; its 12 contract cases, its 400 generated comparisons with Node and its tests still pass. The `ReadResult` test moved with it.
+- `backend/internal/starred`: the port. It passes the 14 route cases and the 15 `public-repository-reads` cases.
+  - Values pass through as written: `jscompat.ObjectFields`, `Elements`, `Kind` and `WriteObject` are new, with tests.
+  - Reads: at most four GitHub reads at once, a 14-second budget for all of them, redirects refused.
+  - `githubrepos.ValidOwner` and `ValidRepoName` export the existing rules. No existing code changed, so lesson 14 still holds.
+- Wiring: `starredMux` in `cmd/api`, beside the GitHub access check; GitHub through the signed-out transport. `cmd/api/starred_wiring_test.go`, and the write-timeout test covers the budget.
+- Next.js: switch `repo-starred` in `next.config.mjs`; rewrite test; three probe requests and a `repo_collections` stand-in in the forwarding probe.
+- Lesson 23 (passing JSON through, packages and capital letters, one deadline for many goroutines). Lesson 22 updated for the moved code. Docs: contract READMEs, backend README "Starred (STAR-001)", ADR (phase row, recorded difference, dated note), backend map.
+
+Changed files: backend/internal/{supabaserest/*,starred/*} (new), backend/internal/jscompat/rawjson{,_test}.go (new), backend/internal/activity/{handler.go,rows.go,handler_test.go}, backend/internal/githubrepos/identifiers.go, backend/cmd/api/{main.go,main_test.go,starred_wiring_test.go}, backend/README.md, contracts/repo-starred/* (new), contracts/public-repository-reads/README.md, scripts/contracts/{starred-fixture,record-repo-starred,repo-starred.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/app/starred/page.js, learn-go/{README.md,22-reading-rows-as-the-user/README.md,23-passing-json-through/*}, docs/{adr/0002-go-backend.md,backend-map.md,coordination.md}. No exercise.go changed.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 804 of 804. `npm run lint`: 0 errors, 16 warnings (unchanged). `git diff --check`: clean; no trailing spaces in new files.
+- backend: gofmt empty, vet clean, `go test -count=1 ./...` 19 packages pass. learn-go `-tags solution`: 24 packages pass; lesson 23's exercise fails until written, as intended.
+- Production forwarding probe: 75 of 75 identical, including three starred requests.
+- Deliberate breaks, each caught, then restored:
+  - a credential sent to GitHub fails 20 checks;
+  - five reads at once fails the concurrency test;
+  - accepting any `private` value fails `not-public-gets-null` and `private-response-denied`. A first attempt at this one did not compile and was redone.
+- The expected answers of `TestRowsOfOtherKinds` were produced by running the Next.js handler (a temporary script, deleted). All 8 match Go byte for byte.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database; Vercel.
+
+Remaining gates: independent review. Turning `repo-starred` on waits for Phase 3's gate (the `repo_collections` definition and row-level security, checked against the live project), like activity. The Supabase connector now asks to be authorized (`/mcp`, `plugin:supabase:supabase`); read-only is enough.
+Next bounded action: with no decision needed, record `GET /api/share/[token]`, the last read-only route; its port needs the owner's view on shared-link rules (revoked and private shares, a Phase 3 gate item). Otherwise, read the database definitions once the connector is authorized, then port the write routes one at a time.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: BRAND-001, new logo system (Claude Code, 2026-10-15)
 
 Status: **implementation complete; awaiting the owner's look and independent review; not deployed**. Changes what every visitor sees once synchronized: favicon, app icons, sidebar and footer logo, the 404 page and the brand page.
 Owner: Claude Code. Reviewer: unassigned.
@@ -1330,7 +1369,7 @@ Task / scope: FIX-003, input validation for the three repository routes
 Owner / reviewer: Claude Code / Codex (peer review NOT run).
 Status: implementation complete; review pending; not deployed.
 Base commit / branch / worktree: 80cee17 / main / main checkout, clean at start.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `03149a4`).
 Owner decisions this rests on, relayed by the owner on 2026-10-12 and now in
   the ADR decisions log: input validation approved; the server token is NOT to
   be limited to public data, and who may see private repositories is
@@ -1946,7 +1985,8 @@ Record disagreements in `claude-review.md` or the ADR, as before.
 | `OPS-002` | Hosting option A: repository side and the owner's setup guide | Complete; uncommitted at handoff; nothing deployed | The owner creates the Vercel project; VERIFY-004 checks it |
 | `OPS-003` | Where the live site comes from: repositories, Vercel project, domain | Complete (audit); uncommitted at handoff | Owner answers; see the handoff |
 | `OPS-004` | Bring code, Vercel and domain together (transfer, relink, release branch) | Not started | Owner: domain renewal, choice of home account, Vercel connector |
-| `VERIFY-004` | Check the owner's Go deployment from outside, then the preview route | Not started | The production address of the Go project from the owner |
+| `VERIFY-004` | Check the owner's Go deployment from outside, then the preview route | Go side passed 2026-10-15 (trending real data, 7 of 7 checks) | The owner sets the trending switch on `sefgh-main`; then verify through the website |
+| `STAR-001` | `GET /api/repo/starred`: contract, Go port off by default, shared `supabaserest` | Complete; uncommitted at handoff | Independent review; Phase 3 gate before it is turned on |
 | `BUG-002` | Walk-through of every page, signed out and signed in, at phone and desktop width; findings added to the register | Not started | A test account from the owner for the signed-in half |
 | `REVIEW-006` | Independent review of AUTH-001 and AUTH-002 by deliberate breaks, with fixes | Committed d2320c2 | Someone other than Claude Code to look at the fixes |
 | `REVIEW-007` | Independent review of CI-001, VERIFY-002 and VERIFY-003 by the same method | Not started; next task that needs no decision | Nothing |

@@ -147,6 +147,10 @@ const scenarios = [
   { path: '/api/activity', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/activity', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
   { path: '/api/activity' },
+  // Starred reads the database as the caller, then GitHub with no credential.
+  { path: '/api/repo/starred', headers: { Authorization: 'Bearer session-a' }, status: 200 },
+  { path: '/api/repo/starred', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
+  { path: '/api/repo/starred' },
 ];
 
 try {
@@ -169,6 +173,12 @@ try {
           res.writeHead(401); res.end('{}'); return;
         }
         res.end(JSON.stringify([{ activity_date: new Date().toISOString().slice(0, 10), activity_count: 3 }]));
+      }
+      else if (req.url.startsWith('/rest/v1/repo_collections?')) {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') {
+          res.writeHead(401); res.end('{}'); return;
+        }
+        res.end(JSON.stringify([{ id: 1, repo_full_name: 'octo/demo', notes: 'probe' }]));
       }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
@@ -197,7 +207,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

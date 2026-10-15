@@ -39,6 +39,9 @@ const goBackendRoutes = {
   // accepts a Supabase bearer only; the browser sends one
   // (src/lib/supabase/session-fetch.js).
   "activity": "/api/activity",
+  // The caller's starred repositories, from the database as the caller and
+  // checked with GitHub (STAR-001). Bearer only, like activity.
+  "repo-starred": "/api/repo/starred",
 };
 
 function goBackendRewrites() {

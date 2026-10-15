@@ -15,6 +15,8 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
 
 // TestSecurityHeadersMatchNextConfig fails when next.config.mjs changes a
@@ -63,6 +65,11 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	// or a title, never both.
 	if total := githubaccess.DefaultTimeout + aiprovider.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in check plus a chat call can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	// Starred asks Supabase, then the database once, then GitHub within its
+	// budget for all the rows together.
+	if total := githubaccess.DefaultTimeout + supabaserest.Timeout + starred.RefreshBudget; total >= writeTimeout {
+		t.Errorf("sign-in, the database and the GitHub budget can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

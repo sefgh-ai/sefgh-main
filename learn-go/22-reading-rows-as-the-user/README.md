@@ -2,7 +2,7 @@
 
 **You will learn:** how Go asks the database for a user's own rows without any server password, how to put a value into a URL safely, why Go and JavaScript round 0.25 differently and how to round exactly, and how a Go test can check itself against the JavaScript it replaces.
 
-**Real code:** `backend/internal/activity` (the port of `GET /api/activity`), `ToFixed` in `backend/internal/jscompat/tofixed.go`, and `User` in `backend/internal/githubaccess/session.go`.
+**Real code:** `backend/internal/activity` (the port of `GET /api/activity`), `Select` in `backend/internal/supabaserest`, `ToFixed` in `backend/internal/jscompat/tofixed.go`, and `User` in `backend/internal/githubaccess/session.go`.
 
 ## The problem in the app
 
@@ -21,10 +21,10 @@ const { data, error } = await supabase
   .eq('user_id', user.id)
 ```
 
-`supabase` here was built from your session cookie, so the request carries your access token. Supabase turns that chain into one HTTP request to its Data API. Go sends the same request itself, in `askDatabase`:
+`supabase` here was built from your session cookie, so the request carries your access token. Supabase turns that chain into one HTTP request to its Data API. Go sends the same request itself, in `Select`. It lives in its own package, `backend/internal/supabaserest`, because the starred route (lesson 23) needed it too:
 
 ```go
-req.Header.Set("apikey", h.SupabaseKey)              // the project's public key
+req.Header.Set("apikey", c.Key)                     // the project's public key
 req.Header.Set("Authorization", "Bearer "+session)  // your own access token
 ```
 
@@ -40,13 +40,13 @@ A function can return several values in Go. JavaScript would return an object, `
 
 ## Putting a value into a URL safely
 
-supabase-js writes `.eq('user_id', id)` as `user_id=eq.<id>` in the URL. Go writes it like this:
+supabase-js writes `.eq('user_id', id)` as `user_id=eq.<id>` in the URL. Go writes it like this, in `askDatabase`:
 
 ```go
-"user_id=" + url.QueryEscape("eq."+userID),
+supabaserest.Param("user_id", "eq."+userID),
 ```
 
-`url.QueryEscape` turns any character that means something in a URL (`&`, `=`, `?`, a space) into a `%` code. Without it, an id containing `&order=...` would add a second instruction to the query. A test, `TestTheQueryIsTheUsersOwn`, sends exactly such an id and checks the database receives it as one value. This is the same idea as `encodeURIComponent` in JavaScript, which lesson 03 rebuilt.
+`Param` puts the value through `url.QueryEscape`, which turns any character that means something in a URL (`&`, `=`, `?`, a space) into a `%` code. Without it, an id containing `&order=...` would add a second instruction to the query. A test, `TestTheQueryIsTheUsersOwn`, sends exactly such an id and checks the database receives it as one value. This is the same idea as `encodeURIComponent` in JavaScript, which lesson 03 rebuilt.
 
 ## Rounding: 0.25 is "0.3" in JavaScript and "0.2" in Go
 

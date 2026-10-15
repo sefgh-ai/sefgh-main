@@ -1,0 +1,1811 @@
+{
+  "contract_version": 1,
+  "route": "GET /api/repo/starred",
+  "recorded_from": "the Next.js handler at 03149a4, by scripts/contracts/record-repo-starred.mjs",
+  "boundary": "The Supabase cookie-session client and GitHub are replaced; the real handler runs. GitHub requests are listed sorted by URL, since up to four run at once.",
+  "cases": [
+    {
+      "id": "signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and neither the database nor GitHub is asked.",
+      "user": null,
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": [],
+        "github": []
+      }
+    },
+    {
+      "id": "session-error",
+      "disposition": "preserve",
+      "reason": "A session Supabase refuses: 401.",
+      "user": {
+        "error": "Auth session missing!"
+      },
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": [],
+        "github": []
+      }
+    },
+    {
+      "id": "client-fails",
+      "disposition": "preserve",
+      "reason": "If the Supabase client cannot be built: 500 with a fixed sentence.",
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": [],
+        "github": []
+      }
+    },
+    {
+      "id": "database-error",
+      "disposition": "preserve",
+      "reason": "A database error: 500 with a fixed sentence, and GitHub is not asked.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "query_error": "permission denied for table repo_collections",
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch starred repositories"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": []
+      }
+    },
+    {
+      "id": "nothing-starred",
+      "disposition": "preserve",
+      "reason": "No rows: an empty list, marked private and not stored.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [],
+          "count": 0
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": []
+      }
+    },
+    {
+      "id": "public-repository-refreshed",
+      "disposition": "preserve",
+      "reason": "Every row is checked again with GitHub. Six public fields replace the stored snapshot, which is never trusted; the other columns and the notes are kept as they are.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "vercel/next.js",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z",
+          "repo_data": {
+            "description": "stale snapshot",
+            "stargazers_count": 1
+          }
+        }
+      ],
+      "github": {
+        "vercel/next.js": {
+          "body": {
+            "id": 7014,
+            "name": "next.js",
+            "full_name": "vercel/next.js",
+            "private": false,
+            "owner": {
+              "login": "vercel"
+            },
+            "html_url": "https://github.com/vercel/next.js",
+            "description": "About vercel/next.js",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "vercel/next.js",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": {
+                "description": "About vercel/next.js",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 1
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/vercel/next.js",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "not-public-gets-null",
+      "disposition": "preserve",
+      "reason": "A repository GitHub says is private, or one whose privacy is not an explicit false, gets null: a visitor never sees private metadata.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "acme/secret",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        },
+        {
+          "id": "00000002-0000-4000-8000-000000000002",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "acme/unclear",
+          "notes": null,
+          "created_at": "2026-10-12T08:00:00.000Z"
+        },
+        {
+          "id": "00000003-0000-4000-8000-000000000003",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "acme/text-false",
+          "notes": null,
+          "created_at": "2026-10-13T08:00:00.000Z"
+        }
+      ],
+      "github": {
+        "acme/secret": {
+          "body": {
+            "id": 7011,
+            "name": "secret",
+            "full_name": "acme/secret",
+            "private": true,
+            "owner": {
+              "login": "acme"
+            },
+            "html_url": "https://github.com/acme/secret",
+            "description": "About acme/secret",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "acme/unclear": {
+          "body": {
+            "id": 7012,
+            "name": "unclear",
+            "full_name": "acme/unclear",
+            "owner": {
+              "login": "acme"
+            },
+            "html_url": "https://github.com/acme/unclear",
+            "description": "About acme/unclear",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "acme/text-false": {
+          "body": {
+            "id": 7015,
+            "name": "text-false",
+            "full_name": "acme/text-false",
+            "private": "false",
+            "owner": {
+              "login": "acme"
+            },
+            "html_url": "https://github.com/acme/text-false",
+            "description": "About acme/text-false",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "acme/secret",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000002-0000-4000-8000-000000000002",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "acme/unclear",
+              "notes": null,
+              "created_at": "2026-10-12T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000003-0000-4000-8000-000000000003",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "acme/text-false",
+              "notes": null,
+              "created_at": "2026-10-13T08:00:00.000Z",
+              "repo_data": null
+            }
+          ],
+          "count": 3
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/acme/secret",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/acme/text-false",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/acme/unclear",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-failures-get-null",
+      "disposition": "preserve",
+      "reason": "Not found, a server error, a refused redirect, no connection and a reply that is not JSON all give null for that row only.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "gone/away",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        },
+        {
+          "id": "00000002-0000-4000-8000-000000000002",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "broken/server",
+          "notes": null,
+          "created_at": "2026-10-12T08:00:00.000Z"
+        },
+        {
+          "id": "00000003-0000-4000-8000-000000000003",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "renamed/old",
+          "notes": null,
+          "created_at": "2026-10-13T08:00:00.000Z"
+        },
+        {
+          "id": "00000004-0000-4000-8000-000000000004",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "offline/repo",
+          "notes": null,
+          "created_at": "2026-10-14T08:00:00.000Z"
+        },
+        {
+          "id": "00000005-0000-4000-8000-000000000005",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "garbled/reply",
+          "notes": null,
+          "created_at": "2026-10-15T08:00:00.000Z"
+        },
+        {
+          "id": "00000006-0000-4000-8000-000000000006",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "fine/repo",
+          "notes": null,
+          "created_at": "2026-10-16T08:00:00.000Z"
+        }
+      ],
+      "github": {
+        "broken/server": {
+          "status": 502,
+          "body": {
+            "message": "Bad gateway",
+            "private": false
+          }
+        },
+        "renamed/old": {
+          "redirect": true
+        },
+        "offline/repo": {
+          "network_error": true
+        },
+        "garbled/reply": {
+          "raw": "{\"private\": false, \"description\": "
+        },
+        "fine/repo": {
+          "body": {
+            "id": 7009,
+            "name": "repo",
+            "full_name": "fine/repo",
+            "private": false,
+            "owner": {
+              "login": "fine"
+            },
+            "html_url": "https://github.com/fine/repo",
+            "description": "About fine/repo",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "gone/away",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000002-0000-4000-8000-000000000002",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "broken/server",
+              "notes": null,
+              "created_at": "2026-10-12T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000003-0000-4000-8000-000000000003",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "renamed/old",
+              "notes": null,
+              "created_at": "2026-10-13T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000004-0000-4000-8000-000000000004",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "offline/repo",
+              "notes": null,
+              "created_at": "2026-10-14T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000005-0000-4000-8000-000000000005",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "garbled/reply",
+              "notes": null,
+              "created_at": "2026-10-15T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000006-0000-4000-8000-000000000006",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "fine/repo",
+              "notes": null,
+              "created_at": "2026-10-16T08:00:00.000Z",
+              "repo_data": {
+                "description": "About fine/repo",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 6
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/broken/server",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/fine/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/garbled/reply",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/gone/away",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/offline/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/renamed/old",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-fields-left-out",
+      "disposition": "preserve",
+      "reason": "A field GitHub leaves out is left out of repo_data too; a field that is null stays null.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "sparse/repo",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        }
+      ],
+      "github": {
+        "sparse/repo": {
+          "body": {
+            "private": false,
+            "description": null,
+            "stargazers_count": 0,
+            "language": null
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "sparse/repo",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": {
+                "description": null,
+                "stargazers_count": 0,
+                "language": null
+              }
+            }
+          ],
+          "count": 1
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/sparse/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "names-checked-before-github",
+      "disposition": "preserve",
+      "reason": "A stored name must be exactly owner/name with safe characters, or GitHub is not asked and repo_data is null.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "owner/repo/extra",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        },
+        {
+          "id": "00000002-0000-4000-8000-000000000002",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "no-slash",
+          "notes": null,
+          "created_at": "2026-10-12T08:00:00.000Z"
+        },
+        {
+          "id": "00000003-0000-4000-8000-000000000003",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": null,
+          "notes": null,
+          "created_at": "2026-10-13T08:00:00.000Z"
+        },
+        {
+          "id": "00000004-0000-4000-8000-000000000004",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": 42,
+          "notes": null,
+          "created_at": "2026-10-14T08:00:00.000Z"
+        },
+        {
+          "id": "00000005-0000-4000-8000-000000000005",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "bad owner/repo",
+          "notes": null,
+          "created_at": "2026-10-15T08:00:00.000Z"
+        },
+        {
+          "id": "00000006-0000-4000-8000-000000000006",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "owner/..",
+          "notes": null,
+          "created_at": "2026-10-16T08:00:00.000Z"
+        },
+        {
+          "id": "00000007-0000-4000-8000-000000000007",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "-dash/repo",
+          "notes": null,
+          "created_at": "2026-10-17T08:00:00.000Z"
+        },
+        {
+          "id": "00000008-0000-4000-8000-000000000008",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "owner/name?x=1",
+          "notes": null,
+          "created_at": "2026-10-18T08:00:00.000Z"
+        },
+        {
+          "id": "00000009-0000-4000-8000-000000000009",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repo",
+          "notes": null,
+          "created_at": "2026-10-19T08:00:00.000Z"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "owner/repo/extra",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000002-0000-4000-8000-000000000002",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "no-slash",
+              "notes": null,
+              "created_at": "2026-10-12T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000003-0000-4000-8000-000000000003",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": null,
+              "notes": null,
+              "created_at": "2026-10-13T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000004-0000-4000-8000-000000000004",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": 42,
+              "notes": null,
+              "created_at": "2026-10-14T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000005-0000-4000-8000-000000000005",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "bad owner/repo",
+              "notes": null,
+              "created_at": "2026-10-15T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000006-0000-4000-8000-000000000006",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "owner/..",
+              "notes": null,
+              "created_at": "2026-10-16T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000007-0000-4000-8000-000000000007",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "-dash/repo",
+              "notes": null,
+              "created_at": "2026-10-17T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000008-0000-4000-8000-000000000008",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "owner/name?x=1",
+              "notes": null,
+              "created_at": "2026-10-18T08:00:00.000Z",
+              "repo_data": null
+            },
+            {
+              "id": "00000009-0000-4000-8000-000000000009",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repo",
+              "notes": null,
+              "created_at": "2026-10-19T08:00:00.000Z",
+              "repo_data": null
+            }
+          ],
+          "count": 9
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": []
+      }
+    },
+    {
+      "id": "order-kept-and-duplicates-asked-twice",
+      "disposition": "preserve",
+      "reason": "Rows keep the database order (newest first) and every row is asked about, the same repository twice included.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "one/repo",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        },
+        {
+          "id": "00000002-0000-4000-8000-000000000002",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "two/repo",
+          "notes": null,
+          "created_at": "2026-10-12T08:00:00.000Z"
+        },
+        {
+          "id": "00000003-0000-4000-8000-000000000003",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "one/repo",
+          "notes": null,
+          "created_at": "2026-10-13T08:00:00.000Z"
+        }
+      ],
+      "github": {
+        "one/repo": {
+          "body": {
+            "id": 7008,
+            "name": "repo",
+            "full_name": "one/repo",
+            "private": false,
+            "owner": {
+              "login": "one"
+            },
+            "html_url": "https://github.com/one/repo",
+            "description": "About one/repo",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "two/repo": {
+          "body": {
+            "id": 7008,
+            "name": "repo",
+            "full_name": "two/repo",
+            "private": false,
+            "owner": {
+              "login": "two"
+            },
+            "html_url": "https://github.com/two/repo",
+            "description": "About two/repo",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "one/repo",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": {
+                "description": "About one/repo",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000002-0000-4000-8000-000000000002",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "two/repo",
+              "notes": null,
+              "created_at": "2026-10-12T08:00:00.000Z",
+              "repo_data": {
+                "description": "About two/repo",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000003-0000-4000-8000-000000000003",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "one/repo",
+              "notes": null,
+              "created_at": "2026-10-13T08:00:00.000Z",
+              "repo_data": {
+                "description": "About one/repo",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 3
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/one/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/one/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/two/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nine-rows",
+      "disposition": "preserve",
+      "reason": "Nine rows: all nine are asked about (at most four at a time; the Node runner checks that separately) and keep their order.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo0",
+          "notes": "Look at the router",
+          "created_at": "2026-10-11T08:00:00.000Z"
+        },
+        {
+          "id": "00000002-0000-4000-8000-000000000002",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo1",
+          "notes": null,
+          "created_at": "2026-10-12T08:00:00.000Z"
+        },
+        {
+          "id": "00000003-0000-4000-8000-000000000003",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo2",
+          "notes": null,
+          "created_at": "2026-10-13T08:00:00.000Z"
+        },
+        {
+          "id": "00000004-0000-4000-8000-000000000004",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo3",
+          "notes": null,
+          "created_at": "2026-10-14T08:00:00.000Z"
+        },
+        {
+          "id": "00000005-0000-4000-8000-000000000005",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo4",
+          "notes": null,
+          "created_at": "2026-10-15T08:00:00.000Z"
+        },
+        {
+          "id": "00000006-0000-4000-8000-000000000006",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo5",
+          "notes": null,
+          "created_at": "2026-10-16T08:00:00.000Z"
+        },
+        {
+          "id": "00000007-0000-4000-8000-000000000007",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo6",
+          "notes": null,
+          "created_at": "2026-10-17T08:00:00.000Z"
+        },
+        {
+          "id": "00000008-0000-4000-8000-000000000008",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo7",
+          "notes": null,
+          "created_at": "2026-10-18T08:00:00.000Z"
+        },
+        {
+          "id": "00000009-0000-4000-8000-000000000009",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "octo/repo8",
+          "notes": null,
+          "created_at": "2026-10-19T08:00:00.000Z"
+        }
+      ],
+      "github": {
+        "octo/repo0": {
+          "body": {
+            "id": 7010,
+            "name": "repo0",
+            "full_name": "octo/repo0",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo0",
+            "description": "About octo/repo0",
+            "stargazers_count": 0,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo1": {
+          "body": {
+            "id": 7010,
+            "name": "repo1",
+            "full_name": "octo/repo1",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo1",
+            "description": "About octo/repo1",
+            "stargazers_count": 1,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo2": {
+          "body": {
+            "id": 7010,
+            "name": "repo2",
+            "full_name": "octo/repo2",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo2",
+            "description": "About octo/repo2",
+            "stargazers_count": 2,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo3": {
+          "body": {
+            "id": 7010,
+            "name": "repo3",
+            "full_name": "octo/repo3",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo3",
+            "description": "About octo/repo3",
+            "stargazers_count": 3,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo4": {
+          "body": {
+            "id": 7010,
+            "name": "repo4",
+            "full_name": "octo/repo4",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo4",
+            "description": "About octo/repo4",
+            "stargazers_count": 4,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo5": {
+          "body": {
+            "id": 7010,
+            "name": "repo5",
+            "full_name": "octo/repo5",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo5",
+            "description": "About octo/repo5",
+            "stargazers_count": 5,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo6": {
+          "body": {
+            "id": 7010,
+            "name": "repo6",
+            "full_name": "octo/repo6",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo6",
+            "description": "About octo/repo6",
+            "stargazers_count": 6,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo7": {
+          "body": {
+            "id": 7010,
+            "name": "repo7",
+            "full_name": "octo/repo7",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo7",
+            "description": "About octo/repo7",
+            "stargazers_count": 7,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        },
+        "octo/repo8": {
+          "body": {
+            "id": 7010,
+            "name": "repo8",
+            "full_name": "octo/repo8",
+            "private": false,
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/repo8",
+            "description": "About octo/repo8",
+            "stargazers_count": 8,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo0",
+              "notes": "Look at the router",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo0",
+                "stargazers_count": 0,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000002-0000-4000-8000-000000000002",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo1",
+              "notes": null,
+              "created_at": "2026-10-12T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo1",
+                "stargazers_count": 1,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000003-0000-4000-8000-000000000003",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo2",
+              "notes": null,
+              "created_at": "2026-10-13T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo2",
+                "stargazers_count": 2,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000004-0000-4000-8000-000000000004",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo3",
+              "notes": null,
+              "created_at": "2026-10-14T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo3",
+                "stargazers_count": 3,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000005-0000-4000-8000-000000000005",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo4",
+              "notes": null,
+              "created_at": "2026-10-15T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo4",
+                "stargazers_count": 4,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000006-0000-4000-8000-000000000006",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo5",
+              "notes": null,
+              "created_at": "2026-10-16T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo5",
+                "stargazers_count": 5,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000007-0000-4000-8000-000000000007",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo6",
+              "notes": null,
+              "created_at": "2026-10-17T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo6",
+                "stargazers_count": 6,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000008-0000-4000-8000-000000000008",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo7",
+              "notes": null,
+              "created_at": "2026-10-18T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo7",
+                "stargazers_count": 7,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            },
+            {
+              "id": "00000009-0000-4000-8000-000000000009",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "octo/repo8",
+              "notes": null,
+              "created_at": "2026-10-19T08:00:00.000Z",
+              "repo_data": {
+                "description": "About octo/repo8",
+                "stargazers_count": 8,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 9
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/octo/repo0",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo1",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo2",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo3",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo4",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo5",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo6",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo7",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          },
+          {
+            "url": "https://api.github.com/repos/octo/repo8",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "anonymous-account",
+      "disposition": "preserve",
+      "reason": "An anonymous Supabase account is a user, so its own rows are returned.",
+      "user": {
+        "id": "user-x",
+        "is_anonymous": true
+      },
+      "rows": [
+        {
+          "id": "r1",
+          "user_id": "user-x",
+          "repo_full_name": "solo/repo",
+          "created_at": "2026-10-15T00:00:00.000Z"
+        }
+      ],
+      "github": {
+        "solo/repo": {
+          "body": {
+            "id": 7009,
+            "name": "repo",
+            "full_name": "solo/repo",
+            "private": false,
+            "owner": {
+              "login": "solo"
+            },
+            "html_url": "https://github.com/solo/repo",
+            "description": "About solo/repo",
+            "stargazers_count": 1234,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "r1",
+              "user_id": "user-x",
+              "repo_full_name": "solo/repo",
+              "created_at": "2026-10-15T00:00:00.000Z",
+              "repo_data": {
+                "description": "About solo/repo",
+                "stargazers_count": 1234,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 1
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "user-x"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/solo/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unusual-values-pass-through",
+      "disposition": "preserve",
+      "reason": "Stored columns and GitHub values pass through unchanged: text outside ASCII, very large numbers, nested objects.",
+      "user": {
+        "id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+      },
+      "rows": [
+        {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+          "repo_full_name": "intl/repo",
+          "notes": "Café ☕ 你好",
+          "created_at": "2026-10-11T08:00:00.000Z",
+          "score": 1e+21,
+          "tags": [
+            "a",
+            {
+              "nested": true
+            }
+          ]
+        }
+      ],
+      "github": {
+        "intl/repo": {
+          "body": {
+            "id": 7009,
+            "name": "repo",
+            "full_name": "intl/repo",
+            "private": false,
+            "owner": {
+              "login": "intl"
+            },
+            "html_url": "https://github.com/intl/repo",
+            "description": "Ünïcödé 🚀",
+            "stargazers_count": 9007199254740992,
+            "forks_count": 56,
+            "language": "TypeScript",
+            "topics": [
+              "react",
+              "ssr"
+            ],
+            "updated_at": "2026-10-14T09:30:00Z"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "repos": [
+            {
+              "id": "00000001-0000-4000-8000-000000000001",
+              "user_id": "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71",
+              "repo_full_name": "intl/repo",
+              "notes": "Café ☕ 你好",
+              "created_at": "2026-10-11T08:00:00.000Z",
+              "score": 1e+21,
+              "tags": [
+                "a",
+                {
+                  "nested": true
+                }
+              ],
+              "repo_data": {
+                "description": "Ünïcödé 🚀",
+                "stargazers_count": 9007199254740992,
+                "forks_count": 56,
+                "language": "TypeScript",
+                "topics": [
+                  "react",
+                  "ssr"
+                ],
+                "updated_at": "2026-10-14T09:30:00Z"
+              }
+            }
+          ],
+          "count": 1
+        },
+        "content_type": "application/json",
+        "cache_control": "private, no-store",
+        "query": [
+          [
+            "from",
+            "repo_collections"
+          ],
+          [
+            "select",
+            "*"
+          ],
+          [
+            "eq",
+            "user_id",
+            "6a1f0e4e-1b7c-4d5e-9f40-3c2b1a0e9d71"
+          ],
+          [
+            "order",
+            "created_at",
+            {
+              "ascending": false
+            }
+          ]
+        ],
+        "github": [
+          {
+            "url": "https://api.github.com/repos/intl/repo",
+            "accept": "application/vnd.github.v3+json",
+            "user_agent": "SEFGH-App",
+            "authorization": null,
+            "redirect": "error"
+          }
+        ]
+      }
+    }
+  ]
+}

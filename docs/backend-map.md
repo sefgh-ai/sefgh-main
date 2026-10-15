@@ -340,3 +340,9 @@ has not opted out (`src/lib/consent.js` value "declined"), and both footers
 have "Cookie settings". Dates are formatted en-IN everywhere. Search paging
 stops at the last page GitHub serves (`src/lib/github/search-pages.js`).
 The trending Star button links to GitHub (`src/lib/utils/trending/githubLink.js`).
+
+## STAR-001 update (2026-10-15)
+
+`GET /api/repo/starred` has a Go port, `backend/internal/starred`, off by default (switch `repo-starred`). It reads `repo_collections` (`select *`, the caller's rows, newest first) through `internal/supabaserest` with the caller's own token. It then reads each repository from GitHub through the signed-out transport, at most four at once, within a 14-second budget for the request. `internal/supabaserest` now holds the Data API request and the supabase-js reading of replies for both activity and starred. `githubrepos.ValidOwner` and `ValidRepoName` export the owner and name rules to other packages. The starred page sends the bearer through `src/lib/supabase/session-fetch.js`.
+
+Hosting (OPS-004): the website is Vercel project `sefgh-main` and the Go service is `sefgh-api` (`https://sefgh-api.vercel.app`). Both are in team "sefghai's projects" and built from `github.com/sefgh-ai/sefgh-main`. No route is switched to Go on the website yet.

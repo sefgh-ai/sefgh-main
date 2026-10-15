@@ -12,6 +12,7 @@ import { LoadingState, CompactEmptyState } from "@/components/shared";
 import { Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { fetchWithSession } from "@/lib/supabase/session-fetch";
 import Link from "next/link";
 
 export default function StarredPage() {
@@ -31,7 +32,8 @@ export default function StarredPage() {
   const fetchStarredRepos = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/repo/starred");
+      // With the Supabase bearer, which the Go port needs (STAR-001).
+      const response = await fetchWithSession("/api/repo/starred");
       const data = await response.json();
 
       if (response.ok) {

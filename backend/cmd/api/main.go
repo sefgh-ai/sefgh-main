@@ -29,6 +29,8 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
 
 // writeTimeout is how long the server allows for writing one response. Every
@@ -103,6 +105,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top := http.NewServeMux()
 	top.Handle("/api/ai/", aiMux(logger, verifier))
 	top.Handle("/api/activity", activityMux(logger, verifier))
+	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -161,6 +164,24 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		Models:  models,
 		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
 		Logger:  logger,
+	})
+	return mux
+}
+
+// starredMux serves the caller's starred repositories. The database is asked
+// as the caller, like activity. GitHub is asked through the transport of
+// signed-out reads: no credential of the caller's and never GITHUB_TOKEN,
+// only the public read token when one is set, which can read only public data.
+func starredMux(logger *slog.Logger, verifier githubaccess.Verifier, public http.RoundTripper) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/repo/starred", &starred.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		GitHub:      &http.Client{Transport: public},
+		GitHubURL:   envOr("GITHUB_API_URL", starred.DefaultGitHubURL),
+		Logger:      logger,
 	})
 	return mux
 }

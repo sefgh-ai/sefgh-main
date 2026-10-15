@@ -37,6 +37,14 @@ func validRepoName(name string) bool {
 	return repoPattern.MatchString(name) && name != "." && name != ".."
 }
 
+// ValidOwner and ValidRepoName are the same rules for other packages, so
+// every route that puts a stored name into a GitHub URL checks it the same
+// way (internal/starred).
+func ValidOwner(owner string) bool { return validOwner(owner) }
+
+// ValidRepoName: see ValidOwner.
+func ValidRepoName(name string) bool { return validRepoName(name) }
+
 // encodeContentsPath turns a file path inside a repository into the form used
 // in a GitHub URL. The boolean is false when the path is not acceptable.
 //

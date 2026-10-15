@@ -6,37 +6,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
-
-// readResult reads a Data API reply as supabase-js does (postgrest-js
-// 2.78, PostgrestBuilder.then) and returns what it hands the handler: the
-// data, and whether it reports an error. Its rules are odd in places, and
-// copied as they are:
-//
-//   - A 2xx reply with no body has no data. One that is not JSON is an
-//     error.
-//   - Any other reply is an error if its body is JSON whose value is
-//     truthy, or is not JSON at all. A 404 whose body is a JSON list, or
-//     is empty, is not an error: it means "no rows".
-func readResult(status int, raw []byte) (data any, failed bool) {
-	text := jscompat.DecodeUTF8(raw)
-	if status >= 200 && status <= 299 {
-		if text == "" {
-			return nil, false
-		}
-		value, err := jscompat.ParseJSON(text)
-		return value, err != nil
-	}
-	value, err := jscompat.ParseJSON(text)
-	if err != nil {
-		return nil, !(status == 404 && text == "")
-	}
-	if _, isList := value.([]any); isList && status == 404 {
-		return []any{}, false
-	}
-	return nil, truthy(value)
-}
 
 // errRows says the rows are of a kind the Next.js handler throws on, or
 // that Go does not follow it into (see sumRows).
@@ -56,7 +27,7 @@ var errRows = errors.New("rows of an unexpected kind")
 func sumRows(data any) (map[string]float64, float64, error) {
 	counts := map[string]float64{}
 	total := 0.0
-	if !truthy(data) { // if (activityData)
+	if !supabaserest.Truthy(data) { // if (activityData)
 		return counts, total, nil
 	}
 	rows, isList := data.([]any)
@@ -89,7 +60,7 @@ func sumRows(data any) (map[string]float64, float64, error) {
 // countOf is row.activity_count || 0. ok is false for a truthy value that
 // is not a number.
 func countOf(value any) (float64, bool) {
-	if !truthy(value) {
+	if !supabaserest.Truthy(value) {
 		return 0, true
 	}
 	n, isNumber := value.(json.Number)
@@ -100,22 +71,4 @@ func countOf(value any) (float64, bool) {
 	// ParseFloat does; its range error is not a failure here.
 	f, _ := strconv.ParseFloat(string(n), 64)
 	return f, true
-}
-
-// truthy reports whether JavaScript would treat a decoded JSON value as true.
-func truthy(value any) bool {
-	switch v := value.(type) {
-	case nil:
-		return false
-	case bool:
-		return v
-	case string:
-		return v != ""
-	case json.Number:
-		// A JSON number is never NaN. One too small for a double is 0 in
-		// both languages, and one too large is Infinity, which is truthy.
-		f, _ := strconv.ParseFloat(string(v), 64)
-		return f != 0
-	}
-	return true
 }

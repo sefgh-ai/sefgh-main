@@ -32,7 +32,9 @@ release. This does not solve public summary cache retention in the separate Go
 handler, remove historical database snapshots, audit all token consumers, or
 enable private UI. Renamed repositories require a canonical name because
 redirects are refused. Supabase RLS definitions remain unverified; no database
-migration is authorized by these tests. The response contract has no Go port yet.
+migration is authorized by these tests. STAR-001 (2026-10-15) added a Go port of the starred
+route, `backend/internal/starred`. Its GitHub read, `publicRepo`, passes these 15 cases
+(`TestPublicRepositoryReads`). The route itself is pinned by `contracts/repo-starred`.
 
 REVIEW-006 (Claude Code, 2026-10-13) added `error-status-with-public-body`: an
 error status is not a public repository even when its body says
