@@ -59,10 +59,19 @@
     --sidebar-accent-foreground: 240 6% 10%;
     --sidebar-border: 240 6% 90%;
     --sidebar-ring: 221 83% 53%;
+
+    /* The logo glyph and Scout's nose (BRAND-001): brand emerald, deep
+       enough to hold 3:1 on white. Plain colours, used as stop-color. */
+    --brand-nose-from: #10b981;
+    --brand-nose-to: #047857;
   }
 
   .dark {
     color-scheme: dark;
+
+    /* Lighter emerald, bright on the dark background. */
+    --brand-nose-from: #34d399;
+    --brand-nose-to: #10b981;
 
     --background: 240 10% 4%;
     --foreground: 0 0% 98%;

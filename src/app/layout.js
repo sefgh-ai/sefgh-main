@@ -36,8 +36,14 @@ export const metadata = {
   alternates: {
     canonical: "https://sefgh.org/",
   },
+  // The star-nosed glyph (BRAND-001): SVG where browsers take it, the
+  // .ico for the rest, and a square tile for Apple, which rounds it itself.
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
   },
   openGraph: {
     type: "website",
@@ -116,21 +122,21 @@ export default function RootLayout({ children }) {
           content="black-translucent"
         />
         <meta name="apple-mobile-web-app-title" content="SEFGH" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link
           rel="apple-touch-icon"
           sizes="152x152"
-          href="/icons/icon-152x152.png"
+          href="/icons/apple-touch-icon.png"
         />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/icons/icon-192x192.png"
+          href="/icons/apple-touch-icon.png"
         />
         <link
           rel="apple-touch-icon"
           sizes="167x167"
-          href="/icons/icon-192x192.png"
+          href="/icons/apple-touch-icon.png"
         />
 
         {/* Microsoft PWA Meta Tags */}
@@ -184,7 +190,7 @@ export default function RootLayout({ children }) {
               "@type": "Organization",
               name: "SEFGH",
               url: "https://sefgh.org",
-              logo: "https://sefgh.org/assets/sefgh-logo.png",
+              logo: "https://sefgh.org/icons/icon-512x512.png",
               description:
                 "SEFGH is a smart GitHub project discovery tool that helps developers find repositories using natural language queries.",
               foundingDate: "2025",

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { CookieSettingsButton } from "@/components/CookieBar";
+import { SefghLogo } from "@/components/brand/SefghMark";
 import Image from "next/image";
 import { Instagram, Twitter } from "lucide-react";
 
@@ -198,16 +199,7 @@ export default function FooterNewsletter() {
 
           {/* Branding Section - Right */}
           <div className="lg:w-1/3 flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/logo.jpg"
-                alt="SEFGH Logo"
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <span className="text-2xl font-semibold text-foreground">SEFGH</span>
-            </div>
+            <SefghLogo size={34} />
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
               Discover hidden GitHub gems with intelligent search. Go beyond
               keywords with natural language queries.

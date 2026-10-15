@@ -1,6 +1,23 @@
 # GitHub trending characterization (GO-006a)
 
-## Version 2 (BUG-005, 2026-10-14): current
+## Version 3 (BUG-007, 2026-10-15): current
+
+Only the GitHub query changed (bug register R-068), with the owner's approval.
+The search terms are now separated by spaces (`stars:>100 created:>DATE
+language:X`, sent as `%20`). Version 2 joined them with `+` and then
+percent-encoded the query, so GitHub received `%2B`, a literal plus sign, and
+refused every request with 422. Trending therefore never worked live. These
+fixtures missed it because their stand-in for GitHub answers any URL. The 38
+expected URLs were rebuilt from each case's own date and language; a language
+such as `C++` is still written `C%2B%2B`.
+
+Go (`backend/internal/githubtrending`) is the implementation of record from
+version 3. Under the owner's rule to fix a backend bug once, in Go, the Next.js
+handler keeps the version 2 query until trending is switched to Go and the
+handler is retired. `scripts/contracts/github-trending.test.mjs` still checks
+everything else it does against these cases, with that one stated exception.
+
+## Version 2 (BUG-005, 2026-10-14)
 
 The owner chose on 2026-10-14 to replace the random "stars today" with a real
 measure (bug register R-020). The Next.js handler, the Go handler and these

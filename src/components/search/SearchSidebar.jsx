@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { SefghTile } from "@/components/brand/SefghMark";
 import {
   Home,
   Search,
@@ -88,19 +88,11 @@ export function SearchSidebar({ user }) {
       <SidebarHeader className="h-16 flex items-center border-b px-5">
         <Link href="/home" className="flex items-center gap-3 group">
           <div className="relative">
-            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-shadow">
-              <Image
-                src="/logo.jpg"
-                alt="SEFGH Logo"
-                width={36}
-                height={36}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <SefghTile size={36} className="rounded-[9px] shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-shadow" />
             <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-background" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-lg text-foreground">SEFGH</span>
+            <span className="font-mono font-bold text-lg tracking-[-0.03em] text-foreground">sefgh</span>
             <span className="text-[10px] text-muted-foreground font-medium -mt-0.5">
               AI Search Engine
             </span>

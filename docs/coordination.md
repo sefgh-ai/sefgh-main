@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-14 (Asia/Calcutta), by Claude Code: OPS-003 (where the live site comes from) handed off; writer released.
+Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: BRAND-001 handed off; writer released.
 
 ## Start here
 
@@ -11,9 +11,108 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released OPS-003 on 2026-10-14; see the handoff below.
+- **Active writer:** none. Claude Code released BRAND-001 on 2026-10-15. BUG-007 is handed off and waits for the Git Agent to push; OPS-004 waits on the owner.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
 - **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 64 entries, 21 fixed (one waits for the owner's token). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+
+## Latest handoff: BRAND-001, new logo system (Claude Code, 2026-10-15)
+
+Status: **implementation complete; awaiting the owner's look and independent review; not deployed**. Changes what every visitor sees once synchronized: favicon, app icons, sidebar and footer logo, the 404 page and the brand page.
+Owner: Claude Code. Reviewer: unassigned.
+Branch main; base 6dd37cc plus the uncommitted BUG-007 change. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner request (2026-10-15): implement the design in the artifact "Scout the Star-Nosed Mole" (a mascot, a seven-ray glyph, the lowercase monospace wordmark `sefgh`), keep the site's own colours so it fits in yet stands out, and make the mascot "more corporate, abstract and minimalist".
+
+Done:
+- Glyph: seven rays around a dot, one pointing up, in the brand's secondary emerald, which stands apart from the blue of buttons and links. A heavier variant is used at 24 pixels and below. Theme tokens `--brand-nose-from` and `--brand-nose-to` in `src/app/globals.css`.
+- Scout: rebuilt from one shape, a low back tapering into a pointed snout, in the primary blue, with the emerald nose, one closed eye and a ground line. The original's feet, claws and eyebrow are gone.
+- Wordmark: `sefgh` in Geist Mono bold, the site's own mono face.
+- `src/components/brand/SefghMark.jsx`: `SefghGlyph`, `SefghTile`, `SefghLogo`, `Scout`. Coordinates are written out so server and browser draw the same numbers. Gradients span the drawing (`userSpaceOnUse`): per-element gradients would skip the vertical ray. That bug showed in the first render and is fixed.
+- Static files: `public/brand/{sefgh-glyph,sefgh-glyph-on-dark,sefgh-icon,sefgh-icon-square,scout}.svg` and `public/icon.svg` (the favicon).
+- `scripts/generate-icons.js` now draws every PNG icon (8 sizes, 2 maskable, the new `apple-touch-icon.png`) and `src/app/favicon.ico` (16, 32, 48) from those SVGs. Run with a working sharp: the local `node_modules/sharp` lacks its `semver` dependency, so this run used sharp 0.34.5 installed in a scratch folder. CI's `npm ci` installs it whole.
+- Used in: the search sidebar (tile and wordmark), the footer (`SefghLogo`), the 404 page (Scout, new copy: "Scout couldn't dig up this page"), and the brand page (new downloads, logo gradient swatch). Layout metadata: SVG icon, .ico, Apple icon; JSON-LD logo now `https://sefgh.org/icons/icon-512x512.png`.
+- `public/logo.jpg` removed: it was GitHub's Octocat (R-069). Note: the search page already has a search mode named "Scout".
+
+Changed files: scripts/contracts/internal-paths.test.mjs, src/components/brand/SefghMark.jsx (new), src/app/globals.css, src/app/layout.js, src/app/not-found.js, src/app/brand/page.js, src/components/search/SearchSidebar.jsx, src/components/ui/footer-newsletter.jsx, scripts/generate-icons.js, public/brand/* (new), public/icon.svg (new), public/icons/* (redrawn, apple-touch-icon.png new), src/app/favicon.ico, public/logo.jpg (deleted), docs/{bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows):
+- Every mark was rendered in headless Chrome at 16 to 512 pixels on light and dark and looked at. The mascot went through three snout shapes, and the vertical-ray bug was caught this way.
+- The production build succeeded (isolated output folder). The 404 page, the search page and the brand page were screenshotted from `next start` and looked at.
+- eslint on the changed files: clean.
+- `npm run test:contracts`: 789 of 789, after one fix to the guard. `scripts/contracts/internal-paths.test.mjs` flagged `/favicon.ico` in the new icon list, a file Next.js serves from `src/app`. The guard now knows the app folder's own files (favicon, icon, apple-icon, robots, sitemap, manifest), and it still fails when such a path points at a missing file (checked with `/favicon-missing.ico`).
+- `npm run lint`: 0 errors, 16 warnings (unchanged). `git diff --check`: clean.
+Not checked: light theme on the real pages (the preview page covered light backgrounds); a real phone's home-screen icon; Vercel.
+
+Remaining gates: the owner's look; independent review; synchronization by the Git Agent.
+Next bounded action: VERIFY-004, trending on Go, once the Git Agent has pushed BUG-007. Then the owner sets `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES=github-trending` on `sefgh-main`.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: BUG-007, trending fixed once in Go (Claude Code, 2026-10-15)
+
+Status: **implementation complete; awaiting independent review; not deployed**. The Go fix reaches visitors only when trending is switched to Go, which needs the Go project (OPS-004).
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 6dd37cc. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner decision (2026-10-15, ADR decisions log): option A. Fix R-068 once, in Go, raise the trending contract to version 3, and make trending the first route to switch to Go. It needs no credentials.
+
+Done:
+- R-068 found while testing the new site from outside. The trending route joined GitHub search terms with `+` and percent-encoded the query, so GitHub got `%2B` and answered 422. The live site has failed on every trending request (old site too). Checked against GitHub on 2026-10-15: with spaces, the same query answers 200, also with `language:Go` and `language:C++`.
+- `backend/internal/githubtrending/handler.go`: the terms are separated by spaces.
+- `contracts/github-trending/cases.json` is now version 3. The 38 expected URLs were rebuilt from each case's date and language (not a find-and-replace; `C%2B%2B` stays); nothing else changed. Its README is updated.
+- `scripts/contracts/github-trending.test.mjs` expects version 3 and checks that every expected query has space-separated terms. It still runs the Next.js handler against all 44 cases with one stated exception: the query, which that handler keeps until it is retired. A comment in `src/app/api/github/trending/route.js` says so.
+- Go tests: the contract test checks version 3; the new `TestSearchTermsReachGitHubAsSeparateWords` reads the query back as GitHub does.
+- Lesson 17 has a new section on the bug. `backend/README.md`'s trending section was stale (33 fixtures, starsToday) and is corrected. Bug register R-068 is fixed in Go; ADR decisions log updated.
+- Earlier in this session, now in this change: R-065 to R-067, the OPS-003 and OPS-004 records, and `hosting-setup.md` on hold.
+
+Changed files: backend/internal/githubtrending/{handler.go,handler_test.go}, contracts/github-trending/{cases.json,README.md}, scripts/contracts/github-trending.test.mjs, src/app/api/github/trending/route.js (comment only), learn-go/17-clocks-and-randomness/README.md, backend/README.md, docs/{adr/0002-go-backend.md,bug-register.md,coordination.md}. No exercise.go changed.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- Deliberate break: with the old `+` query restored, the new Go guard fails and 76 contract subtests fail (38 cases, in memory and over a socket). Restored; passing.
+- `npm run test:contracts` 789 of 789; trending runner 45 of 45.
+- backend: gofmt empty, vet clean, `go test -count=1 ./...` all packages pass. learn-go `-tags solution`: 23 packages pass; gofmt empty.
+- eslint on the two changed JavaScript files: clean. `git diff --check` clean.
+- Production forwarding probe: 72 of 72 identical.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); trending through a hosted Go project, which does not exist yet.
+
+Remaining gates: independent review; the owner creates `sefgh-api` (Import single project on the `backend` (Go) row); then an agent runs `scripts/check-go-deployment.mjs` against it; then the owner adds `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES=github-trending` to `sefgh-main` and redeploys; then an agent verifies trending live and the rollback; then the Next.js trending handler is retired.
+Next bounded action: VERIFY-004 when the owner reports the Go project's address.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Waiting on owner: OPS-004, one repository and a new Vercel project (Claude Code, 2026-10-14)
+
+Status: **paused / incomplete, waiting on the owner**. Owner: Claude Code. Writer released (this checkpoint). Branch main; base 8dd76ed, then fast-forwarded to 6dd37cc (a timestamp commit); no tracked file changed besides this one.
+Owner decisions (2026-10-14):
+- The repository was transferred to `github.com/sefgh-ai/sefgh-main` (private).
+- The "auto update repo timestamp" workflow stays. The owner relies on it so that Vercel's free plan builds pushes.
+- A **new** Vercel project replaces `sefgh-ui`, which "has too many errors".
+- Steps 8 to 12 of the plan: "you go ahead".
+Done:
+- Local `origin` now points to `https://github.com/sefgh-ai/sefgh-main.git`; fetch works. `Adeel0-0` stays a collaborator after the transfer, as GitHub documents.
+- Read through the Vercel connector, team "sefghai's projects" (`team_5EJzBDhXfAMCNe0yCQhqLB5T`):
+  - Projects: `sefgh-ui` (`prj_g3hgvdP7gPK94CUA7iRdj2gXhyFw`) and `sefgh-ai-docs-temp`.
+  - `sefgh-ui`: Next.js, Node 22.x. Domains sefgh.org, www.sefgh.org and sefgh-ui.vercel.app. Vercel Authentication on "all_except_custom_domains".
+  - Its last build (2026-05-24, `c7d8828`) failed at `npm run build` (exit 1) in the old code.
+  - Its env var names: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, GITHUB_TOKEN, NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_AUTH_REDIRECT_URL, SUPABASE_SERVICE_ROLE_KEY and SUPABASE_SERVICE_KEY. All are stored readable; Vercel flags the three secrets "readable-secret". Values were not decrypted.
+  - The Vercel GitHub app is installed on `sefgh-ai` with access to all repositories.
+- The connector is read-only for this account: `create_project` answered 403 "You don't have permission to create the project". So the owner creates the project in the dashboard.
+- Reading `.env.local` to copy the public anon key was refused by the tool's permission rules. It was not worked around: the owner copies the values from `sefgh-ui`.
+Settings the new project needs, from `git grep process.env`:
+- NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and GITHUB_TOKEN (GitHub Models; mark it Sensitive).
+- **Not** the two Supabase admin keys and not NEXT_PUBLIC_AUTH_REDIRECT_URL: the current code reads none of them.
+- NEXT_PUBLIC_SITE_URL is left out until sefgh.org works. `src/app/auth/callback/route.js` would otherwise send sign-ins to the dead domain; without it the request's own origin is used.
+- CRON_SECRET is not set, so the refresh route refuses everyone.
+Next, once the owner says the new project exists:
+1. Read its first deployment and build log; test the production address (pages, `/api/github/languages`, search).
+2. The owner adds that address to Supabase Auth's Redirect URLs, then a sign-in is tested.
+3. After sefgh.org is renewed (R-065): the owner removes the domains from `sefgh-ui` and adds them to the new project, then sets NEXT_PUBLIC_SITE_URL.
+4. The Go project (`hosting-setup.md`, parts A and B, Root Directory `backend`) in the same team.
+5. Archive `sefgh-ai/sefgh-nextjs`. Delete `sefgh-ui` only after the new site has run well; the owner deletes it.
+2026-10-15, new project created by the owner: **`sefgh-main`** in "sefghai's projects", from `sefgh-ai/sefgh-main`, app (Next.js) imported as a single project (not Services), with NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and GITHUB_TOKEN. Production address `https://sefgh-main.vercel.app` (public); the generated address answers 302 (Vercel Authentication). The connector cannot see this project (lists only the two old ones; `list_deployments` 403), so build logs were not read. Checked from outside, with no credentials (Claude Code), 15 of 16:
+- Pass: `/`, `/search`, `/trending`, `/about` and `/privacy` answer 200; the home page is the new code (footer "Cookie settings"); security headers present; the browser code carries Supabase project `kohwfuxqbllsmvmsfqci` and its public key.
+- Pass: `/api/github/languages` 200; `/api/github/search` 200 from GitHub; `/api/activity` and `/api/ai/chat` 401 without sign-in; `/api/trending/refresh` 401.
+- Fail: `/api/github/trending` 500, also on the old site. Cause recorded as R-068.
+Not checked: sign-in (needs the owner to add `https://sefgh-main.vercel.app/**` to Supabase Auth's Redirect URLs; the code returns to `window.location.origin/auth/callback`), signed-in pages, chat with the token.
+2026-10-15: the owner pasted the old project's environment values, including the Supabase service-role key and `GITHUB_TOKEN`, into the chat; they were not used or stored. They are now R-067 (rotate). The owner had not yet created the new project. The new project should start with the rotated values: a new narrow `GITHUB_TOKEN` (GitHub Models only), and Supabase's publishable key in `NEXT_PUBLIC_SUPABASE_ANON_KEY` (supabase-js 2.78 accepts it; verify on the first deployment before disabling the legacy keys).
+No processes running. Account usage is not visible to Claude Code.
 
 ## Latest handoff: OPS-003, account and deployment audit (Claude Code, 2026-10-14)
 
@@ -1170,7 +1269,7 @@ Status: implementation complete; review pending; not deployed.
 History: paused on the owner's instruction part-way through and resumed the
   same day from a checkpoint in this file. Nothing was committed in between.
 Base commit / branch / worktree: 3f4c7dd / main / main checkout.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `6dd37cc`).
 Changed files:
   backend/internal/jscompat/{utf8.go,utf8_test.go}: new. DecodeUTF8 is a
     step-for-step port of the WHATWG UTF-8 decoder.

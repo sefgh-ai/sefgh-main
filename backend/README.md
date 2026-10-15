@@ -157,12 +157,17 @@ successful hosted run.
 ## Trending (GO-006b)
 
 Enable only with `SEFGH_GO_ROUTES=github-trending` and the Go origin. Off by
-default. Public-only: supplied authorization headers are ignored, and no token
-is sent upstream. Thirty-three shared fixtures pin calendar/date/query rules,
-responses and injected randomness, including 13 defect cases. The handler has
-a 10-second upstream timeout and 16 MiB body limit, and honors cancellation.
-It preserves fabricated starsToday and local-time date calculation pending
-contract decisions. No private data, database access or shared cache.
+default. Public-only: supplied authorization headers are ignored, and no
+caller or server token is sent upstream; the public read token of QUOTA-001
+may be, when one is set. 44 shared fixtures (contract version 3) pin the
+calendar, date and query rules and the replies, including 7 defect cases. The
+handler has a 10-second upstream timeout and a 16 MiB body limit, and honors
+cancellation. No private data, database access or shared cache.
+
+Version 3 (BUG-007, R-068) fixed the GitHub query here only: the search terms
+are separated by spaces. The Next.js handler joined them with `+`, which
+GitHub refused, so trending never worked live. Trending is the first route
+planned to switch to Go; until then the Next.js handler keeps the old query.
 
 ## Developers (GO-007b)
 

@@ -81,7 +81,10 @@ function deadPaths() {
         const table = kind === 'api' ? apis : pages;
         const found = table.some((r) => r.re.test(path))
           || (templated && table.some((r) => r.path.startsWith(path.replace(/\/x$/, ''))))
-          || (kind === 'link' && existsSync(join(root, 'public', path)) && statSync(join(root, 'public', path)).isFile());
+          || (kind === 'link' && existsSync(join(root, 'public', path)) && statSync(join(root, 'public', path)).isFile())
+          // Files Next.js serves from the app folder itself, such as
+          // src/app/favicon.ico at /favicon.ico (BRAND-001).
+          || (kind === 'link' && /^\/(favicon\.ico|(icon|apple-icon)\.\w+|robots\.txt|sitemap\.xml|manifest\.(json|webmanifest))$/.test(path) && existsSync(join(root, 'src', 'app', path)));
         if (!found) dead.push({ key: `${kind === 'api' ? 'api' : 'page'} ${path}`, at });
       }
     }

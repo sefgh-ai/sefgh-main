@@ -15,6 +15,34 @@ import (
 	_ "time/tzdata" // deterministic IANA locations on Windows and CI
 )
 
+// GitHub reads its search terms as words separated by spaces. Version 2
+// joined them with "+", which reached GitHub percent-encoded as %2B, a
+// literal plus sign, and GitHub refused every request with 422 (bug
+// register R-068). This reads the query back the way GitHub does.
+func TestSearchTermsReachGitHubAsSeparateWords(t *testing.T) {
+	now := time.Date(2026, 10, 15, 12, 0, 0, 0, time.UTC)
+	for _, tt := range []struct {
+		request string
+		want    []string
+	}{
+		{"/api/github/trending", []string{"stars:>100", "created:>2026-10-14"}},
+		{"/api/github/trending?since=weekly&language=Go", []string{"stars:>100", "created:>2026-10-08", "language:Go"}},
+		// A plus sign inside a language name is part of the name.
+		{"/api/github/trending?since=monthly&language=C%2B%2B", []string{"stars:>100", "created:>2026-09-15", "language:C++"}},
+	} {
+		query := ""
+		h := &Handler{Now: func() time.Time { return now }, Client: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+			query = r.URL.Query().Get("q")
+			return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"items":[]}`))}, nil
+		})}}
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, tt.request, nil))
+		if got := strings.Fields(query); rec.Code != 200 || !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%s: status %d, GitHub would read the search terms %q; want %q", tt.request, rec.Code, got, tt.want)
+		}
+	}
+}
+
 func TestCancellationReachesUpstream(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -77,10 +105,14 @@ func TestContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 	var contract struct {
-		Cases []fixture `json:"cases"`
+		Version int       `json:"contract_version"`
+		Cases   []fixture `json:"cases"`
 	}
 	if err := json.Unmarshal(content, &contract); err != nil {
 		t.Fatal(err)
+	}
+	if contract.Version != 3 || len(contract.Cases) == 0 {
+		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {
 		for _, wire := range []bool{false, true} {

@@ -62,9 +62,26 @@ export default function BrandPage() {
 
   const logos = [
     {
-      name: "Logo Full Color",
-      file: "/logo.jpg",
-      desc: "Primary logo for light backgrounds",
+      name: "Glyph",
+      file: "/brand/sefgh-glyph.svg",
+      desc: "The star-nosed mark, for light backgrounds",
+    },
+    {
+      name: "Glyph on dark",
+      file: "/brand/sefgh-glyph-on-dark.svg",
+      desc: "The same mark, brighter, for dark backgrounds",
+    },
+    {
+      name: "App icon",
+      file: "/brand/sefgh-icon.svg",
+      desc: "Favicon, app icon and avatars",
+    },
+    {
+      name: "Scout",
+      file: "/brand/scout.svg",
+      desc: "The mascot, for 32 pixels wide and up",
+      width: 160,
+      height: 75,
     },
     {
       name: "GitHub Mark",
@@ -212,11 +229,11 @@ export default function BrandPage() {
             </div>
 
             <div className="rounded-xl overflow-hidden">
-              <div className="h-32 bg-gradient-to-br from-blue-500 to-purple-600"></div>
+              <div className="h-32 bg-gradient-to-br from-emerald-500 to-emerald-700"></div>
               <div className="bg-muted/50 border border-border border-t-0 p-4 rounded-b-xl">
                 <h3 className="text-foreground font-semibold mb-1">Logo Gradient</h3>
                 <p className="text-muted-foreground text-sm font-mono">
-                  from-blue-500 to-purple-600
+                  from-emerald-500 to-emerald-700
                 </p>
               </div>
             </div>
@@ -243,8 +260,8 @@ export default function BrandPage() {
                   <Image
                     src={logo.file}
                     alt={logo.name}
-                    width={80}
-                    height={80}
+                    width={logo.width ?? 80}
+                    height={logo.height ?? 80}
                     className="object-contain"
                   />
                 </div>

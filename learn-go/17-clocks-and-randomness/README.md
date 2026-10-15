@@ -62,6 +62,34 @@ fixtures, the Next.js handler and the Go handler change together.
 The route remains public-only and forwards no caller or server GitHub token.
 It stays off unless `github-trending` is selected in the Next.js Go-route switch.
 
+## A plus sign that GitHub read literally (version 3)
+
+On 2026-10-15, testing the new Vercel project showed that trending never worked
+on the live site: every request ended in a 500. The handler built its GitHub
+search like this, and Go copied it faithfully:
+
+```go
+search := "stars:>100+created:>" + date
+u := base + "/search/repositories?q=" + jscompat.EncodeURIComponent(search)
+```
+
+In a URL's query, a bare `+` stands for a space. But `EncodeURIComponent`, like
+JavaScript's `encodeURIComponent`, turns `+` into `%2B`, which means "a real
+plus sign". GitHub received one long word, `stars:>100+created:>...`, and
+answered 422. The fixtures did not notice: their stand-in for GitHub answers
+whatever it is sent. Now the terms are separated by spaces, which encode as
+`%20`:
+
+```go
+search := "stars:>100 created:>" + date.UTC().Format("2006-01-02")
+```
+
+`TestSearchTermsReachGitHubAsSeparateWords` reads the query back the way
+GitHub does, with `r.URL.Query().Get("q")` and `strings.Fields`, so it fails
+if the terms ever run together again. The fix was made once, in Go, under the
+owner's rule: the Next.js handler keeps the old query until trending is
+switched to Go and that handler is retired.
+
 ## Exercise
 
 Implement `previousDay(now func() time.Time) string` in this lesson's exercise.

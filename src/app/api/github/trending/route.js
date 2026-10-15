@@ -22,6 +22,11 @@ export async function GET(request) {
     // const trendingUrl = `https://api.gitterapp.com/repositories?language=${language}&since=${since}`;
     
     // Option 2: Use GitHub Search API with trending logic
+    //
+    // Known bug, left here on purpose (bug register R-068): GitHub reads the
+    // encoded "+" as a literal plus sign and refuses this query. It is fixed
+    // once, in Go (backend/internal/githubtrending, contract version 3), and
+    // this handler is retired when trending switches to Go.
     const sinceDate = getSinceDate(since);
     const languageQuery = language && language !== 'any' ? `+language:${language}` : '';
     const query = `stars:>100+created:>${sinceDate}${languageQuery}`;

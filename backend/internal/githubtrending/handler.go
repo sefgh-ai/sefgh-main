@@ -64,9 +64,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	// AddDate preserves local calendar subtraction and month overflow; only
 	// then convert to UTC, matching setDate/setMonth followed by toISOString.
-	search := "stars:>100+created:>" + date.UTC().Format("2006-01-02")
+	// GitHub's search terms are separated by spaces. The Next.js handler
+	// joined them with "+" and then percent-encoded the whole query, so
+	// GitHub received %2B, a literal plus sign, and refused every request
+	// with 422 (bug register R-068, fixed here at contract version 3).
+	search := "stars:>100 created:>" + date.UTC().Format("2006-01-02")
 	if language != "" && language != "any" {
-		search += "+language:" + language
+		search += " language:" + language
 	}
 	base := h.BaseURL
 	if base == "" {

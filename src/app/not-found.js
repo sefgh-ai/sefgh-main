@@ -10,6 +10,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { Scout } from "@/components/brand/SefghMark";
 
 const demoLinks = [
   {
@@ -39,8 +40,10 @@ export default function NotFoundPage() {
         <div className="flex justify-center">
           <div className="w-full sm:w-10/12 md:w-8/12 text-center">
             {/* 404 Hero Section */}
-            <div className="relative py-12">
-              <h1 className="text-center text-foreground text-8xl sm:text-9xl font-bold">
+            <div className="relative py-12 flex flex-col items-center">
+              {/* Scout, the mole who digs things up, came back empty-handed. */}
+              <Scout width={180} className="text-muted-foreground mb-4" />
+              <h1 className="text-center text-foreground text-8xl sm:text-9xl font-bold font-mono tracking-[-0.04em]">
                 404
               </h1>
             </div>
@@ -48,10 +51,11 @@ export default function NotFoundPage() {
             {/* Content Section */}
             <div className="mt-[-30px]">
               <h3 className="text-xl text-foreground sm:text-2xl font-bold mb-3">
-                Look like you&apos;re lost
+                Scout couldn&apos;t dig up this page
               </h3>
               <p className="mb-4 text-muted-foreground text-sm sm:text-base">
-                The page you are looking for is not available!
+                It may have moved, or the address has a typo. Search for what
+                you need, or start again from the home page.
               </p>
 
               {/* Action Buttons */}
