@@ -28,6 +28,34 @@ func TestEncodeURIComponent(t *testing.T) {
 	}
 }
 
+// Each answer was produced by new URLSearchParams({ x: in }).toString() in
+// Node 21, without the leading "x=".
+func TestFormEncode(t *testing.T) {
+	tests := []struct{ in, want string }{
+		{
+			"\x00\x1f !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f",
+			"%00%1F+%21%22%23%24%25%26%27%28%29*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D%7E%7F",
+		},
+		{"", ""},
+		{" ", "+"},
+		{"+", "%2B"},
+		{"é", "%C3%A9"},
+		{"☕", "%E2%98%95"},
+		{"😀", "%F0%9F%98%80"},
+		{"a b&c=d+e/é*~'()!", "a+b%26c%3Dd%2Be%2F%C3%A9*%7E%27%28%29%21"},
+		{"eq.9c1e5d2a", "eq.9c1e5d2a"},
+		{"id,share_token", "id%2Cshare_token"},
+		// Not valid UTF-8: read as one replacement character first, as a
+		// JavaScript string would hold it.
+		{"a\xffb", "a%EF%BF%BDb"},
+	}
+	for _, tt := range tests {
+		if got := FormEncode(tt.in); got != tt.want {
+			t.Errorf("FormEncode(%q) = %q, want %q", tt.in, got, tt.want)
+		}
+	}
+}
+
 func TestParseQuery(t *testing.T) {
 	tests := []struct {
 		in   string

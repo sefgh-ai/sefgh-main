@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-16 (Asia/Calcutta), by Claude Code: SEC-001b handed off (migration applied by the owner and verified; trending live on Go); writer released.
+Last updated: 2026-10-16 (Asia/Calcutta), by Claude Code: SHARE-001 handed off; writer released. The owner asked to save and stop.
 
 ## Start here
 
@@ -11,11 +11,41 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released SEC-001b on 2026-10-16. The SEC-001 migration is applied and verified, and trending on `sefgh-main` is served by Go, the first route cut over.
+- **Active writer:** none. Claude Code released SHARE-001 on 2026-10-16 (owner: "save and stop"). Trending on `sefgh-main` is served by Go; every other route by Next.js.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Thirteen of 25 API routes are implemented in Go (52% of routes, not of the whole migration). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 80 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Fourteen of 25 API routes are implemented in Go (56% of routes, not of the whole migration); every read-only route is among them. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 82 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: SEC-001b, migration applied and trending on Go (Claude Code, 2026-10-16)
+## Latest handoff: SHARE-001, `GET /api/share/[token]` (Claude Code, 2026-10-16)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the shared-chat page sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 64c9bc0. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction: "continue the migration" ("CONTINUE", 2026-10-16), then "save and stop".
+
+Done:
+- Contract `contracts/share-token` version 1, 17 cases (5 `defect`), recorded from the Next.js handler by `scripts/contracts/record-share-token.mjs`. The runner `share-fixture.mjs` builds the client with the real supabase-js 2.78 around a stand-in `fetch`, so the URL, headers and reply reading are supabase-js's own; `share-loader.mjs` swaps the server client. Node runner `share-token.test.mjs`.
+- `backend/internal/sharetoken`: the port. The visitor's bearer, or the public key when signed out, goes to the Data API; no Supabase Auth call. 17 of 17 cases, the database URL compared byte for byte. Unit tests: header parsing, a malformed header reads as signed out, logs never hold either token.
+- `jscompat.FormEncode` (URLSearchParams encoding, answers generated in Node). `supabaserest.Param` now uses it for every route; `supabaserest.SelectObject` asks for one row as `.single()` does, with tests.
+- Wiring: `shareMux` in `cmd/api` serves only `GET /api/share/{token}`; `share_wiring_test.go`. Next.js switch `share-token` (`/api/share/:token`), rewrite test, seven probe scenarios and a `shared_conversations` stand-in.
+- `src/app/s/[token]/page.js` reads the share with `fetchWithSession`.
+- Lesson 24 (route patterns and `PathValue`, optional sign-in, two URL encoders, exercise `bearer`). Lesson 22 updated for `Param`; index updated.
+- Docs: contract README, backend README "Share (SHARE-001)", and the activity and starred gate notes (database gate met on 2026-10-15). ADR (Phase 3 row, two recorded differences, dated note), backend map. Bug register R-081 (500 sends the library's message) and R-082 (every database failure reads as "Not found").
+
+Changed files: backend/internal/sharetoken/* (new), backend/internal/jscompat/{jscompat.go,jscompat_test.go}, backend/internal/supabaserest/{supabaserest.go,supabaserest_test.go}, backend/cmd/api/{main.go,share_wiring_test.go (new)}, backend/README.md, contracts/share-token/* (new), scripts/contracts/{share-loader,share-fixture,record-share-token,share-token.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/app/s/[token]/page.js, learn-go/{README.md,22-reading-rows-as-the-user/README.md,24-optional-sign-in/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}. No exercise.go changed except the new lesson's own.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 824 of 824. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 20 packages pass; vet clean; gofmt empty. learn-go `-tags solution`: 25 packages pass; lesson 24's exercise fails only `TestBearerReadsTheToken`, as intended.
+- Forwarding probe (dev): 82 of 82 identical, including seven share requests (encoded space, slash and `é` in the token).
+- Deliberate breaks, each caught, then restored: sending no bearer when signed out (13 cases fail); `url.QueryEscape` back in `Param` (`token-with-symbols` fails); `is_public` compared with `true` instead of truthiness. That one first went uncaught, so case `is-public-not-boolean` was added, and it is now caught.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database; the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; switching `share-token` on is the owner's choice (it needs only the two variables on `sefgh-main`, like trending).
+Next bounded action: port the first write route against `docs/database/user-db.md`. `POST /api/repo/collect` is the smallest: `repo_collections`, own rows only.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: SEC-001b, migration applied and trending on Go (Claude Code, 2026-10-16)
 
 Status: **complete and live**. The owner applied the migration and switched trending; Claude Code verified both. No independent review.
 Owner: Claude Code (verification and records); the owner ran both production steps. Branch main; base 1bf8e71. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
@@ -1621,7 +1651,7 @@ Task / scope: REVIEW-003, peer review of GO-003 (cd8906c against 1e5d87f) and
 Owner / reviewer: Claude Code reviewed Codex's work. This record is unreviewed.
 Status: review complete for both tasks. Not deployed.
 Base commit / branch / worktree: b0ef691 / main / main checkout, clean at start.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `64c9bc0`).
 Changed files: docs/claude-review.md (review section added) and this file. Nothing else.
 Contract or decision changes: none.
 Verdicts: GO-003 accepted. GO-004 accepted with routing off. No route is

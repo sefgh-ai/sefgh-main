@@ -151,6 +151,16 @@ const scenarios = [
   { path: '/api/repo/starred', headers: { Authorization: 'Bearer session-a' }, status: 200 },
   { path: '/api/repo/starred', headers: { Authorization: 'Bearer wrong-session' }, status: 401, cache: null },
   { path: '/api/repo/starred' },
+  // A share is read with the visitor's bearer, or the public key signed out;
+  // it sets no Cache-Control. The token is a path segment, so awkward ones
+  // test how each layer decodes it.
+  { path: '/api/share/tok-public' },
+  { path: '/api/share/tok-public', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/share/tok-private', headers: { Authorization: 'Bearer session-a' }, status: 403, cache: null },
+  { path: '/api/share/tok-private' },
+  { path: '/api/share/no%20such%20link' },
+  { path: '/api/share/a%2Fb' },
+  { path: '/api/share/caf%C3%A9' },
 ];
 
 try {
@@ -180,6 +190,16 @@ try {
         }
         res.end(JSON.stringify([{ id: 1, repo_full_name: 'octo/demo', notes: 'probe' }]));
       }
+      // Shares: a public one for anyone, a private one only for session-a,
+      // as row-level security has it; otherwise no row.
+      else if (req.url.startsWith('/rest/v1/shared_conversations?')) {
+        const token = new URL(req.url, 'http://stand.in').searchParams.get('share_token');
+        const owner = req.headers.authorization === 'Bearer session-a';
+        if (req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        if (token === 'eq.tok-public') res.end(JSON.stringify({ id: 's1', share_token: 'tok-public', is_public: true, title: 'Shared' }));
+        else if (token === 'eq.tok-private' && owner) res.end(JSON.stringify({ id: 's2', share_token: 'tok-private', is_public: false, title: 'Mine' }));
+        else { res.writeHead(406); res.end(JSON.stringify({ code: 'PGRST116', details: 'The result contains 0 rows', hint: null, message: 'Cannot coerce the result to a single JSON object' })); }
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -207,7 +227,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

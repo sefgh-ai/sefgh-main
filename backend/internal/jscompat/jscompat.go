@@ -83,6 +83,34 @@ func EncodeURIComponent(s string) string {
 	return b.String()
 }
 
+// FormEncode percent-encodes s as JavaScript's URLSearchParams writes a
+// name or a value (application/x-www-form-urlencoded): A-Z a-z 0-9 * - . _
+// stay, a space becomes +, and every other byte becomes %XX in upper-case
+// hex. That is how supabase-js puts a filter in a Data API URL. It differs
+// from EncodeURIComponent, which keeps ! ~ ' ( ) and writes a space as %20,
+// and from Go's url.QueryEscape, which keeps ~ and encodes *. Text that is
+// not valid UTF-8 is first read as JavaScript reads it.
+func FormEncode(s string) string {
+	const hex = "0123456789ABCDEF"
+	s = decodeUTF8([]byte(s))
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		switch {
+		case c == ' ':
+			b.WriteByte('+')
+		case 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9' || strings.IndexByte("*-._", c) >= 0:
+			b.WriteByte(c)
+		default:
+			b.WriteByte('%')
+			b.WriteByte(hex[c>>4])
+			b.WriteByte(hex[c&0x0F])
+		}
+	}
+	return b.String()
+}
+
 func isUnreserved(c byte) bool {
 	if 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9' {
 		return true

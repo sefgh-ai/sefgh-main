@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { Copy, ExternalLink, Link2, Share2, Twitter, Facebook, Linkedin, MessageSquare, Loader2 } from 'lucide-react'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { toast } from 'sonner'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export default function SharedChatPage({ params }) {
   const router = useRouter()
@@ -27,7 +28,9 @@ export default function SharedChatPage({ params }) {
     const load = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`/api/share/${token}`)
+        // With the bearer, the Go backend still recognises the owner's own
+        // private link, as Next.js does from the session cookie.
+        const res = await fetchWithSession(`/api/share/${token}`)
         if (!res.ok) throw new Error('Not found')
         const json = await res.json()
         setShare(json.share)

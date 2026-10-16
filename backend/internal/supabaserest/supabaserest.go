@@ -1,6 +1,6 @@
 // Package supabaserest asks the Supabase Data API (PostgREST) as the
 // signed-in user, and reads its replies as supabase-js does. The routes that
-// read the database (activity, starred) share it.
+// read the database (activity, starred, share) share it.
 //
 // The database is asked as the user, never as the server: the user's own
 // access token goes with the project's public key, which is what the Next.js
@@ -40,14 +40,28 @@ type Client struct {
 // them supabase-js cannot build a client, and the handlers answer 500.
 func (c Client) Configured() bool { return c.URL != "" && c.Key != "" }
 
-// Param writes one query parameter as supabase-js writes it in the URL, the
-// value encoded so that it cannot add a parameter of its own.
-func Param(name, value string) string { return name + "=" + url.QueryEscape(value) }
+// Param writes one query parameter as supabase-js writes it in the URL
+// (URLSearchParams), the value encoded so that it cannot add a parameter of
+// its own.
+func Param(name, value string) string {
+	return jscompat.FormEncode(name) + "=" + jscompat.FormEncode(value)
+}
 
 // Select sends GET /rest/v1/<table>?<query> as the user whose access token
 // is session, and returns the reply's status and body, or an error when
 // there is no reply to read. query is already encoded (see Param).
 func (c Client) Select(ctx context.Context, session, table, query string) (int, []byte, error) {
+	return c.get(ctx, session, table, query, "")
+}
+
+// SelectObject is Select for one row, as supabase-js's .single() asks for
+// it: the Data API answers the row as an object, or 406 when there is not
+// exactly one.
+func (c Client) SelectObject(ctx context.Context, session, table, query string) (int, []byte, error) {
+	return c.get(ctx, session, table, query, "application/vnd.pgrst.object+json")
+}
+
+func (c Client) get(ctx context.Context, session, table, query, accept string) (int, []byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, Timeout)
 	defer cancel()
 	target := strings.TrimRight(c.URL, "/") + "/rest/v1/" + table + "?" + query
@@ -58,6 +72,9 @@ func (c Client) Select(ctx context.Context, session, table, query string) (int, 
 	req.Header.Set("apikey", c.Key)
 	req.Header.Set("Authorization", "Bearer "+session)
 	req.Header.Set("Accept-Profile", "public")
+	if accept != "" {
+		req.Header.Set("Accept", accept)
+	}
 
 	client := *c.HTTP
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }

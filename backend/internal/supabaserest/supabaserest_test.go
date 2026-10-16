@@ -2,7 +2,11 @@ package supabaserest
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"io"
+	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -40,6 +44,55 @@ func TestReadResultFollowsSupabaseJS(t *testing.T) {
 		want, _ := json.Marshal(tt.data)
 		if failed != tt.failed || !bytes.Equal(got, want) {
 			t.Errorf("%s: ReadResult = %s, %v; want %s, %v", tt.name, got, failed, want, tt.failed)
+		}
+	}
+}
+
+// The query postgrest-js 2.78 writes for
+// .select("*").eq("share_token", t).is("deleted_at", null): URLSearchParams
+// keeps "*" and encodes "~", where url.QueryEscape does the opposite.
+func TestParamWritesWhatSupabaseJSWrites(t *testing.T) {
+	got := strings.Join([]string{
+		Param("select", "*"),
+		Param("share_token", "eq.a b&c=d+e/é*~'()!"),
+		Param("deleted_at", "is.null"),
+	}, "&")
+	want := "select=*&share_token=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E%27%28%29%21&deleted_at=is.null"
+	if got != want {
+		t.Errorf("query\n got  %s\n want %s", got, want)
+	}
+}
+
+type recordRoundTrip struct{ requests []*http.Request }
+
+func (r *recordRoundTrip) RoundTrip(req *http.Request) (*http.Response, error) {
+	r.requests = append(r.requests, req)
+	return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{}`)), Header: http.Header{}, Request: req}, nil
+}
+
+// .single() asks for one row as an object; a plain select does not.
+func TestSelectObjectAsksForOneRow(t *testing.T) {
+	record := &recordRoundTrip{}
+	c := Client{HTTP: &http.Client{Transport: record}, URL: "https://project.invalid/", Key: "public-key"}
+	if _, _, err := c.SelectObject(context.Background(), "token-a", "shared_conversations", "select=id"); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := c.Select(context.Background(), "token-a", "repo_collections", "select=id"); err != nil {
+		t.Fatal(err)
+	}
+	one, many := record.requests[0], record.requests[1]
+	if got := one.URL.String(); got != "https://project.invalid/rest/v1/shared_conversations?select=id" {
+		t.Errorf("SelectObject asked %s", got)
+	}
+	if got := one.Header.Get("Accept"); got != "application/vnd.pgrst.object+json" {
+		t.Errorf("SelectObject Accept %q", got)
+	}
+	if got := many.Header.Get("Accept"); got != "" {
+		t.Errorf("Select Accept %q, want none", got)
+	}
+	for _, req := range record.requests {
+		if req.Header.Get("Authorization") != "Bearer token-a" || req.Header.Get("apikey") != "public-key" {
+			t.Errorf("%s: not asked as the caller with the public key", req.URL)
 		}
 	}
 }

@@ -42,6 +42,11 @@ const goBackendRoutes = {
   // The caller's starred repositories, from the database as the caller and
   // checked with GitHub (STAR-001). Bearer only, like activity.
   "repo-starred": "/api/repo/starred",
+  // A shared conversation, by the token in its link (SHARE-001). Signed in,
+  // the browser sends the bearer, so the owner's own private link is still
+  // told apart; signed out, the public key is used, as now. The fork route
+  // under it is not ported.
+  "share-token": "/api/share/:token",
 };
 
 function goBackendRewrites() {

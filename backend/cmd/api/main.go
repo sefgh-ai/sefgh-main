@@ -29,6 +29,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
@@ -106,6 +107,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/ai/", aiMux(logger, verifier))
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
+	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -181,6 +183,22 @@ func starredMux(logger *slog.Logger, verifier githubaccess.Verifier, public http
 		SupabaseKey: verifier.SupabaseKey,
 		GitHub:      &http.Client{Transport: public},
 		GitHubURL:   envOr("GITHUB_API_URL", starred.DefaultGitHubURL),
+		Logger:      logger,
+	})
+	return mux
+}
+
+// shareMux serves a shared conversation to anyone with its link. The
+// database is asked with the visitor's own token when there is one and with
+// the public key otherwise, so row-level security decides, as it does for
+// the Next.js handler. Only the GET of one token is served: the fork route
+// under it is not ported.
+func shareMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/share/{token}", &sharetoken.Handler{
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
 		Logger:      logger,
 	})
 	return mux

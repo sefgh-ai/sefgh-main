@@ -370,3 +370,14 @@ Go service `https://sefgh-api.vercel.app` (`SEFGH_GO_ROUTES=github-trending`).
 Every other route is still answered by Next.js. The SEC-001 migration is
 applied on User-DB: browsers can read every `profiles` column except
 `email`.
+
+## SHARE-001 update (2026-10-16)
+
+`GET /api/share/[token]` has a Go port, `backend/internal/sharetoken`, off by
+default (switch `share-token`). It asks the Data API with the visitor's
+bearer when there is one and the public key otherwise, without a Supabase
+Auth call, so row-level security decides as for the Next.js handler's
+cookie client. `src/app/s/[token]/page.js` now sends the bearer
+(`fetchWithSession`). `POST /api/share/[token]/fork` stays in Next.js.
+`supabaserest.Param` writes URLs with URLSearchParams' encoding
+(`jscompat.FormEncode`) for every route.

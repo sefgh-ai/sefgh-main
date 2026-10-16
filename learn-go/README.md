@@ -73,6 +73,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [21 Wrapping every request](21-wrapping-every-request/README.md) | `http.RoundTripper`, cloning a request, remembering an answer for a while, and a URL that prints without its host | `Transport` in `backend/internal/publictoken/transport.go` |
 | [22 Reading rows as the user](22-reading-rows-as-the-user/README.md) | Asking the database with the user's own token, several return values, `url.QueryEscape`, rounding exactly with `math/big`, and testing Go against the JavaScript it replaces with `os/exec` | `backend/internal/activity`, `ToFixed` in `backend/internal/jscompat/tofixed.go` |
 | [23 Passing JSON through untouched](23-passing-json-through/README.md) | `json.RawMessage`, reading an object one token at a time, packages and capitalised names, one deadline for a group of goroutines | `backend/internal/starred`, `backend/internal/jscompat/rawjson.go`, `backend/internal/supabaserest` |
+| [24 Optional sign-in, and a URL that matches byte for byte](24-optional-sign-in/README.md) | Method and wildcard route patterns, `r.PathValue`, "value, ok" pairs and `strings.CutPrefix`, two URL encoders that disagree, a `switch` with no value | `backend/internal/sharetoken`, `FormEncode` in `backend/internal/jscompat/jscompat.go`, `backend/internal/supabaserest` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

@@ -1,0 +1,88 @@
+package sharetoken
+
+import (
+	"bytes"
+	"errors"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+func TestBearer(t *testing.T) {
+	tests := []struct {
+		header, token string
+		ok            bool
+	}{
+		{"Bearer abc.def.ghi", "abc.def.ghi", true},
+		{"", "", false},
+		{"Bearer ", "", false},
+		{"bearer abc", "", false}, // Go is strict here; Next.js never reads this header
+		{"Basic abc", "", false},
+		{"Bearer abc def", "", false},
+		{"Bearer abc\tdef", "", false},
+	}
+	for _, tt := range tests {
+		token, ok := bearer(tt.header)
+		if token != tt.token || ok != tt.ok {
+			t.Errorf("bearer(%q) = %q, %v; want %q, %v", tt.header, token, ok, tt.token, tt.ok)
+		}
+	}
+}
+
+// A header that is not a bearer is a signed-out visitor: the database is
+// asked with the public key, never with what the header held.
+func TestMalformedHeaderReadsAsSignedOut(t *testing.T) {
+	var got string
+	h := &Handler{
+		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+			got = r.Header.Get("Authorization")
+			return nil, errors.New("stop")
+		})},
+		SupabaseURL: fixtureSupabaseURL, SupabaseKey: fixtureSupabaseKey, Logger: discard,
+	}
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/share/{token}", h)
+	r := httptest.NewRequest(http.MethodGet, "/api/share/abc", nil)
+	r.Header.Set("Authorization", "Basic c2VjcmV0")
+	mux.ServeHTTP(httptest.NewRecorder(), r)
+	if got != "Bearer "+fixtureSupabaseKey {
+		t.Errorf("the database was asked with %q, want the public key", got)
+	}
+}
+
+// The log names the stage and the status, never the visitor's token or the
+// share's token, even when the transport's own error text holds the URL.
+func TestLogsKeepTokensOut(t *testing.T) {
+	var logs bytes.Buffer
+	h := &Handler{
+		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+			return nil, errors.New("dial failed for " + r.URL.String())
+		})},
+		SupabaseURL: fixtureSupabaseURL, SupabaseKey: fixtureSupabaseKey,
+		Logger: slog.New(slog.NewTextHandler(&logs, nil)),
+	}
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/share/{token}", h)
+	r := httptest.NewRequest(http.MethodGet, "/api/share/link-secret-123", nil)
+	r.Header.Set("Authorization", "Bearer visitor-secret-456")
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+	if w.Code != 404 {
+		t.Errorf("status %d, want 404", w.Code)
+	}
+	text := logs.String()
+	if !strings.Contains(text, "stage=database") {
+		t.Errorf("the failure was not logged: %q", text)
+	}
+	for _, secret := range []string{"link-secret-123", "visitor-secret-456"} {
+		if strings.Contains(text, secret) {
+			t.Errorf("the log holds %q: %s", secret, text)
+		}
+	}
+}
+
+type roundTrip func(*http.Request) (*http.Response, error)
+
+func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }

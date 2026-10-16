@@ -228,9 +228,18 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Share (SHARE-001)
+
+Opt-in name: `share-token`, off by default. One shared conversation, by the token in its link, for anyone who has the link. It passes the 17 cases of `contracts/share-token`, recorded from the Next.js handler by `scripts/contracts/record-share-token.mjs` with the real supabase-js around a stand-in Data API. The live rules it relies on were read on 2026-10-15 (`../docs/database/user-db.md`).
+
+- **The database** is asked through `internal/supabaserest.SelectObject`, which asks for one row as an object, as `.single()` does. Signed in, the visitor's bearer is sent; signed out, the project's public key, as supabase-js does. Row-level security decides: public shares that are not deleted for anyone, and a user's own shares for that user. Supabase Auth is not asked: the handler needs no user id, and the Data API refuses a token it does not accept.
+- **The URL** is the one supabase-js sends, byte for byte. `supabaserest.Param` now encodes with `jscompat.FormEncode` (URLSearchParams), not `url.QueryEscape`; the two differ on `*` and `~`, among others. Activity and starred send the same filters as before, now written as the browser writes them.
+- **Defects kept** so the two can be compared: every database failure answers 404 `Not found` (R-082), and missing settings answer 500 with the library's own message (R-081). Both are fixed here after cutover.
+- **Differs from Next.js:** a bearer instead of the session cookie (the share page now uses `fetchWithSession`); a header in any other form counts as signed out. Only `GET /api/share/{token}` is served; the fork route under it stays in Next.js.
+
 ## Starred (STAR-001)
 
-Opt-in name: `repo-starred`, off by default. The caller's saved repositories, each checked again with GitHub. It passes the 14 cases of `contracts/repo-starred` (recorded from the Next.js handler by `scripts/contracts/record-repo-starred.mjs`) and the 15 of `contracts/public-repository-reads`. Turning it on waits, like activity, for Phase 3's gate: the `repo_collections` definition and its row-level security, checked against the live project.
+Opt-in name: `repo-starred`, off by default. The caller's saved repositories, each checked again with GitHub. It passes the 14 cases of `contracts/repo-starred` (recorded from the Next.js handler by `scripts/contracts/record-repo-starred.mjs`) and the 15 of `contracts/public-repository-reads`. Phase 3's database gate for it was met on 2026-10-15: `repo_collections` lets a user read only their own rows (`../docs/database/user-db.md`). Turning it on still waits for review.
 
 - **The database** is asked as the caller with their own bearer, through `internal/supabaserest`, which activity now uses too: `Select` sends the request, `ReadResult` reads the reply as supabase-js does.
 - **GitHub** is asked through the transport of signed-out reads: no credential of the caller's, never `GITHUB_TOKEN`, only the public read token when one is set. A name must pass `githubrepos.ValidOwner` and `ValidRepoName` (the same rules, now exported) before it reaches a URL. Redirects are refused, each read has 10 seconds, at most four run at once, and a repository counts as public only with an explicit `private: false`.
@@ -242,9 +251,10 @@ Opt-in name: `repo-starred`, off by default. The caller's saved repositories, ea
 Opt-in name: `activity`, off by default. This is the first route in Go that
 reads the database. It answers the caller's own activity over the last year,
 as the Next.js handler does, the two recorded defects included (bug
-register R-059). Turning it on needs the owner's go-ahead: Phase 3's gate
-in ADR-0002 (the table's definition and its row-level security, checked
-against the live project) still stands.
+register R-059). Phase 3's database gate for it was met on 2026-10-15:
+`activity_logs` lets a user read only their own rows
+(`../docs/database/user-db.md`). Turning it on still needs review and the
+owner's go-ahead.
 
 The caller sends `Authorization: Bearer <Supabase access token>`, which
 `githubaccess.Verifier.User` checks online with Supabase Auth. An anonymous

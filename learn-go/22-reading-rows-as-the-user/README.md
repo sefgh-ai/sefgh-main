@@ -46,7 +46,7 @@ supabase-js writes `.eq('user_id', id)` as `user_id=eq.<id>` in the URL. Go writ
 supabaserest.Param("user_id", "eq."+userID),
 ```
 
-`Param` puts the value through `url.QueryEscape`, which turns any character that means something in a URL (`&`, `=`, `?`, a space) into a `%` code. Without it, an id containing `&order=...` would add a second instruction to the query. A test, `TestTheQueryIsTheUsersOwn`, sends exactly such an id and checks the database receives it as one value. This is the same idea as `encodeURIComponent` in JavaScript, which lesson 03 rebuilt.
+`Param` puts the value through `jscompat.FormEncode`, which turns any character that means something in a URL (`&`, `=`, `?`, a space) into a `%` code. Without it, an id containing `&order=...` would add a second instruction to the query. A test, `TestTheQueryIsTheUsersOwn`, sends exactly such an id and checks the database receives it as one value. This is the same idea as `encodeURIComponent` in JavaScript, which lesson 03 rebuilt. (`Param` first used Go's `url.QueryEscape`; lesson 24 explains why it now copies the browser's `URLSearchParams` instead.)
 
 ## Rounding: 0.25 is "0.3" in JavaScript and "0.2" in Go
 
@@ -110,6 +110,6 @@ go test -tags solution ./22-reading-rows-as-the-user
 
 - Asking the database with the user's own token, and only the public key besides, keeps the database's own rules in charge.
 - A function can return several values; `User` returns the id, the token and a status.
-- `url.QueryEscape` keeps a value from changing the meaning of a URL.
+- Encoding a value keeps it from changing the meaning of a URL.
 - Go rounds a tie to even, JavaScript's `toFixed` rounds it up; `math/big` lets you round on the exact value.
 - A Go test can run the JavaScript it replaces with `os/exec`, and a fixed random seed makes many generated cases repeatable.

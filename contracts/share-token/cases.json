@@ -1,0 +1,571 @@
+{
+  "contract_version": 1,
+  "route": "GET /api/share/[token]",
+  "recorded_from": "the Next.js handler at 64c9bc0, by scripts/contracts/record-share-token.mjs",
+  "boundary": "The real handler runs with a client built by the real supabase-js 2.78 around a stand-in Data API, so the query and the reading of each reply are supabase-js's own. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead.",
+  "cases": [
+    {
+      "id": "public-signed-out",
+      "disposition": "preserve",
+      "reason": "A public share that is not deleted, read by anyone with the link: 200 with the row. Signed out, the public key is the bearer.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": {
+          "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+          "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+          "is_public": true,
+          "title": "Why does go vet complain?",
+          "summary": null,
+          "snapshot": [
+            {
+              "role": "user",
+              "content": "Why does go vet complain about my struct tags?"
+            },
+            {
+              "role": "assistant",
+              "content": "Tag values must be quoted: `json:\"name\"`."
+            }
+          ],
+          "shared_at": "2026-10-14T09:30:00.123456+00:00"
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "share": {
+            "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+            "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+            "is_public": true,
+            "title": "Why does go vet complain?",
+            "summary": null,
+            "snapshot": [
+              {
+                "role": "user",
+                "content": "Why does go vet complain about my struct tags?"
+              },
+              {
+                "role": "assistant",
+                "content": "Tag values must be quoted: `json:\"name\"`."
+              }
+            ],
+            "shared_at": "2026-10-14T09:30:00.123456+00:00"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-signed-in",
+      "disposition": "preserve",
+      "reason": "The same share read by a signed-in visitor: the database is asked with the visitor's own token, and the answer is the same.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": "session-a",
+      "database": {
+        "status": 200,
+        "body": {
+          "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+          "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+          "is_public": true,
+          "title": "Why does go vet complain?",
+          "summary": "Struct tags need quoted values.",
+          "snapshot": [],
+          "shared_at": "2026-10-14T09:30:00.123456+00:00"
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "share": {
+            "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+            "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+            "is_public": true,
+            "title": "Why does go vet complain?",
+            "summary": "Struct tags need quoted values.",
+            "snapshot": [],
+            "shared_at": "2026-10-14T09:30:00.123456+00:00"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "own-private-share",
+      "disposition": "preserve",
+      "reason": "Row-level security lets the owner read their own private share, and this public endpoint still refuses it: 403 \"Private link\". Anyone else cannot read the row at all (see no-matching-row).",
+      "token": "4d2a9e7c1b5f3a8e6c0d2b4f",
+      "session": "session-a",
+      "database": {
+        "status": 200,
+        "body": {
+          "id": "8a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+          "share_token": "4d2a9e7c1b5f3a8e6c0d2b4f",
+          "is_public": false,
+          "title": "Draft",
+          "summary": null,
+          "snapshot": [],
+          "shared_at": "2026-10-15T08:00:00+00:00"
+        }
+      },
+      "expect": {
+        "status": 403,
+        "body": {
+          "error": "Private link"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.4d2a9e7c1b5f3a8e6c0d2b4f&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "no-matching-row",
+      "disposition": "preserve",
+      "reason": "No row: the token is unknown, the share was revoked (the query asks only for rows whose deleted_at is null), or it is someone else's private share, which row-level security hides. PostgREST answers 406 to a single-object request with no row: 404 \"Not found\".",
+      "token": "0000000000000000deadbeef",
+      "session": null,
+      "database": {
+        "status": 406,
+        "body": {
+          "code": "PGRST116",
+          "details": "The result contains 0 rows",
+          "hint": null,
+          "message": "Cannot coerce the result to a single JSON object"
+        }
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "refused-session",
+      "disposition": "preserve",
+      "reason": "The Data API refuses the visitor's token (here an expired one): an error, so 404. Neither backend asks Supabase Auth first.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": "session-expired",
+      "database": {
+        "status": 401,
+        "body": {
+          "code": "PGRST303",
+          "details": null,
+          "hint": null,
+          "message": "JWT expired"
+        }
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer session-expired",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "database-error",
+      "disposition": "defect",
+      "reason": "A database failure reads as a missing link: 404 \"Not found\" (bug register R-082). Recorded so the Go port can be compared; the fix lands in Go after cutover.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 500,
+        "body": {
+          "code": "XX000",
+          "details": null,
+          "hint": null,
+          "message": "internal error"
+        }
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "database-unreachable",
+      "disposition": "defect",
+      "reason": "The Data API cannot be reached: supabase-js reports an error, and the handler answers 404 as for a missing link (R-082).",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "network_error": true
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gateway-text",
+      "disposition": "defect",
+      "reason": "An error reply that is not JSON (a gateway's page): supabase-js keeps the text as the error, and the handler answers 404 (R-082).",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 502,
+        "raw": "Bad Gateway"
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unreadable-success",
+      "disposition": "defect",
+      "reason": "A success reply whose body is not JSON: supabase-js fails to read it and reports an error, so 404 (R-082).",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "raw": "<html>maintenance</html>"
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-success",
+      "disposition": "preserve",
+      "reason": "A success reply with no body has no data: 404.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "raw": ""
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-success",
+      "disposition": "preserve",
+      "reason": "A success reply whose body is null: no data, 404.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "raw": "null"
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "list-on-404",
+      "disposition": "preserve",
+      "reason": "supabase-js reads a 404 whose body is a list as no rows and no error, with data []. An empty list is truthy and has no is_public, so the handler answers 403 \"Private link\". PostgREST does not send this for a table, but supabase-js's rule is shared with the other database routes.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 404,
+        "body": []
+      },
+      "expect": {
+        "status": 403,
+        "body": {
+          "error": "Private link"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "row-without-is-public",
+      "disposition": "preserve",
+      "reason": "A row with no is_public is treated as private: 403. The column is required, so only a changed query or table would send this.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": {
+          "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+          "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+          "title": "No flag"
+        }
+      },
+      "expect": {
+        "status": 403,
+        "body": {
+          "error": "Private link"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "is-public-not-boolean",
+      "disposition": "preserve",
+      "reason": "The check is JavaScript's truthiness: any truthy is_public counts as public, here the text \"yes\". The column is boolean, so only a changed table would send this.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": {
+          "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+          "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+          "is_public": "yes",
+          "title": "Truthy flag"
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "share": {
+            "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+            "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+            "is_public": "yes",
+            "title": "Truthy flag"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "values-pass-through",
+      "disposition": "preserve",
+      "reason": "The row is answered as read, in its own field order, with nested values, text outside ASCII and numbers in exponent form untouched in meaning.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "database": {
+        "status": 200,
+        "raw": "{\"shared_at\":\"2026-10-14T09:30:00+00:00\",\"is_public\":true,\"title\":\"Caf\\u00e9 ☕ नमस्ते\",\"id\":\"2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b\",\"share_token\":\"9c1e5d2a7b3f4e6d8a0b1c2d\",\"summary\":\"a\\/b \\\"quoted\\\"\",\"snapshot\":[{\"role\":\"user\",\"content\":\"line one\\nline two\",\"tokens\":1.5e3,\"meta\":{\"nested\":[1,2,{\"deep\":null}]}}]}"
+      },
+      "expect": {
+        "status": 200,
+        "body": {
+          "share": {
+            "shared_at": "2026-10-14T09:30:00+00:00",
+            "is_public": true,
+            "title": "Café ☕ नमस्ते",
+            "id": "2f6c1f3e-8d8a-4b7e-9a51-3c2d1e0f4a5b",
+            "share_token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+            "summary": "a/b \"quoted\"",
+            "snapshot": [
+              {
+                "role": "user",
+                "content": "line one\nline two",
+                "tokens": 1500,
+                "meta": {
+                  "nested": [
+                    1,
+                    2,
+                    {
+                      "deep": null
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "token-with-symbols",
+      "disposition": "preserve",
+      "reason": "A token holding characters that mean something in a URL is sent as one value of share_token, encoded as URLSearchParams encodes it.",
+      "token": "a b&c=d+e/é*~'()!",
+      "session": null,
+      "database": {
+        "status": 406,
+        "body": {
+          "code": "PGRST116",
+          "details": "The result contains 0 rows",
+          "hint": null,
+          "message": "Cannot coerce the result to a single JSON object"
+        }
+      },
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E%27%28%29%21&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing",
+      "disposition": "defect",
+      "reason": "Without the project's address and key, createServerClient throws, and the handler sends the error's own text to the browser: 500 (R-081). The database is not asked.",
+      "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
+      "session": null,
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Your project's URL and Key are required to create a Supabase client!\n\nCheck your Supabase project's API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}
