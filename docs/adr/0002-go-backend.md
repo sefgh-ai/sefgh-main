@@ -160,6 +160,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | 2026-10-13 | Owner authorized implementing Codex's recommendations, including CI-001 and API authorization. Contracts change in Next and Go together. No deployment or route cutover is implied |
 | 2026-10-13 | Owner decided the AI policy, answering the four questions in "AI routes: decisions needed before a port". Chat: signed-in users only, 30 requests per five minutes per user, the most recent 20 messages and 8,000 characters per request. Suggestions and enhance-query: anyone, 30 AI calls per five minutes per address, queries of at most 500 characters. Fix three recorded defects in Next.js and Go together: internal and provider error text returned to callers; a caller's system message replacing the application's; unchecked message shapes. Other recorded defects stay |
 | 2026-10-13 | Owner approved a server token for anonymous GitHub reads, on condition that it can read only public data. It is a new variable, separate from `GITHUB_TOKEN`. Not implemented yet (`QUOTA-001`) |
+| 2026-10-15 | Owner approved and applied the SEC-001 migration ("apply"; run in the Supabase SQL editor) and switched trending to Go on `sefgh-main` ("yeah switch to go": `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES=github-trending`, then a redeploy). Trending is the first route the website serves from Go. Rollback: remove `github-trending` from `SEFGH_GO_ROUTES` and redeploy. The Next.js handler stays until Phase 7. Leaked-password protection (R-080) needs Supabase's Pro plan, outside the free-tier budget, so it was not turned on |
 | 2026-10-15 | Owner gave agents full access to the Supabase projects through the MCP connection ("you can have full access i give permission"). Claude Code still reads with catalog queries and changes the production database only by a migration in `supabase/migrations/`, each approved by the owner before it runs (SEC-001) |
 | 2026-10-15 | Owner chose to fix trending (R-068) once, in Go: contract version 3 changes the GitHub query, the Go handler is the implementation of record, and trending is the first route to switch to Go, since it needs no credentials. The Next.js handler keeps the old query until it is retired. The owner created the new website project `sefgh-main` and will create the Go project `sefgh-api`. Task BUG-007 |
 | 2026-10-14 | Owner chose hosting option A, a second free Vercel project rooted at `backend/`, preview first ("yes go ahead"). The owner creates it from `../hosting-setup.md`. The owner offered full Supabase access; Claude Code asked for read-only (reasons in `../coordination.md`, "Owner decisions pending"). Task OPS-002 |
@@ -474,3 +475,9 @@ account could rewrite trending (R-070 to R-074). The fix is a migration in
 `../../supabase/migrations/`, dry-run on a local copy of the definitions
 and not applied: applying it changes production and waits for the owner.
 Profile reads now name their columns, which works before and after it.
+
+SEC-001b (2026-10-15): the owner ran the SEC-001 migration in the Supabase
+SQL editor, and the verify query showed all 13 checks true. The owner also
+switched trending to Go on `sefgh-main`; the website's
+`/api/github/trending` now answers from `sefgh-api` with real data, where
+the Next.js handler answered 500 (R-068). It is the first route cut over.

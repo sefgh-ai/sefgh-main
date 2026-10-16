@@ -16,7 +16,7 @@ Repo-DB, the second project (semantic search), has not been reviewed yet.
 
 ## Exposures found
 
-Each is a register entry. SEC-001 prepared the fix for the first five; it is not applied until the owner approves (see "The fix").
+Each is a register entry. The first five were closed on 2026-10-15 (see "The fix"); the table describes the database as it was before.
 
 | Entry | What anyone could do | Why |
 |---|---|---|
@@ -50,7 +50,7 @@ Row-level security is on for every table. "Own" means `auth.uid()` equals the ro
 | `notifications` | own | insert, update, delete own | |
 | `onboarding_data`, `search_history`, `user_conversations`, `repo_collections` | own | own | |
 | `platform_stats` | everyone | service role only | counters change through `increment_platform_stat` |
-| `profiles` | everyone, every column (R-070) | insert, update, delete own | duplicate insert, select and update policies; `id` references `auth.users` |
+| `profiles` | everyone; since SEC-001 every column except `email` (R-070) | insert, update, delete own | duplicate insert, select and update policies; `id` references `auth.users` |
 | `projects`, `repo_videos` | everyone | own (`uploaded_by` for videos) | |
 | `repo_claims` | own, or `claim_status = 'verified'` | insert own | |
 | `repo_comments` | not deleted, or own | own | |
@@ -62,7 +62,7 @@ Row-level security is on for every table. "Own" means `auth.uid()` equals the ro
 | `repository_notifications` | own | insert: anyone, `with check (true)` (R-078) | not used by this code; 0 rows |
 | `repository_shares` | everyone | insert: anyone, `with check (true)` (R-078) | not used by this code; 0 rows |
 | `shared_conversations` | public and not deleted, or own | own | `conversation_id` and `created_by` required; 4 rows |
-| `trending_repos` | everyone | `authenticated` and service role: insert, update, delete (R-073) | 0 rows |
+| `trending_repos` | everyone | service role only; until SEC-001 also `authenticated` (R-073) | 0 rows |
 | `user_stats` | everyone | insert, update own | |
 | `user-data` | nobody | nobody | no policies; not used by this code (R-078) |
 
@@ -93,11 +93,12 @@ Bucket `avatars`: anyone can read; a signed-in user can upload, update and delet
 
 ## Auth
 
-32 users, none anonymous; the code never calls `signInAnonymously`. The security advisor reports leaked-password protection off (R-080).
+32 users, none anonymous; the code never calls `signInAnonymously`. The security advisor reports leaked-password protection off (R-080); Supabase offers it only on the Pro plan.
 
 ## The fix (SEC-001)
 
 - **App, safe before and after the database change.** Profile reads name their columns: `PROFILE_COLUMNS` in `src/lib/supabase/profile-columns.js`, used by `src/lib/supabase/profiles.js` and `src/hooks/profile/useProfileData.js`. The profile form takes the user's email from Supabase Auth. Guard: `scripts/contracts/profile-columns.test.mjs`.
+- **Applied 2026-10-15** by the owner, in the Supabase SQL editor, after the app change was live on `sefgh-main`. The Supabase connector had declined both a dry run and `apply_migration`. Run that way, the migration is not in the project's migration history table. Afterwards `supabase/checks/sec_001_verify.sql` showed 13 of 13 true (Claude Code, read-only).
 - **Database.** `supabase/migrations/20261015140000_sec_001_close_data_exposures.sql`. Read-only check afterwards: `supabase/checks/sec_001_verify.sql`, which must show 13 rows, all `ok`. Undo: `supabase/checks/sec_001_rollback.sql`.
 - **Order.** Deploy the app change first: once the migration runs, `select('*')` on `profiles` is refused. The old live project `sefgh-ui` runs May 2026 code (R-066) against the same database and has not been checked; its profile and chat pages may stop loading their profile.
 - **Dry run.** On 2026-10-15 the migration was run against a local Postgres 17.5 (PGlite) loaded with the definitions above: roles, `auth.uid()`, the affected tables, their policies, the function bodies and triggers, and Supabase's default grants. 17 checks passed:

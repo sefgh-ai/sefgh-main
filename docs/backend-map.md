@@ -362,3 +362,11 @@ Nothing about the request path changed. Two things are new:
 
 `activity_logs` and `repo_collections` let a user read only their own rows,
 which is what the Go activity and starred ports assume.
+
+## SEC-001b update (2026-10-15)
+
+In production, `sefgh-main` now forwards `GET /api/github/trending` to the
+Go service `https://sefgh-api.vercel.app` (`SEFGH_GO_ROUTES=github-trending`).
+Every other route is still answered by Next.js. The SEC-001 migration is
+applied on User-DB: browsers can read every `profiles` column except
+`email`.

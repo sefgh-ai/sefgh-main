@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-15 (Asia/Calcutta), by Claude Code: SEC-001 handed off (migration prepared, not applied); writer released.
+Last updated: 2026-10-16 (Asia/Calcutta), by Claude Code: SEC-001b handed off (migration applied by the owner and verified; trending live on Go); writer released.
 
 ## Start here
 
@@ -11,11 +11,32 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released SEC-001 on 2026-10-15. Waiting on the owner: an explicit "apply" for the SEC-001 migration (after this change is live on `sefgh-main`), and the two trending settings on `sefgh-main` (VERIFY-004: Go trending answers real data at `https://sefgh-api.vercel.app`).
+- **Active writer:** none. Claude Code released SEC-001b on 2026-10-16. The SEC-001 migration is applied and verified, and trending on `sefgh-main` is served by Go, the first route cut over.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twelve of 25 API routes are implemented in Go (48% of routes, not of the whole migration); rewrites off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 80 entries, 23 fixed, 5 in progress (SEC-001, waiting on the owner). Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Thirteen of 25 API routes are implemented in Go (52% of routes, not of the whole migration). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 80 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: SEC-001, User-DB security review (Claude Code, 2026-10-15)
+## Latest handoff: SEC-001b, migration applied and trending on Go (Claude Code, 2026-10-16)
+
+Status: **complete and live**. The owner applied the migration and switched trending; Claude Code verified both. No independent review.
+Owner: Claude Code (verification and records); the owner ran both production steps. Branch main; base 1bf8e71. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instructions (2026-10-15): "1.apply", "yeah switch to go", leaked-password protection "if its recommended then go for it".
+
+Done:
+- Before applying, Claude Code checked that the SEC-001 app change was live on `sefgh-main`: the chat and profile chunks `06d492b920fa6f54.js` and `7a2cf75bb5684727.js` are served and contain the new column list.
+- The Supabase connector declined both a dry run (`execute_sql`) and `apply_migration`; neither ran, and a read-only check showed the database unchanged. The owner then ran `supabase/migrations/20261015140000_sec_001_close_data_exposures.sql` in the Supabase SQL editor. Run that way, it is not in the project's migration history table.
+- Verified (Claude Code, read-only `execute_sql`): `supabase/checks/sec_001_verify.sql` returned 13 rows, all true. R-070 to R-074 marked fixed.
+- The owner set `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES=github-trending` on `sefgh-main` and redeployed. Verified from outside: `https://sefgh-main.vercel.app/api/github/trending?since=daily` answers 200 with repositories (it answered 500 before), and `/trending` answers 200. R-068 marked live.
+- Leaked-password protection (R-080): Supabase offers it only on the Pro plan, outside the free-tier budget; not turned on. Left for the owner.
+
+Changed files: docs/{coordination.md,bug-register.md,adr/0002-go-backend.md,backend-map.md,database/user-db.md}. No code change.
+Checks: the verify query (13 of 13 on 2026-10-15, and again on 2026-10-16); the two HTTP requests above (repeated on 2026-10-16); `npm run handoff` ran after this record was saved, and a failure would be recorded here by a further edit.
+Not checked: signed-in pages (profile, chat, activity logging, sharing) in a browser after the migration; the old `sefgh-ui` project.
+
+Remaining gates: a signed-in look at the profile and chat pages; independent review of SEC-001.
+Next bounded action: record `GET /api/share/[token]` (the last read-only route), then port the write routes one at a time against `database/user-db.md`.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: SEC-001, User-DB security review (Claude Code, 2026-10-15)
 
 Status: **app change complete; migration prepared and dry-run, NOT applied; awaiting the owner's approval and independent review**. Applying the migration changes the production database, so it waits for the owner's explicit "apply".
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1546,7 +1567,7 @@ Task / scope: GO-005a, characterize GET /api/github/contributions as contract
 Owner / reviewer: Claude Code / Codex (peer review NOT run).
 Status: implementation complete; review pending; not deployed. No Go code.
 Base commit / branch / worktree: 73429e1 / main / main checkout, clean at start.
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `1bf8e71`).
 Changed files:
   contracts/github-contributions/{cases.json,README.md}: 95 cases, version 1.
   scripts/contracts/github-contributions.test.mjs: Node runner.
