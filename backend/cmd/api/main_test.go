@@ -11,6 +11,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/activity"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
@@ -89,6 +90,14 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	if vote.Budget >= 3*supabaserest.Timeout {
 		t.Errorf("vote.Budget %v does not bound the three calls of %v each", vote.Budget, supabaserest.Timeout)
+	}
+	// Comments: a GET reads the list, then every comment's details within one
+	// budget; a POST asks Supabase, then makes three calls within another.
+	if total := supabaserest.Timeout + comments.DetailsBudget; total >= writeTimeout {
+		t.Errorf("the comment list and its details can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	if total := githubaccess.DefaultTimeout + comments.WriteBudget; total >= writeTimeout {
+		t.Errorf("sign-in and a comment's three calls can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

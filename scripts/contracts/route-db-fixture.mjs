@@ -1,25 +1,35 @@
 // Runs the real handlers of a route that reads and writes the database.
 // Their Supabase client is built by the real supabase-js around a stand-in
-// for the Data API, so every query, write, function call and reading of a
-// reply is supabase-js's own. Only auth.getUser() is replaced: it answers
-// what the fixture's `user` says, as Supabase Auth would for the session.
+// for Supabase, so every query, write, function call, admin call and reading
+// of a reply is supabase-js's own. Only auth.getUser() and auth.getSession()
+// are replaced: getUser answers what the fixture's `user` says, as Supabase
+// Auth would for the session, and getSession hands supabase-js the session's
+// token, as the cookie client does. So the Data API gets the visitor's
+// token, and the auth admin API gets the public key, as with the real
+// server client.
 // The clock is fixed, so `new Date()` gives the same moment every run.
 // collect-fixture.mjs and share-fixture.mjs are earlier, narrower versions.
 //
 // A fixture gives:
 //   method         GET, POST or DELETE
 //   query          the request's query string, without "?"
-//   body           the POST body as text, sent as it is
+//   body           the request body as text (POST, PATCH), sent as it is
 //   session        the visitor's access token, or null when signed out. The
 //                  cookie-session client sends it to the Data API; signed
 //                  out, it sends the project's public key instead.
 //   user           what getUser() answers for that session: an object, null
 //                  (no session), or { "error": "..." }
 //   client_throws  true when the project's settings are missing
-//   database       the Data API's replies, one per request in order:
-//                  { "status": 201, "raw": "" }, { "status": 200, "body": [...] }
-//                  or { "network_error": true }. A request beyond the list
+//   database       the replies to the handler's requests, one per request
+//                  in order: { "status": 201, "raw": "" },
+//                  { "status": 200, "body": [...], "headers": {...} } or
+//                  { "network_error": true }. A request beyond the list
 //                  gets 200 with [].
+//   routes         instead of database, for handlers that make requests at
+//                  the same time, whose order is not part of the contract:
+//                  [{ "match": "HEAD /rest/v1/repo_comments", ...reply }].
+//                  A request gets the first reply whose match is part of
+//                  "METHOD path?query"; one with no match gets 200 with [].
 //
 // A request is recorded with its method, path and query, Prefer, Accept and
 // Content-Type headers, Authorization and apikey, and its body as JSON.
@@ -60,18 +70,27 @@ export async function runRouteFixture(handlers, route, fixture) {
         apikey: headers.get('apikey'),
         body: init.body === undefined ? null : JSON.parse(init.body),
       });
-      const answer = (fixture.database ?? [])[database.length - 1] ?? { status: 200, body: [] };
+      const asked = `${init.method ?? 'GET'} ${url.pathname}${url.search}`;
+      const answer = (fixture.routes
+        ? fixture.routes.find((route) => asked.includes(route.match))
+        : (fixture.database ?? [])[database.length - 1]) ?? { status: 200, body: [] };
       if (answer.network_error) throw new TypeError('fetch failed');
       const status = answer.status ?? 200;
       // A 204 reply has no body at all; Response refuses even an empty one.
-      const body = status === 204 ? null : answer.raw ?? (answer.body === undefined ? '' : JSON.stringify(answer.body));
-      return new Response(body, { status, headers: { 'content-type': 'application/json' } });
+      // Neither does a reply to HEAD.
+      const empty = status === 204 || (init.method ?? 'GET') === 'HEAD';
+      const body = empty ? null : answer.raw ?? (answer.body === undefined ? '' : JSON.stringify(answer.body));
+      return new Response(body, { status, headers: { 'content-type': 'application/json', ...answer.headers } });
     };
     globalThis.__routeClient = () => {
       if (fixture.client_throws) return createServerClient(undefined, undefined, { cookies: { getAll: () => [], setAll() {} } });
       const client = createClient(SUPABASE_URL, SUPABASE_KEY, {
-        global: { fetch, headers: fixture.session ? { Authorization: `Bearer ${fixture.session}` } : {} },
+        global: { fetch },
         auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      });
+      client.auth.getSession = async () => ({
+        data: { session: fixture.session ? { access_token: fixture.session } : null },
+        error: null,
       });
       client.auth.getUser = async () => {
         const user = fixture.user ?? null;
@@ -82,7 +101,8 @@ export async function runRouteFixture(handlers, route, fixture) {
       return client;
     };
     const url = `https://app.test${route}${fixture.query ? `?${fixture.query}` : ''}`;
-    const request = new Request(url, { method: fixture.method, body: fixture.method === 'POST' ? fixture.body ?? '' : undefined });
+    const hasBody = fixture.method === 'POST' || fixture.method === 'PATCH';
+    const request = new Request(url, { method: fixture.method, body: hasBody ? fixture.body ?? '' : undefined });
     const response = await handlers[fixture.method](request);
     return {
       status: response.status,

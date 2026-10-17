@@ -412,3 +412,11 @@ bearer (`fetchWithSession`).
 `/api/repo/comments/vote` (GET, POST) has a Go port, `backend/internal/commentvote`,
 off by default (switch `comment-vote`). The comment vote arrows send the
 bearer (`fetchWithSession`); the other comment calls still go to Next.js.
+
+## COMMENTS-001 update (2026-10-17)
+
+`/api/repo/comments` (GET, POST, PATCH, DELETE) has a Go port,
+`backend/internal/comments`, off by default (switch `repo-comments`). Its GET
+reads each comment's details concurrently (four at once, one budget). The
+comment form, edit and delete send the bearer (`fetchWithSession`). The list
+the page shows is still read in the browser (`commentHelpers.js`).

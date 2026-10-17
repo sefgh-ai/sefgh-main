@@ -1,0 +1,2993 @@
+{
+  "contract_version": 1,
+  "route": "GET, POST, PATCH and DELETE /api/repo/comments",
+  "recorded_from": "the Next.js handlers at fead0d9, by scripts/contracts/record-repo-comments.mjs",
+  "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-comment requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
+  "cases": [
+    {
+      "id": "get-top-level",
+      "disposition": "defect",
+      "reason": "Signed out: the top-level comments, newest first, 50 from 0, each with its author and reply count. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "method": "GET",
+      "query": "repo=octo%2Fdemo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            },
+            {
+              "id": "c2",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Works on Windows too",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c1&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-1/2"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c2&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-0/0"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 2
+            },
+            {
+              "id": "c2",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Works on Windows too",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c2&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in",
+      "disposition": "defect",
+      "reason": "Signed in, the same, with the visitor's token for the Data API; the admin lookup still goes with the public key. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c1&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-0/1"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 1
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-replies",
+      "disposition": "preserve",
+      "reason": "parentId asks for the replies of one comment.",
+      "method": "GET",
+      "query": "repo=octo/demo&parentId=c1",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c3",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": "c1",
+              "comment_text": "Agreed",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c3&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-0/0"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c3",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": "c1",
+              "comment_text": "Agreed",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=eq.c1",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c3&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-parent-null-text",
+      "disposition": "preserve",
+      "reason": "parentId=null is read as no parent: top-level comments.",
+      "method": "GET",
+      "query": "repo=octo/demo&parentId=null",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-offset",
+      "disposition": "preserve",
+      "reason": "limit and offset become PostgREST's offset and limit.",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=10&offset=20",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=20&limit=10&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-parse-int",
+      "disposition": "preserve",
+      "reason": "limit and offset are read with parseInt: \" 7px\" is 7, and \"0x10\" is 16.",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=%207px&offset=0x10",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=16&limit=7&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-not-a-number",
+      "disposition": "preserve",
+      "reason": "A limit that is not a number is NaN, and NaN is sent as the text \"NaN\".",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=abc",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=NaN&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-negative",
+      "disposition": "preserve",
+      "reason": "A negative limit is sent as it is.",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=-3",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=-3&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-no-repo",
+      "disposition": "preserve",
+      "reason": "No repo parameter: 400, and nothing is asked.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-error",
+      "disposition": "preserve",
+      "reason": "The read fails: 500 \"Failed to fetch comments\".",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch comments"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-empty",
+      "disposition": "preserve",
+      "reason": "No comments: an empty list.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-empty-success",
+      "disposition": "preserve",
+      "reason": "A success with no body has no data, and null.map throws: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "raw": ""
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-profile-present",
+      "disposition": "preserve",
+      "reason": "Were the profile read to succeed, its username and avatar would be used, and no admin lookup made.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 200,
+          "body": {
+            "username": "octo",
+            "avatar_url": "https://avatars.example/octo.png"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c1&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-2/3"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": "octo",
+              "user_email": null,
+              "user_avatar": "https://avatars.example/octo.png",
+              "reply_count": 3
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-admin-answers",
+      "disposition": "preserve",
+      "reason": "Were the admin lookup to succeed, the author's email would be sent to everyone (R-040). With the public key it never does.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 200,
+          "body": {
+            "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "email": "a@example.test"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c1&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-0/0"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_email": "a@example.test",
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-admin-unreachable",
+      "disposition": "defect",
+      "reason": "The admin lookup cannot be reached: no email, and the comment is still answered. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "network_error": true
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments?select=*&parent_id=eq.c1&",
+          "status": 200,
+          "headers": {
+            "content-range": "0-0/0"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-user-id-not-uuid",
+      "disposition": "preserve",
+      "reason": "An author id that is not a lower-case UUID makes the admin lookup throw before any request: 500 for the whole list.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "not-a-uuid",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Odd",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.not-a-uuid",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-count-without-range",
+      "disposition": "preserve",
+      "reason": "A count reply without Content-Range has no count: reply_count is 0.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-count-error",
+      "disposition": "preserve",
+      "reason": "A count that fails is ignored: reply_count is 0.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false
+            }
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        },
+        {
+          "match": "HEAD /rest/v1/repo_comments",
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-null-row",
+      "disposition": "preserve",
+      "reason": "A null row: comment.user_id throws, 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": [
+            null
+          ]
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-comment",
+      "disposition": "defect",
+      "reason": "A signed-in user comments: the comment is inserted as the user and returned, with the author's details. Names never show: the profile read asks for username, which does not exist (R-075),.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"  Nice work  \"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Nice work",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-reply",
+      "disposition": "preserve",
+      "reason": "A reply: the parent is checked first, then the reply is inserted with its parent_id.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Agreed\",\"parentId\":\"c1\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "c1"
+          }
+        },
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": "c1",
+            "comment_text": "Agreed",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": "c1",
+            "comment_text": "Agreed",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=id&id=eq.c1",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": "c1",
+              "comment_text": "Agreed",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-parent-missing",
+      "disposition": "preserve",
+      "reason": "A parent that cannot be found: 404 \"Parent comment not found\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Agreed\",\"parentId\":\"gone\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Parent comment not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=id&id=eq.gone",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and nothing else is asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to comment."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Supabase Auth refuses: 401.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to comment."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-repo",
+      "disposition": "preserve",
+      "reason": "No repoFullName: 400.",
+      "method": "POST",
+      "body": "{\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-text",
+      "disposition": "preserve",
+      "reason": "No commentText: 400 \"Comment text is required\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment text is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-blank-text",
+      "disposition": "preserve",
+      "reason": "Text that is only white space, JavaScript's white space included: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"  ﻿\\n\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment text is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-number-text",
+      "disposition": "preserve",
+      "reason": "A commentText that is a number has no trim(): 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":42}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-trims-javascript-space",
+      "disposition": "preserve",
+      "reason": "The text is trimmed as JavaScript trims, a no-break space and a byte-order mark included.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\" Nice﻿\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Nice",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-insert-fails",
+      "disposition": "preserve",
+      "reason": "The insert fails: 500 \"Failed to post comment\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to post comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Hi",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-profile-present",
+      "disposition": "preserve",
+      "reason": "Were the profile read to succeed, its username and avatar would be in the reply.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "username": "octo",
+            "avatar_url": "a.png"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": "octo",
+            "user_email": "a@example.test",
+            "user_avatar": "a.png"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Hi",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-user-without-email",
+      "disposition": "preserve",
+      "reason": "A user Auth answers without an email: user_email is undefined and left out of the reply.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Hi",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-invalid-json",
+      "disposition": "preserve",
+      "reason": "A body that is not JSON: 500.",
+      "method": "POST",
+      "body": "{broken",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-null-body",
+      "disposition": "preserve",
+      "reason": "A body of null cannot be destructured: 500.",
+      "method": "POST",
+      "body": "null",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "patch-edits",
+      "disposition": "preserve",
+      "reason": "The author edits a comment: it is updated as the user (only their own) and returned.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\" Edited \"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "c1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Edited",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": true,
+            "is_deleted": false
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Edited",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": true,
+            "is_deleted": false
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "comment_text": "Edited",
+              "is_edited": true,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "patch-not-yours",
+      "disposition": "defect",
+      "reason": "Someone else's comment, or none: the update matches no row, the single read answers 406, and the handler answers 500 \"Failed to update comment\", not 404 (bug register R-087).",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c2\",\"commentText\":\"Edited\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to update comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "comment_text": "Edited",
+              "is_edited": true,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "patch-empty-success",
+      "disposition": "preserve",
+      "reason": "A success with no body has no data: 404 \"Comment not found or unauthorized\".",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\"Edited\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Comment not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "comment_text": "Edited",
+              "is_edited": true,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "patch-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\"Edited\"}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "patch-no-id",
+      "disposition": "preserve",
+      "reason": "No commentId: 400.",
+      "method": "PATCH",
+      "body": "{\"commentText\":\"Edited\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment ID is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "patch-blank-text",
+      "disposition": "preserve",
+      "reason": "Text that is only white space: 400.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\"   \"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment text is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "patch-fails",
+      "disposition": "preserve",
+      "reason": "The update fails: 500.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\"Edited\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to update comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "comment_text": "Edited",
+              "is_edited": true,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-soft",
+      "disposition": "preserve",
+      "reason": "The author deletes a comment: it is marked deleted and its text replaced, as the user (only their own).",
+      "method": "DELETE",
+      "query": "id=c1",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-not-yours",
+      "disposition": "defect",
+      "reason": "Someone else's comment: the update matches no row and is not an error, so the handler answers success (R-087).",
+      "method": "DELETE",
+      "query": "id=c2",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401.",
+      "method": "DELETE",
+      "query": "id=c1",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-no-id",
+      "disposition": "preserve",
+      "reason": "No id: 400.",
+      "method": "DELETE",
+      "query": "",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment ID is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-fails",
+      "disposition": "preserve",
+      "reason": "The update fails: 500 \"Failed to delete comment\".",
+      "method": "DELETE",
+      "query": "id=c1",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing-get",
+      "disposition": "preserve",
+      "reason": "GET checks repo first, then builds the client: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-post",
+      "disposition": "preserve",
+      "reason": "POST builds the client first: 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-patch",
+      "disposition": "preserve",
+      "reason": "PATCH builds the client first: 500.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\"Hi\"}",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-delete",
+      "disposition": "preserve",
+      "reason": "DELETE builds the client first: 500.",
+      "method": "DELETE",
+      "query": "id=c1",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}

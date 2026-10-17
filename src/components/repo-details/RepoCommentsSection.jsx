@@ -226,7 +226,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/repo/comments', {
+      const response = await fetchWithSession('/api/repo/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -267,7 +267,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
       throw new Error('Not authenticated')
     }
 
-    const response = await fetch('/api/repo/comments', {
+    const response = await fetchWithSession('/api/repo/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -343,7 +343,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
     if (!confirm('Are you sure you want to delete this comment?')) return
 
     try {
-      const response = await fetch(`/api/repo/comments?id=${commentId}`, {
+      const response = await fetchWithSession(`/api/repo/comments?id=${commentId}`, {
         method: 'DELETE'
       })
 

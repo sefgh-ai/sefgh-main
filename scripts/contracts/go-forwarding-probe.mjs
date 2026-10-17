@@ -192,6 +192,14 @@ const scenarios = [
   { path: '/api/repo/comments/vote', body: '{"commentId":"c1","voteType":"upvote"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/comments/vote', body: '{"commentId":"c1","voteType":null}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/comments/vote', body: '{"commentId":"c1","voteType":"upvote"}' },
+  // Comments: a list with each author's details and reply count, a new
+  // comment, an edit and a deletion. No Cache-Control.
+  { path: '/api/repo/comments?repo=octo%2Fdemo' },
+  { path: '/api/repo/comments?repo=octo%2Fdemo&limit=%207px&offset=0x2', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/comments', body: '{"repoFullName":"octo/demo","commentText":"  Nice  "}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/comments', body: '{"commentId":"c1","commentText":"Edited"}', method: 'PATCH', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/comments?id=c1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/comments', body: '{"repoFullName":"octo/demo","commentText":"Hi"}' },
 ];
 
 try {
@@ -275,6 +283,23 @@ try {
         if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
         res.end(JSON.stringify({ vote_type: 'upvote' }));
       }
+      // Comments: the list, counts, writes, profiles (refused, as with the
+      // missing username column) and the admin lookup (refused).
+      else if (req.url.startsWith('/rest/v1/profiles?')) { res.writeHead(400); res.end(JSON.stringify({ code: '42703', message: 'column profiles.username does not exist' })); }
+      else if (req.url.startsWith('/auth/v1/admin/users/')) { res.writeHead(403); res.end(JSON.stringify({ code: 403, msg: 'User not allowed' })); }
+      else if (req.method === 'HEAD' && req.url.startsWith('/rest/v1/repo_comments?')) { res.setHeader('Content-Range', '0-1/2'); res.end(); }
+      else if (req.url.startsWith('/rest/v1/repo_comments') && req.method === 'POST') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(201); res.end(JSON.stringify({ id: 'c9', user_id: 'a', comment_text: JSON.parse(body).comment_text }));
+      }
+      else if (req.url.startsWith('/rest/v1/repo_comments') && req.method === 'PATCH') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        if (req.url.includes('select=')) res.end(JSON.stringify({ id: 'c1', user_id: 'a', comment_text: 'Edited', is_edited: true }));
+        else { res.writeHead(204); res.end(); }
+      }
+      else if (req.url.startsWith('/rest/v1/repo_comments?select=*&repo_full_name=')) {
+        res.end(JSON.stringify([{ id: 'c1', user_id: '0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b', comment_text: 'Great' }]));
+      }
       else if (req.url.startsWith('/rest/v1/repo_comments?select=upvotes')) {
         res.end(JSON.stringify({ upvotes: 3, downvotes: 1 }));
       }
@@ -305,7 +330,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

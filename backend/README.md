@@ -228,6 +228,16 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Comments (COMMENTS-001)
+
+Opt-in name: `repo-comments`, off by default. `GET`, `POST`, `PATCH` and `DELETE /api/repo/comments`. It passes the 50 cases of `contracts/repo-comments`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`, which now hands supabase-js the session the way the cookie client does, answers by route, and sends PATCH bodies).
+
+- **Author details copied as they fail:** the profile read asks for `username`, which does not exist (R-075), and the admin lookup (`supabaserest.AdminUser`, new) goes with the public key and is refused (R-040). Names never show, as today. The lookup is kept so the two can be compared; the fix lands here after cutover.
+- **Concurrency:** each comment's profile, admin lookup and reply count (`supabaserest.Count`, a `HEAD` with `Prefer: count=exact`) run for at most four comments at once, all within `comments.DetailsBudget` (16 seconds) after the list's own read. A comment that makes `Promise.all` reject (null, or an author id that is not a lower-case UUID) answers 500 and cancels the rest.
+- **Writes go as the caller:** `supabaserest.InsertReturning` (insert and return the row) and `Update` (PATCH, with or without the row back), within `comments.WriteBudget` (20 seconds) for a POST's three calls. The reply's `user_email` comes from `githubaccess.Verifier.UserEmail`.
+- **JavaScript's rules kept:** `parseInt` for `limit` and `offset` (`jscompat.ParseInt`), `trim()` for the text (`jscompat.Trim`), and `{...comment, user_name, ...}` for each row (`jscompat.Spread`, `Assign`).
+- **Differs from Next.js:** a bearer instead of the session cookie (the comment form, edit and delete now use `fetchWithSession`), the two budgets, the four-at-once limit, cancelling the rest after a rejection, and 1 MiB bodies.
+
 ## Comment votes (CVOTE-001)
 
 Opt-in name: `comment-vote`, off by default. `POST` and `GET /api/repo/comments/vote`: voting on a comment, and the caller's own vote. It passes the 25 cases of `contracts/comment-vote`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`). Only a signed-in caller reaches the database, with their own token: a signed-out GET answers `{"userVote":null}` without a request. Writes use `supabaserest.Upsert` (`on_conflict=user_id,comment_id`) and `Delete`. The counts after a vote are read as one row and written with `jscompat.FieldOr` (`comment?.upvotes || 0`), now shared with vote. Differs from Next.js as vote does: a bearer instead of the session cookie (the comment arrows use `fetchWithSession`), a 1 MiB body limit, Go's 405 for other methods.

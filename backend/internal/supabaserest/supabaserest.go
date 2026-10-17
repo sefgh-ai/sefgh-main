@@ -88,26 +88,85 @@ func (c Client) RPC(ctx context.Context, session, name string, args []byte) (int
 	return c.do(ctx, http.MethodPost, session, "rpc/"+name, "", "", args)
 }
 
+// InsertReturning is Insert followed by .select().single(): the row comes
+// back as the database stored it, as one object.
+func (c Client) InsertReturning(ctx context.Context, session, table string, row []byte) (int, []byte, error) {
+	return c.do(ctx, http.MethodPost, session, table+"?select=*", "application/vnd.pgrst.object+json", "return=representation", row)
+}
+
+// Update sends PATCH /rest/v1/<table>?<query> with changes, a JSON object:
+// supabase-js's .update(changes) with the query's filters. With returning,
+// it is followed by .select().single(): the row comes back as one object,
+// or 406 when the filters reach no row (row-level security included).
+func (c Client) Update(ctx context.Context, session, table, query string, changes []byte, returning bool) (int, []byte, error) {
+	if returning {
+		return c.do(ctx, http.MethodPatch, session, table+"?"+query+"&select=*", "application/vnd.pgrst.object+json", "return=representation", changes)
+	}
+	return c.do(ctx, http.MethodPatch, session, table+"?"+query, "", "", changes)
+}
+
+// Count is supabase-js's .select('*', { count: 'exact', head: true }): a
+// HEAD request whose answer is the number after the slash in the reply's
+// Content-Range, read with parseInt. ok is false when supabase-js has no
+// count: no reply, a reply that is not a success, or no such header.
+func (c Client) Count(ctx context.Context, session, table, query string) (count float64, ok bool) {
+	status, header, _, err := c.send(ctx, http.MethodHead, session, c.restURL(table+"?"+query), "", "count=exact", nil)
+	if err != nil || status < 200 || status > 299 {
+		return 0, false
+	}
+	parts := strings.Split(header.Get("Content-Range"), "/")
+	if header.Get("Content-Range") == "" || len(parts) < 2 {
+		return 0, false
+	}
+	return jscompat.ParseInt(parts[1]), true
+}
+
+// AdminUser asks Supabase Auth's admin API for one user, as supabase-js's
+// auth.admin.getUserById(id) does, with the project's public key, which
+// is what that call carries from a client built with it. The admin API
+// refuses the public key, so this never succeeds (bug register R-040). It
+// is kept so the comments route can be compared with Next.js.
+func (c Client) AdminUser(ctx context.Context, id string) (int, []byte, error) {
+	target := strings.TrimRight(c.URL, "/") + "/auth/v1/admin/users/" + id
+	status, _, raw, err := c.send(ctx, http.MethodGet, c.Key, target, "", "", nil)
+	return status, raw, err
+}
+
+func (c Client) restURL(path string) string {
+	return strings.TrimRight(c.URL, "/") + "/rest/v1/" + path
+}
+
 // do sends one Data API request with the headers postgrest-js 2.78 sends: a
 // read names the schema in Accept-Profile, and a write in Content-Profile
 // with a JSON Content-Type, body or not.
 func (c Client) do(ctx context.Context, method, session, path, accept, prefer string, body []byte) (int, []byte, error) {
+	status, _, raw, err := c.send(ctx, method, session, c.restURL(path), accept, prefer, body)
+	return status, raw, err
+}
+
+// send makes one request to the project as the holder of session, and
+// returns the reply's status, headers and body. A request to the Data API
+// gets its schema header; one to Auth gets the API version supabase-js
+// sends.
+func (c Client) send(ctx context.Context, method, session, target, accept, prefer string, body []byte) (int, http.Header, []byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, Timeout)
 	defer cancel()
 	var reader io.Reader
 	if body != nil {
 		reader = bytes.NewReader(body)
 	}
-	target := strings.TrimRight(c.URL, "/") + "/rest/v1/" + path
 	req, err := http.NewRequestWithContext(ctx, method, target, reader)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	req.Header.Set("apikey", c.Key)
 	req.Header.Set("Authorization", "Bearer "+session)
-	if method == http.MethodGet {
+	switch {
+	case strings.Contains(target, "/auth/v1/"):
+		req.Header.Set("X-Supabase-Api-Version", "2024-01-01")
+	case method == http.MethodGet || method == http.MethodHead:
 		req.Header.Set("Accept-Profile", "public")
-	} else {
+	default:
 		req.Header.Set("Content-Profile", "public")
 		req.Header.Set("Content-Type", "application/json")
 	}
@@ -122,7 +181,7 @@ func (c Client) do(ctx context.Context, method, session, path, accept, prefer st
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	defer resp.Body.Close()
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, MaxReplyBytes+1))
@@ -130,9 +189,9 @@ func (c Client) do(ctx context.Context, method, session, path, accept, prefer st
 		err = errors.New("reply too large")
 	}
 	if err != nil {
-		return resp.StatusCode, nil, err
+		return resp.StatusCode, resp.Header, nil, err
 	}
-	return resp.StatusCode, raw, nil
+	return resp.StatusCode, resp.Header, raw, nil
 }
 
 // ReadResult reads a Data API reply as supabase-js does (postgrest-js

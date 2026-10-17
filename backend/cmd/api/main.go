@@ -22,6 +22,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/collect"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/commentvote"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
@@ -116,6 +117,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/repo/vote", voteMux(logger, verifier))
 	top.Handle("/api/repo/rating", ratingMux(logger, verifier))
 	top.Handle("/api/repo/comments/vote", commentVoteMux(logger, verifier))
+	top.Handle("/api/repo/comments", commentsMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -280,6 +282,25 @@ func commentVoteMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.S
 	}
 	mux.Handle("GET /api/repo/comments/vote", h)
 	mux.Handle("POST /api/repo/comments/vote", h)
+	return mux
+}
+
+// commentsMux serves a repository's comments. Every read and write goes as
+// the caller with their own token, or the public key when signed out, so
+// row-level security decides. The admin lookup it copies from Next.js goes
+// with the public key and is refused (bug register R-040).
+func commentsMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &comments.Handler{
+		User:        verifier.UserEmail,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	for _, method := range []string{"GET", "POST", "PATCH", "DELETE"} {
+		mux.Handle(method+" /api/repo/comments", h)
+	}
 	return mux
 }
 
