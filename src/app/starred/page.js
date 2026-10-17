@@ -52,7 +52,7 @@ export default function StarredPage() {
   const handleRemove = async (repoFullName) => {
     setRemoving(repoFullName);
     try {
-      const response = await fetch(
+      const response = await fetchWithSession(
         `/api/repo/collect?repo=${encodeURIComponent(repoFullName)}`,
         { method: "DELETE" }
       );

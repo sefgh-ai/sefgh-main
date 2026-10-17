@@ -96,3 +96,34 @@ func TestSelectObjectAsksForOneRow(t *testing.T) {
 		}
 	}
 }
+
+// Writes carry the headers postgrest-js 2.78 sends: the schema in
+// Content-Profile and a JSON Content-Type, with or without a body.
+func TestWritesAskAsTheCaller(t *testing.T) {
+	record := &recordRoundTrip{}
+	c := Client{HTTP: &http.Client{Transport: record}, URL: "https://project.invalid", Key: "public-key"}
+	if _, _, err := c.Insert(context.Background(), "token-a", "repo_collections", []byte(`{"user_id":"a"}`)); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := c.Delete(context.Background(), "token-a", "repo_collections", "user_id=eq.a"); err != nil {
+		t.Fatal(err)
+	}
+	insert, remove := record.requests[0], record.requests[1]
+	if insert.Method != "POST" || insert.URL.String() != "https://project.invalid/rest/v1/repo_collections" {
+		t.Errorf("insert: %s %s", insert.Method, insert.URL)
+	}
+	if body, _ := io.ReadAll(insert.Body); string(body) != `{"user_id":"a"}` {
+		t.Errorf("insert body %q", body)
+	}
+	if remove.Method != "DELETE" || remove.URL.String() != "https://project.invalid/rest/v1/repo_collections?user_id=eq.a" {
+		t.Errorf("delete: %s %s", remove.Method, remove.URL)
+	}
+	for _, req := range record.requests {
+		if req.Header.Get("Content-Profile") != "public" || req.Header.Get("Content-Type") != "application/json" || req.Header.Get("Accept-Profile") != "" {
+			t.Errorf("%s: headers %v", req.Method, req.Header)
+		}
+		if req.Header.Get("Authorization") != "Bearer token-a" || req.Header.Get("apikey") != "public-key" {
+			t.Errorf("%s: not asked as the caller with the public key", req.Method)
+		}
+	}
+}

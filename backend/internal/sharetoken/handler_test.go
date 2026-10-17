@@ -10,45 +10,41 @@ import (
 	"testing"
 )
 
-func TestBearer(t *testing.T) {
+// The bearer is read by githubaccess.SessionToken, the rule every route of
+// the server uses. Whatever it refuses is a signed-out visitor: the database
+// is asked with the public key, never with what the header held.
+func TestWhichTokenReachesTheDatabase(t *testing.T) {
 	tests := []struct {
-		header, token string
-		ok            bool
+		name    string
+		headers []string
+		sent    string
 	}{
-		{"Bearer abc.def.ghi", "abc.def.ghi", true},
-		{"", "", false},
-		{"Bearer ", "", false},
-		{"bearer abc", "", false}, // Go is strict here; Next.js never reads this header
-		{"Basic abc", "", false},
-		{"Bearer abc def", "", false},
-		{"Bearer abc\tdef", "", false},
+		{"a bearer", []string{"Bearer abc.def.ghi"}, "Bearer abc.def.ghi"},
+		{"the scheme in any case", []string{"bearer abc"}, "Bearer abc"},
+		{"no header", nil, "Bearer " + fixtureSupabaseKey},
+		{"another scheme", []string{"Basic c2VjcmV0"}, "Bearer " + fixtureSupabaseKey},
+		{"a space in the token", []string{"Bearer abc def"}, "Bearer " + fixtureSupabaseKey},
+		{"two headers", []string{"Bearer abc", "Bearer def"}, "Bearer " + fixtureSupabaseKey},
 	}
 	for _, tt := range tests {
-		token, ok := bearer(tt.header)
-		if token != tt.token || ok != tt.ok {
-			t.Errorf("bearer(%q) = %q, %v; want %q, %v", tt.header, token, ok, tt.token, tt.ok)
+		var got string
+		h := &Handler{
+			Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+				got = r.Header.Get("Authorization")
+				return nil, errors.New("stop")
+			})},
+			SupabaseURL: fixtureSupabaseURL, SupabaseKey: fixtureSupabaseKey, Logger: discard,
 		}
-	}
-}
-
-// A header that is not a bearer is a signed-out visitor: the database is
-// asked with the public key, never with what the header held.
-func TestMalformedHeaderReadsAsSignedOut(t *testing.T) {
-	var got string
-	h := &Handler{
-		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
-			got = r.Header.Get("Authorization")
-			return nil, errors.New("stop")
-		})},
-		SupabaseURL: fixtureSupabaseURL, SupabaseKey: fixtureSupabaseKey, Logger: discard,
-	}
-	mux := http.NewServeMux()
-	mux.Handle("GET /api/share/{token}", h)
-	r := httptest.NewRequest(http.MethodGet, "/api/share/abc", nil)
-	r.Header.Set("Authorization", "Basic c2VjcmV0")
-	mux.ServeHTTP(httptest.NewRecorder(), r)
-	if got != "Bearer "+fixtureSupabaseKey {
-		t.Errorf("the database was asked with %q, want the public key", got)
+		mux := http.NewServeMux()
+		mux.Handle("GET /api/share/{token}", h)
+		r := httptest.NewRequest(http.MethodGet, "/api/share/abc", nil)
+		for _, header := range tt.headers {
+			r.Header.Add("Authorization", header)
+		}
+		mux.ServeHTTP(httptest.NewRecorder(), r)
+		if got != tt.sent {
+			t.Errorf("%s: the database was asked with %q, want %q", tt.name, got, tt.sent)
+		}
 	}
 }
 

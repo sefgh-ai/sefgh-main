@@ -53,10 +53,10 @@ async function ready(url, child) {
 // A raw request, so that the path is sent exactly as written. fetch() would
 // tidy some of these before they left.
 // `body`, when given, makes it a POST of that exact text as JSON.
-function raw(port, path, headers, body) {
+function raw(port, path, headers, body, method) {
   return new Promise((resolve) => {
     const sent = body === undefined ? headers : { ...headers, "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) };
-    const req = http.request({ host: "127.0.0.1", port, path, headers: sent, method: body === undefined ? "GET" : "POST" }, (res) => {
+    const req = http.request({ host: "127.0.0.1", port, path, headers: sent, method: method ?? (body === undefined ? "GET" : "POST") }, (res) => {
       let body = ""; res.setEncoding("utf8");
       res.on("data", (d) => (body += d)).on("end", () => resolve({ status: res.statusCode, backend: res.headers["x-sefgh-backend"] ?? null, cache: res.headers['cache-control'] ?? null, body }));
     });
@@ -161,6 +161,16 @@ const scenarios = [
   { path: '/api/share/no%20such%20link' },
   { path: '/api/share/a%2Fb' },
   { path: '/api/share/caf%C3%A9' },
+  // Collect reads and writes the database as the caller; signed out, a read
+  // goes with the public key. It sets no Cache-Control.
+  { path: '/api/repo/collect?repo=octo%2Fdemo' },
+  { path: '/api/repo/collect?repo=a%2Bb+c' },
+  { path: '/api/repo/collect?repo=octo%2Fdemo', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/collect', body: '{"repoFullName":"octo/demo"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/collect', body: '{broken', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
+  { path: '/api/repo/collect', body: '{"repoFullName":"octo/demo"}' },
+  { path: '/api/repo/collect?repo=octo%2Fdemo&collection=work', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/collect?repo=octo%2Fdemo', method: 'DELETE' },
 ];
 
 try {
@@ -184,6 +194,17 @@ try {
         }
         res.end(JSON.stringify([{ activity_date: new Date().toISOString().slice(0, 10), activity_count: 3 }]));
       }
+      // Collect: a save is stored, a removal removes, and a signed-out read
+      // (the public key) finds nothing, as row-level security has it.
+      else if (req.url === '/rest/v1/repo_collections' && req.method === 'POST') {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(201); res.end();
+      }
+      else if (req.url.startsWith('/rest/v1/repo_collections?') && req.method === 'DELETE') {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(204); res.end();
+      }
+      else if (req.url.startsWith('/rest/v1/repo_collections?') && req.headers.authorization === 'Bearer fixture-public-key') res.end('[]');
       else if (req.url.startsWith('/rest/v1/repo_collections?')) {
         if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') {
           res.writeHead(401); res.end('{}'); return;
@@ -227,7 +248,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -246,20 +267,20 @@ try {
 
   // Summary answers are cached by the Go server, so a second identical
   // request makes no upstream call. Count only what each request triggers.
-  const ask = async (port, path, headers, body) => {
+  const ask = async (port, path, headers, body, method) => {
     const before = seen.length;
-    const answer = await raw(port, path, headers, body);
+    const answer = await raw(port, path, headers, body, method);
     return { ...answer, upstream: seen.slice(before) };
   };
 
   let same = 0;
   const different = [];
-  for (const { path, headers, status, body, cache = 'private, no-store' } of scenarios) {
+  for (const { path, headers, status, body, method, cache = 'private, no-store' } of scenarios) {
     // Via Next first, then direct. On the cached summary route the second
     // request makes no upstream call, so those are compared on the reply
     // only; the reply carries the upstream path in full_name.
-    const viaNext = await ask(nextPort, path, headers, body);
-    const direct = await ask(goPort, path, headers, body);
+    const viaNext = await ask(nextPort, path, headers, body, method);
+    const direct = await ask(goPort, path, headers, body, method);
     const cached = !headers && path.startsWith("/api/github/repo?");
     const equal = viaNext.status === direct.status && viaNext.body === direct.body && viaNext.backend === "go" &&
       (!headers || (viaNext.status === status && viaNext.cache === cache)) &&

@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { fetchWithSession } from "@/lib/supabase/session-fetch";
 
 const languageColors = {
   JavaScript: "#f1e05a",
@@ -104,7 +105,7 @@ export function RepositoryCard({ repo, onSelect }) {
     try {
       if (isStarred) {
         // Remove from collection
-        const response = await fetch(
+        const response = await fetchWithSession(
           `/api/repo/collect?repo=${encodeURIComponent(repo.full_name)}`,
           {
             method: "DELETE",
@@ -119,7 +120,7 @@ export function RepositoryCard({ repo, onSelect }) {
         toast.success("Removed from starred");
       } else {
         // Add to collection
-        const response = await fetch("/api/repo/collect", {
+        const response = await fetchWithSession("/api/repo/collect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

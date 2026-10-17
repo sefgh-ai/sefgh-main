@@ -2,7 +2,7 @@
 
 **You will learn:** how a Go route takes a value out of its path, how a handler serves visitors who may or may not be signed in, why two "encode this for a URL" functions can disagree, and how to copy the browser's version exactly.
 
-**Real code:** `backend/internal/sharetoken/handler.go` (the port of `GET /api/share/[token]`), `FormEncode` in `backend/internal/jscompat/jscompat.go`, `Param` and `SelectObject` in `backend/internal/supabaserest`, and `shareMux` in `backend/cmd/api/main.go`.
+**Real code:** `backend/internal/sharetoken/handler.go` (the port of `GET /api/share/[token]`), `SessionToken` in `backend/internal/githubaccess/access.go`, `FormEncode` in `backend/internal/jscompat/jscompat.go`, `Param` and `SelectObject` in `backend/internal/supabaserest`, and `shareMux` in `backend/cmd/api/main.go`.
 
 ## The problem in the app
 
@@ -29,13 +29,13 @@ Two things come for free. The method is part of the pattern, so a `POST` to this
 The browser sends a signed-in visitor's token as `Authorization: Bearer <token>` (lesson 22). Signed out, there is no header. The handler reads it like this:
 
 ```go
-session, signedIn := bearer(r.Header.Get("Authorization"))
+session, signedIn := githubaccess.SessionToken(r)
 if !signedIn {
 	session = h.SupabaseKey
 }
 ```
 
-`bearer` returns two values: the token, and whether there was one. Go uses this "value, ok" pair wherever an answer may be missing. In JavaScript you would return `null` and check for it. Here the missing case can't be mistaken for a real value.
+`SessionToken` returns two values: the token, and whether there was one. Go uses this "value, ok" pair wherever an answer may be missing. In JavaScript you would return `null` and check for it. Here the missing case can't be mistaken for a real value.
 
 Signed out, the database is asked with the project's public key instead, which is exactly what supabase-js sends when nobody is signed in. Either way, the database's own row rules decide what comes back: a public share for anyone, and a private one only for its owner.
 
@@ -75,7 +75,7 @@ The contract `contracts/share-token` (17 cases) was recorded by running the real
 
 ## Your turn
 
-Open `exercise.go` and write `bearer`.
+Open `exercise.go` and write `bearer`, a simpler version of the rule the server uses. The real one, `sessionToken` in `backend/internal/githubaccess/access.go`, also accepts the word `bearer` in any case, allows only the characters a token can hold, and refuses a request with two `Authorization` headers. Every route reads the header with it, so two routes never disagree about whether a visitor is signed in.
 
 1. `strings.CutPrefix(header, "Bearer ")` returns what follows the prefix, and whether the prefix was there.
 2. Without the prefix, or with nothing after it, return `"", false`.

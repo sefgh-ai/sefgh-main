@@ -9,6 +9,7 @@
 package supabaserest
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -51,27 +52,53 @@ func Param(name, value string) string {
 // is session, and returns the reply's status and body, or an error when
 // there is no reply to read. query is already encoded (see Param).
 func (c Client) Select(ctx context.Context, session, table, query string) (int, []byte, error) {
-	return c.get(ctx, session, table, query, "")
+	return c.do(ctx, http.MethodGet, session, table+"?"+query, "", nil)
 }
 
 // SelectObject is Select for one row, as supabase-js's .single() asks for
 // it: the Data API answers the row as an object, or 406 when there is not
 // exactly one.
 func (c Client) SelectObject(ctx context.Context, session, table, query string) (int, []byte, error) {
-	return c.get(ctx, session, table, query, "application/vnd.pgrst.object+json")
+	return c.do(ctx, http.MethodGet, session, table+"?"+query, "application/vnd.pgrst.object+json", nil)
 }
 
-func (c Client) get(ctx context.Context, session, table, query, accept string) (int, []byte, error) {
+// Insert sends POST /rest/v1/<table> with row, a JSON object, as the user
+// whose access token is session: supabase-js's .insert(row) without
+// .select(). The Data API answers 201 with no body when the row is stored.
+func (c Client) Insert(ctx context.Context, session, table string, row []byte) (int, []byte, error) {
+	return c.do(ctx, http.MethodPost, session, table, "", row)
+}
+
+// Delete sends DELETE /rest/v1/<table>?<query> as the user whose access
+// token is session: supabase-js's .delete() with the query's filters.
+// Row-level security decides which rows the filters may reach.
+func (c Client) Delete(ctx context.Context, session, table, query string) (int, []byte, error) {
+	return c.do(ctx, http.MethodDelete, session, table+"?"+query, "", nil)
+}
+
+// do sends one Data API request with the headers postgrest-js 2.78 sends: a
+// read names the schema in Accept-Profile, and a write in Content-Profile
+// with a JSON Content-Type, body or not.
+func (c Client) do(ctx context.Context, method, session, path, accept string, body []byte) (int, []byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, Timeout)
 	defer cancel()
-	target := strings.TrimRight(c.URL, "/") + "/rest/v1/" + table + "?" + query
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	var reader io.Reader
+	if body != nil {
+		reader = bytes.NewReader(body)
+	}
+	target := strings.TrimRight(c.URL, "/") + "/rest/v1/" + path
+	req, err := http.NewRequestWithContext(ctx, method, target, reader)
 	if err != nil {
 		return 0, nil, err
 	}
 	req.Header.Set("apikey", c.Key)
 	req.Header.Set("Authorization", "Bearer "+session)
-	req.Header.Set("Accept-Profile", "public")
+	if method == http.MethodGet {
+		req.Header.Set("Accept-Profile", "public")
+	} else {
+		req.Header.Set("Content-Profile", "public")
+		req.Header.Set("Content-Type", "application/json")
+	}
 	if accept != "" {
 		req.Header.Set("Accept", accept)
 	}

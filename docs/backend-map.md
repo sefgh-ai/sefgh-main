@@ -381,3 +381,13 @@ cookie client. `src/app/s/[token]/page.js` now sends the bearer
 (`fetchWithSession`). `POST /api/share/[token]/fork` stays in Next.js.
 `supabaserest.Param` writes URLs with URLSearchParams' encoding
 (`jscompat.FormEncode`) for every route.
+
+## COLLECT-001 update (2026-10-17)
+
+`/api/repo/collect` (GET, POST, DELETE) has a Go port,
+`backend/internal/collect`, off by default (switch `repo-collect`). It is
+the first Go route that writes to the database: `supabaserest.Insert` and
+`Delete` send the caller's own token, so row-level security decides each
+write. The bookmark button, the repository card and the starred page now
+send the bearer (`fetchWithSession`). `githubaccess.SessionToken` is the
+one rule for reading a bearer.

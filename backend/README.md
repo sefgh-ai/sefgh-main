@@ -228,6 +228,17 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Collect (COLLECT-001)
+
+Opt-in name: `repo-collect`, off by default. `POST`, `DELETE` and `GET /api/repo/collect`: saving a repository to the caller's collection, removing it, and asking whether it is saved and how many saves it has. It is the first Go route that writes to the database. It passes the 49 cases of `contracts/repo-collect`, recorded from the Next.js handlers by `scripts/contracts/record-repo-collect.mjs` with the real supabase-js around a stand-in Data API.
+
+- **Writes go as the caller.** `supabaserest.Insert` and `supabaserest.Delete` send the caller's own token with the public key, with the headers postgrest-js sends (`Content-Profile: public`, a JSON `Content-Type`). The row names the user id that Supabase Auth gave for that token, and the table's own rule checks it again: a user may add, change or remove only rows whose `user_id` is their own (`../docs/database/user-db.md`). No service key exists.
+- **Reads** go with the caller's bearer, or the public key when signed out. For `GET`, Supabase Auth is asked only for whether the row is the caller's; a token it refuses still goes to the database, as the cookie client sends the session it has.
+- **The header** is read by `githubaccess.SessionToken`, now exported, which share uses too. So every route reads a bearer by the same rules.
+- **JavaScript's rules kept:** `||` defaults, a repeated name's last value, `String(value)` for a filter (`jscompat.String`), `saves?.length || 0`, and `some()` that throws on a null row.
+- **Defects kept** so the two can be compared: the save count reads as the caller and so counts only the caller's own rows (R-083). POST and DELETE answer 401 when Supabase Auth cannot be reached (R-084). Both are fixed here after cutover.
+- **Differs from Next.js:** a bearer instead of the session cookie (the three browser callers now use `fetchWithSession`); a POST body over 1 MiB (`collect.MaxBodyBytes`) is answered as unreadable, 500; methods other than GET, HEAD, POST and DELETE get Go's 405. Sign-in, a write and a count take at most 24 seconds together, inside the 30-second write timeout (checked in `cmd/api`).
+
 ## Share (SHARE-001)
 
 Opt-in name: `share-token`, off by default. One shared conversation, by the token in its link, for anyone who has the link. It passes the 17 cases of `contracts/share-token`, recorded from the Next.js handler by `scripts/contracts/record-share-token.mjs` with the real supabase-js around a stand-in Data API. The live rules it relies on were read on 2026-10-15 (`../docs/database/user-db.md`).

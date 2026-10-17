@@ -21,6 +21,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/collect"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
@@ -108,6 +109,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/api/share/", shareMux(logger, verifier))
+	top.Handle("/api/repo/collect", collectMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -201,6 +203,26 @@ func shareMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMu
 		SupabaseKey: verifier.SupabaseKey,
 		Logger:      logger,
 	})
+	return mux
+}
+
+// collectMux serves saving, removing and counting a repository in the
+// caller's collections, the first route that writes to the database. Every
+// read and write goes as the caller with their own token, or the public key
+// when signed out, so row-level security decides, as it does for the
+// Next.js handlers.
+func collectMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &collect.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	for _, method := range []string{"GET", "POST", "DELETE"} {
+		mux.Handle(method+" /api/repo/collect", h)
+	}
 	return mux
 }
 

@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
@@ -58,7 +59,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		write(w, 500, body)
 		return
 	}
-	session, signedIn := bearer(r.Header.Get("Authorization"))
+	// The bearer is read by the rules every route of this server uses. A
+	// header that breaks them counts as signed out.
+	session, signedIn := githubaccess.SessionToken(r)
 	if !signedIn {
 		session = h.SupabaseKey
 	}
@@ -98,16 +101,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	jscompat.WriteObject(&body, fields)
 	body.WriteByte('}')
 	write(w, 200, body.Bytes())
-}
-
-// bearer reads "Authorization: Bearer <token>". No header, or any other
-// form, means the visitor is signed out.
-func bearer(header string) (string, bool) {
-	token, ok := strings.CutPrefix(header, "Bearer ")
-	if !ok || token == "" || strings.ContainsAny(token, " \t") {
-		return "", false
-	}
-	return token, true
 }
 
 // log records the stage and the database's status, never the visitor's

@@ -1,0 +1,1923 @@
+{
+  "contract_version": 1,
+  "route": "GET, POST and DELETE /api/repo/collect",
+  "recorded_from": "the Next.js handlers at 7625677, by scripts/contracts/record-repo-collect.mjs",
+  "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API; only auth.getUser() is replaced. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
+  "cases": [
+    {
+      "id": "post-saves",
+      "disposition": "preserve",
+      "reason": "A signed-in user saves a repository: the row is inserted as the user, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"default\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to save repositories."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Supabase Auth refuses: 401.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to save repositories."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-defaults",
+      "disposition": "preserve",
+      "reason": "Without collectionName and notes, the row gets collection_name \"default\" and notes null.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-notes",
+      "disposition": "preserve",
+      "reason": "A named collection and notes are stored as sent.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"work\",\"notes\":\"read later\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "work",
+              "notes": "read later"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-falsy-collection",
+      "disposition": "preserve",
+      "reason": "An empty collectionName becomes \"default\" and empty notes become null: the handler uses ||.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"\",\"notes\":\"\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-no-repo",
+      "disposition": "preserve",
+      "reason": "No repoFullName: 400, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"collectionName\":\"default\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-empty-repo",
+      "disposition": "preserve",
+      "reason": "An empty repoFullName: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-array-body",
+      "disposition": "preserve",
+      "reason": "A list has no repoFullName: 400.",
+      "method": "POST",
+      "body": "[]",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-text-body",
+      "disposition": "preserve",
+      "reason": "A JSON text has no repoFullName either: 400.",
+      "method": "POST",
+      "body": "\"octo/demo\"",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-null-body",
+      "disposition": "preserve",
+      "reason": "A body of null cannot be destructured, so the handler throws: 500.",
+      "method": "POST",
+      "body": "null",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-invalid-json",
+      "disposition": "preserve",
+      "reason": "A body that is not JSON: request.json() throws, 500, and the database is not asked.",
+      "method": "POST",
+      "body": "{broken",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-empty-body",
+      "disposition": "preserve",
+      "reason": "An empty body is not JSON either: 500.",
+      "method": "POST",
+      "body": "",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-duplicate",
+      "disposition": "preserve",
+      "reason": "The repository is already in that collection: the insert fails with 23505 and the handler answers 409.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "details": "Key (user_id, repo_full_name, collection_name)=(user-a, octo/demo, default) already exists.",
+            "hint": null,
+            "message": "duplicate key value violates unique constraint \"repo_collections_user_id_repo_full_name_collection_name_key\""
+          }
+        }
+      ],
+      "expect": {
+        "status": 409,
+        "body": {
+          "error": "Repository already in this collection"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-insert-refused",
+      "disposition": "preserve",
+      "reason": "Any other insert error, here row-level security: 500 with a fixed sentence, and the count is not asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "details": null,
+            "hint": null,
+            "message": "new row violates row-level security policy for table \"repo_collections\""
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save repository"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-insert-unreachable",
+      "disposition": "preserve",
+      "reason": "The Data API cannot be reached for the insert: 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save repository"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-fails",
+      "disposition": "preserve",
+      "reason": "The insert succeeds and the count fails: the error is ignored and totalSaves is 0.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-own-rows",
+      "disposition": "defect",
+      "reason": "Two of the user's own collections hold the repository, so totalSaves is 2. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"work\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            },
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 2
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "work",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-number-repo",
+      "disposition": "preserve",
+      "reason": "A repoFullName that is a number is inserted as a number, and the count filters on its text, as a template literal writes it.",
+      "method": "POST",
+      "body": "{\"repoFullName\":42}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": 42,
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.42",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-object-repo",
+      "disposition": "preserve",
+      "reason": "A repoFullName that is an object is inserted as sent, and the count filters on \"[object Object]\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":{\"owner\":\"octo\"}}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": {
+                "owner": "octo"
+              },
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.%5Bobject+Object%5D",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-list-repo",
+      "disposition": "preserve",
+      "reason": "A repoFullName that is a list: the count filters on its items joined with commas, null written as nothing.",
+      "method": "POST",
+      "body": "{\"repoFullName\":[\"octo\",null,1.5e3,true]}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": [
+                "octo",
+                null,
+                1500,
+                true
+              ],
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2C%2C1500%2Ctrue",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-repeated-name",
+      "disposition": "preserve",
+      "reason": "A name given twice: JSON.parse keeps the last value.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"a/b\",\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-symbols",
+      "disposition": "preserve",
+      "reason": "Characters that mean something in a URL are sent as one value of the count's filter.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"a b&c=d+e/é*~\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "a b&c=d+e/é*~",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out: the saves are read with the public key, and saved is false. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "method": "GET",
+      "query": "repo=octo%2Fdemo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in-saved",
+      "disposition": "preserve",
+      "reason": "Signed in, with one of the user's rows: saved is true.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in-other-row",
+      "disposition": "preserve",
+      "reason": "A row of another user (row-level security would not return one): saved is false, and it is counted.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-b"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-no-repo",
+      "disposition": "preserve",
+      "reason": "No repo parameter: 400, before anything else is asked.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-empty-repo",
+      "disposition": "preserve",
+      "reason": "An empty repo parameter: 400.",
+      "method": "GET",
+      "query": "repo=",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-repeated-repo",
+      "disposition": "preserve",
+      "reason": "The first repo parameter wins, as URLSearchParams.get gives it.",
+      "method": "GET",
+      "query": "repo=a%2Fb&repo=octo%2Fdemo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a%2Fb",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-plus-is-space",
+      "disposition": "preserve",
+      "reason": "A plus in the query is a space.",
+      "method": "GET",
+      "query": "repo=octo/demo+x",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo+x",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-error",
+      "disposition": "preserve",
+      "reason": "The read fails: 500 \"Failed to fetch save status\".",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch save status"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Auth refuses: the visitor counts as signed out, but the database is still asked with that token, refuses it, and the handler answers 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [
+        {
+          "status": 401,
+          "body": {
+            "code": "PGRST303",
+            "details": null,
+            "hint": null,
+            "message": "JWT expired"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch save status"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-refused",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-object-reply-signed-in",
+      "disposition": "preserve",
+      "reason": "A reply that is an object, not a list: saves.some is not a function, so a signed-in request throws: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "user_id": "user-a"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-object-reply-signed-out",
+      "disposition": "preserve",
+      "reason": "The same reply signed out: some() is never called, and an object has no length, so totalSaves is 0.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "user_id": "user-a"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-length-field",
+      "disposition": "preserve",
+      "reason": "An object with a length field: totalSaves is that field's value, as saves?.length || 0 reads it.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "length": 7
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 7
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-text-reply",
+      "disposition": "preserve",
+      "reason": "A reply that is JSON text: its length counts UTF-16 units, so \"a😀\" counts 3.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": "a😀"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 3
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-null-row-signed-in",
+      "disposition": "preserve",
+      "reason": "A null row: s.user_id throws, 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            null
+          ]
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-removes",
+      "disposition": "preserve",
+      "reason": "A signed-in user removes a repository from the default collection, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "method": "DELETE",
+      "query": "repo=octo%2Fdemo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401 with a shorter message than POST's, and the database is not asked.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-no-repo",
+      "disposition": "preserve",
+      "reason": "Signed in with no repo parameter: 400. Sign-in is checked first.",
+      "method": "DELETE",
+      "query": "collection=work",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-signed-out-no-repo",
+      "disposition": "preserve",
+      "reason": "Signed out with no repo parameter: 401, because sign-in is checked first.",
+      "method": "DELETE",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-collection",
+      "disposition": "preserve",
+      "reason": "A named collection is removed by name.",
+      "method": "DELETE",
+      "query": "repo=octo/demo&collection=work",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.work",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-empty-collection",
+      "disposition": "preserve",
+      "reason": "An empty collection parameter means \"default\".",
+      "method": "DELETE",
+      "query": "repo=octo/demo&collection=",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-fails",
+      "disposition": "preserve",
+      "reason": "The delete fails: 500 \"Failed to remove from collection\", and the count is not asked.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to remove from collection"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-count-fails",
+      "disposition": "preserve",
+      "reason": "The delete succeeds and the count fails: totalSaves is 0.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing-post",
+      "disposition": "preserve",
+      "reason": "Without the project's settings the client cannot be built: 500 with a fixed sentence.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get",
+      "disposition": "preserve",
+      "reason": "GET checks the repo parameter before building the client, so this is 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get-no-repo",
+      "disposition": "preserve",
+      "reason": "And without a repo parameter it is still 400.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-delete",
+      "disposition": "preserve",
+      "reason": "DELETE builds the client first: 500.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}

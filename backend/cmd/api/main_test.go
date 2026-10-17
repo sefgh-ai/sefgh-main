@@ -71,6 +71,15 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	if total := githubaccess.DefaultTimeout + supabaserest.Timeout + starred.RefreshBudget; total >= writeTimeout {
 		t.Errorf("sign-in, the database and the GitHub budget can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
+	// Share asks the database once, with no sign-in check.
+	if supabaserest.Timeout >= writeTimeout {
+		t.Errorf("a share read can take %v, which is not below the server's write timeout of %v", supabaserest.Timeout, writeTimeout)
+	}
+	// Collect asks Supabase who is calling, then writes, then counts: two
+	// database calls.
+	if total := githubaccess.DefaultTimeout + 2*supabaserest.Timeout; total >= writeTimeout {
+		t.Errorf("sign-in, a write and a count can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in check plus the activity query can take %v, which is not below the server's write timeout of %v", total, writeTimeout)

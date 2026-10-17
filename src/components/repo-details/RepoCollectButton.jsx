@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) {
   const { user } = useAuth()
@@ -26,7 +27,7 @@ export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) 
     try {
       if (saved) {
         // Remove from collection
-        const response = await fetch(`/api/repo/collect?repo=${encodeURIComponent(repoFullName)}`, {
+        const response = await fetchWithSession(`/api/repo/collect?repo=${encodeURIComponent(repoFullName)}`, {
           method: 'DELETE'
         })
 
@@ -41,7 +42,7 @@ export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) 
         toast.success('Removed from collection')
       } else {
         // Add to collection
-        const response = await fetch('/api/repo/collect', {
+        const response = await fetchWithSession('/api/repo/collect', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

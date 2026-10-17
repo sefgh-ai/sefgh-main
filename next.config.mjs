@@ -47,6 +47,10 @@ const goBackendRoutes = {
   // told apart; signed out, the public key is used, as now. The fork route
   // under it is not ported.
   "share-token": "/api/share/:token",
+  // Saving, removing and counting a repository in the caller's collections
+  // (COLLECT-001), the first route that writes to the database. Bearer only,
+  // like activity; the browser sends it (src/lib/supabase/session-fetch.js).
+  "repo-collect": "/api/repo/collect",
 };
 
 function goBackendRewrites() {

@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-16 (Asia/Calcutta), by Claude Code: SHARE-001 handed off; writer released. The owner asked to save and stop.
+Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: COLLECT-001 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,42 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released SHARE-001 on 2026-10-16 (owner: "save and stop"). Trending on `sefgh-main` is served by Go; every other route by Next.js.
+- **Active writer:** none. Claude Code released COLLECT-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Fourteen of 25 API routes are implemented in Go (56% of routes, not of the whole migration); every read-only route is among them. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 82 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Fifteen of 25 API routes are implemented in Go (60% of routes, not of the whole migration): every read-only route, and the first route that writes (`/api/repo/collect`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 84 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: SHARE-001, `GET /api/share/[token]` (Claude Code, 2026-10-16)
+## Latest handoff: COLLECT-001, `/api/repo/collect` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the bookmark button, the repository card and the starred page send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 7625677. Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-17): "continue migration", then "retry" after an interruption.
+Found on resume: after committing SHARE-001 (27d9e0d) the Git Agent left this checkout on `go-backend` (still 64c9bc0, not fast-forwarded). Claude Code switched back to `main` and fast-forwarded to `origin/main`; `go-backend` was not touched and is behind `main`.
+
+Done:
+- Contract `contracts/repo-collect` version 1, 49 cases (1 `defect`), over GET, POST and DELETE, recorded from the three Next.js handlers by `scripts/contracts/record-repo-collect.mjs`. The runner `collect-fixture.mjs` builds the client with the real supabase-js 2.78 (only `fetch` and `auth.getUser()` replaced) and records every request's method, URL, headers and JSON body. Node runner `repo-collect.test.mjs`.
+- `backend/internal/collect`: the port, 49 of 49. Writes (`supabaserest.Insert`, `Delete`, new, with tests) go with the caller's own token; reads with the bearer or the public key. Unit tests: a body over 1 MiB, and logs that never hold the user, the repository or the token.
+- `jscompat.String` (JavaScript's `String(value)` for JSON values; answers generated in Node). `githubaccess.SessionToken` exported; share now uses it instead of its own parser, so every route reads a bearer by one rule. Share's header test was rewritten for that rule.
+- Wiring: `collectMux` in `cmd/api`, `collect_wiring_test.go`, write-timeout checks for share and collect. Next.js switch `repo-collect`, rewrite test, probe scenarios (the probe can now send DELETE) and stand-ins for insert and delete.
+- Browser: `RepoCollectButton.jsx`, `RepositoryCard.jsx` and `src/app/starred/page.js` call the route with `fetchWithSession`.
+- Lesson 25 (a request with a body, writes as the user, `||`, type switch, exercise `savedBy`). Lesson 24 updated for `SessionToken` (README and lesson.go only; its exercise.go untouched). Lesson 22's index row updated.
+- Docs: contract README, backend README "Collect (COLLECT-001)", ADR (Phase 3 row, recorded difference, dated note), backend map. Bug register R-083 (High: the save count counts only the visitor's own rows) and R-084 (401 when Auth is unreachable).
+
+Changed files: backend/internal/collect/* (new), backend/internal/jscompat/{tostring.go,tostring_test.go} (new), backend/internal/supabaserest/{supabaserest.go,supabaserest_test.go}, backend/internal/githubaccess/access.go, backend/internal/sharetoken/{handler.go,handler_test.go}, backend/cmd/api/{main.go,main_test.go,collect_wiring_test.go (new)}, backend/README.md, contracts/repo-collect/* (new), scripts/contracts/{collect-loader,collect-fixture,record-repo-collect,repo-collect.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/repo-details/RepoCollectButton.jsx, src/components/RepositoryCard.jsx, src/app/starred/page.js, learn-go/{README.md,24-optional-sign-in/{README.md,lesson.go},25-writing-as-the-user/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 874 of 874. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 21 packages pass; vet clean; gofmt empty. learn-go `-tags solution`: 26 packages pass; lesson 25's exercise fails only `TestSavedBy`, as intended.
+- Forwarding probe (dev): 90 of 90 identical, including eight collect requests (GET signed in and out, POST, a body that is not JSON, DELETE).
+- Deliberate breaks, each caught, then restored: writing with the public key instead of the caller's token (14 cases); a null row not throwing; text length ignored; the unique-key code changed (`post-duplicate`); the raw body text instead of `String(value)` in the count's filter (10 cases). One attempt at the unique-key break did not compile and was redone.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database; the unique key behind the 409, which was not read from the live database (the Supabase connector needed re-authorising this session); the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; the owner's choice to switch `repo-collect` on; R-083 is visible to users today, in Next.js.
+Next bounded action: the next write route against `docs/database/user-db.md`. `POST /api/repo/rating` and `/api/repo/vote` are similar in shape; `vote` also calls the missing RPC (R-076).
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: SHARE-001, `GET /api/share/[token]` (Claude Code, 2026-10-16)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the shared-chat page sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1687,7 +1718,7 @@ Task / scope: GO-004, first Phase 2 slice: GET /api/github/languages.
 Owner / reviewer: Codex / independent reviewer pending; no agent was contacted.
 Status: implementation complete, review pending, not deployed.
 Base / branch / worktree: cd8906c / main / main checkout; clean at start.
-Resulting commit: uncommitted at handoff; Git Agent owns synchronization.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `7625677`).
 Changed files:
   contracts/github-languages/{cases.json,response.json,README.md}
   scripts/contracts/{github-languages.test.mjs,route-loader.mjs,go-rewrites.test.mjs}

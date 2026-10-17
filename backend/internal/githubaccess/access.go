@@ -99,6 +99,11 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 	return token, 200
 }
 
+// SessionToken is sessionToken for routes that read a bearer without asking
+// Supabase Auth about it first (share, and collect for the database), so
+// every route reads the header by the same rules.
+func SessionToken(r *http.Request) (string, bool) { return sessionToken(r) }
+
 // sessionToken reads the Supabase session from the request's one
 // Authorization header. It answers false for no header, a malformed or
 // over-long one, or more than one.
