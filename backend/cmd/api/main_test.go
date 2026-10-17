@@ -17,6 +17,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
 
 // TestSecurityHeadersMatchNextConfig fails when next.config.mjs changes a
@@ -79,6 +80,14 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	// database calls.
 	if total := githubaccess.DefaultTimeout + 2*supabaserest.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in, a write and a count can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	// A vote asks Supabase, then writes, calls the stats function and, when
+	// that fails, counts: three database calls, within one budget.
+	if total := githubaccess.DefaultTimeout + vote.Budget; total >= writeTimeout {
+		t.Errorf("sign-in and a vote's database budget can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	if vote.Budget >= 3*supabaserest.Timeout {
+		t.Errorf("vote.Budget %v does not bound the three calls of %v each", vote.Budget, supabaserest.Timeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

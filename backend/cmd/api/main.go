@@ -33,6 +33,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
 
 // writeTimeout is how long the server allows for writing one response. Every
@@ -110,6 +111,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
+	top.Handle("/api/repo/vote", voteMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -223,6 +225,23 @@ func collectMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.Serve
 	for _, method := range []string{"GET", "POST", "DELETE"} {
 		mux.Handle(method+" /api/repo/collect", h)
 	}
+	return mux
+}
+
+// voteMux serves votes on a repository. Like collect, every read and write
+// goes as the caller with their own token, or the public key when signed
+// out, so row-level security decides.
+func voteMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &vote.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	mux.Handle("GET /api/repo/vote", h)
+	mux.Handle("POST /api/repo/vote", h)
 	return mux
 }
 

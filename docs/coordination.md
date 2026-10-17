@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: COLLECT-001 handed off; writer released.
+Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: VOTE-001 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,40 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released COLLECT-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
+- **Active writer:** none. Claude Code released VOTE-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Fifteen of 25 API routes are implemented in Go (60% of routes, not of the whole migration): every read-only route, and the first route that writes (`/api/repo/collect`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 84 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Sixteen of 25 API routes are implemented in Go (64% of routes, not of the whole migration): every read-only route, and two that write (`/api/repo/collect`, `/api/repo/vote`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 84 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: COLLECT-001, `/api/repo/collect` (Claude Code, 2026-10-17)
+## Latest handoff: VOTE-001, `/api/repo/vote` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the vote arrows send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 7881116 (COLLECT-001, pushed). Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-17): "continue next stages".
+
+Done:
+- Contract `contracts/repo-vote` version 1, 37 cases (5 `defect`, all R-076), recorded from the two Next.js handlers by `scripts/contracts/record-repo-vote.mjs`. New shared runner `route-db-fixture.mjs` and `route-db-loader.mjs`: the real supabase-js with only `fetch` and `auth.getUser()` replaced, and a fixed clock. Meant for the next routes. Node runner `repo-vote.test.mjs`.
+- `backend/internal/vote`: the port, 37 of 37. `supabaserest.Upsert` and `RPC` (new, with tests). The missing stats function is still called, then the votes are counted, as in Next.js. One 24-second budget (`vote.Budget`) bounds the write, the stats call and the count: `TestHandlersFinishInsideTheWriteTimeout` failed at 34 s when the route was wired, which led to it. Unit tests: body limit, logs, a hanging stats call.
+- `jscompat`: `Truthy`, `TruthyJSON`, `RequestFields` (moved out of collect; collect and `supabaserest.Truthy` now use them) and `ISOString`, with answers from Node.
+- Wiring: `voteMux` in `cmd/api`, `vote_wiring_test.go`, the write-timeout check. Next.js switch `repo-vote`, rewrite test, six probe scenarios and stand-ins for votes and the missing function. `RepoVoteSection.jsx` uses `fetchWithSession`.
+- Lesson 26 (three kinds of nothing, one deadline for calls in a row, stopping the clock; exercise `reply`). Index updated.
+- Docs: contract README, backend README "Vote (VOTE-001)", ADR (Phase 3 row, recorded difference, dated note), backend map. Bug register: R-076 and R-084 extended to the vote route; no new entry.
+
+Changed files: backend/internal/vote/* (new), backend/internal/jscompat/{request.go,request_test.go} (new), backend/internal/supabaserest/{supabaserest.go,supabaserest_test.go}, backend/internal/collect/handler.go, backend/cmd/api/{main.go,main_test.go,vote_wiring_test.go (new)}, backend/README.md, contracts/repo-vote/* (new), scripts/contracts/{route-db-loader,route-db-fixture,record-repo-vote,repo-vote.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/repo-details/RepoVoteSection.jsx, learn-go/{README.md,26-three-kinds-of-nothing/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 912 of 912. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 22 packages pass; vet clean; gofmt empty. learn-go `-tags solution`: 27 packages pass; lesson 26's exercise fails only `TestReply`, as intended.
+- Forwarding probe (dev): 96 of 96 identical, including six vote requests.
+- Deliberate breaks, each caught, then restored: the public key instead of the caller's token for the upsert; a null row not throwing; `userVote` always left out; vote types matched in any case; the real clock instead of `Now`.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database; the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; the owner's choice to switch `repo-vote` on.
+Next bounded action: `/api/repo/rating`. Its checks compare a rating with numbers and its average adds with `+`, so text in place of numbers follows JavaScript's loose rules. That needs `jscompat` versions of `Number()`, `<` and `+` for JSON values, and the fixed clock.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: COLLECT-001, `/api/repo/collect` (Claude Code, 2026-10-17)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the bookmark button, the repository card and the starred page send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1788,7 +1817,7 @@ Task / scope: GO-003, REVIEW-002 findings 2–6 and 10, lesson clarification
 Owner / reviewer: Codex / Claude Code intended, peer review NOT run.
 Status: implementation complete; review pending; not deployed.
 Base / branch / worktree: 1e5d87f / main / main checkout.
-Resulting commit: uncommitted at handoff. Git Agent owns synchronization.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `7881116`).
 Changed files:
   AGENTS.md: owner-required low-capacity checkpoint rule, shared via CLAUDE.md.
   backend/internal/githubrepos/{cache.go,cache_test.go,cache_regression_test.go,

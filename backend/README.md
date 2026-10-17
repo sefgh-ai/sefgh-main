@@ -228,6 +228,15 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Vote (VOTE-001)
+
+Opt-in name: `repo-vote`, off by default. `POST` and `GET /api/repo/vote`: upvoting, downvoting or removing a vote, and the counts. It passes the 37 cases of `contracts/repo-vote`, recorded from the Next.js handlers with the real supabase-js and a fixed clock (`scripts/contracts/route-db-fixture.mjs`).
+
+- **Writes go as the caller:** `supabaserest.Upsert` (new: `on_conflict` and `Prefer: resolution=merge-duplicates`) and `Delete`, with the caller's own token. `updated_at` comes from `Handler.Now`, written by `jscompat.ISOString` as `toISOString()` writes it.
+- **The stats function** is called with `supabaserest.RPC` (new). The live database has no `get_repo_vote_stats` (R-076), so the call fails and the votes are counted by hand, as in Next.js. The port keeps the failing call so the two can be compared; the fix comes after cutover.
+- **Shared helpers:** `jscompat.RequestFields` (the body read like `const { a, b } = await request.json()`) and `jscompat.TruthyJSON` moved out of collect, which uses them too. `jscompat.Truthy` is the rule `supabaserest.Truthy` now calls.
+- **Differs from Next.js:** a bearer instead of the session cookie (the vote arrows now use `fetchWithSession`). A POST body over 1 MiB is answered as unreadable. The write, the stats call and the count share one 24-second budget (`vote.Budget`), because three 10-second calls after sign-in would outlast the 30-second write timeout. `TestHandlersFinishInsideTheWriteTimeout` caught that when the route was wired. A call cut short reads as a failed one.
+
 ## Collect (COLLECT-001)
 
 Opt-in name: `repo-collect`, off by default. `POST`, `DELETE` and `GET /api/repo/collect`: saving a repository to the caller's collection, removing it, and asking whether it is saved and how many saves it has. It is the first Go route that writes to the database. It passes the 49 cases of `contracts/repo-collect`, recorded from the Next.js handlers by `scripts/contracts/record-repo-collect.mjs` with the real supabase-js around a stand-in Data API.

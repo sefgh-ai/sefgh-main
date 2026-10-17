@@ -11,12 +11,10 @@ package supabaserest
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
@@ -52,34 +50,48 @@ func Param(name, value string) string {
 // is session, and returns the reply's status and body, or an error when
 // there is no reply to read. query is already encoded (see Param).
 func (c Client) Select(ctx context.Context, session, table, query string) (int, []byte, error) {
-	return c.do(ctx, http.MethodGet, session, table+"?"+query, "", nil)
+	return c.do(ctx, http.MethodGet, session, table+"?"+query, "", "", nil)
 }
 
 // SelectObject is Select for one row, as supabase-js's .single() asks for
 // it: the Data API answers the row as an object, or 406 when there is not
 // exactly one.
 func (c Client) SelectObject(ctx context.Context, session, table, query string) (int, []byte, error) {
-	return c.do(ctx, http.MethodGet, session, table+"?"+query, "application/vnd.pgrst.object+json", nil)
+	return c.do(ctx, http.MethodGet, session, table+"?"+query, "application/vnd.pgrst.object+json", "", nil)
 }
 
 // Insert sends POST /rest/v1/<table> with row, a JSON object, as the user
 // whose access token is session: supabase-js's .insert(row) without
 // .select(). The Data API answers 201 with no body when the row is stored.
 func (c Client) Insert(ctx context.Context, session, table string, row []byte) (int, []byte, error) {
-	return c.do(ctx, http.MethodPost, session, table, "", row)
+	return c.do(ctx, http.MethodPost, session, table, "", "", row)
 }
 
 // Delete sends DELETE /rest/v1/<table>?<query> as the user whose access
 // token is session: supabase-js's .delete() with the query's filters.
 // Row-level security decides which rows the filters may reach.
 func (c Client) Delete(ctx context.Context, session, table, query string) (int, []byte, error) {
-	return c.do(ctx, http.MethodDelete, session, table+"?"+query, "", nil)
+	return c.do(ctx, http.MethodDelete, session, table+"?"+query, "", "", nil)
+}
+
+// Upsert sends row, a JSON object, as supabase-js's
+// .upsert(row, { onConflict }) does: POST with on_conflict in the query and
+// Prefer: resolution=merge-duplicates, so a row that clashes on those
+// columns is updated instead of refused.
+func (c Client) Upsert(ctx context.Context, session, table, onConflict string, row []byte) (int, []byte, error) {
+	return c.do(ctx, http.MethodPost, session, table+"?"+Param("on_conflict", onConflict), "", "resolution=merge-duplicates", row)
+}
+
+// RPC calls the database function name with args, a JSON object, as
+// supabase-js's .rpc(name, args) does: POST /rest/v1/rpc/<name>.
+func (c Client) RPC(ctx context.Context, session, name string, args []byte) (int, []byte, error) {
+	return c.do(ctx, http.MethodPost, session, "rpc/"+name, "", "", args)
 }
 
 // do sends one Data API request with the headers postgrest-js 2.78 sends: a
 // read names the schema in Accept-Profile, and a write in Content-Profile
 // with a JSON Content-Type, body or not.
-func (c Client) do(ctx context.Context, method, session, path, accept string, body []byte) (int, []byte, error) {
+func (c Client) do(ctx context.Context, method, session, path, accept, prefer string, body []byte) (int, []byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, Timeout)
 	defer cancel()
 	var reader io.Reader
@@ -101,6 +113,9 @@ func (c Client) do(ctx context.Context, method, session, path, accept string, bo
 	}
 	if accept != "" {
 		req.Header.Set("Accept", accept)
+	}
+	if prefer != "" {
+		req.Header.Set("Prefer", prefer)
 	}
 
 	client := *c.HTTP
@@ -149,23 +164,9 @@ func ReadResult(status int, raw []byte) (data any, failed bool) {
 	return nil, Truthy(value)
 }
 
-// Truthy reports whether JavaScript would treat a decoded JSON value as true.
-func Truthy(value any) bool {
-	switch v := value.(type) {
-	case nil:
-		return false
-	case bool:
-		return v
-	case string:
-		return v != ""
-	case json.Number:
-		// A JSON number is never NaN. One too small for a double is 0 in
-		// both languages, and one too large is Infinity, which is truthy.
-		f, _ := strconv.ParseFloat(string(v), 64)
-		return f != 0
-	}
-	return true
-}
+// Truthy reports whether JavaScript would treat a decoded JSON value as
+// true. It is jscompat.Truthy, kept here for the routes that read replies.
+func Truthy(value any) bool { return jscompat.Truthy(value) }
 
 // Describe names an error for a log. A transport error's own text holds the
 // request's URL, and the URL holds the user's id, so it is not used.

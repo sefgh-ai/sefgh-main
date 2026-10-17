@@ -51,6 +51,8 @@ const goBackendRoutes = {
   // (COLLECT-001), the first route that writes to the database. Bearer only,
   // like activity; the browser sends it (src/lib/supabase/session-fetch.js).
   "repo-collect": "/api/repo/collect",
+  // Votes on a repository (VOTE-001). Bearer only, like collect.
+  "repo-vote": "/api/repo/vote",
 };
 
 function goBackendRewrites() {

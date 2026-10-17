@@ -391,3 +391,11 @@ the first Go route that writes to the database: `supabaserest.Insert` and
 write. The bookmark button, the repository card and the starred page now
 send the bearer (`fetchWithSession`). `githubaccess.SessionToken` is the
 one rule for reading a bearer.
+
+## VOTE-001 update (2026-10-17)
+
+`/api/repo/vote` (GET, POST) has a Go port, `backend/internal/vote`, off by
+default (switch `repo-vote`). Writes go as the caller (`supabaserest.Upsert`,
+`Delete`); the stats function is called with `supabaserest.RPC` and, as on
+the live database, fails, so the votes are counted by hand. The vote arrows
+send the bearer (`fetchWithSession`).

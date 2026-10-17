@@ -78,7 +78,7 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "read_body", 0, err, 500, "Internal server error")
 		return
 	}
-	fields, ok := destructure(body)
+	fields, ok := jscompat.RequestFields(body)
 	if !ok {
 		h.fail(w, "decode_body", 0, nil, 500, "Internal server error")
 		return
@@ -212,26 +212,6 @@ func (h *Handler) count(r *http.Request, session, repo string) json.RawMessage {
 	return lengthOf(data, raw)
 }
 
-// destructure reads a request body as request.json() and then
-// `const { a, b } = body` do: the raw JSON of each field the object holds,
-// the last value of a repeated name. A list, text, a number or a boolean
-// has none of these fields. Text that is not JSON, and null, cannot be
-// destructured, so ok is false.
-func destructure(body []byte) (map[string]json.RawMessage, bool) {
-	value, err := jscompat.DecodeJSON(body)
-	if err != nil || value == nil {
-		return nil, false
-	}
-	fields := map[string]json.RawMessage{}
-	if _, isObject := value.(map[string]any); isObject {
-		list, _ := jscompat.ObjectFields([]byte(jscompat.DecodeUTF8(body)))
-		for _, field := range list {
-			fields[field.Name] = field.Value
-		}
-	}
-	return fields, true
-}
-
 // insertRow is the object the Next.js handler inserts:
 // { user_id, repo_full_name, collection_name: collectionName || 'default',
 // notes: notes || null }. Values the visitor sent pass through as written.
@@ -326,9 +306,7 @@ func parse(raw json.RawMessage) any {
 
 // truthy is JavaScript's truthiness of a raw JSON value; a missing one is
 // undefined, which is false.
-func truthy(raw json.RawMessage) bool {
-	return raw != nil && supabaserest.Truthy(parse(raw))
-}
+func truthy(raw json.RawMessage) bool { return jscompat.TruthyJSON(raw) }
 
 // fail logs the stage and the database's status, never the user, the
 // repository or the database's own words, and answers with a fixed

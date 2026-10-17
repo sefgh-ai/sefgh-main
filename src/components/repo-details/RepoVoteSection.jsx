@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ArrowBigUp, ArrowBigDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
   const { user } = useAuth()
@@ -69,7 +70,7 @@ export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
       setCurrentVote(newCurrentVote)
 
       // API call
-      const response = await fetch('/api/repo/vote', {
+      const response = await fetchWithSession('/api/repo/vote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

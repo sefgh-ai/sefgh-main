@@ -1,0 +1,2036 @@
+{
+  "contract_version": 1,
+  "route": "GET and POST /api/repo/vote",
+  "recorded_from": "the Next.js handlers at 7881116, by scripts/contracts/record-repo-vote.mjs",
+  "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API (scripts/contracts/route-db-fixture.mjs); only auth.getUser() is replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
+  "cases": [
+    {
+      "id": "post-upvote",
+      "disposition": "defect",
+      "reason": "A signed-in user upvotes: the vote is upserted as the user, then the stats function is called. The live database has no get_repo_vote_stats, so the call fails and the handler counts the votes itself (bug register R-076).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-downvote",
+      "disposition": "defect",
+      "reason": "A downvote, the same way. The live database has no get_repo_vote_stats, so the call fails and the handler counts the votes itself (bug register R-076).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"downvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": "downvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "downvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-remove",
+      "disposition": "defect",
+      "reason": "voteType null removes the user's vote; userVote is null. The live database has no get_repo_vote_stats, so the call fails and the handler counts the votes itself (bug register R-076).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":null}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-remove-no-vote-type",
+      "disposition": "preserve",
+      "reason": "No voteType removes the vote too, and userVote is undefined, which JSON leaves out of the reply.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-remove-empty-text",
+      "disposition": "preserve",
+      "reason": "An empty voteType is falsy: the vote is removed, and userVote is the empty text as sent.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": ""
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-invalid-type",
+      "disposition": "preserve",
+      "reason": "A voteType other than upvote or downvote: 400, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"sideways\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid vote type. Must be \"upvote\" or \"downvote\""
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-invalid-number",
+      "disposition": "preserve",
+      "reason": "A truthy voteType that is not text is not in the list either: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":1}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid vote type. Must be \"upvote\" or \"downvote\""
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-wrong-case",
+      "disposition": "preserve",
+      "reason": "The comparison is exact: \"Upvote\" is not \"upvote\", 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"Upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid vote type. Must be \"upvote\" or \"downvote\""
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to vote."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Supabase Auth refuses: 401.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to vote."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-repo",
+      "disposition": "preserve",
+      "reason": "No repoFullName: 400, checked before the vote type.",
+      "method": "POST",
+      "body": "{\"voteType\":\"sideways\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-invalid-json",
+      "disposition": "preserve",
+      "reason": "A body that is not JSON: 500, and the database is not asked.",
+      "method": "POST",
+      "body": "{broken",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-null-body",
+      "disposition": "preserve",
+      "reason": "A body of null cannot be destructured: 500.",
+      "method": "POST",
+      "body": "null",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-upsert-fails",
+      "disposition": "preserve",
+      "reason": "The upsert fails: 500 \"Failed to save vote\", and nothing else is asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save vote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-delete-fails",
+      "disposition": "preserve",
+      "reason": "The removal fails: 500 \"Failed to remove vote\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":null}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to remove vote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-stats-function-answers",
+      "disposition": "preserve",
+      "reason": "Were the stats function present, its answer would be the reply's votes, passed through as it is.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1,
+            "net_votes": 2
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 3,
+            "downvotes": 1,
+            "net_votes": 2
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-stats-function-list",
+      "disposition": "preserve",
+      "reason": "A function that returns a table answers a list, which is passed through as the votes too.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "upvotes": 3,
+              "downvotes": 1,
+              "net_votes": 2
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": [
+            {
+              "upvotes": 3,
+              "downvotes": 1,
+              "net_votes": 2
+            }
+          ],
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-stats-function-null",
+      "disposition": "preserve",
+      "reason": "A function that answers null: the votes are all zero.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "raw": "null"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-stats-unreachable",
+      "disposition": "defect",
+      "reason": "The stats call cannot be reached: the handler counts the votes itself. The live database has no get_repo_vote_stats, so the call fails and the handler counts the votes itself (bug register R-076).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "network_error": true
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-fails",
+      "disposition": "defect",
+      "reason": "The stats function is missing and the count fails too: its error is ignored, so every number is 0. The live database has no get_repo_vote_stats, so the call fails and the handler counts the votes itself (bug register R-076).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-null-row",
+      "disposition": "preserve",
+      "reason": "A null row in the count: v.vote_type throws, 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            null
+          ]
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-object-reply",
+      "disposition": "preserve",
+      "reason": "A count reply that is an object has no filter(): 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "vote_type": "upvote"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-odd-rows",
+      "disposition": "preserve",
+      "reason": "Rows that are not objects, or whose vote_type is not exactly upvote or downvote, are not counted.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            "upvote",
+            1,
+            {
+              "vote_type": "UPVOTE"
+            },
+            {
+              "vote_type": "downvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 1,
+            "net_votes": -1
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "octo/demo"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-number-repo",
+      "disposition": "preserve",
+      "reason": "A repoFullName that is a number goes to the function as a number and into filters as its text.",
+      "method": "POST",
+      "body": "{\"repoFullName\":42,\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": 42,
+              "vote_type": "upvote",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": 42
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.42",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-symbols",
+      "disposition": "preserve",
+      "reason": "Characters that mean something in a URL are sent as one value.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"a b&c=d+e/é*~\",\"voteType\":null}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 404,
+          "body": {
+            "code": "PGRST202",
+            "details": "Searched for the function public.get_repo_vote_stats with parameter repo_name or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+            "hint": null,
+            "message": "Could not find the function public.get_repo_vote_stats(repo_name) in the schema cache"
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/get_repo_vote_stats",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_name": "a b&c=d+e/é*~"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out: the votes are read with the public key and counted; userVote is null.",
+      "method": "GET",
+      "query": "repo=octo%2Fdemo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in",
+      "disposition": "preserve",
+      "reason": "Signed in: the user's own vote is read as one row, and its vote_type is userVote.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": {
+            "vote_type": "downvote"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": "downvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in-no-vote",
+      "disposition": "preserve",
+      "reason": "No row of the user's: the single read fails with 406, and userVote is null.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        },
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-falsy-user-vote",
+      "disposition": "preserve",
+      "reason": "An empty vote_type is falsy: userVote is null.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "vote_type": "upvote"
+            },
+            {
+              "vote_type": "downvote"
+            },
+            {
+              "vote_type": "upvote"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": {
+            "vote_type": ""
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "votes": {
+            "upvotes": 2,
+            "downvotes": 1,
+            "net_votes": 1
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-no-repo",
+      "disposition": "preserve",
+      "reason": "No repo parameter: 400, before anything else is asked.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-error",
+      "disposition": "preserve",
+      "reason": "The read fails: 500 \"Failed to fetch votes\".",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch votes"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Auth refuses counts as signed out, but the database is still asked with that token, refuses it, and the handler answers 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [
+        {
+          "status": 401,
+          "body": {
+            "code": "PGRST303",
+            "details": null,
+            "hint": null,
+            "message": "JWT expired"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch votes"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-refused",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-null-row",
+      "disposition": "preserve",
+      "reason": "A null row: v.vote_type throws, 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            null
+          ]
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-empty-success",
+      "disposition": "preserve",
+      "reason": "A success with no body: no votes, all zero.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "votes": {
+            "upvotes": 0,
+            "downvotes": 0,
+            "net_votes": 0
+          },
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing-post",
+      "disposition": "preserve",
+      "reason": "Without the project's settings the client cannot be built: 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get",
+      "disposition": "preserve",
+      "reason": "GET checks the repo parameter first, then builds the client: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get-no-repo",
+      "disposition": "preserve",
+      "reason": "And without a repo parameter it is still 400.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}

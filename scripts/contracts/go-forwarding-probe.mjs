@@ -171,6 +171,14 @@ const scenarios = [
   { path: '/api/repo/collect', body: '{"repoFullName":"octo/demo"}' },
   { path: '/api/repo/collect?repo=octo%2Fdemo&collection=work', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/collect?repo=octo%2Fdemo', method: 'DELETE' },
+  // Votes: the stand-in has no stats function, as the live database, so a
+  // vote is counted by hand after the call fails. No Cache-Control.
+  { path: '/api/repo/vote?repo=octo%2Fdemo' },
+  { path: '/api/repo/vote?repo=octo%2Fdemo', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":"upvote"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":null}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":"sideways"}', headers: { Authorization: 'Bearer session-a' }, status: 400, cache: null },
+  { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":"upvote"}' },
 ];
 
 try {
@@ -221,6 +229,20 @@ try {
         else if (token === 'eq.tok-private' && owner) res.end(JSON.stringify({ id: 's2', share_token: 'tok-private', is_public: false, title: 'Mine' }));
         else { res.writeHead(406); res.end(JSON.stringify({ code: 'PGRST116', details: 'The result contains 0 rows', hint: null, message: 'Cannot coerce the result to a single JSON object' })); }
       }
+      // Votes: anyone may read them; a signed-in user may write their own.
+      // There is no stats function, as on the live database.
+      else if (req.url.startsWith('/rest/v1/rpc/get_repo_vote_stats')) {
+        res.writeHead(404); res.end(JSON.stringify({ code: 'PGRST202', message: 'Could not find the function' }));
+      }
+      else if (req.url.startsWith('/rest/v1/repo_votes') && req.method !== 'GET') {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(req.method === 'DELETE' ? 204 : 201); res.end();
+      }
+      else if (req.url.startsWith('/rest/v1/repo_votes?')) {
+        if (req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        if (req.url.includes('user_id=eq.')) res.end(JSON.stringify({ vote_type: 'upvote' }));
+        else res.end(JSON.stringify([{ vote_type: 'upvote' }, { vote_type: 'downvote' }, { vote_type: 'upvote' }]));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -248,7 +270,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

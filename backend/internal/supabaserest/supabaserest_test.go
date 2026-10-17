@@ -127,3 +127,34 @@ func TestWritesAskAsTheCaller(t *testing.T) {
 		}
 	}
 }
+
+// An upsert names its conflict columns and asks to merge; a function call
+// posts its arguments to rpc/<name>. Both are writes as far as headers go.
+func TestUpsertAndRPC(t *testing.T) {
+	record := &recordRoundTrip{}
+	c := Client{HTTP: &http.Client{Transport: record}, URL: "https://project.invalid", Key: "public-key"}
+	if _, _, err := c.Upsert(context.Background(), "token-a", "repo_votes", "user_id,repo_full_name", []byte(`{"user_id":"a"}`)); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := c.RPC(context.Background(), "token-a", "get_repo_vote_stats", []byte(`{"repo_name":"octo/demo"}`)); err != nil {
+		t.Fatal(err)
+	}
+	upsert, call := record.requests[0], record.requests[1]
+	if upsert.Method != "POST" || upsert.URL.String() != "https://project.invalid/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name" {
+		t.Errorf("upsert: %s %s", upsert.Method, upsert.URL)
+	}
+	if got := upsert.Header.Get("Prefer"); got != "resolution=merge-duplicates" {
+		t.Errorf("upsert Prefer %q", got)
+	}
+	if call.Method != "POST" || call.URL.String() != "https://project.invalid/rest/v1/rpc/get_repo_vote_stats" || call.Header.Get("Prefer") != "" {
+		t.Errorf("rpc: %s %s %v", call.Method, call.URL, call.Header)
+	}
+	if body, _ := io.ReadAll(call.Body); string(body) != `{"repo_name":"octo/demo"}` {
+		t.Errorf("rpc body %q", body)
+	}
+	for _, req := range record.requests {
+		if req.Header.Get("Content-Profile") != "public" || req.Header.Get("Content-Type") != "application/json" {
+			t.Errorf("%s: headers %v", req.URL, req.Header)
+		}
+	}
+}
