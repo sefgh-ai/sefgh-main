@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { useSendNotification } from '@/hooks/useSendNotification'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 // Format date consistently for SSR
 const formatDate = (dateString) => {
@@ -311,7 +312,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
     }
 
     try {
-      const response = await fetch('/api/repo/comments/vote', {
+      const response = await fetchWithSession('/api/repo/comments/vote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

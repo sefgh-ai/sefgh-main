@@ -101,3 +101,23 @@ func LengthOrZero(value any, raw []byte) json.RawMessage {
 	}
 	return json.RawMessage("0")
 }
+
+// FieldOr is `data?.name || fallback` for one reply's JSON text: the field
+// as written when the reply is an object and the field is truthy, and
+// fallback otherwise. A list, text or nothing has no field.
+func FieldOr(raw []byte, name string, fallback []byte) []byte {
+	fields, ok := ObjectFields([]byte(DecodeUTF8(raw)))
+	if !ok {
+		return fallback
+	}
+	var value json.RawMessage
+	for _, f := range fields {
+		if f.Name == name {
+			value = f.Value
+		}
+	}
+	if TruthyJSON(value) {
+		return value
+	}
+	return fallback
+}

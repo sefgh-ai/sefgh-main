@@ -22,6 +22,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/collect"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/commentvote"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
@@ -114,6 +115,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
 	top.Handle("/api/repo/vote", voteMux(logger, verifier))
 	top.Handle("/api/repo/rating", ratingMux(logger, verifier))
+	top.Handle("/api/repo/comments/vote", commentVoteMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -262,6 +264,22 @@ func ratingMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeM
 	for _, method := range []string{"GET", "POST", "DELETE"} {
 		mux.Handle(method+" /api/repo/rating", h)
 	}
+	return mux
+}
+
+// commentVoteMux serves votes on comments. Only a signed-in caller reaches
+// the database, with their own token, so row-level security decides.
+func commentVoteMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &commentvote.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	mux.Handle("GET /api/repo/comments/vote", h)
+	mux.Handle("POST /api/repo/comments/vote", h)
 	return mux
 }
 

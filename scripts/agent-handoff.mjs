@@ -139,7 +139,7 @@ if (args.has('--stamp-sync')) {
   const content = readFileSync(COORD_PATH, 'utf-8');
   const updated = content
     .replace(
-      /^Resulting commit:\s*uncommitted.*$/m,
+      /(?:^|(?<=\.\s*))Resulting commit:\s*uncommitted[^\r\n]*/m,
       `Resulting commit: synchronized by Git Agent on \`main\` and \`go-backend\` (from base \`${headSha}\`).`
     )
     .replace(

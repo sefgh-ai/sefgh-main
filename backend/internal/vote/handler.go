@@ -209,7 +209,7 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		}, "&")
 		upstream, raw, err := db.SelectObject(r.Context(), session, "repo_votes", own)
 		if !failed(upstream, raw, err) {
-			userVote = field(raw, "vote_type", userVote)
+			userVote = jscompat.FieldOr(raw, "vote_type", userVote)
 		}
 	}
 	var reply bytes.Buffer
@@ -286,25 +286,6 @@ func count(data any) (up, down int, ok bool) {
 // counts writes { upvotes, downvotes, net_votes: upvotes - downvotes }.
 func counts(up, down int) []byte {
 	return []byte(`{"upvotes":` + strconv.Itoa(up) + `,"downvotes":` + strconv.Itoa(down) + `,"net_votes":` + strconv.Itoa(up-down) + `}`)
-}
-
-// field is data?.name || fallback for a reply that holds one object: the
-// field as written when it is truthy. Anything but an object has no field.
-func field(raw []byte, name string, fallback []byte) []byte {
-	fields, ok := jscompat.ObjectFields([]byte(jscompat.DecodeUTF8(raw)))
-	if !ok {
-		return fallback
-	}
-	var value json.RawMessage
-	for _, f := range fields {
-		if f.Name == name {
-			value = f.Value
-		}
-	}
-	if jscompat.TruthyJSON(value) {
-		return value
-	}
-	return fallback
 }
 
 // failed is supabase-js's error: no reply, or a reply it reads as one.

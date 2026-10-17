@@ -228,6 +228,10 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Comment votes (CVOTE-001)
+
+Opt-in name: `comment-vote`, off by default. `POST` and `GET /api/repo/comments/vote`: voting on a comment, and the caller's own vote. It passes the 25 cases of `contracts/comment-vote`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`). Only a signed-in caller reaches the database, with their own token: a signed-out GET answers `{"userVote":null}` without a request. Writes use `supabaserest.Upsert` (`on_conflict=user_id,comment_id`) and `Delete`. The counts after a vote are read as one row and written with `jscompat.FieldOr` (`comment?.upvotes || 0`), now shared with vote. Differs from Next.js as vote does: a bearer instead of the session cookie (the comment arrows use `fetchWithSession`), a 1 MiB body limit, Go's 405 for other methods.
+
 ## Rating (RATING-001)
 
 Opt-in name: `repo-rating`, off by default. `POST`, `DELETE` and `GET /api/repo/rating`: rating a repository, removing the rating, and every rating with the total and average. It passes the 52 cases of `contracts/repo-rating`, recorded from the Next.js handlers with the shared runner (`scripts/contracts/route-db-fixture.mjs`).

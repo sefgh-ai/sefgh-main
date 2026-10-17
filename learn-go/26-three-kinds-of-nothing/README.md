@@ -2,7 +2,7 @@
 
 **You will learn:** the difference between JavaScript's `undefined`, `null` and other falsy values, and how Go keeps them apart. You will also see how one deadline can cover several calls in a row, and how both languages' tests can stop the clock.
 
-**Real code:** `backend/internal/vote/handler.go` (the port of `/api/repo/vote`), `RequestFields`, `TruthyJSON` and `ISOString` in `backend/internal/jscompat/request.go`, and `TestHandlersFinishInsideTheWriteTimeout` in `backend/cmd/api/main_test.go`.
+**Real code:** `backend/internal/vote/handler.go` (the port of `/api/repo/vote`), `backend/internal/commentvote/handler.go`, `RequestFields`, `TruthyJSON` and `ISOString` in `backend/internal/jscompat/request.go`, and `TestHandlersFinishInsideTheWriteTimeout` in `backend/cmd/api/main_test.go`.
 
 ## The problem in the app
 
@@ -61,6 +61,22 @@ A vote stores `updated_at: new Date().toISOString()`, so every run of the handle
 ## One copy of the shared rules
 
 Lesson 25's collect route had small helpers: read the body like `const { a, b } = await request.json()`, and decide whether a JSON value is truthy. The vote route needs the same, so they moved into `jscompat`, and both routes now call `jscompat.RequestFields` and `jscompat.TruthyJSON`. The rating and comment routes will too.
+
+## The same ideas, again: votes on comments
+
+`backend/internal/commentvote` ports `/api/repo/comments/vote`, the arrows beside each comment. It needed nothing new, which is the point of the shared helpers:
+
+- `jscompat.RequestFields` reads the body;
+- `jscompat.TruthyJSON` copies `voteType && ...`;
+- a `nil` `voteType` leaves `userVote` out of the reply, as above.
+
+One more small helper moved into `jscompat` on the way. `comment?.upvotes || 0` and `vote?.vote_type || null` have the same shape, "a field when it is truthy, or a fallback", so both routes call `jscompat.FieldOr`:
+
+```go
+upvotes = jscompat.FieldOr(raw, "upvotes", upvotes)
+```
+
+When a third piece of code needs the same few lines, it is usually time to give them a name.
 
 ## Your turn
 

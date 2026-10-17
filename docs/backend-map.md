@@ -406,3 +406,9 @@ send the bearer (`fetchWithSession`).
 off by default (switch `repo-rating`). Writes go as the caller; JavaScript's
 loose comparisons and `+` are copied by `jscompat`. The rating form sends the
 bearer (`fetchWithSession`).
+
+## CVOTE-001 update (2026-10-17)
+
+`/api/repo/comments/vote` (GET, POST) has a Go port, `backend/internal/commentvote`,
+off by default (switch `comment-vote`). The comment vote arrows send the
+bearer (`fetchWithSession`); the other comment calls still go to Next.js.

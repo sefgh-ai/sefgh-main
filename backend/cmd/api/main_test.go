@@ -78,7 +78,7 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	// Collect asks Supabase who is calling, then writes, then counts: two
 	// database calls. A rating does the same: an upsert, then a read; and its
-	// GET makes two reads.
+	// GET makes two reads. So does a comment vote: a write, then one read.
 	if total := githubaccess.DefaultTimeout + 2*supabaserest.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in, a write and a count can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}

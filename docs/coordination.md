@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: RATING-001 handed off; writer released.
+Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: CVOTE-001 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,44 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released RATING-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
+- **Active writer:** none. Claude Code released CVOTE-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Seventeen of 25 API routes are implemented in Go (68% of routes, not of the whole migration): every read-only route, and three that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 85 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Eighteen of 25 API routes are implemented in Go (72% of routes, not of the whole migration): every read-only route, and four that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 85 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: RATING-001, `/api/repo/rating` (Claude Code, 2026-10-17)
+## Latest handoff: CVOTE-001, `/api/repo/comments/vote` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the comment vote arrows send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base 88bea3d (RATING-001 at 5f0689c, pushed). Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `88bea3d`).
+Owner instruction (2026-10-17): "continue".
+
+Done:
+- Contract `contracts/comment-vote` version 1, 25 cases, recorded from the two Next.js handlers with the shared runner (`record-comment-vote.mjs`, `comment-vote.test.mjs`).
+- `backend/internal/commentvote`: the port, 25 of 25. `jscompat.FieldOr` (`data?.name || fallback`, moved out of vote; vote uses it). Unit tests: body limit, logs. Wiring: `commentVoteMux`.
+- Next.js switch `comment-vote`, rewrite test, five probe scenarios with stand-ins. `RepoCommentsSection.jsx`: only the vote call uses `fetchWithSession`; the comment calls stay for COMMENTS-001.
+- Lesson 26 gained a section on comment votes and `FieldOr` (no new exercise).
+- Docs: contract README, backend README "Comment votes (CVOTE-001)", ADR (Phase 3 row, dated note), backend map. R-084 extended; no new entry.
+
+Changed files: backend/internal/commentvote/* (new), backend/internal/jscompat/request.go, backend/internal/vote/handler.go, backend/cmd/api/{main.go,main_test.go}, backend/README.md, contracts/comment-vote/* (new), scripts/contracts/{record-comment-vote,comment-vote.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/repo-details/RepoCommentsSection.jsx, learn-go/26-three-kinds-of-nothing/README.md, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 991 of 991. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 24 packages pass; vet clean; gofmt empty. learn-go `-tags solution`: 28 packages pass.
+- Forwarding probe (dev): 107 of 107 identical, including five comment-vote requests.
+- Deliberate breaks, each caught, then restored:
+  - the public key for the upsert;
+  - a signed-out GET asking the database;
+  - `userVote` written when undefined;
+  - a null count passed through instead of 0.
+  The last needed two attempts: the first wrote `0.0`, which JSON reads as 0, and the second matched text the stand-in's spacing did not contain.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database; the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; the owner's choice to switch `comment-vote` on.
+Next bounded action: `/api/repo/comments` (GET, POST, PATCH, DELETE). Its GET fetches each commenter's profile, an admin user lookup and a reply count concurrently. It carries R-040 (the admin call with the public key) and R-075 (`username`), which the port copies until cutover. It needs a HEAD count request in `supabaserest` and JavaScript's `parseInt` for `limit` and `offset`.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: RATING-001, `/api/repo/rating` (Claude Code, 2026-10-17)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the rating form sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

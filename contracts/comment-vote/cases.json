@@ -1,0 +1,1020 @@
+{
+  "contract_version": 1,
+  "route": "GET and POST /api/repo/comments/vote",
+  "recorded_from": "the Next.js handlers at 88bea3d, by scripts/contracts/record-comment-vote.mjs",
+  "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API (scripts/contracts/route-db-fixture.mjs); only auth.getUser() is replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
+  "cases": [
+    {
+      "id": "post-upvote",
+      "disposition": "preserve",
+      "reason": "A signed-in user upvotes a comment: the vote is upserted as the user (on user_id and comment_id), then the comment's counts are read as one row.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 3,
+          "downvotes": 1,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-downvote",
+      "disposition": "preserve",
+      "reason": "A downvote, the same way.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"downvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 3,
+          "downvotes": 1,
+          "userVote": "downvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "downvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-remove",
+      "disposition": "preserve",
+      "reason": "voteType null removes the user's vote; userVote is null.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":null}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 3,
+          "downvotes": 1,
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/comment_votes?user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-remove-no-vote-type",
+      "disposition": "preserve",
+      "reason": "No voteType removes the vote, and userVote, undefined, is left out of the reply.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 3,
+          "downvotes": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/comment_votes?user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-invalid-type",
+      "disposition": "preserve",
+      "reason": "A voteType other than upvote or downvote: 400, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"sideways\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid vote type"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to vote."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Supabase Auth refuses: 401.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to vote."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-comment",
+      "disposition": "preserve",
+      "reason": "No commentId: 400, checked before the vote type.",
+      "method": "POST",
+      "body": "{\"voteType\":\"sideways\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment ID is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-invalid-json",
+      "disposition": "preserve",
+      "reason": "A body that is not JSON: 500.",
+      "method": "POST",
+      "body": "{broken",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-null-body",
+      "disposition": "preserve",
+      "reason": "A body of null cannot be destructured: 500.",
+      "method": "POST",
+      "body": "null",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-upsert-fails",
+      "disposition": "preserve",
+      "reason": "The upsert fails: 500 \"Failed to save vote\".",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save vote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-delete-fails",
+      "disposition": "preserve",
+      "reason": "The removal fails: 500 \"Failed to remove vote\".",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":null}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to remove vote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/comment_votes?user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-comment-missing",
+      "disposition": "preserve",
+      "reason": "The comment cannot be read back (406): its error is ignored, and both counts are 0.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 0,
+          "downvotes": 0,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-falsy",
+      "disposition": "preserve",
+      "reason": "Counts of 0 or null are written as 0 (|| 0).",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 0,
+            "downvotes": null
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 0,
+          "downvotes": 0,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-count-passes-through",
+      "disposition": "preserve",
+      "reason": "Truthy counts pass through as stored, even text.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": "7",
+            "downvotes": 2.5
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": "7",
+          "downvotes": 2.5,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-read-unreachable",
+      "disposition": "preserve",
+      "reason": "The read cannot be reached: counts 0.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 0,
+          "downvotes": 0,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": "6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-number-id",
+      "disposition": "preserve",
+      "reason": "A commentId that is a number is stored as sent and filtered on as its text.",
+      "method": "POST",
+      "body": "{\"commentId\":42,\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "upvotes": 3,
+          "downvotes": 1,
+          "userVote": "upvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/comment_votes?on_conflict=user_id%2Ccomment_id",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "comment_id": 42,
+              "vote_type": "upvote"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=upvotes%2Cdownvotes&id=eq.42",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in",
+      "disposition": "preserve",
+      "reason": "Signed in: the user's vote on the comment is read as one row; its vote_type is userVote.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "vote_type": "downvote"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "userVote": "downvote"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/comment_votes?select=vote_type&user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in-no-vote",
+      "disposition": "preserve",
+      "reason": "No vote of the user's: 406, and userVote is null.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/comment_votes?select=vote_type&user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out: userVote is null and the database is not asked.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 200,
+        "body": {
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Auth refuses counts as signed out: userVote null, no database request.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 200,
+        "body": {
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-no-comment",
+      "disposition": "preserve",
+      "reason": "No commentId: 400.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Comment ID is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-read-fails",
+      "disposition": "preserve",
+      "reason": "The read fails: its error is ignored, userVote null.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "userVote": null
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/comment_votes?select=vote_type&user_id=eq.user-a&comment_id=eq.6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing-post",
+      "disposition": "preserve",
+      "reason": "Without the project's settings the client cannot be built: 500.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get",
+      "disposition": "preserve",
+      "reason": "GET checks commentId first, then builds the client: 500.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}

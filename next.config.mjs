@@ -55,6 +55,8 @@ const goBackendRoutes = {
   "repo-vote": "/api/repo/vote",
   // Ratings of a repository (RATING-001). Bearer only, like collect.
   "repo-rating": "/api/repo/rating",
+  // Votes on comments (CVOTE-001). Bearer only, like collect.
+  "comment-vote": "/api/repo/comments/vote",
 };
 
 function goBackendRewrites() {
