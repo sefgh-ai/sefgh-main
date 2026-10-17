@@ -179,6 +179,13 @@ const scenarios = [
   { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":null}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":"sideways"}', headers: { Authorization: 'Bearer session-a' }, status: 400, cache: null },
   { path: '/api/repo/vote', body: '{"repoFullName":"octo/demo","voteType":"upvote"}' },
+  // Ratings: read by anyone, written by the signed-in user. No Cache-Control.
+  { path: '/api/repo/rating?repo=octo%2Fdemo' },
+  { path: '/api/repo/rating?repo=octo%2Fdemo', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/rating', body: '{"repoFullName":"octo/demo","rating":4,"reviewText":"Solid"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/rating', body: '{"repoFullName":"octo/demo","rating":9}', headers: { Authorization: 'Bearer session-a' }, status: 400, cache: null },
+  { path: '/api/repo/rating?repo=octo%2Fdemo', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/rating?repo=octo%2Fdemo', method: 'DELETE' },
 ];
 
 try {
@@ -243,6 +250,16 @@ try {
         if (req.url.includes('user_id=eq.')) res.end(JSON.stringify({ vote_type: 'upvote' }));
         else res.end(JSON.stringify([{ vote_type: 'upvote' }, { vote_type: 'downvote' }, { vote_type: 'upvote' }]));
       }
+      // Ratings: anyone may read them; a signed-in user may write their own.
+      else if (req.url.startsWith('/rest/v1/repo_ratings') && req.method !== 'GET') {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(req.method === 'DELETE' ? 204 : 201); res.end();
+      }
+      else if (req.url.startsWith('/rest/v1/repo_ratings?')) {
+        if (req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        if (req.url.includes('user_id=eq.')) res.end(JSON.stringify({ id: 'r1', user_id: 'a', rating: 4 }));
+        else res.end(JSON.stringify([{ id: 'r1', user_id: 'a', rating: 4 }, { id: 'r2', user_id: 'b', rating: 5 }]));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -270,7 +287,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

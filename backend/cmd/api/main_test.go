@@ -77,7 +77,8 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 		t.Errorf("a share read can take %v, which is not below the server's write timeout of %v", supabaserest.Timeout, writeTimeout)
 	}
 	// Collect asks Supabase who is calling, then writes, then counts: two
-	// database calls.
+	// database calls. A rating does the same: an upsert, then a read; and its
+	// GET makes two reads.
 	if total := githubaccess.DefaultTimeout + 2*supabaserest.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in, a write and a count can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}

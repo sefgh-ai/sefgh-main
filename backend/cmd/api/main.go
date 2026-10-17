@@ -30,6 +30,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/rating"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
@@ -112,6 +113,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
 	top.Handle("/api/repo/vote", voteMux(logger, verifier))
+	top.Handle("/api/repo/rating", ratingMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -242,6 +244,24 @@ func voteMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux
 	}
 	mux.Handle("GET /api/repo/vote", h)
 	mux.Handle("POST /api/repo/vote", h)
+	return mux
+}
+
+// ratingMux serves ratings of a repository. Like collect and vote, every
+// read and write goes as the caller with their own token, or the public key
+// when signed out, so row-level security decides.
+func ratingMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &rating.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	for _, method := range []string{"GET", "POST", "DELETE"} {
+		mux.Handle(method+" /api/repo/rating", h)
+	}
 	return mux
 }
 

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export function RepoRatingSection({ repoFullName, initialRatings, userRating }) {
   const { user } = useAuth()
@@ -31,7 +32,7 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/repo/rating', {
+      const response = await fetchWithSession('/api/repo/rating', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

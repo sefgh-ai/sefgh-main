@@ -76,3 +76,28 @@ func ISOString(t time.Time) string {
 	}
 	return sign + digits + t.Format("-01-02T15:04:05.000Z")
 }
+
+// LengthOrZero is `value?.length || 0` for a value ParseJSON returned, with
+// raw its JSON text, written back as JSON: a list's length, text's length in
+// UTF-16 units, or an object's own length field when it is truthy, as it was
+// written. Anything else has no length, so it is 0.
+func LengthOrZero(value any, raw []byte) json.RawMessage {
+	switch v := value.(type) {
+	case []any:
+		return json.RawMessage(strconv.Itoa(len(v)))
+	case string:
+		return json.RawMessage(strconv.Itoa(UTF16Len(v)))
+	case map[string]any:
+		fields, _ := ObjectFields([]byte(DecodeUTF8(raw)))
+		var length json.RawMessage
+		for _, field := range fields {
+			if field.Name == "length" {
+				length = field.Value
+			}
+		}
+		if TruthyJSON(length) {
+			return length
+		}
+	}
+	return json.RawMessage("0")
+}

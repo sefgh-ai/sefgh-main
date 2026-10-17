@@ -150,7 +150,7 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		data, _ := supabaserest.ReadResult(upstream, raw)
 		votes = counts(0, 0)
 		if jscompat.Truthy(data) {
-			votes = replyJSON(upstream, raw)
+			votes = supabaserest.DataJSON(upstream, raw)
 		}
 	}
 
@@ -286,16 +286,6 @@ func count(data any) (up, down int, ok bool) {
 // counts writes { upvotes, downvotes, net_votes: upvotes - downvotes }.
 func counts(up, down int) []byte {
 	return []byte(`{"upvotes":` + strconv.Itoa(up) + `,"downvotes":` + strconv.Itoa(down) + `,"net_votes":` + strconv.Itoa(up-down) + `}`)
-}
-
-// replyJSON is a successful reply's data, as JSON.stringify writes it back.
-// supabase-js reads a 404 whose body is a list as data [], whatever the list
-// held.
-func replyJSON(status int, raw []byte) []byte {
-	if status < 200 || status > 299 {
-		return []byte("[]")
-	}
-	return []byte(jscompat.DecodeUTF8(raw))
 }
 
 // field is data?.name || fallback for a reply that holds one object: the

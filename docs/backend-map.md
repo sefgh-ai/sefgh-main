@@ -399,3 +399,10 @@ default (switch `repo-vote`). Writes go as the caller (`supabaserest.Upsert`,
 `Delete`); the stats function is called with `supabaserest.RPC` and, as on
 the live database, fails, so the votes are counted by hand. The vote arrows
 send the bearer (`fetchWithSession`).
+
+## RATING-001 update (2026-10-17)
+
+`/api/repo/rating` (GET, POST, DELETE) has a Go port, `backend/internal/rating`,
+off by default (switch `repo-rating`). Writes go as the caller; JavaScript's
+loose comparisons and `+` are copied by `jscompat`. The rating form sends the
+bearer (`fetchWithSession`).

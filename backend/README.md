@@ -228,6 +228,15 @@ keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
 
+## Rating (RATING-001)
+
+Opt-in name: `repo-rating`, off by default. `POST`, `DELETE` and `GET /api/repo/rating`: rating a repository, removing the rating, and every rating with the total and average. It passes the 52 cases of `contracts/repo-rating`, recorded from the Next.js handlers with the shared runner (`scripts/contracts/route-db-fixture.mjs`).
+
+- **JavaScript's loose rules, copied:** the check (`rating < 1 || rating > 5`) turns the rating into a number with `jscompat.Number`, so `"5"`, `" 5 "`, `"0x5"` and `[3]` pass and `"great"` (NaN) passes every comparison. The average adds with `jscompat.Add`, which joins text, and rounds with `jscompat.MathRound`; NaN is written `null` (`jscompat.NumberJSON`). These are bug R-085, kept so the two can be compared; the fix comes after cutover.
+- **Writes go as the caller** (`supabaserest.Upsert`, `Delete`), with `updated_at` from `Handler.Now`.
+- **Shared helpers:** `jscompat.LengthOrZero` (`x?.length || 0`, moved out of collect) and `supabaserest.DataJSON` (the data supabase-js hands over, moved out of vote) now serve all three routes.
+- **Differs from Next.js:** a bearer instead of the session cookie (the rating form now uses `fetchWithSession`); a POST body over 1 MiB is answered as unreadable; other methods get Go's 405.
+
 ## Vote (VOTE-001)
 
 Opt-in name: `repo-vote`, off by default. `POST` and `GET /api/repo/vote`: upvoting, downvoting or removing a vote, and the counts. It passes the 37 cases of `contracts/repo-vote`, recorded from the Next.js handlers with the real supabase-js and a fixed clock (`scripts/contracts/route-db-fixture.mjs`).

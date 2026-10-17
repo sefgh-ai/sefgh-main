@@ -164,6 +164,16 @@ func ReadResult(status int, raw []byte) (data any, failed bool) {
 	return nil, Truthy(value)
 }
 
+// DataJSON is the data of a reply ReadResult did not fail, as JSON.stringify
+// writes it back: a success's own text, and [] for a 404 whose body is a
+// list, which supabase-js reads as no rows whatever the list held.
+func DataJSON(status int, raw []byte) []byte {
+	if status < 200 || status > 299 {
+		return []byte("[]")
+	}
+	return []byte(jscompat.DecodeUTF8(raw))
+}
+
 // Truthy reports whether JavaScript would treat a decoded JSON value as
 // true. It is jscompat.Truthy, kept here for the routes that read replies.
 func Truthy(value any) bool { return jscompat.Truthy(value) }

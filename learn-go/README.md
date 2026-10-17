@@ -76,6 +76,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [24 Optional sign-in, and a URL that matches byte for byte](24-optional-sign-in/README.md) | Method and wildcard route patterns, `r.PathValue`, "value, ok" pairs and `strings.CutPrefix`, two URL encoders that disagree, a `switch` with no value | `backend/internal/sharetoken`, `FormEncode` in `backend/internal/jscompat/jscompat.go`, `backend/internal/supabaserest` |
 | [25 Writing to the database as the user](25-writing-as-the-user/README.md) | Sending a request with a body, writes that go with the user's own token, JavaScript's `||` defaults, a type switch, copying `.some()` exactly | `backend/internal/collect`, `Insert` and `Delete` in `backend/internal/supabaserest`, `backend/internal/jscompat/tostring.go` |
 | [26 Three kinds of nothing, and one deadline for several calls](26-three-kinds-of-nothing/README.md) | `undefined`, `null` and falsy values, a `nil` `json.RawMessage`, one `context.WithTimeout` over calls in a row, a clock passed in, sharing helpers in `jscompat` | `backend/internal/vote`, `backend/internal/jscompat/request.go`, `backend/cmd/api/main_test.go` |
+| [27 When text meets numbers](27-when-text-meets-numbers/README.md) | JavaScript's comparisons and `+` with text, NaN in a range check, three ways to round, checking a number's shape before parsing it | `backend/internal/rating`, `backend/internal/jscompat/number.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

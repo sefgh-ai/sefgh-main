@@ -1,0 +1,2573 @@
+{
+  "contract_version": 1,
+  "route": "GET, POST and DELETE /api/repo/rating",
+  "recorded_from": "the Next.js handlers at e223449, by scripts/contracts/record-repo-rating.mjs",
+  "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API (scripts/contracts/route-db-fixture.mjs); only auth.getUser() is replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
+  "cases": [
+    {
+      "id": "post-rates",
+      "disposition": "preserve",
+      "reason": "A signed-in user rates a repository 4: the rating is upserted as the user, then every rating of the repository is read and averaged.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4,\"reviewText\":\"Solid\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            },
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-no-review",
+      "disposition": "preserve",
+      "reason": "Without reviewText, review_text is null.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":5}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            },
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-empty-review",
+      "disposition": "preserve",
+      "reason": "An empty reviewText is falsy: null.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":5,\"reviewText\":\"\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            },
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and the database is not asked.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to rate."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-refused-session",
+      "disposition": "preserve",
+      "reason": "A session Supabase Auth refuses: 401.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to rate."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-repo",
+      "disposition": "preserve",
+      "reason": "No repoFullName: 400, checked before the rating.",
+      "method": "POST",
+      "body": "{\"rating\":9}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-no-rating",
+      "disposition": "preserve",
+      "reason": "No rating: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-zero",
+      "disposition": "preserve",
+      "reason": "0 is falsy: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":0}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-six",
+      "disposition": "preserve",
+      "reason": "6 is above 5: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":6}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-fraction-low",
+      "disposition": "preserve",
+      "reason": "0.9 is below 1: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":0.9}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-fraction",
+      "disposition": "preserve",
+      "reason": "4.5 is between 1 and 5, so it passes and is stored as sent.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4.5}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4.5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 4.5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4.5,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-text-number",
+      "disposition": "defect",
+      "reason": "The text \"5\" compares as the number 5, so it passes and is stored as text. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"5\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": "5",
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-text-words",
+      "disposition": "defect",
+      "reason": "The text \"great\" is NaN, and every comparison with NaN is false, so it passes the check; the database then refuses it for an integer column: 500. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"great\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 400,
+          "body": {
+            "code": "22P02",
+            "details": null,
+            "hint": null,
+            "message": "invalid input syntax for type integer: \"great\""
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save rating"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": "great",
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-text-six",
+      "disposition": "preserve",
+      "reason": "The text \"6\" compares as 6: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"6\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-padded",
+      "disposition": "defect",
+      "reason": "The text \" 5 \" compares as 5 (white space is ignored), so it passes. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\" 5 \"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": " 5 ",
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-hex",
+      "disposition": "defect",
+      "reason": "The text \"0x5\" compares as 5, so it passes. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"0x5\"}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": "0x5",
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-list",
+      "disposition": "defect",
+      "reason": "The list [3] compares as 3, so it passes. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":[3]}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 3
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 3
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": [
+                3
+              ],
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-empty-list",
+      "disposition": "preserve",
+      "reason": "The list [] compares as 0: 400.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":[]}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-rating-object",
+      "disposition": "defect",
+      "reason": "An object is NaN, so it passes the check. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":{\"stars\":4}}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 4
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": {
+                "stars": 4
+              },
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-rating-true",
+      "disposition": "defect",
+      "reason": "true compares as 1, so it passes. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":true}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 1
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 1
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": true,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-invalid-json",
+      "disposition": "preserve",
+      "reason": "A body that is not JSON: 500, and the database is not asked.",
+      "method": "POST",
+      "body": "{broken",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-null-body",
+      "disposition": "preserve",
+      "reason": "A body of null cannot be destructured: 500.",
+      "method": "POST",
+      "body": "null",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-upsert-fails",
+      "disposition": "preserve",
+      "reason": "The upsert fails: 500 \"Failed to save rating\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to save rating"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-read-fails",
+      "disposition": "preserve",
+      "reason": "The upsert succeeds and the read fails: 500 \"Failed to fetch updated ratings\".",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch updated ratings"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-no-ratings-read",
+      "disposition": "preserve",
+      "reason": "No rows read back: total and average are 0.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 0,
+            "average": 0
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-average-rounds",
+      "disposition": "preserve",
+      "reason": "The average is rounded to one decimal with Math.round: 4.25 and 4.35 average 4.3.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4.25
+            },
+            {
+              "rating": 4.35
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 4.3
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-average-half-up",
+      "disposition": "preserve",
+      "reason": "Math.round takes a half upward: 4.45 averages to 4.5 here (4.45 * 10 is 44.5).",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4.45
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 1,
+            "average": 4.5
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-sum-joins-text",
+      "disposition": "defect",
+      "reason": "A rating stored as text joins the sum as text: 0 + \"3\" + 4 is \"034\", which averages to 17. (bug register R-085)",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": "3"
+            },
+            {
+              "rating": 4
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 17
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-sum-null-rating",
+      "disposition": "preserve",
+      "reason": "A null rating adds 0.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": null
+            },
+            {
+              "rating": 4
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": 2
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-sum-missing-rating",
+      "disposition": "preserve",
+      "reason": "A row without rating adds undefined: the average is NaN, which JSON writes as null.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {},
+            {
+              "rating": 4
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-sum-overflows",
+      "disposition": "preserve",
+      "reason": "Two huge ratings add to Infinity, which JSON writes as null.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 1e+308
+            },
+            {
+              "rating": 1e+308
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 2,
+            "average": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-null-row",
+      "disposition": "preserve",
+      "reason": "A null row: r.rating throws, 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            },
+            null
+          ]
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-object-reply",
+      "disposition": "preserve",
+      "reason": "A read that answers an object with a length: reduce() does not exist, 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "length": 2
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-text-reply",
+      "disposition": "preserve",
+      "reason": "A read that answers text: its length is above 0 and text has no reduce(), 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": "ab"
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-number-repo",
+      "disposition": "preserve",
+      "reason": "A repoFullName that is a number is stored as a number and filtered on as its text.",
+      "method": "POST",
+      "body": "{\"repoFullName\":42,\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "ratings": {
+            "total": 0,
+            "average": 0
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
+            "prefer": "resolution=merge-duplicates",
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": 42,
+              "rating": 4,
+              "review_text": null,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.42",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out: every rating is read with the public key and averaged; userRating is null and allRatings are the rows as read.",
+      "method": "GET",
+      "query": "repo=octo%2Fdemo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          },
+          "userRating": null,
+          "allRatings": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in",
+      "disposition": "preserve",
+      "reason": "Signed in: the user's own rating is read as one row and passed through as userRating.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": {
+            "id": "r1",
+            "user_id": "user-a",
+            "repo_full_name": "octo/demo",
+            "rating": 4,
+            "review_text": "Solid",
+            "created_at": "2026-10-10T08:00:00+00:00",
+            "updated_at": "2026-10-10T08:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          },
+          "userRating": {
+            "id": "r1",
+            "user_id": "user-a",
+            "repo_full_name": "octo/demo",
+            "rating": 4,
+            "review_text": "Solid",
+            "created_at": "2026-10-10T08:00:00+00:00",
+            "updated_at": "2026-10-10T08:00:00+00:00"
+          },
+          "allRatings": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-signed-in-unrated",
+      "disposition": "preserve",
+      "reason": "No rating of the user's: the single read fails with 406, and userRating is null.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          },
+          "userRating": null,
+          "allRatings": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-no-repo",
+      "disposition": "preserve",
+      "reason": "No repo parameter: 400, before anything else is asked.",
+      "method": "GET",
+      "query": "",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-error",
+      "disposition": "preserve",
+      "reason": "The read fails: 500 \"Failed to fetch ratings\".",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch ratings"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-empty",
+      "disposition": "preserve",
+      "reason": "No ratings: total and average 0, allRatings [].",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 0,
+            "average": 0
+          },
+          "userRating": null,
+          "allRatings": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-empty-success",
+      "disposition": "preserve",
+      "reason": "A success with no body: allRatings is [] (null || []).",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 0,
+            "average": 0
+          },
+          "userRating": null,
+          "allRatings": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-refused-session",
+      "disposition": "preserve",
+      "reason": "A refused session counts as signed out, but its token still goes to the database, which refuses it: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-refused",
+      "user": {
+        "error": "invalid JWT"
+      },
+      "database": [
+        {
+          "status": 401,
+          "body": {
+            "code": "PGRST303",
+            "details": null,
+            "hint": null,
+            "message": "JWT expired"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch ratings"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-refused",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-length-field",
+      "disposition": "preserve",
+      "reason": "An object with a length field: total passes through, and with a total above 0 reduce() does not exist: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "length": 3
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-length-zero",
+      "disposition": "preserve",
+      "reason": "An object with length 0: total is 0, no reduce() is needed, and allRatings is the object.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "length": 0
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 0,
+            "average": 0
+          },
+          "userRating": null,
+          "allRatings": {
+            "length": 0
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-removes",
+      "disposition": "preserve",
+      "reason": "The user's rating of the repository is deleted: 200 { success: true }.",
+      "method": "DELETE",
+      "query": "repo=octo%2Fdemo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_ratings?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-signed-out",
+      "disposition": "preserve",
+      "reason": "No session: 401, and the database is not asked.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-no-repo",
+      "disposition": "preserve",
+      "reason": "Signed in with no repo parameter: 400. Sign-in is checked first.",
+      "method": "DELETE",
+      "query": "",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Repository name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-fails",
+      "disposition": "preserve",
+      "reason": "The delete fails: 500 \"Failed to delete rating\".",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete rating"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_ratings?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "settings-missing-post",
+      "disposition": "preserve",
+      "reason": "Without the project's settings the client cannot be built: 500.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4}",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-get",
+      "disposition": "preserve",
+      "reason": "GET checks the repo parameter first, then builds the client: 500.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": null,
+      "user": null,
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "settings-missing-delete",
+      "disposition": "preserve",
+      "reason": "DELETE builds the client first: 500.",
+      "method": "DELETE",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "id": "user-a",
+        "email": null,
+        "is_anonymous": false
+      },
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    }
+  ]
+}

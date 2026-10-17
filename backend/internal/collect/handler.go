@@ -146,7 +146,7 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	write(w, 200, []byte(`{"saved":`+strconv.FormatBool(saved)+`,"totalSaves":`+string(lengthOf(data, raw))+`}`))
+	write(w, 200, []byte(`{"saved":`+strconv.FormatBool(saved)+`,"totalSaves":`+string(jscompat.LengthOrZero(data, raw))+`}`))
 }
 
 // delete removes a repository from one collection: DELETE in the Next.js
@@ -209,7 +209,7 @@ func (h *Handler) count(r *http.Request, session, repo string) json.RawMessage {
 		h.log("count", upstream, nil)
 		return json.RawMessage("0")
 	}
-	return lengthOf(data, raw)
+	return jscompat.LengthOrZero(data, raw)
 }
 
 // insertRow is the object the Next.js handler inserts:
@@ -272,30 +272,6 @@ func savedBy(data any, userID string) (saved, ok bool) {
 		return false, true
 	}
 	return false, false
-}
-
-// lengthOf is saves?.length || 0, written as JSON: a list's length, text's
-// length in UTF-16 units, or an object's own length field when it is
-// truthy, as it was written. Anything else has no length.
-func lengthOf(data any, raw []byte) json.RawMessage {
-	switch v := data.(type) {
-	case []any:
-		return json.RawMessage(strconv.Itoa(len(v)))
-	case string:
-		return json.RawMessage(strconv.Itoa(jscompat.UTF16Len(v)))
-	case map[string]any:
-		fields, _ := jscompat.ObjectFields([]byte(jscompat.DecodeUTF8(raw)))
-		var length json.RawMessage
-		for _, field := range fields {
-			if field.Name == "length" {
-				length = field.Value
-			}
-		}
-		if truthy(length) {
-			return length
-		}
-	}
-	return json.RawMessage("0")
 }
 
 // parse reads one raw JSON value the body already proved valid.

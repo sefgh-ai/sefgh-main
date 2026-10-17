@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: VOTE-001 handed off; writer released.
+Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: RATING-001 handed off; writer released.
 
 ## Start here
 
@@ -11,11 +11,47 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released VOTE-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
+- **Active writer:** none. Claude Code released RATING-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Sixteen of 25 API routes are implemented in Go (64% of routes, not of the whole migration): every read-only route, and two that write (`/api/repo/collect`, `/api/repo/vote`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 84 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Seventeen of 25 API routes are implemented in Go (68% of routes, not of the whole migration): every read-only route, and three that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 85 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: VOTE-001, `/api/repo/vote` (Claude Code, 2026-10-17)
+## Latest handoff: RATING-001, `/api/repo/rating` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the rating form sends the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base e223449 (VOTE-001 at 34a05c1, pushed). Resulting commit: uncommitted at handoff; the Git Agent synchronizes.
+Owner instruction (2026-10-17): "continue next stages", "continue".
+
+Done:
+- Contract `contracts/repo-rating` version 1, 52 cases (8 `defect`, all R-085), recorded from the three Next.js handlers with the shared runner `route-db-fixture.mjs`. Recorder `record-repo-rating.mjs`, Node runner `repo-rating.test.mjs`.
+- `jscompat/number.go` (new): `Number`, `StringToNumber`, `Add`, `MathRound`, `NumberJSON`, `Undefined`; `String` now also writes float64 and undefined. Every expected value in `number_test.go` came from Node.
+- `jscompat.LengthOrZero` (moved out of collect) and `supabaserest.DataJSON` (moved out of vote); collect and vote use them.
+- `backend/internal/rating`: the port, 52 of 52. Unit tests: body limit and logs. Wiring: `ratingMux`, `rating_wiring_test.go`.
+- Next.js switch `repo-rating`, rewrite test, six probe scenarios with a ratings stand-in. `RepoRatingSection.jsx` uses `fetchWithSession`.
+- Lesson 27 (when text meets numbers; exercise `mathRound`). Index updated.
+- Docs: contract README, backend README "Rating (RATING-001)", ADR (Phase 3 row, dated note), backend map. Bug register R-085 (new, Low) and R-084 extended to rating.
+
+Changed files: backend/internal/rating/* (new), backend/internal/jscompat/{number.go,number_test.go} (new), backend/internal/jscompat/{tostring.go,request.go}, backend/internal/supabaserest/supabaserest.go, backend/internal/{collect,vote}/handler.go, backend/cmd/api/{main.go,main_test.go,rating_wiring_test.go (new)}, backend/README.md, contracts/repo-rating/* (new), scripts/contracts/{record-repo-rating,repo-rating.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/repo-details/RepoRatingSection.jsx, learn-go/{README.md,27-when-text-meets-numbers/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 965 of 965. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 23 packages pass; vet clean; gofmt empty. learn-go `-tags solution`: 28 packages pass; lesson 27's exercise fails only `TestMathRound`, as intended.
+- Forwarding probe (dev): 102 of 102 identical, including six rating requests (GET signed in and out, POST, a refused rating, DELETE signed in and out).
+- Deliberate breaks, each caught, then restored:
+  - the public key instead of the caller's token for the upsert;
+  - only real numbers passing the check (7 cases);
+  - a sum added only as numbers (`post-sum-joins-text`);
+  - NaN written as text (2 cases);
+  - `allRatings` passed through even when empty (`get-empty-success`).
+  One attempt at the NaN break did not compile and was redone.
+- npm run handoff ran after this record was saved; a failure would be recorded here by a further edit.
+Not checked: `-race` (CI runs it); the route against the real database (including the type of `repo_ratings.rating`, which decides what the database refuses); the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; the owner's choice to switch `repo-rating` on.
+Next bounded action: `/api/repo/comments` and `comments/vote`. Comments also need commenters' names, which R-040 and R-075 break today: the Go port must copy that until cutover. Read the comment routes and their tables' rules in `database/user-db.md` first.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: VOTE-001, `/api/repo/vote` (Claude Code, 2026-10-17)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the vote arrows send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -1884,7 +1920,7 @@ Task / scope: REVIEW-002, peer review of GO-002a and GO-002b (commit 6e0753d):
 Owner / reviewer: Claude Code reviewed Codex's work. This record is itself unreviewed.
 Status: review complete. Implementation was already complete. Not deployed.
 Base commit / branch / worktree: 43513d4 / main / main checkout
-Resulting commit: uncommitted at handoff; the Git Agent commits after npm run handoff.
+Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `e223449`).
 Changed files: docs/claude-review.md (review section added) and this file. Nothing else.
 Contract or decision changes: none.
 Verdict: acceptable as merged with routing off. NOT ready to switch any of the
