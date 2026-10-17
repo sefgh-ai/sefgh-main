@@ -18,6 +18,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/videos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
 
@@ -98,6 +99,15 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	if total := githubaccess.DefaultTimeout + comments.WriteBudget; total >= writeTimeout {
 		t.Errorf("sign-in and a comment's three calls can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	// Videos: a GET reads the list, then every uploader within one budget; a
+	// POST asks Supabase, then makes two calls within another. A DELETE asks
+	// Supabase, then deletes once, as a sign-in and a write above.
+	if total := supabaserest.Timeout + videos.DetailsBudget; total >= writeTimeout {
+		t.Errorf("the video list and its uploaders can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	if total := githubaccess.DefaultTimeout + videos.WriteBudget; total >= writeTimeout {
+		t.Errorf("sign-in and a video's two calls can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

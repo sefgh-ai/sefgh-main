@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export function RepoVideoTab({ repoFullName }) {
   const { user } = useAuth()
@@ -33,7 +34,7 @@ export function RepoVideoTab({ repoFullName }) {
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch(`/api/repo/videos?repo=${encodeURIComponent(repoFullName)}`)
+      const response = await fetchWithSession(`/api/repo/videos?repo=${encodeURIComponent(repoFullName)}`)
       const data = await response.json()
       
       if (response.ok) {
@@ -58,7 +59,7 @@ export function RepoVideoTab({ repoFullName }) {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/repo/videos', {
+      const response = await fetchWithSession('/api/repo/videos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -96,7 +97,7 @@ export function RepoVideoTab({ repoFullName }) {
     if (!confirm('Are you sure you want to delete this video?')) return
 
     try {
-      const response = await fetch(`/api/repo/videos?id=${videoId}`, {
+      const response = await fetchWithSession(`/api/repo/videos?id=${videoId}`, {
         method: 'DELETE'
       })
 

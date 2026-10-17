@@ -24,7 +24,6 @@ import (
 	"log/slog"
 	"math"
 	"net/http"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -51,10 +50,6 @@ const DetailsBudget = 16 * time.Second
 // WriteBudget bounds a POST's database calls together: the parent check,
 // the insert and the profile read, three calls after the sign-in check.
 const WriteBudget = 20 * time.Second
-
-// uuidPattern is the check auth-js 2.78 makes before an admin lookup
-// (validateUUID): lower case only. An id that fails it throws.
-var uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 
 // Handler answers the four methods of /api/repo/comments. User, Database and
 // the two settings are required; the rest have defaults.
@@ -217,14 +212,9 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 	// let userEmail = null, then, with no profile, the admin lookup (R-040).
 	userEmail := json.RawMessage("null")
 	if userData == nil {
-		uid := jscompat.String(userID)
-		if !uuidPattern.MatchString(uid) {
-			return nil, false // validateUUID throws before any request
-		}
-		upstream, raw, err := db.AdminUser(ctx, uid)
 		var ok bool
-		if userEmail, ok = adminEmail(upstream, raw, err); !ok {
-			return nil, false
+		if userEmail, ok = db.AdminUserEmail(ctx, jscompat.String(userID)); !ok {
+			return nil, false // validateUUID, or null.user, throws
 		}
 	}
 	// The reply count; its error is ignored, and count || 0.
@@ -258,38 +248,6 @@ func (h *Handler) profile(ctx context.Context, session, userID string) []byte {
 		return supabaserest.DataJSON(upstream, raw)
 	}
 	return nil
-}
-
-// adminEmail is authUser?.user?.email after auth.admin.getUserById, as
-// auth-js 2.78 reads the reply: any failure is an auth error, so no user;
-// a success is read as JSON, and its user is data.user ?? data. It answers
-// the email's JSON, or nil for undefined. ok is false where auth-js throws:
-// a success whose JSON is null (null.user).
-func adminEmail(status int, raw []byte, err error) (json.RawMessage, bool) {
-	if err != nil || status < 200 || status > 299 {
-		return nil, true
-	}
-	value, perr := jscompat.DecodeJSON(raw)
-	if perr != nil {
-		return nil, true
-	}
-	if value == nil {
-		return nil, false
-	}
-	user := value
-	if object, isObject := value.(map[string]any); isObject && object["user"] != nil {
-		user = object["user"]
-	}
-	object, isObject := user.(map[string]any)
-	if !isObject {
-		return nil, true
-	}
-	email, present := object["email"]
-	if !present {
-		return nil, true
-	}
-	text, _ := json.Marshal(email)
-	return text, true
 }
 
 // property is value.name for one row's raw JSON: an object's field, and

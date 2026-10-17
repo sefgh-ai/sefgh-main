@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: COMMENTS-001 handed off; writer released.
+Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: VIDEOS-001 handoff (contract and Go port of /api/repo/videos, off by default); writer released.
 
 ## Start here
 
@@ -11,11 +11,42 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released COMMENTS-001 on 2026-10-17. Trending on `sefgh-main` is served by Go; every other route by Next.js.
+- **Active writer:** none. Previously: VIDEOS-001 released 2026-10-17 (paused once at the owner's request and resumed the same day).
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Nineteen of 25 API routes are implemented in Go (76% of routes, not of the whole migration): every read-only route, and five that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 87 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Stage:** Twenty of 25 API routes are implemented in Go (80% of routes, not of the whole migration): every read-only route, and six that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 88 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: COMMENTS-001, `/api/repo/comments` (Claude Code, 2026-10-17)
+## Latest handoff: VIDEOS-001, `/api/repo/videos` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the video tab sends the Supabase bearer (`fetchWithSession`) for all three calls; Next.js still answers the route.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `7c894a0` (COMMENTS-001 at `71ff742`, pushed). Resulting commit: synchronized by Git Agent on `main` and `go-backend` (from base `7c894a0`).
+Owner instructions (2026-10-17): "continue"; then "save a checkpoint and stop" (the task was paused, checkpointed and released); then the pickup prompt, which resumed it.
+
+Done:
+- Contract `contracts/repo-videos` version 1, 47 cases (4 `defect`), recorded from the three Next.js handlers at `7c894a0` (`record-repo-videos.mjs`, `repo-videos.test.mjs`, 48 of 48). GET's requests are compared in any order. One hand-written reason was corrected after the pause (a stray comma); no recorded answer changed.
+- `backend/internal/jscompat/regexp.go`: `JSSpace` and `JSDot` (JavaScript's white space class and dot, which differ from Go's) and `FindSubmatchUTF16` (a pattern run over UTF-16 units, so `{11}` counts an emoji as two and can end in half of one). Its tests are vectors produced in Node.
+- `backend/internal/videos`: the port, 47 of 47. Uploaders for at most four videos at once within `DetailsBudget` (16 s); the first rejection cancels the rest; a POST's two calls within `WriteBudget` (20 s); 1 MiB bodies. `kind` copies `includes()` on text and on a list. The contract test also compares lone halves of emoji written as escapes, which Go's JSON reader would turn into U+FFFD. Unit tests: four at a time, a hanging read, the first failure stopping the rest, body limit, logs, and `kind` for every kind of value.
+- `supabaserest.AdminUserEmail` (with `uuidPattern`), moved out of comments and shared; comments uses it and still passes its 50 cases.
+- Wiring: `videosMux` (GET, POST, DELETE), `videos_wiring_test.go` (list, insert and delete as the caller; the admin lookup carries only the public key; PATCH is 405), write-timeout checks for both budgets. Next.js switch `repo-videos`, rewrite test, five probe scenarios (one with an id ending in half of an emoji) and stand-ins. `RepoVideoTab.jsx`: all three calls use `fetchWithSession` (CRLF kept).
+- Lesson 29 (a JavaScript pattern in Go: white space, dot, UTF-16 units, byte offsets, `includes` on a list; exercise `unitIndex`). Index updated.
+- Docs: contract README, backend README "Videos (VIDEOS-001)" and the route table (the six earlier write ports were missing from it and are added), ADR (Phase 3 row, recorded difference, dated note), backend map. Bug register: R-088 new (any text accepted as a video address, type found anywhere in it; needs the owner); R-040, R-075, R-084 and R-087 extended to videos.
+
+Changed files: backend/internal/videos/{handler.go,handler_test.go,contract_test.go} (new), backend/internal/jscompat/{regexp.go,regexp_test.go} (new), backend/internal/supabaserest/supabaserest.go, backend/internal/comments/handler.go, backend/cmd/api/{main.go,main_test.go,videos_wiring_test.go (new)}, backend/README.md, contracts/repo-videos/{cases.json,README.md} (new), scripts/contracts/{record-repo-videos,repo-videos.test}.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/repo-details/RepoVideoTab.jsx, learn-go/{README.md,29-a-javascript-pattern-in-go/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+Not part of this task: `scripts/agent-handoff.mjs` (a 5-second timeout on the CI-status fetch) was already changed in the working tree when the task resumed; it was left as found.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2), after the last code change:
+- `npm run test:contracts`: 1090 of 1090. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 26 packages pass; `go vet ./...` clean; `gofmt -l .` empty. `-race` could not run here (no C compiler); CI runs it, and this route is concurrent. learn-go `-tags solution`: 30 packages pass, vet clean, gofmt empty; lesson 29's exercise fails only its own tests (`TestUnitIndex`, `TestUnitIndexOfAMatch`), as intended.
+- Forwarding probe (dev): 118 of 118 identical, including five videos requests (GET signed in and out, POST, DELETE, signed-out POST).
+- Deliberate breaks against the contract, each caught, then restored byte for byte: Go's own white space class; Go's own dot; matching over runes; the thumbnail written through a Go string (caught only by the lone-half comparison); a list without `includes()`; a row without `uploaded_by` looked up; no admin lookup when a profile exists; a throwing admin lookup ignored; DELETE without the uploader filter; the email written as null; the order columns swapped; a falsy title kept; a null reply as an error; a non-list reply as empty; a null row returned; the insert without `uploaded_by`. Three of these did not compile at first (unused variables) and were redone. Unit breaks: no `cancel()` (the reply took 10 s, caught); no concurrency limit (20 at once, caught). A first concurrency break raised the constant the test compares against, proved nothing, and was redone.
+- `npm run handoff` runs after this record is saved; a failure would be recorded here by a further edit.
+Not checked: `-race` locally; the route against the real database (the columns and policies of `repo_videos`); the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review (concurrency and the UTF-16 matching especially); the owner's choice to switch `repo-videos` on; R-088 needs the owner's choice of accepted addresses; R-086 still needs a maximum comments page size.
+Next bounded action: `/api/conversations/[id]/share`, then `share/[token]/fork`, `playground/keys` (R-039), `upload-avatar` (Storage) and `trending/refresh` (R-077). Wait for the Git Agent's commit of this task first.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: COMMENTS-001, `/api/repo/comments` (Claude Code, 2026-10-17)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the comment form, edit and delete send the Supabase bearer (`fetchWithSession`); Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

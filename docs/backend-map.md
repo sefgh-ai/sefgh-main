@@ -420,3 +420,12 @@ bearer (`fetchWithSession`); the other comment calls still go to Next.js.
 reads each comment's details concurrently (four at once, one budget). The
 comment form, edit and delete send the bearer (`fetchWithSession`). The list
 the page shows is still read in the browser (`commentHelpers.js`).
+
+## VIDEOS-001 update (2026-10-17)
+
+`/api/repo/videos` (GET, POST, DELETE) has a Go port, `backend/internal/videos`,
+off by default (switch `repo-videos`). Its GET reads each video's uploader
+concurrently (four at once, one budget). The admin lookup that comments and
+videos share is `supabaserest.AdminUserEmail`. The video tab
+(`RepoVideoTab.jsx`) sends the bearer (`fetchWithSession`) for all three
+calls.

@@ -32,6 +32,7 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'repo-rating': '/api/repo/rating',
       'comment-vote': '/api/repo/comments/vote',
       'repo-comments': '/api/repo/comments',
+      'repo-videos': '/api/repo/videos',
     };
     for (const [name, path] of Object.entries(routes)) {
       process.env.SEFGH_GO_ROUTES = ` unknown, ${name}, ${name} `;

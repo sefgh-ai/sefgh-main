@@ -11,10 +11,12 @@ package supabaserest
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -130,6 +132,52 @@ func (c Client) AdminUser(ctx context.Context, id string) (int, []byte, error) {
 	target := strings.TrimRight(c.URL, "/") + "/auth/v1/admin/users/" + id
 	status, _, raw, err := c.send(ctx, http.MethodGet, c.Key, target, "", "", nil)
 	return status, raw, err
+}
+
+// uuidPattern is the check auth-js 2.78 makes before an admin lookup
+// (validateUUID): lower case only.
+var uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
+
+// AdminUserEmail is `(await auth.admin.getUserById(id)).data.user?.email`
+// as supabase-js 2.78 computes it, for id written as JavaScript writes it
+// in text. It answers the email's JSON, or nil for undefined. ok is false
+// where auth-js throws:
+//
+//   - an id that is not a lower-case UUID, before any request;
+//   - a success whose JSON is null (null.user).
+//
+// Every failure of the call itself is an auth error to auth-js, so no user.
+// A success is read as JSON, and its user is data.user ?? data. With the
+// public key the admin API always refuses (bug register R-040).
+func (c Client) AdminUserEmail(ctx context.Context, id string) (email json.RawMessage, ok bool) {
+	if !uuidPattern.MatchString(id) {
+		return nil, false
+	}
+	status, raw, err := c.AdminUser(ctx, id)
+	if err != nil || status < 200 || status > 299 {
+		return nil, true
+	}
+	value, perr := jscompat.DecodeJSON(raw)
+	if perr != nil {
+		return nil, true
+	}
+	if value == nil {
+		return nil, false
+	}
+	user := value
+	if object, isObject := value.(map[string]any); isObject && object["user"] != nil {
+		user = object["user"]
+	}
+	object, isObject := user.(map[string]any)
+	if !isObject {
+		return nil, true
+	}
+	value, present := object["email"]
+	if !present {
+		return nil, true
+	}
+	email, _ = json.Marshal(value)
+	return email, true
 }
 
 func (c Client) restURL(path string) string {

@@ -200,6 +200,13 @@ const scenarios = [
   { path: '/api/repo/comments', body: '{"commentId":"c1","commentText":"Edited"}', method: 'PATCH', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/comments?id=c1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/comments', body: '{"repoFullName":"octo/demo","commentText":"Hi"}' },
+  // Videos: a list with each uploader's details, a new video whose id ends
+  // in half of an emoji, and a deletion. No Cache-Control.
+  { path: '/api/repo/videos?repo=octo%2Fdemo' },
+  { path: '/api/repo/videos?repo=octo%2Fdemo', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/videos', body: '{"repoFullName":"octo/demo","videoUrl":"https://youtu.be/abcdefghij\u{1F600}","title":"Demo"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/videos?id=v1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/repo/videos', body: '{"repoFullName":"octo/demo","videoUrl":"https://example.test/clip.mp4"}' },
 ];
 
 try {
@@ -303,6 +310,20 @@ try {
       else if (req.url.startsWith('/rest/v1/repo_comments?select=upvotes')) {
         res.end(JSON.stringify({ upvotes: 3, downvotes: 1 }));
       }
+      // Videos: the list, a new video (its thumbnail echoed back) and a
+      // deletion. Uploader lookups are refused as for comments.
+      else if (req.url.startsWith('/rest/v1/repo_videos') && req.method === 'POST') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        const row = JSON.parse(body);
+        res.writeHead(201); res.end(JSON.stringify({ id: 'v9', video_type: row.video_type, thumbnail_url: row.thumbnail_url, uploaded_by: row.uploaded_by }));
+      }
+      else if (req.url.startsWith('/rest/v1/repo_videos') && req.method === 'DELETE') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(204); res.end();
+      }
+      else if (req.url.startsWith('/rest/v1/repo_videos?select=*&repo_full_name=')) {
+        res.end(JSON.stringify([{ id: 'v1', uploaded_by: '0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b', video_url: 'https://youtu.be/dQw4w9WgXcQ' }, { id: 'v2', uploaded_by: null }]));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -330,7 +351,7 @@ try {
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

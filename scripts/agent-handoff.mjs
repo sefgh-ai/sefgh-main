@@ -114,6 +114,7 @@ async function fetchLatestCiRun() {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.github+json',
         },
+        signal: AbortSignal.timeout(5000),
       }
     );
     if (!res.ok) return { status: `http_${res.status}` };
@@ -139,7 +140,7 @@ if (args.has('--stamp-sync')) {
   const content = readFileSync(COORD_PATH, 'utf-8');
   const updated = content
     .replace(
-      /(?:^|(?<=\.\s*))Resulting commit:\s*uncommitted[^\r\n]*/m,
+      /(?:^|(?<=\.\s*))Resulting commit:\s*(?:uncommitted|not yet made)[^\r\n]*/m,
       `Resulting commit: synchronized by Git Agent on \`main\` and \`go-backend\` (from base \`${headSha}\`).`
     )
     .replace(

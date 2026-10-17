@@ -36,6 +36,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/videos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
 
@@ -118,6 +119,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/repo/rating", ratingMux(logger, verifier))
 	top.Handle("/api/repo/comments/vote", commentVoteMux(logger, verifier))
 	top.Handle("/api/repo/comments", commentsMux(logger, verifier))
+	top.Handle("/api/repo/videos", videosMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
 }
@@ -300,6 +302,25 @@ func commentsMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.Serv
 	}
 	for _, method := range []string{"GET", "POST", "PATCH", "DELETE"} {
 		mux.Handle(method+" /api/repo/comments", h)
+	}
+	return mux
+}
+
+// videosMux serves a repository's videos. Every read and write goes as the
+// caller with their own token, or the public key when signed out, so
+// row-level security decides. The uploader lookup it copies from Next.js
+// goes with the public key and is refused (bug register R-040).
+func videosMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &videos.Handler{
+		User:        verifier.UserEmail,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}
+	for _, method := range []string{"GET", "POST", "DELETE"} {
+		mux.Handle(method+" /api/repo/videos", h)
 	}
 	return mux
 }

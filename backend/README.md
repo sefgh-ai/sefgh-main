@@ -21,6 +21,13 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `POST /api/ai/chat` | `internal/aichat` | `../contracts/ai-chat/` |
 | `GET /api/activity` | `internal/activity` | `../contracts/activity/` |
 | `GET /api/repo/starred` | `internal/starred` | `../contracts/repo-starred/`, `../contracts/public-repository-reads/` |
+| `GET /api/share/{token}` | `internal/sharetoken` | `../contracts/share-token/` |
+| `GET`, `POST`, `DELETE /api/repo/collect` | `internal/collect` | `../contracts/repo-collect/` |
+| `GET`, `POST /api/repo/vote` | `internal/vote` | `../contracts/repo-vote/` |
+| `GET`, `POST`, `DELETE /api/repo/rating` | `internal/rating` | `../contracts/repo-rating/` |
+| `GET`, `POST /api/repo/comments/vote` | `internal/commentvote` | `../contracts/comment-vote/` |
+| `GET`, `POST`, `PATCH`, `DELETE /api/repo/comments` | `internal/comments` | `../contracts/repo-comments/` |
+| `GET`, `POST`, `DELETE /api/repo/videos` | `internal/videos` | `../contracts/repo-videos/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -227,6 +234,16 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Videos (VIDEOS-001)
+
+Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 47 cases of `contracts/repo-videos`, recorded with the shared runner.
+
+- **Uploader details copied as they fail:** as for comments, the profile read asks for `username` (R-075) and the admin lookup, now `supabaserest.AdminUserEmail` and shared with comments, goes with the public key and is refused (R-040). A video without `uploaded_by` is answered as it is.
+- **The YouTube pattern matches what JavaScript matches:** `jscompat.JSSpace` and `jscompat.JSDot` stand in for Go's `\s` and `.`, which match different characters, and `jscompat.FindSubmatchUTF16` runs the pattern over UTF-16 units, so the id's `{11}` counts an emoji as two and can end in half of one. The thumbnail is written from those units (`jscompat.UTF16`), so the half survives as JavaScript writes it.
+- **`includes` on text and on a list:** a `videoUrl` that is a list is searched for an equal item, as `Array.prototype.includes` does; one that finds YouTube then throws (a list has no `match()`), and a number or an object throws at once: 500.
+- **Concurrency and budgets:** each video's uploader is read for at most four videos at once within `videos.DetailsBudget` (16 seconds); the first rejection (a null row, an uploader id that is not a lower-case UUID, an admin reply of `null`) answers 500 and cancels the rest. A POST's two calls share `videos.WriteBudget` (20 seconds).
+- **Differs from Next.js:** a bearer instead of the session cookie (the video tab now uses `fetchWithSession` for all three calls), the two budgets, the four-at-once limit, cancelling the rest after a rejection, and 1 MiB bodies. Any text is still accepted as an address (R-088), and deleting someone else's video still answers success (R-087).
 
 ## Comments (COMMENTS-001)
 
