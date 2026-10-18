@@ -7,6 +7,7 @@ import { Upload, Loader2, Camera, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }) {
   const [uploading, setUploading] = useState(false)
@@ -59,7 +60,7 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
 
-      const response = await fetch('/api/upload-avatar', {
+      const response = await fetchWithSession('/api/upload-avatar', {
         method: 'POST',
         body: formData,
         signal: controller.signal,

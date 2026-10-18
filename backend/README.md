@@ -30,6 +30,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET`, `POST`, `DELETE /api/repo/videos` | `internal/videos` | `../contracts/repo-videos/` |
 | `POST`, `DELETE /api/conversations/{id}/share` | `internal/shares` | `../contracts/conversation-share/` |
 | `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
+| `POST /api/upload-avatar` | `internal/avatar` | `../contracts/upload-avatar/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -237,6 +238,27 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Avatar upload (AVATAR-001a/b)
+
+`internal/avatar` matches the 45 version-1 fixtures. The `upload-avatar`
+switch is off by default. The browser sends its bearer with multipart data;
+Storage upload/list/remove, Auth update and profile PATCH all carry that
+same user's token and the public project key, never a privileged credential.
+
+The file limit remains five MiB. Go bounds the whole request to six MiB,
+reads multipart parts without temporary files, refuses upstream redirects,
+bounds replies to eight MiB, and shares one 24-second deadline across identity,
+inbound reading and all calls. A connection read deadline interrupts slow
+uploads. Each upstream call also has a ten-second limit.
+
+Cleanup is best-effort and noncritical, as before, but finishes within a
+three-second child budget before Go returns. This avoids a detached goroutine
+being abandoned after a serverless response. The file-selection defects and
+partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
+deployment-size checks, independent review and owner approval remain before
+cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
+back to the existing Next.js handler.
 
 ## Shares (SHARE-002)
 

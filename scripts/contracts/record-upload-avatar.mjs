@@ -1,0 +1,10 @@
+import { readFile, writeFile } from 'node:fs/promises';
+import { register } from 'node:module';
+import { runAvatarFixture } from './avatar-fixture.mjs';
+register('./route-db-loader.mjs', import.meta.url);
+const handlers = await import('../../src/app/api/upload-avatar/route.js');
+const file = new URL('../../contracts/upload-avatar/cases.json', import.meta.url);
+const contract = JSON.parse(await readFile(file, 'utf8'));
+for (const c of contract.cases) c.expect = await runAvatarFixture(handlers, c);
+await writeFile(file, JSON.stringify(contract, null, 2) + '\n');
+console.log(`recorded ${contract.cases.length} avatar cases`);

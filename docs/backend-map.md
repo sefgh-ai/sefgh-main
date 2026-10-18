@@ -1,5 +1,14 @@
 # SEFGH backend map
 
+Update 2026-10-18 (AVATAR-001a/b): `POST /api/upload-avatar` has 45 recorded
+cases and a default-off standard-library Go port in `backend/internal/avatar`.
+The browser sends its session bearer. Storage upload/list/remove, Auth metadata
+and own-profile writes use that same user identity. Cleanup selection and partial
+writes are preserved; Go bounds cleanup before responding. See
+[the contract](../contracts/upload-avatar/README.md) for explicit differences
+and R-094 to R-096. No live Storage write, schema change or cutover performed.
+
+
 Update 2026-10-18 (BATCH-001): R-039 direction is real hashed, show-once keys
 with supported-endpoint validation and server accounting; see
 [the key plan](plans/playground-keys.md). The plaintext route is not ported or

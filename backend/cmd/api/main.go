@@ -21,6 +21,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aisuggestions"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/avatar"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/collect"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/commentvote"
@@ -122,8 +123,18 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/repo/comments/vote", commentVoteMux(logger, verifier))
 	top.Handle("/api/repo/comments", commentsMux(logger, verifier))
 	top.Handle("/api/repo/videos", videosMux(logger, verifier))
+	top.Handle("/api/upload-avatar", avatarMux(logger, verifier))
 	top.Handle("/", github)
 	return markBackend(top)
+}
+
+func avatarMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("POST /api/upload-avatar", &avatar.Handler{
+		User: verifier.User, HTTP: &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL, SupabaseKey: verifier.SupabaseKey, Logger: logger,
+	})
+	return mux
 }
 
 // activityMux serves the caller's own activity. It asks the Supabase Data

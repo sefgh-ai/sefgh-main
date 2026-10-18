@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-18 (Asia/Calcutta), by Codex: BATCH-001 recovery, two-route independent review and migration sequencing; handoff below.
+Last updated: 2026-10-18 (Asia/Calcutta), by Codex: AVATAR-001a/b complete locally, default off; handoff below.
 
 ## Start here
 
@@ -11,16 +11,67 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released BATCH-001 (REVIEW-008, BUG-008 and KEYS-001 planning), 2026-10-18; SHARE-002 remains preserved pending Git Agent commit.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). BUG-008 recovery fixes await a different reviewer. Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-two of 25 API routes are implemented in Go (88% of routes, not of the whole migration): every read-only route, and eight that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`). Left: `playground/keys`, `upload-avatar`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 91 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Codex released AVATAR-001a/b, 2026-10-18; awaiting independent review and Git Agent synchronization.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). BUG-008 recovery fixes await a different reviewer. Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No additional route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 97 entries, including the four AVATAR-001 findings; BUG-008 fixes are committed at 7b71c07. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: BATCH-001, review, recovery fixes and key-system decisions (Codex, 2026-10-18)
+## Latest handoff: AVATAR-001a/b, contract and Go avatar port (Codex, 2026-10-18)
+
+Status: **implementation complete; independently unreviewed; off by default; not deployed**.
+Owner: Codex. Reviewer: unassigned; no peer review claimed.
+Branch main; base/current commit `4f8c815840af963b37955a3010c20b588c8546d9`.
+Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `4f8c815`).
+
+Pickup and owner decisions:
+- Verified `AGENTS.md`, prior handoff, status/log and writer release. SHARE-002/BATCH-001 committed by Git Agent at `7b71c07` on both branches; remote main had only a later timestamp update, fast-forwarded cleanly to `4f8c815` before claiming writer. No existing dirty source was overwritten.
+- Retried key-schema catalog read: connector again refused `You do not have permission to perform this action`; no data or SQL mutation. Followed the recorded fallback: avatar characterization and port/wiring/tutorial in one batch. R-039 real-key direction and R-090 after-cutover decision remain unchanged.
+
+Done:
+- **AVATAR-001a:** `contracts/upload-avatar` version 1, 45 recorded cases, 23 defect. Installed Storage/Auth/PostgREST SDK; multipart requests; binary uploads compared by byte count and SHA-256. Session/HTTP/clock stand-ins; SDK Auth update retains real HTTP/parsing. Cleanup drained before globals restored. `engine_message` pins error detail presence, status, message category and call order without Node-version-specific wording.
+- **AVATAR-001b:** `backend/internal/avatar` preserves upload, bucket-error fallback, metadata/profile writes and cleanup selection with the caller's bearer/public key. Six-MiB whole body, five-MiB existing file limit, 24-second whole-route budget including identity, connection read deadline, ten seconds per call, eight-MiB replies, redirects refused. Cleanup completes before response within a three-second child budget; deliberate difference recorded in ADR/README. No detached goroutine.
+- Wiring `avatarMux`, real-socket caller-credential/405/signed-out test, write-budget guard, default-off `upload-avatar` switch and rewrite test. `AvatarUpload.jsx` uses `fetchWithSession` without setting multipart Content-Type manually.
+- Production forwarding adds five multipart/auth/error cases, verifies upload bytes and upsert flag, normalizes only avatar timestamps across distinct requests. Lesson 31 covers readers, one-extra-byte size checks, multipart and deadlines; intentionally unfinished exercise plus solution/tests; existing exercises untouched.
+- Register R-094 (MIME-only/extension/empty-file validation), R-095 (cleanup selection/concurrency), R-096 (partial writes), R-097 (error detail disclosure); preserved for later fixes. R-041's missing setup-file wording also preserved. Active ADR/backend map/README updated.
+
+Changed files:
+`backend/internal/avatar/{handler,handler_test,contract_test}.go` (new);
+`backend/cmd/api/{main,main_test}.go`, new `avatar_wiring_test.go`;
+`contracts/upload-avatar/{cases.json,README.md}` (new);
+`scripts/contracts/{avatar-fixture,record-upload-avatar,upload-avatar.test}.mjs` (new);
+`scripts/contracts/{go-forwarding-probe,go-rewrites.test}.mjs`;
+`next.config.mjs`, `src/components/AvatarUpload.jsx`, `backend/README.md`;
+`learn-go/README.md`, new `learn-go/31-bounded-file-streams/*`;
+`docs/{coordination,backend-map,bug-register}.md`, `docs/adr/0002-go-backend.md`.
+
+Checks (Codex, Windows / Node 21.7.1 / Go 1.27.2; suites run serially):
+- Focused Node contract: **46/46**; Go avatar contracts all **45** pass, plus unit and real-socket server wiring checks.
+- Six deliberate Go contract breaks all caught and restored byte for byte: MIME, size cap, upsert flag, Auth PUT method, cleanup threshold, profile owner filter.
+- New slow-body socket regression caught an initial deadline reset that let net/http block draining an unfinished request body. Removing the reset fixed it; focused test and avatar suite passed before rebuilding the final binary.
+- Recorder null-shape extension caught the new runner converting null to an empty object; corrected and rerecorded before accepting the final fixtures. Earlier Opaque URL assertion corrected to RequestURI. Two documentation/format commands first used the wrong working directory; corrected without altering unrelated files.
+- Final production forwarding probe: **131/131 identical**, including five avatar cases, after production build. Separate rollback production build with Go switches empty: avatar answered **401 Unauthorized from Next.js**, no Go header. Both builds passed and test servers exited.
+- Full `npm run test:contracts`: **1214/1214 pass**; `npm run lint`: **0 errors, 16 existing warnings**.
+- backend `go test -count=1 ./...`: **28 packages pass**; vet clean; gofmt empty. Go binary built at ignored `backend/bin/sefgh-avatar-probe.exe`.
+- Tutorial `go test -count=1 -tags solution ./...`: **32 packages pass**; solution vet clean; gofmt empty. Lesson 31 unfinished exercise fails only the intended tests; existing exercises preserved.
+- `git diff --check`: clean. `npm run handoff` runs after saving this record and releasing the writer; checkpoint any failure before continuing. A signal is not a commit/push/deployment receipt.
+
+Not checked / remaining gates:
+- Independent review (especially cleanup timing, multipart/parser behavior and account isolation); local race detector (prior environment lacks C compiler), hosted CI, live Storage writes or current live policy/bucket configuration; deployment upload limits. No production state or environment changed.
+- KEYS-001 schema/RPC evidence is still permission-blocked. No executable key migration applied, no paid resource/dependency added. API route progress 23/25 excludes browser Supabase operations and Python workers; whole migration is not complete.
+- Preserved risks R-041 and R-094 to R-097 are not fixed or silently deferred; follow fix-once rules at cutover. R-090 stays for after Go cutover as the owner decided.
+
+Next bounded batch:
+1. Verify actual Git Agent commit with `git status --short`, `git log -3`, and `node scripts/agent-handoff.mjs --status`; read this handoff, then claim writer.
+2. Independent avatar review plus BUG-008 helper review can be batched read-only. If key catalog access is restored, execute KEYS-001a/b/c from `plans/playground-keys.md`, preparing SQL for review before applying.
+3. Otherwise characterize `trending/refresh` and prepare its worker/atomic-replacement design as a batch; R-077 privileges and schema gates must be settled before enabling writes. Do not port the plaintext key route as if R-039 were solved.
+
+Writer released: yes. No avatar/probe/rollback servers left running. No test jobs remain except the final handoff command launched after this record. Account quota is not visible to Codex.
+
+## Previous handoff: BATCH-001, review, recovery fixes and key-system decisions (Codex, 2026-10-18)
 
 Status: **implementation complete for REVIEW-008 and BUG-008; key-system planning complete; awaiting Git Agent synchronization; no new route port or deployment**.
 Owner: Codex. Reviewer: Codex independently reviewed Claude Code's SHARE-002; a different reviewer is needed for Codex's BUG-008 fixes.
 Branch: `main`. Base/current commit: `bf67292e2e704a219929167673e457708ad063d7`.
-Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `bf67292`).
+Resulting commit: `7b71c07` (SHARE-002 + BATCH-001), committed by Git Agent; verified in local history and both remote branches on 2026-10-18 before AVATAR-001.
 
 Pickup evidence:
 - Read `AGENTS.md`, SHARE-002, architecture/ADR/review/bug records, and tutorial index. `git status --short` showed SHARE-002 still dirty; `git log -3` showed `bf67292`, `9486f35`, `7c894a0`. Both local branches were at `bf67292`; there was no signal file. The old synchronization stamp did not prove a commit. Previous writer was none/released; Codex claimed the writer before editing.

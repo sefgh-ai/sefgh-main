@@ -66,6 +66,7 @@ const goBackendRoutes = {
   // server needs NEXT_PUBLIC_SITE_URL for the link (backend/README.md).
   "conversation-share": "/api/conversations/:id/share",
   "share-fork": "/api/share/:token/fork",
+  "upload-avatar": "/api/upload-avatar",
 };
 
 function goBackendRewrites() {

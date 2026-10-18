@@ -11,6 +11,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/activity"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aienhance"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/avatar"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
@@ -46,6 +47,10 @@ func TestSecurityHeadersMatchNextConfig(t *testing.T) {
 // A handler that outlasts the write timeout gets its caller a dropped
 // connection, not a reply.
 func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
+	// Avatar's budget includes identity verification, upload and cleanup.
+	if avatar.Budget >= writeTimeout || avatar.CleanupBudget >= avatar.Budget {
+		t.Fatal("avatar work can exceed the response budget")
+	}
 	if githubdevelopers.Timeout >= writeTimeout {
 		t.Fatal("developers timeout exceeds write timeout")
 	}

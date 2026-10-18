@@ -55,7 +55,7 @@ async function ready(url, child) {
 // `body`, when given, makes it a POST of that exact text as JSON.
 function raw(port, path, headers, body, method) {
   return new Promise((resolve) => {
-    const sent = body === undefined ? headers : { ...headers, "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) };
+    const sent = body === undefined ? headers : { ...headers, "Content-Type": headers?.['Content-Type'] ?? "application/json", "Content-Length": Buffer.byteLength(body) };
     const req = http.request({ host: "127.0.0.1", port, path, headers: sent, method: method ?? (body === undefined ? "GET" : "POST") }, (res) => {
       let body = ""; res.setEncoding("utf8");
       res.on("data", (d) => (body += d)).on("end", () => resolve({ status: res.statusCode, backend: res.headers["x-sefgh-backend"] ?? null, cache: res.headers['cache-control'] ?? null, body }));
@@ -119,6 +119,8 @@ const probes = [
   "/api/github/contributions?username=octocat",
   "/api/github/contributions?username=-bad-",
 ];
+const avatarBoundary = 'sefgh-avatar-probe';
+const avatarMultipart = `--${avatarBoundary}\r\nContent-Disposition: form-data; name="avatar"; filename="photo.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n--${avatarBoundary}--\r\n`;
 const scenarios = [
   ...probes.map(path => ({ path })),
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
@@ -217,6 +219,11 @@ const scenarios = [
   { path: '/api/share/tok-public/fork', body: '', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/share/tok-private/fork', body: '', headers: { Authorization: 'Bearer session-b' }, status: 401, cache: null },
   { path: '/api/share/tok-public/fork', body: '' },
+  { path: '/api/upload-avatar', body: avatarMultipart, headers: { Authorization: 'Bearer session-a', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 200, cache: null },
+  { path: '/api/upload-avatar', body: avatarMultipart.replace('image/png', 'text/plain'), headers: { Authorization: 'Bearer session-a', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 400, cache: null },
+  { path: '/api/upload-avatar', body: '{}', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
+  { path: '/api/upload-avatar', body: avatarMultipart, headers: { Authorization: 'Bearer session-b', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 401, cache: null },
+  { path: '/api/upload-avatar', body: avatarMultipart },
 ];
 
 try {
@@ -354,6 +361,16 @@ try {
         if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
         res.writeHead(201); res.end(JSON.stringify({ id: 'c9' }));
       }
+      else if (req.url.startsWith('/storage/v1/object/avatars/')) {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key' || body !== 'PNG' || req.headers['x-upsert'] !== 'true') {
+          res.writeHead(403); res.end(JSON.stringify({ message: 'invalid avatar upload' })); return;
+        }
+        res.end(JSON.stringify({ Key: 'avatars/photo.png' }));
+      }
+      else if (req.url === '/storage/v1/object/list/avatars') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.end('[]');
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -384,7 +401,7 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -406,7 +423,15 @@ try {
   const ask = async (port, path, headers, body, method) => {
     const before = seen.length;
     const answer = await raw(port, path, headers, body, method);
-    return { ...answer, upstream: seen.slice(before) };
+    let upstream = seen.slice(before);
+    if (path === '/api/upload-avatar') {
+      // Separate requests deliberately use separate clocks. Contract tests
+      // pin the exact timestamp; here compare transport behavior without it.
+      const normalize = value => value.replace(/avatar-\d+/g, 'avatar-CLOCK').replace(/\?t=\d+/g, '?t=CLOCK');
+      answer.body = normalize(answer.body);
+      upstream = upstream.map(normalize);
+    }
+    return { ...answer, upstream };
   };
 
   let same = 0;
