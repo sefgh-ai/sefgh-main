@@ -20,6 +20,11 @@
 //   user           what getUser() answers for that session: an object, null
 //                  (no session), or { "error": "..." }
 //   client_throws  true when the project's settings are missing
+//   params         the route's path parameters, as Next.js hands them to
+//                  the handler (decoded): { "id": "c1" }. Each [name] in the
+//                  route is written into the request's path, percent-encoded.
+//   site_url       NEXT_PUBLIC_SITE_URL while the handler runs; left out or
+//                  null, it is unset
 //   database       the replies to the handler's requests, one per request
 //                  in order: { "status": 201, "raw": "" },
 //                  { "status": 200, "body": [...], "headers": {...} } or
@@ -42,10 +47,12 @@ export const SUPABASE_KEY = 'public-fixture-key';
 export const NOW = '2026-10-17T09:30:00.000Z';
 
 export async function runRouteFixture(handlers, route, fixture) {
-  const original = { error: console.error, client: globalThis.__routeClient, Date: globalThis.Date };
+  const original = { error: console.error, client: globalThis.__routeClient, Date: globalThis.Date, siteURL: process.env.NEXT_PUBLIC_SITE_URL };
   const database = [];
   try {
     console.error = () => {};
+    if (fixture.site_url == null) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = fixture.site_url;
     const RealDate = original.Date;
     const fixed = RealDate.parse(NOW);
     globalThis.Date = class extends RealDate {
@@ -100,10 +107,12 @@ export async function runRouteFixture(handlers, route, fixture) {
       };
       return client;
     };
-    const url = `https://app.test${route}${fixture.query ? `?${fixture.query}` : ''}`;
+    const params = fixture.params ?? {};
+    const path = route.replace(/\[(\w+)\]/g, (_, name) => encodeURIComponent(params[name]));
+    const url = `https://app.test${path}${fixture.query ? `?${fixture.query}` : ''}`;
     const hasBody = fixture.method === 'POST' || fixture.method === 'PATCH';
     const request = new Request(url, { method: fixture.method, body: hasBody ? fixture.body ?? '' : undefined });
-    const response = await handlers[fixture.method](request);
+    const response = await handlers[fixture.method](request, { params: Promise.resolve(params) });
     return {
       status: response.status,
       body: await response.json(),
@@ -114,6 +123,8 @@ export async function runRouteFixture(handlers, route, fixture) {
   } finally {
     console.error = original.error;
     globalThis.Date = original.Date;
+    if (original.siteURL === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = original.siteURL;
     delete globalThis.__routeClient;
     if (original.client !== undefined) globalThis.__routeClient = original.client;
   }

@@ -78,7 +78,7 @@ export default function SharedChatPage({ params }) {
 
   const continueChat = async () => {
     try {
-      const res = await fetch(`/api/share/${token}/fork`, { method: 'POST' })
+      const res = await fetchWithSession(`/api/share/${token}/fork`, { method: 'POST' })
       if (res.status === 401) {
         // redirect to login preserving return
         const dest = encodeURIComponent(`/s/${token}`)

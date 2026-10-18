@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-17 (Asia/Calcutta), by Claude Code: VIDEOS-001 handoff (contract and Go port of /api/repo/videos, off by default); writer released.
+Last updated: 2026-10-18 (Asia/Calcutta), by Codex: BATCH-001 recovery, two-route independent review and migration sequencing; handoff below.
 
 ## Start here
 
@@ -11,11 +11,80 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Previously: VIDEOS-001 released 2026-10-17 (paused once at the owner's request and resumed the same day).
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`). Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty of 25 API routes are implemented in Go (80% of routes, not of the whole migration): every read-only route, and six that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 88 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Codex released BATCH-001 (REVIEW-008, BUG-008 and KEYS-001 planning), 2026-10-18; SHARE-002 remains preserved pending Git Agent commit.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). BUG-008 recovery fixes await a different reviewer. Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Twenty-two of 25 API routes are implemented in Go (88% of routes, not of the whole migration): every read-only route, and eight that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`). Left: `playground/keys`, `upload-avatar`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 91 entries, 28 fixed. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
 
-## Latest handoff: VIDEOS-001, `/api/repo/videos` (Claude Code, 2026-10-17)
+## Latest handoff: BATCH-001, review, recovery fixes and key-system decisions (Codex, 2026-10-18)
+
+Status: **implementation complete for REVIEW-008 and BUG-008; key-system planning complete; awaiting Git Agent synchronization; no new route port or deployment**.
+Owner: Codex. Reviewer: Codex independently reviewed Claude Code's SHARE-002; a different reviewer is needed for Codex's BUG-008 fixes.
+Branch: `main`. Base/current commit: `bf67292e2e704a219929167673e457708ad063d7`.
+Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `bf67292`).
+
+Pickup evidence:
+- Read `AGENTS.md`, SHARE-002, architecture/ADR/review/bug records, and tutorial index. `git status --short` showed SHARE-002 still dirty; `git log -3` showed `bf67292`, `9486f35`, `7c894a0`. Both local branches were at `bf67292`; there was no signal file. The old synchronization stamp did not prove a commit. Previous writer was none/released; Codex claimed the writer before editing.
+- Preserved Claude Code's SHARE-002 implementation, fixtures, lesson and browser changes. Codex has not committed, staged, reset, stashed or overwritten those source files.
+
+Completed subtasks:
+1. **REVIEW-008:** independent source/contract review of both SHARE-002 routes and their shared helpers and bearer wiring; acceptable with switches off, no cutover approval. Details in `claude-review.md`. No intentional mutations applied in this review. R-089 and R-090 remain recorded.
+2. **BUG-008:** fixed R-092 (pre-commit stamp claimed synchronization) and R-093 (verification fingerprint omitted untracked content). New `scripts/handoff-state.mjs` hashes tracked/staged changes, HEAD and new file contents, fails on Git errors, and keeps pre-commit stamps explicitly pending without rewriting older handoffs. Eight temporary-repository/receipt regression tests. No backend Go changed, so no new tutorial exercise is required.
+3. **KEYS-001 planning:** owner decisions recorded in the ADR and register. R-039: build real hashed/show-once keys, validate supported endpoints, server-side accounting; prepare database changes for review before applying. R-090: preserve until Go cutover, then fix in Go. Product direction is decided; no permission to apply SQL or switch a route on. Plan and three implementation subtasks in `plans/playground-keys.md`; read-only catalog preflight in `../supabase/checks/keys_001_catalog.sql`.
+
+Changed by Codex: `docs/coordination.md`, `docs/claude-review.md`, `docs/bug-register.md`, `docs/backend-map.md`, `docs/adr/0002-go-backend.md`, new `docs/plans/playground-keys.md`, new `supabase/checks/keys_001_catalog.sql`, `scripts/agent-handoff.mjs`, new `scripts/handoff-state.mjs`, new `scripts/contracts/handoff-state.test.mjs`. The previous SHARE-002 changed-file inventory below remains attributed to Claude Code and is still in the same uncommitted tree.
+
+Checks (Codex, Windows / Node 21.7.1 / Go 1.27.2):
+- Focused share/fork Node contracts: **70/70 pass**. Targeted Go `shares`, `supabaserest`, `jscompat`, `sharetoken`: pass. cmd/api share and conversation wiring tests: pass.
+- BUG-008 regression tests: **8/8 pass**; focused ESLint clean (baseline-browser-mapping age warning only).
+- `npm run test:contracts`: **1168/1168 pass**, with no Go suite running concurrently.
+- backend `go test -count=1 ./...`: **27 packages pass**; `go vet ./...` clean; `gofmt -l .` empty.
+- learn-go `go test -count=1 -tags solution ./...`: **31 packages pass**; solution vet clean; gofmt empty. Owner exercises preserved.
+- `npm run lint`: **0 errors, 16 existing warnings**, exit 0. `git diff --check`: clean.
+- `npm run handoff` runs after this record is saved and writer released. A failure must be checkpointed before any new port. Its signal verifies the tree; it does not establish a commit, push, peer review or deployment.
+
+Failure/dependencies/checks not run:
+- Supabase connector refused a catalog-only query for `kohwfuxqbllsmvmsfqci`: `You do not have permission to perform this action`. No rows or key values read, no SQL applied. The 2026-10-15 snapshot lacks the full key/usage definitions; executable schema migration waits for read-only catalog evidence. The saved SQL is an unexecuted read-only check, not a migration.
+- No new build, forwarding probe, local race run, hosted CI or live-route verification by Codex in this batch. Claude Code's prior SHARE-002 results below stay attributed to Claude Code. BUG-008 itself still needs peer review.
+- SHARE-002 commit/push is not verified; do not port a new route until the Git Agent actually commits it. R-090's accepted risk remains until cutover. Account quota is not visible to Codex.
+
+Next bounded batch (2-3 related subtasks, checkpoints between them):
+1. Run `node scripts/agent-handoff.mjs --status`, `git status --short`, and `git log -3`; confirm SHARE-002 and BUG-008 files are in actual Git Agent commits. Never infer synchronization from a pre-commit stamp.
+2. If the key catalog is available: KEYS-001a schema/contracts, KEYS-001b Go lifecycle and supported public-search API, KEYS-001c playground/reference. Prepare SQL for review; no live schema mutation or cutover. New Go work must update the tutorial.
+3. If catalog access is still refused: AVATAR-001a characterization plus AVATAR-001b Go port/wiring/tutorial as one bounded batch after synchronization. Keys stay gated explicitly. Trending refresh requires its separate R-077/worker/atomic-write design.
+
+Writer released: yes. No Codex test/server processes remain at handoff; the handoff command itself will run next. Existing SHARE-002 files preserved in place.
+
+## Previous handoff: SHARE-002, `/api/conversations/[id]/share` and `/api/share/[token]/fork` (Claude Code, 2026-10-17)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the share dialog (create and delete) and the shared page's fork button send the Supabase bearer (`fetchWithSession`); Next.js still answers both routes.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `bf67292` (VIDEOS-001 at `9486f35`, pushed). Resulting commit: uncommitted on Codex pickup, 2026-10-18; the earlier Git Agent synchronization stamp was not supported by Git history. Synchronization must be verified after the actual commit.
+Owner instruction (2026-10-17): "continue and paceup the implemetation". The two routes were taken as one bounded task because they share tables, sign-in rules and error handling.
+
+Done:
+- Shared runner `route-db-fixture.mjs`: `params` (path parameters, decoded as Next.js hands them; percent-encoded in the request's path) and `site_url` (`NEXT_PUBLIC_SITE_URL` per case). The six earlier contracts on it pass unchanged.
+- Contracts `contracts/conversation-share` (45 cases, 14 `defect`) and `contracts/share-fork` (23 cases, 7 `defect`), version 1, recorded from the Next.js handlers at `bf67292` (`record-conversation-share.mjs`, `record-share-fork.mjs`, `conversation-share.test.mjs`, `share-fork.test.mjs`). Cases marked `engine_message` pin the status and that an error text is sent, not the text, which comes from the JavaScript engine (`engine-message.mjs`).
+- `backend/internal/shares`: `Conversation` (POST, DELETE) and `Fork` (POST), 68 of 68. Unit tests: body limit, logs without the visitor's data, and the link's origin with and without `SiteURL` and forwarded headers.
+- `supabaserest.ErrorMessage` (supabase-js's `error.message`, every test row checked against postgrest-js 2.78), `InsertSelect`, and `MissingSettings` (moved from `sharetoken`, which uses it). `jscompat.JSONParseMessage`.
+- Wiring: `conversationsMux` (with `NEXT_PUBLIC_SITE_URL`) and the fork in `shareMux`; `shares_wiring_test.go`; `share_wiring_test.go` now expects the fork route to answer (401 signed out, 405 for GET) instead of 404. Next.js switches `conversation-share` and `share-fork`, rewrite test, eight probe scenarios and stand-ins (the Go server in the probe has `NEXT_PUBLIC_SITE_URL`). `ShareDialog.jsx` and `src/app/s/[token]/page.js`: the three calls use `fetchWithSession`.
+- Lesson 30 (destructuring defaults against `||`, `undefined` fields that JSON leaves out, `slice(-50)` without negative indexes, error text; exercise `jsSlice`). Index updated.
+- Docs: two contract READMEs, backend README "Shares (SHARE-002)", route table rows and `NEXT_PUBLIC_SITE_URL` in the settings table, ADR (Phase 3 row, two recorded differences, dated note; the stale Phase 1, 2 and 6 status cells brought up to date), backend map. Bug register: R-089 (error text sent to the browser), R-090 (a failed removal reports success; needs the owner), R-091 (three wall-clock tests that fail on a busy machine); R-081 annotated.
+
+Changed files: backend/internal/shares/{handler.go,handler_test.go,contract_test.go} (new), backend/internal/supabaserest/{supabaserest.go,supabaserest_test.go}, backend/internal/sharetoken/handler.go, backend/internal/jscompat/{json.go,json_test.go}, backend/cmd/api/{main.go,share_wiring_test.go,shares_wiring_test.go (new)}, backend/README.md, contracts/{conversation-share,share-fork}/{cases.json,README.md} (new), scripts/contracts/{record-conversation-share,record-share-fork,conversation-share.test,share-fork.test,engine-message}.mjs (new), scripts/contracts/{route-db-fixture.mjs,go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, src/components/ShareDialog.jsx, src/app/s/[token]/page.js, learn-go/{README.md,30-defaults-and-missing-values/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2), after the last code change:
+- `npm run test:contracts`: 1159 of 1160 while the Go suites ran at the same time; the one failure, "an issuer that never answers is given up on at the deadline" (`github-access.test.mjs`, unchanged since `d2320c2`), then passed alone three times out of three (R-091). `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 27 packages pass on a quiet machine. Under the same load, `TestChatAllowanceIsPerUserAndSeparate` (cmd/api) and `TestDetailsBudgetBoundsHangingReads` (comments) failed once on wall-clock bounds (R-091). `go vet ./...` clean; `gofmt -l .` empty. `-race` could not run here (no C compiler). learn-go `-tags solution`: 31 packages pass, vet clean, gofmt empty; lesson 30's exercise fails only its own tests, as intended.
+- Forwarding probe (dev): 126 of 126 identical, including eight share and fork requests (a path id holding `%2F`, a body that is not JSON, DELETE, a refused session, signed out).
+- Deliberate breaks against the contracts, each caught, then restored byte for byte (24 tried; 23 caught; 2 of them redone because they did not compile): `isPublic` defaulted when null; the title fallback only when missing; an empty summary kept; the snapshot uncapped, or the first 50; `p_title` written as null; every trailing slash dropped; no forwarded host; a missing token written empty; a null share answered; a failed lookup answered as an error; the update without the share's id; the lookup without the owner filter; `is_public` unchecked; an untitled fork kept empty; another model; the insert asking every column; `conversationId` written as null; a broken body answered 400; the fetch failure worded differently; a refusal's text unused; the `message` field ignored; the empty-body message worded differently. Not caught, and not observable: answering the share's JSON without collapsing repeated names, which every JSON reader collapses the same way. The new unit tests were not broken on purpose.
+- `npm run handoff` runs after this record is saved; a failure would be recorded here by a further edit.
+Not checked: `-race` locally; the routes against the real database (the definition of `upsert_shared_conversation` and the policies of both tables are not versioned here); the probe in `--production` mode; Vercel.
+
+Remaining gates: independent review; the owner's choice to switch `conversation-share` and `share-fork` on, and to set `NEXT_PUBLIC_SITE_URL` for the Go server first; **R-090 needs the owner's decision** (fix it now in the live Next.js handler as a privacy bug, or in Go after cutover); R-088 and R-086 still need the owner.
+Next bounded action: `/api/playground/keys` (R-039), then `upload-avatar` (Storage) and `trending/refresh` (R-077). Wait for the Git Agent's commit of this task first.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: VIDEOS-001, `/api/repo/videos` (Claude Code, 2026-10-17)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. Live change once synchronized: the video tab sends the Supabase bearer (`fetchWithSession`) for all three calls; Next.js still answers the route.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

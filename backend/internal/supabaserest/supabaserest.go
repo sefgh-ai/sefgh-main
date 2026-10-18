@@ -93,7 +93,14 @@ func (c Client) RPC(ctx context.Context, session, name string, args []byte) (int
 // InsertReturning is Insert followed by .select().single(): the row comes
 // back as the database stored it, as one object.
 func (c Client) InsertReturning(ctx context.Context, session, table string, row []byte) (int, []byte, error) {
-	return c.do(ctx, http.MethodPost, session, table+"?select=*", "application/vnd.pgrst.object+json", "return=representation", row)
+	return c.InsertSelect(ctx, session, table, "*", row)
+}
+
+// InsertSelect is Insert followed by .select(columns).single(): the stored
+// row's columns come back as one object. columns is written as postgrest-js
+// writes it, such as "id" or "id,title".
+func (c Client) InsertSelect(ctx context.Context, session, table, columns string, row []byte) (int, []byte, error) {
+	return c.do(ctx, http.MethodPost, session, table+"?"+Param("select", columns), "application/vnd.pgrst.object+json", "return=representation", row)
 }
 
 // Update sends PATCH /rest/v1/<table>?<query> with changes, a JSON object:
@@ -270,6 +277,48 @@ func ReadResult(status int, raw []byte) (data any, failed bool) {
 	}
 	return nil, Truthy(value)
 }
+
+// ErrorMessage is error.message of supabase-js 2.78's answer to one reply,
+// for handlers that send it to the browser, as JSON, or nil when it is
+// undefined. failed is whether there is an error at all, as ReadResult says.
+//
+//   - No reply: "TypeError: fetch failed", fetch's own error.
+//   - A success that is not JSON: "SyntaxError: " and the parse error. That
+//     text comes from the JavaScript engine; this writes
+//     jscompat.JSONParseMessage's.
+//   - A refusal that is JSON: its message field, if it is an object that has
+//     one. A refusal that is not JSON: its text.
+func ErrorMessage(status int, raw []byte, err error) (message json.RawMessage, failed bool) {
+	if err != nil {
+		return json.RawMessage(`"TypeError: fetch failed"`), true
+	}
+	text := jscompat.DecodeUTF8(raw)
+	if _, failed = ReadResult(status, raw); !failed {
+		return nil, false
+	}
+	if status >= 200 && status <= 299 {
+		message, _ = jscompat.ToUTF16("SyntaxError: " + jscompat.JSONParseMessage(text)).MarshalJSON()
+		return message, true
+	}
+	if _, perr := jscompat.ParseJSON(text); perr != nil {
+		message, _ = jscompat.ToUTF16(text).MarshalJSON()
+		return message, true
+	}
+	fields, _ := jscompat.ObjectFields([]byte(text))
+	for _, field := range fields {
+		if field.Name == "message" {
+			message = field.Value
+		}
+	}
+	return message, true
+}
+
+// MissingSettings is the message createServerClient of @supabase/ssr 0.7
+// throws without the project's address and key. Handlers that send a thrown
+// error's message to the browser send this one (bug register R-081, R-089).
+const MissingSettings = "Your project's URL and Key are required to create a Supabase client!\n\n" +
+	"Check your Supabase project's API settings to find these values\n\n" +
+	"https://supabase.com/dashboard/project/_/settings/api"
 
 // DataJSON is the data of a reply ReadResult did not fail, as JSON.stringify
 // writes it back: a success's own text, and [] for a 404 whose body is a

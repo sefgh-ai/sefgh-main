@@ -20,14 +20,14 @@
  *   - `ciRun` (when `--ci` is passed): latest GitHub Actions `Backend verification` run status.
  *
  * - `--stamp-sync` (`node scripts/agent-handoff.mjs --stamp-sync`):
- *   Updates `Resulting commit: uncommitted...` in the latest handoff section of
- *   `docs/coordination.md` prior to Git Agent commit.
+ *   Records synchronization as pending in `docs/coordination.md` before the
+ *   Git Agent commit. A pre-commit stamp is not proof of synchronization.
  */
 
 import { execSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { computeTreeHash, stampPendingSync } from './handoff-state.mjs';
 
 const ROOT = resolve(process.cwd());
 const GO_BIN_PATH = `${process.env.LOCALAPPDATA || ''}\\Programs\\Go\\bin`;
@@ -48,19 +48,6 @@ function run(cmd, cwd = ROOT, envExtra = {}, input = undefined) {
   } catch (err) {
     return { ok: false, out: err.stdout || '', err: err.stderr || err.message };
   }
-}
-
-function computeTreeHash() {
-  const statusOut = run('git status --porcelain').out
-    .split(/\r?\n/)
-    .filter((line) => line.trim() && !line.endsWith('.agent-signal.json'))
-    .join('\n');
-  const diffOut = run('git diff HEAD').out;
-  return createHash('sha256')
-    .update(statusOut)
-    .update('\n---DIFF---\n')
-    .update(diffOut)
-    .digest('hex');
 }
 
 function parseCoordination() {
@@ -138,18 +125,10 @@ const args = new Set(process.argv.slice(2));
 if (args.has('--stamp-sync')) {
   const headSha = run('git rev-parse --short HEAD').out.trim();
   const content = readFileSync(COORD_PATH, 'utf-8');
-  const updated = content
-    .replace(
-      /(?:^|(?<=\.\s*))Resulting commit:\s*(?:uncommitted|not yet made)[^\r\n]*/m,
-      `Resulting commit: synchronized by Git Agent on \`main\` and \`go-backend\` (from base \`${headSha}\`).`
-    )
-    .replace(
-      /Git Agent receipt, commit and push are not verified\./g,
-      `Synchronized and verified by Git Agent (base \`${headSha}\`).`
-    );
+  const updated = stampPendingSync(content, headSha);
   if (updated !== content) {
     writeFileSync(COORD_PATH, updated, 'utf-8');
-    console.log(`[handoff] Stamped synchronization state in docs/coordination.md (base ${headSha}).`);
+    console.log(`[handoff] Recorded pending synchronization in docs/coordination.md (base ${headSha}); commit and push still need verification.`);
   }
   process.exit(0);
 }
@@ -160,7 +139,7 @@ if (args.has('--status')) {
     .split(/\r?\n/)
     .filter((l) => l.trim() && !l.endsWith('.agent-signal.json'));
   const workingTreeClean = porcelain.length === 0;
-  const treeHash = workingTreeClean ? null : computeTreeHash();
+  const treeHash = workingTreeClean ? null : computeTreeHash(ROOT);
 
   let signal = null;
   if (existsSync(SIGNAL_PATH)) {
@@ -280,7 +259,7 @@ if (!coord.writerReleased) {
 console.log('✅ docs/coordination.md records: Active writer is "none" and task is complete.');
 
 // 5. Compute working-tree hash and emit .agent-signal.json
-const treeHash = computeTreeHash();
+const treeHash = computeTreeHash(ROOT);
 const signal = {
   timestamp: new Date().toISOString(),
   contractsPassed: true,

@@ -28,6 +28,8 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET`, `POST /api/repo/comments/vote` | `internal/commentvote` | `../contracts/comment-vote/` |
 | `GET`, `POST`, `PATCH`, `DELETE /api/repo/comments` | `internal/comments` | `../contracts/repo-comments/` |
 | `GET`, `POST`, `DELETE /api/repo/videos` | `internal/videos` | `../contracts/repo-videos/` |
+| `POST`, `DELETE /api/conversations/{id}/share` | `internal/shares` | `../contracts/conversation-share/` |
+| `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
 Every response carries `X-Sefgh-Backend: go`, plus the same security headers `next.config.mjs` sets.
@@ -50,6 +52,7 @@ go run ./cmd/api
 | `SEFGH_AI_MODELS_URL`, `SEFGH_OPENAI_URL`, `SEFGH_ANTHROPIC_URL` | the providers' real addresses | For pointing the three AI providers at a stub in tests and in the forwarding probe |
 | `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification, for private GitHub reads and for chat. Without it chat answers 503 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |
+| `NEXT_PUBLIC_SITE_URL` | none | The start of a conversation's share link, as in Next.js. Set it wherever this server runs behind a proxy: without it the link starts with the forwarded host and scheme (`X-Forwarded-Host`, `X-Forwarded-Proto`), and Next.js's own proxy forwards only the host |
 | `GITHUB_API_URL` | `https://api.github.com` | GitHub API origin, for pointing at a stub |
 | `GITHUB_PUBLIC_READ_TOKEN` | none | Optional token for GitHub reads made for signed-out callers. Used only if GitHub confirms it is a classic token with no scopes; see "Public read token" below |
 
@@ -234,6 +237,16 @@ conversation every time. The sign-in check (4 seconds) and one provider call
 keeps it so. The fallback title is cut at 30 UTF-16 units as JavaScript cuts
 it, which can leave half an emoji; `jscompat.UTF16` writes that half as
 JavaScript does.
+
+## Shares (SHARE-002)
+
+Opt-in names: `conversation-share` (`POST` and `DELETE /api/conversations/{id}/share`) and `share-fork` (`POST /api/share/{token}/fork`), both off by default. They pass the 45 cases of `contracts/conversation-share` and the 23 of `contracts/share-fork`, recorded with the shared runner, which now hands a handler its path parameters (`params`) and sets `NEXT_PUBLIC_SITE_URL` per case.
+
+- **Only a signed-in caller reaches the database**, always with their own token: the conversation read, `upsert_shared_conversation`, the share lookup, the `deleted_at` update and the fork's insert (`supabaserest.InsertSelect`, new).
+- **Error text sent as it is** (R-089): `supabaserest.ErrorMessage` (new) gives supabase-js's `error.message` for each kind of reply, checked against postgrest-js 2.78; `supabaserest.MissingSettings` is the client library's message, moved here from `sharetoken`; a thrown `TypeError`'s text is copied. A JSON parse error's text comes from the JavaScript engine and changes between Node versions, so Go writes `jscompat.JSONParseMessage`'s (V8's own for an empty body) and those cases are compared without their text (`engine_message`).
+- **JavaScript's defaults kept:** `isPublic = true` only when missing, `title || conv.title` left out of the call when both are missing, `summary || null`, `slice(-50)` for the snapshot, and `/s/undefined` for a share without a token.
+- **A removal that fails reports success** (R-090), copied: the lookup's failure answers `{ ok: true }`.
+- **Differs from Next.js:** a bearer instead of the session cookie (the share dialog and the fork button now use `fetchWithSession`); the link's start comes from `NEXT_PUBLIC_SITE_URL` in this server's environment, or the forwarded host and scheme; Go's own text for a body that is not JSON; 1 MiB bodies. No budget is needed: each method makes at most two database calls after the sign-in check, inside the write timeout.
 
 ## Videos (VIDEOS-001)
 

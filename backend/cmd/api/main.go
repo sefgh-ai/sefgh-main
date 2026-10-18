@@ -33,6 +33,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/rating"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/shares"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
@@ -114,6 +115,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/api/share/", shareMux(logger, verifier))
+	top.Handle("/api/conversations/", conversationsMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
 	top.Handle("/api/repo/vote", voteMux(logger, verifier))
 	top.Handle("/api/repo/rating", ratingMux(logger, verifier))
@@ -203,8 +205,8 @@ func starredMux(logger *slog.Logger, verifier githubaccess.Verifier, public http
 // shareMux serves a shared conversation to anyone with its link. The
 // database is asked with the visitor's own token when there is one and with
 // the public key otherwise, so row-level security decides, as it does for
-// the Next.js handler. Only the GET of one token is served: the fork route
-// under it is not ported.
+// the Next.js handler. Forking a share into one's own conversations needs a
+// signed-in caller, whose token every request of the fork carries.
 func shareMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("GET /api/share/{token}", &sharetoken.Handler{
@@ -213,6 +215,32 @@ func shareMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMu
 		SupabaseKey: verifier.SupabaseKey,
 		Logger:      logger,
 	})
+	mux.Handle("POST /api/share/{token}/fork", &shares.Fork{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	})
+	return mux
+}
+
+// conversationsMux serves the share link of the caller's own conversation.
+// Only a signed-in caller reaches the database, with their own token. The
+// link starts with NEXT_PUBLIC_SITE_URL; without it, with the request's
+// origin as a proxy forwards it (see shares.Conversation.origin).
+func conversationsMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	h := &shares.Conversation{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		SiteURL:     os.Getenv("NEXT_PUBLIC_SITE_URL"),
+		Logger:      logger,
+	}
+	mux.Handle("POST /api/conversations/{id}/share", h)
+	mux.Handle("DELETE /api/conversations/{id}/share", h)
 	return mux
 }
 

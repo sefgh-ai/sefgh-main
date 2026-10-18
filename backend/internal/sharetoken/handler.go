@@ -31,14 +31,6 @@ import (
 // spaces between the names are dropped.
 const columns = "id,share_token,is_public,title,summary,snapshot,shared_at"
 
-// missingSettings is the message createServerClient of @supabase/ssr 0.7
-// throws without the project's address and key. The Next.js handler sends
-// it to the browser as it is (bug register R-081), and so does this port
-// until that bug is fixed here.
-const missingSettings = "Your project's URL and Key are required to create a Supabase client!\n\n" +
-	"Check your Supabase project's API settings to find these values\n\n" +
-	"https://supabase.com/dashboard/project/_/settings/api"
-
 // Handler answers GET /api/share/{token}. Database is required; Logger has
 // a default.
 type Handler struct {
@@ -55,7 +47,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// handler's catch answers the error's own message.
 	if !db.Configured() {
 		h.log("settings", 0, nil)
-		body, _ := json.Marshal(map[string]string{"error": missingSettings})
+		body, _ := json.Marshal(map[string]string{"error": supabaserest.MissingSettings})
 		write(w, 500, body)
 		return
 	}

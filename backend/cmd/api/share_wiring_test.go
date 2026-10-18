@@ -79,8 +79,9 @@ func TestShareAsksTheDatabaseAsTheVisitor(t *testing.T) {
 	}
 }
 
-// Only GET of one token is served. The fork route under it, and other
-// methods, are not answered by the share handler.
+// Only GET of one token is served by the share handler. The fork route
+// under it has its own handler (SHARE-002): signed out it answers 401, and
+// it serves POST only. Neither asks the database.
 func TestShareServesOnlyItsOwnRoute(t *testing.T) {
 	handler, stand := shareServer(t)
 	for _, tt := range []struct {
@@ -88,7 +89,8 @@ func TestShareServesOnlyItsOwnRoute(t *testing.T) {
 		status       int
 	}{
 		{"POST", "/api/share/tok", 405},
-		{"POST", "/api/share/tok/fork", 404},
+		{"POST", "/api/share/tok/fork", 401},
+		{"GET", "/api/share/tok/fork", 405},
 		{"GET", "/api/share/", 404},
 	} {
 		rec := httptest.NewRecorder()

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Link2, Copy, Check, Globe, Lock, Twitter, Facebook, Linkedin, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
+import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
 export default function ShareDialog({ open, onOpenChange, conversation, snapshot, onAfterShare }) {
   const [title, setTitle] = useState(conversation?.title || '')
@@ -26,7 +27,7 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
     if (!canShare) return
     setCreating(true)
     try {
-      const res = await fetch(`/api/conversations/${conversation.id}/share`, {
+      const res = await fetchWithSession(`/api/conversations/${conversation.id}/share`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isPublic, title: title || conversation.title, summary }),
@@ -49,7 +50,7 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
 
   const deleteShare = async () => {
     try {
-      const res = await fetch(`/api/conversations/${conversation.id}/share`, { method: 'DELETE' })
+      const res = await fetchWithSession(`/api/conversations/${conversation.id}/share`, { method: 'DELETE' })
       if (!res.ok) {
         const j = await res.json().catch(() => ({}))
         throw new Error(j.error || 'Failed to delete share')

@@ -207,6 +207,16 @@ const scenarios = [
   { path: '/api/repo/videos', body: '{"repoFullName":"octo/demo","videoUrl":"https://youtu.be/abcdefghij\u{1F600}","title":"Demo"}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/videos?id=v1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/repo/videos', body: '{"repoFullName":"octo/demo","videoUrl":"https://example.test/clip.mp4"}' },
+  // Conversation shares and forks: only a signed-in caller reaches the
+  // database. No Cache-Control.
+  { path: '/api/conversations/c1/share', body: '{"title":"Mine","isPublic":true}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/conversations/a%2Fb/share', body: '{}', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/conversations/c1/share', body: '{', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
+  { path: '/api/conversations/c1/share', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/conversations/c1/share', body: '{}' },
+  { path: '/api/share/tok-public/fork', body: '', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
+  { path: '/api/share/tok-private/fork', body: '', headers: { Authorization: 'Bearer session-b' }, status: 401, cache: null },
+  { path: '/api/share/tok-public/fork', body: '' },
 ];
 
 try {
@@ -249,11 +259,17 @@ try {
       }
       // Shares: a public one for anyone, a private one only for session-a,
       // as row-level security has it; otherwise no row.
+      else if (req.url.startsWith('/rest/v1/shared_conversations?') && req.method === 'PATCH') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(204); res.end();
+      }
       else if (req.url.startsWith('/rest/v1/shared_conversations?')) {
-        const token = new URL(req.url, 'http://stand.in').searchParams.get('share_token');
+        const params = new URL(req.url, 'http://stand.in').searchParams;
+        const token = params.get('share_token');
         const owner = req.headers.authorization === 'Bearer session-a';
         if (req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
-        if (token === 'eq.tok-public') res.end(JSON.stringify({ id: 's1', share_token: 'tok-public', is_public: true, title: 'Shared' }));
+        if (params.get('conversation_id') === 'eq.c1' && owner) res.end(JSON.stringify({ id: 's1', created_by: 'a', conversation_id: 'c1' }));
+        else if (token === 'eq.tok-public') res.end(JSON.stringify({ id: 's1', share_token: 'tok-public', is_public: true, title: 'Shared' }));
         else if (token === 'eq.tok-private' && owner) res.end(JSON.stringify({ id: 's2', share_token: 'tok-private', is_public: false, title: 'Mine' }));
         else { res.writeHead(406); res.end(JSON.stringify({ code: 'PGRST116', details: 'The result contains 0 rows', hint: null, message: 'Cannot coerce the result to a single JSON object' })); }
       }
@@ -324,6 +340,20 @@ try {
       else if (req.url.startsWith('/rest/v1/repo_videos?select=*&repo_full_name=')) {
         res.end(JSON.stringify([{ id: 'v1', uploaded_by: '0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b', video_url: 'https://youtu.be/dQw4w9WgXcQ' }, { id: 'v2', uploaded_by: null }]));
       }
+      // Conversation shares: the caller's own conversation, the share
+      // function, and a fork's new conversation.
+      else if (req.url.startsWith('/rest/v1/user_conversations?select=id%2Cuser_id')) {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.end(JSON.stringify({ id: 'c1', user_id: 'a', title: 'Mine', messages: [{ role: 'user', content: 'hi' }] }));
+      }
+      else if (req.url.startsWith('/rest/v1/rpc/upsert_shared_conversation')) {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.end(JSON.stringify({ id: 's1', share_token: 'tok-new', is_public: JSON.parse(body).p_is_public }));
+      }
+      else if (req.url.startsWith('/rest/v1/user_conversations?select=id') && req.method === 'POST') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(201); res.end(JSON.stringify({ id: 'c9' }));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -349,9 +379,12 @@ try {
     // the keys are emptied and every provider address points at the stand-in.
     OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic`,
     // The public read token's rules have their own contract; here it is off.
-    GITHUB_PUBLIC_READ_TOKEN: '' });
+    GITHUB_PUBLIC_READ_TOKEN: '',
+    // The start of a conversation's share link, so it does not depend on
+    // which host each path shows the Go server.
+    NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

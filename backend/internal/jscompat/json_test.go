@@ -52,3 +52,18 @@ func TestDecodeJSON(t *testing.T) {
 		t.Errorf("two byte-order marks: DecodeJSON = %#v, want an error", got)
 	}
 }
+
+// V8's message for empty or blank text, checked in Node 21 with
+// JSON.parse; anything else gets the fixed message.
+func TestJSONParseMessage(t *testing.T) {
+	for text, want := range map[string]string{
+		"":        "Unexpected end of JSON input",
+		" \t\r\n": "Unexpected end of JSON input",
+		"{":       "Unexpected token in JSON",
+		"<html>":  "Unexpected token in JSON",
+	} {
+		if got := JSONParseMessage(text); got != want {
+			t.Errorf("JSONParseMessage(%q) = %q, want %q", text, got, want)
+		}
+	}
+}

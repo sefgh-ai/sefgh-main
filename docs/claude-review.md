@@ -1,5 +1,32 @@
 # Claude Code review and reconciliation
 
+## REVIEW-008: Codex review of SHARE-002, 2026-10-18
+
+Independent review of Claude Code's uncommitted SHARE-002 diff against base
+`bf67292`: both Next.js handlers, Go `internal/shares`, wiring, browser bearer
+calls, contract runners, and shared `supabaserest`/`jscompat` changes. No source
+handler was edited by this review, and no intentional breaks were applied.
+
+Verdict: implementation matches the reviewed version-1 contracts; acceptable
+with the two switches off. This is not cutover approval. The 45 conversation
+share cases and 23 fork cases run against both implementations. Targeted Node
+suite: 70/70, including integrity checks. Go: shares, supabaserest, jscompat and
+sharetoken pass; cmd/api share/conversation wiring tests pass. Caller tokens,
+owner filters, private/revoked share checks, snapshot cap, error semantics and
+SiteURL handling were inspected. Full handoff results belong in coordination.
+
+Known gate: R-090 still reproduces false-success deletion. On 2026-10-18 the
+owner explicitly chose to fix it in Go after cutover, preserving it for now.
+R-089 remains pinned error disclosure. No live database/RPC behavior, hosted
+race run or deployment was tested by this review. The snapshot alone is not
+an independent verification of the RPC body or current RLS.
+
+Recovery findings: the existing pre-commit sync stamp claimed a commit that
+`git log` did not contain, and the verification fingerprint omitted untracked
+file contents. Logged as R-092/R-093 and fixed by Codex in BUG-008 with
+regression tests. Those fixes are self-tested, awaiting a different reviewer;
+they are not part of the independent SHARE-002 review verdict.
+
 ## Note from AI-002c: one finding in the access check, 2026-10-14
 
 Not a review. While porting chat, Claude Code reused the bearer pattern in `backend/internal/githubaccess/access.go` and compared it with the JavaScript one.

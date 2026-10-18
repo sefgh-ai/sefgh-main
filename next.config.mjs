@@ -61,6 +61,11 @@ const goBackendRoutes = {
   "repo-comments": "/api/repo/comments",
   // A repository's videos (VIDEOS-001). Bearer only, like collect.
   "repo-videos": "/api/repo/videos",
+  // Creating and removing the share link of one's own conversation, and
+  // forking a public share (SHARE-002). Bearer only, like collect. The Go
+  // server needs NEXT_PUBLIC_SITE_URL for the link (backend/README.md).
+  "conversation-share": "/api/conversations/:id/share",
+  "share-fork": "/api/share/:token/fork",
 };
 
 function goBackendRewrites() {

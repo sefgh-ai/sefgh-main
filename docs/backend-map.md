@@ -1,5 +1,14 @@
 # SEFGH backend map
 
+Update 2026-10-18 (BATCH-001): R-039 direction is real hashed, show-once keys
+with supported-endpoint validation and server accounting; see
+[the key plan](plans/playground-keys.md). The plaintext route is not ported or
+changed yet. The connector denied a catalog-only schema query, so
+`supabase/checks/keys_001_catalog.sql` is an unexecuted read-only preflight,
+not a verified schema or an applied migration. R-090 is explicitly scheduled
+by the owner for Go after cutover; current share deletion behavior remains.
+
+
 Update 2026-10-13: AUTH-001 verifies Supabase and GitHub bearer credentials for
 the five migrated dynamic GitHub handlers; anonymous requests use no server
 token. Private responses are not cached. Go protects direct requests too.
@@ -429,3 +438,12 @@ concurrently (four at once, one budget). The admin lookup that comments and
 videos share is `supabaserest.AdminUserEmail`. The video tab
 (`RepoVideoTab.jsx`) sends the bearer (`fetchWithSession`) for all three
 calls.
+
+## SHARE-002 update (2026-10-17)
+
+`/api/conversations/[id]/share` (POST, DELETE) and `/api/share/[token]/fork`
+(POST) have a Go port, `backend/internal/shares`, off by default (switches
+`conversation-share` and `share-fork`). The share dialog and the fork button
+send the bearer (`fetchWithSession`). `src/lib/supabase/shares.js` calls the
+same function and table straight from the browser, but nothing imports it
+(checked at SHARE-002).

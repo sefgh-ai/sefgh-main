@@ -158,3 +158,55 @@ func TestUpsertAndRPC(t *testing.T) {
 		}
 	}
 }
+
+// Each answer was produced by postgrest-js 2.78 with the same status and
+// body: error.message, and whether `if (error)` sees an error at all.
+func TestErrorMessage(t *testing.T) {
+	tests := []struct {
+		status  int
+		body    string
+		down    bool
+		message string // "" for undefined
+		failed  bool
+	}{
+		{0, "", true, `"TypeError: fetch failed"`, true},
+		{200, "", false, "", false},
+		{200, `{"id":1}`, false, "", false},
+		{200, " ", false, `"SyntaxError: Unexpected end of JSON input"`, true},
+		{404, "", false, "", false},
+		{404, "[]", false, "", false},
+		{400, `{"message":"denied","code":"x"}`, false, `"denied"`, true},
+		{400, `{"code":"x"}`, false, "", true},
+		{400, `"denied"`, false, "", true},
+		{400, "false", false, "", false},
+		{400, "null", false, "", false},
+		{502, "Bad gateway", false, `"Bad gateway"`, true},
+		{400, `{"message":null}`, false, "null", true},
+		{400, `{"message":"a","message":"b"}`, false, `"b"`, true},
+		{400, "[1]", false, "", true},
+	}
+	for _, tt := range tests {
+		var err error
+		if tt.down {
+			err = io.ErrUnexpectedEOF
+		}
+		message, failed := ErrorMessage(tt.status, []byte(tt.body), err)
+		if string(message) != tt.message || failed != tt.failed {
+			t.Errorf("%d %q: %s, %v; want %s, %v", tt.status, tt.body, message, failed, tt.message, tt.failed)
+		}
+	}
+}
+
+// .insert(row).select(columns).single() asks for those columns as one row.
+func TestInsertSelect(t *testing.T) {
+	record := &recordRoundTrip{}
+	c := Client{HTTP: &http.Client{Transport: record}, URL: "https://project.invalid", Key: "public-key"}
+	if _, _, err := c.InsertSelect(context.Background(), "session-a", "user_conversations", "id,title", []byte(`{}`)); err != nil {
+		t.Fatal(err)
+	}
+	got := record.requests[0]
+	if got.Method != "POST" || got.URL.RequestURI() != "/rest/v1/user_conversations?select=id%2Ctitle" || got.Header.Get("Prefer") != "return=representation" ||
+		got.Header.Get("Accept") != "application/vnd.pgrst.object+json" || got.Header.Get("Authorization") != "Bearer session-a" {
+		t.Errorf("%s %s %v", got.Method, got.URL.RequestURI(), got.Header)
+	}
+}
