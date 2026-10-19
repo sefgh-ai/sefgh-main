@@ -1,0 +1,68 @@
+# Cutover runbook: switching the website to the Go backend
+
+Written by Claude Code on 2026-10-19 for the owner. Everything below is **off** until you switch it, and each switch is undone by removing a name and redeploying. Nothing here has been switched on except `github-trending` (since 2026-10-15). How the Go project itself is hosted is in `hosting-setup.md`; this runbook starts where that guide's Part C ends.
+
+## The two switches
+
+| Setting (on the **website** project) | What it switches | Example |
+|---|---|---|
+| `SEFGH_GO_API_URL` | Where the Go server is. Without it nothing goes to Go, whatever else is set | `https://sefgh-api.vercel.app` |
+| `SEFGH_GO_ROUTES` | API routes the website forwards to Go (a rewrite in `next.config.mjs`) | `github-languages,github-search` |
+| `NEXT_PUBLIC_SEFGH_GO_DATA` | Areas of the browser's own database calls sent through Go. It is built into the browser code, so it needs a new build, not just a restart | `search-history,notifications` |
+
+**Rolling back** is always the same: remove the name, redeploy. A route then goes back to its Next.js handler. A data area goes back to calling Supabase directly. If a data area's rewrite is missing (for example `SEFGH_GO_API_URL` is not set), the browser gets a 404 that Go did not send and calls Supabase directly by itself. If the Go server is down, the switched routes and areas fail until you roll back.
+
+**Always on a preview first.** Set the names for **Preview** only, deploy a preview, check it, then set the same names for **Production**. Switch one or a few related names at a time, so a problem has one cause.
+
+## Settings the Go project needs
+
+These go on the Go project (`sefgh-api`), not the website. All are public values except the tokens; no service-role key or database password is ever needed.
+
+| Setting | Needed for |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Every route or area that signs a user in or reads the database (everything except the public GitHub reads) |
+| `NEXT_PUBLIC_SITE_URL` | `conversation-share`: the start of share links. Without it the links can start with the wrong address |
+| `GITHUB_PUBLIC_READ_TOKEN` (no scopes) | Optional: GitHub reads for signed-out visitors, including `trending-topics`, under a higher rate limit |
+| `GITHUB_TOKEN`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | Only the three AI routes |
+
+## Recommended order
+
+From least risk to most. Within a step, the names can go together.
+
+1. **Public GitHub reads:** `github-languages`, `github-search`, `github-trending-developers`, `github-contributions`, `github-repo`, `github-repo-details`, `github-contents` (`github-trending` is already on). No user data. **Check:** the search page, a repository's page and its files, the trending page; the browser's Network tab shows `x-sefgh-backend: go` on those requests.
+2. **Public reads of shared data:** `share-token` (open a public share link and a private one), `trending-topics` (the trending page's topic sections appear; check the reply's `cache-control` and that a reload a minute later is fast, which means the CDN cache is working).
+3. **The user's own reads:** `activity` (the profile's activity grid), `repo-starred` (the starred page). **Check** signed in and signed out.
+4. **Repository interactions:** `repo-collect`, `repo-vote`, `repo-rating`, `comment-vote`, `repo-comments`, `repo-videos`. **Check** on a repository page: save and unsave, vote, rate, comment, edit and delete a comment, add and delete a video, each signed in and signed out.
+5. **Conversations shared and forked:** `conversation-share`, `share-fork`, after `NEXT_PUBLIC_SITE_URL` is set on the Go project. **Check:** create a share link, open it signed out, fork it signed in, delete the link.
+6. **Avatar:** `upload-avatar`. **Check:** upload a PNG and a JPEG on the profile page; the new picture shows after a reload.
+7. **The browser's database calls**, one area at a time in `NEXT_PUBLIC_SEFGH_GO_DATA`. Each needs a new build:
+   - `search-history`: search signed in, open the history list, delete one, clear all.
+   - `onboarding`: a new account's onboarding, every step to the end.
+   - `notifications`: open the bell, mark one and all as read, delete one.
+   - `profile`: edit the bio and website.
+   - `user-stats`, `search-stats`: the profile's stats and the search page's figures show.
+   - `home`, `submissions`: the home page's projects and categories; submit a project and delete the submission.
+   - `repo-page`: a repository page's counts and comments.
+   - `activity`: do something that is logged, then check the activity grid.
+   - `conversations` last, as it is used most: start a chat, send messages, rename, pin, archive and delete a conversation, and check the list updates by itself (Realtime).
+8. **AI routes last:** `ai-suggestions`, `ai-enhance-query`, `ai-chat`, with the AI keys on the Go project. Their per-user limits are counted in memory, by each copy of the Go server separately: on Vercel several copies may run, so the limits are looser than they read. Decide whether that is acceptable before switching them on.
+
+## What behaves differently through Go
+
+Each of these is recorded in `adr/0002-go-backend.md` ("Recorded differences") or the route's contract README. The main ones a visitor could notice:
+
+- Requests are sent with the user's bearer token instead of the session cookie; the browser code already sends it.
+- Writes have time limits (about 20 to 25 seconds) where Next.js had none.
+- Search history: a signed-out delete answers `false`; the counter of searches still does not increase (R-102, fixed in Go after cutover).
+- Onboarding refuses fields its steps never write, `user_id` included. The data proxy refuses fields the website never writes, and any update of the stats (R-103). Changes the proxy allows, such as `user_id` on a notification, are still decided by row-level security, as before.
+- Share links start with `NEXT_PUBLIC_SITE_URL`.
+
+## Not ready to switch
+
+- **`playground/keys`** has no Go route: it waits for KEYS-001, which needs the key tables' definitions (run `supabase/checks/keys_001_catalog.sql` in the SQL editor, or authorize the Supabase connector).
+- **The trending refresh** is not ported on purpose. It is replaced by `trending-topics` and is removed in Phase 7.
+
+## After a switch has run for a while
+
+- **Phase 6:** bugs recorded as "fixed in Go after cutover" are fixed then, once each, in the Go code: among them R-084, R-087, R-089, R-090, R-094 to R-097, R-102, R-040 and R-075 (`bug-register.md`).
+- **Phase 7:** once Phase 6's gate is met and a route or area has run on Go long enough to trust, its Next.js handler or direct Supabase path, the dead code listed in the register, and the switch for it are removed.

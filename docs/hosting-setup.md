@@ -93,6 +93,8 @@ Do these one at a time. Each one waits for the route that needs it.
 
 Separate several names with commas. Any name left out stays in Next.js.
 
-`github-languages`, `github-search`, `github-trending`, `github-trending-developers`, `github-contributions`, `github-repo`, `github-repo-details`, `github-contents`, `ai-suggestions`, `ai-enhance-query`, `ai-chat`, `activity`.
+`github-languages`, `github-search`, `github-trending`, `github-trending-developers`, `github-contributions`, `github-repo`, `github-repo-details`, `github-contents`, `ai-suggestions`, `ai-enhance-query`, `ai-chat`, `activity`, `repo-starred`, `share-token`, `repo-collect`, `repo-vote`, `repo-rating`, `comment-vote`, `repo-comments`, `repo-videos`, `conversation-share`, `share-fork`, `upload-avatar`, `trending-topics`.
+
+The browser's own database calls have a second setting, `NEXT_PUBLIC_SEFGH_GO_DATA`. For both, the order to switch things in, what to check, and what behaves differently are in `cutover.md`.
 
 Before switching on `activity`, the database check of Phase 3 must be done (see "Connecting Supabase" in `coordination.md`).

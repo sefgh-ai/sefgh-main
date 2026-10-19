@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-PROXY-001 handoff (the remaining browser data areas through the Go policy proxy); writer released.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: CUTOVER-001 handoff (cutover runbook for every switch); writer released.
 
 ## Start here
 
@@ -15,7 +15,24 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 103 entries (R-001 through R-103). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: DATA-PROXY-001, the remaining browser data areas through Go (Claude Code, 2026-10-19)
+## Latest handoff: CUTOVER-001, the cutover runbook (Claude Code, 2026-10-19)
+
+Status: **complete (documentation only).** Nothing switched, nothing deployed.
+Owner: Claude Code. Base `c41bea7` (DATA-PROXY-001, local commit). Resulting commit: a local commit after this record.
+Owner instruction (2026-10-19): "continue the migration, let's wrap it up, work in large chunks". With every browser data area and 23 of 25 API routes reachable through Go, what remains is mostly switching on, which the owner does; this runbook is for that.
+
+Done:
+- `docs/cutover.md` (new): the two switches (`SEFGH_GO_ROUTES`, `NEXT_PUBLIC_SEFGH_GO_DATA`) and rollback; the Go project's settings per step; an order in eight steps from public reads to the AI routes, each with what to check on a preview; the differences a visitor could notice; what is not ready (KEYS-001; the trending refresh, replaced); what follows (Phase 6 fixes in Go, Phase 7 removals). Every one of the 24 route switches and 11 data areas is named (checked by script against `next.config.mjs` and `src/lib/go-areas.mjs`).
+- `docs/hosting-setup.md`: the route-name list brought up to date, and a pointer to the runbook.
+
+Changed files: docs/cutover.md (new), docs/hosting-setup.md, docs/coordination.md.
+Checks: `git diff --check` clean; the switch-name check above; `npm run handoff` below.
+
+Remaining gates: the owner's switching, preview first, step by step; independent review of the unreviewed tasks (DATA-001a/b, DATA-002, DATA-PROXY-001, TREND-001a/b among them); KEYS-001 (catalog evidence); R-103, R-090, R-088, R-086 (owner).
+Next bounded action: the owner's first preview switch (step 1 of `docs/cutover.md`). For agents meanwhile: Phase 6 fixes that do not wait for cutover (browser and UI entries), or an independent review.
+Writer released: yes.
+
+## Previous handoff: DATA-PROXY-001, the remaining browser data areas through Go (Claude Code, 2026-10-19)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default.** Live change once deployed: the browser's Supabase client has a routing fetch, which with `NEXT_PUBLIC_SEFGH_GO_DATA` unset passes every request through unchanged (checked with the real supabase-js).
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
