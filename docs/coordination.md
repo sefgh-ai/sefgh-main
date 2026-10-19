@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 Status: **implementation complete; not reviewed; not deployed.** Once deployed, the live changes are the security policy fix (Supabase Realtime may connect, R-104) and the browser fixes below. The Go server's copy of the policy changed with it; no contract fixture or switch changed.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
-Branch main; base `52350c9`. Resulting commit: a local commit made after this record, as the owner chose for each chunk (the Git Agent may push it).
+Branch main; base `52350c9`. Resulting commits, made and pushed by the Git Agent while this record was being finished, not by Claude Code: `de8e644` (the code, the Go copy of the policy and lesson 37), `ecf30c7` (lesson 37 in the index) and `a82a16c` (this record's later corrections). Two statements in `de8e644`'s message are the Git Agent's and are wrong: `commentHelpers.js` now reads `full_name` instead of the missing `username` (it does not remove a `full_name` read), and the suites were 32 Go and 38 learn-go packages, not 31 and 37. This correction is a further docs-only commit.
 Owner instruction (2026-10-19): "continue the migration, let's wrap it up, work in large chunks". This batch takes the Phase 6 entries that need neither cutover nor an owner decision.
 
 Done:
