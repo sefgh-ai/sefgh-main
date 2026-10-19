@@ -20,6 +20,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/trendingtopics"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/videos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
@@ -117,6 +118,10 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	}
 	if total := githubaccess.DefaultTimeout + videos.WriteBudget; total >= writeTimeout {
 		t.Errorf("sign-in and a video's two calls can take %v, which is not below the server's write timeout of %v", total, writeTimeout)
+	}
+	// The trending topics' searches share one budget; nothing comes before it.
+	if trendingtopics.Budget >= writeTimeout {
+		t.Errorf("the trending topics' budget %v is not below the server's write timeout of %v", trendingtopics.Budget, writeTimeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

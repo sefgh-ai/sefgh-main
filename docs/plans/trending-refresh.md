@@ -2,6 +2,8 @@
 
 Written by Claude Code on 2026-10-19 for the owner to choose from. Nothing is implemented, and no database change is proposed for application.
 
+**Decision, 2026-10-19: the owner chose option A.** TREND-001a builds the Go endpoint. Building it showed that GitHub refuses the topic searches as written: `OR` applies only to text, not to `topic:` qualifiers, so every search was answered 422 (R-101). The endpoint searches the same words as text, which GitHub matches in a repository's name, description and topics. Results are broader than an exact topic match.
+
 ## What exists today
 
 - `POST /api/trending/refresh` needs `CRON_SECRET` as a bearer. It deletes every row of `trending_repos`, then searches GitHub for each of six topics (created in the last 30 days, over 100 stars, top 5) and inserts the results one topic at a time. It uses the browser Supabase client, so it writes with the public key. Since SEC-001 only the service role may write that table, so every write is refused and the table holds 0 rows (R-077). Even with a working write, deleting first and inserting topic by topic is not atomic: a failure part-way leaves the table part-empty.

@@ -30,6 +30,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET`, `POST`, `DELETE /api/repo/videos` | `internal/videos` | `../contracts/repo-videos/` |
 | `POST`, `DELETE /api/conversations/{id}/share` | `internal/shares` | `../contracts/conversation-share/` |
 | `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
+| `GET /api/trending/topics` | `internal/trendingtopics` | `../contracts/trending-topics/` (Go only) |
 | `POST /api/upload-avatar` | `internal/avatar` | `../contracts/upload-avatar/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
@@ -259,6 +260,15 @@ partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
 deployment-size checks, independent review and owner approval remain before
 cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
 back to the existing Next.js handler.
+
+## Trending topics (TREND-001a)
+
+Opt-in name: `trending-topics`, off by default. `GET /api/trending/topics` is new: it has no Next.js handler, so with the switch off the path is a 404. It replaces the stored `trending_repos` table and its refresh route, which could not write the table (R-077); the owner chose this design on 2026-10-19 (`../docs/plans/trending-refresh.md`, option A). It passes the 11 hand-written cases of `contracts/trending-topics`.
+
+- **Six public searches**, two at a time within `trendingtopics.Budget` (20 seconds), each with the public read token when one is set and never a caller's credential. The topic words are searched as text joined by `OR`: GitHub refuses `OR` between `topic:` qualifiers (R-101).
+- **Partial answers:** a topic whose search fails is answered empty with `complete: false`; only when every search fails is the answer 502.
+- **Cached by the CDN:** `s-maxage` of six hours (with an hour of `stale-while-revalidate`) when complete, five minutes when partial, `no-store` on failure. How Vercel caches it is to be verified before the switch is turned on.
+- **One mapping:** repositories are mapped by `githubtrending.Item`, now exported, so the topic sections look like the main list.
 
 ## Shares (SHARE-002)
 

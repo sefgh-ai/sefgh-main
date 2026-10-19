@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: TREND-PLAN-001 and BUG-009 handoff; writer released; R-077 waits for the owner.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: TREND-001a handoff (Go endpoint for the trending topics, off by default); writer released.
 
 ## Start here
 
@@ -11,11 +11,40 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Previously: TREND-PLAN-001 and BUG-009 released 2026-10-19.
+- **Active writer:** none. Previously: TREND-001a released 2026-10-19.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 100 entries (R-001 through R-100). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 101 entries (R-001 through R-101). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: TREND-PLAN-001 and BUG-009 (Claude Code, 2026-10-19)
+## Latest handoff: TREND-001a, `GET /api/trending/topics` in Go (Claude Code, 2026-10-19)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default**. No live change: the page does not call the endpoint yet, and without the switch Next.js has no handler for it.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `9203581` (TREND-PLAN-001 and BUG-009 at `0ea050c`, pushed). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `9203581`).
+Owner decision (2026-10-19, asked in this session): R-077 option A, "live + CDN cache". Recorded in the ADR's decisions log and at the top of `docs/plans/trending-refresh.md`.
+
+Done:
+- `backend/internal/trendingtopics`: six GitHub searches, two at a time within a 20-second `Budget`, with the public transport and never a caller's credential. A failed topic is answered empty with `complete: false`; all failed is 502 `no-store`. Cache headers: six hours (`s-maxage=21600`, `stale-while-revalidate=3600`) when complete, five minutes when partial. Items mapped by `githubtrending.Item`, now exported from the trending route (its contract still passes), plus `topic` and `topicIcon`.
+- Found R-101 while building it: GitHub refuses `OR` between `topic:` qualifiers with 422, so the old refresh's searches could never have worked (checked with three read-only, unauthenticated calls to GitHub's public search). The endpoint searches the same words as text; results are broader than an exact topic match.
+- Contract `contracts/trending-topics` version 1, 11 hand-written cases (no Next.js handler exists), expected items computed by a separate script; Go `TestContract` 11 of 11; `trending-topics.test.mjs` checks the fixtures (one search per topic, no `topic:` in any search, cache headers by outcome). Unit tests: two at a time, the budget's deadline on every hanging search (deterministic, as BUG-009), and logs without URLs.
+- Wiring: `topicsMux` (GET only) with the public transport; `topics_wiring_test.go` (no credential reaches GitHub, cache header, 405); the write-timeout check covers the budget. Next.js switch `trending-topics` (off), rewrite test, two probe requests; the probe masks `generatedAt` and sorts the concurrent searches for this route.
+- Lesson 33 (`WaitGroup.Go`, partial answers, `max-age` against `s-maxage` and `no-store`, never caching who asked; exercise `answer`). Index updated.
+- Docs: contract README, backend README section and route row, ADR (decision, Phase 4 row, dated note), backend map, plan decision note. Register: R-101 new, fixed in Go; R-077 in progress.
+
+Changed files: backend/internal/trendingtopics/{handler.go,handler_test.go,contract_test.go} (new), backend/internal/githubtrending/handler.go, backend/cmd/api/{main.go,main_test.go,topics_wiring_test.go (new)}, backend/README.md, contracts/trending-topics/{cases.json,README.md} (new), scripts/contracts/trending-topics.test.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, learn-go/{README.md,33-partial-answers-and-shared-caches/* (new)}, docs/plans/trending-refresh.md, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2), run one after another:
+- `npm run test:contracts`: 1215 of 1215. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 29 packages pass; `go vet ./...` clean; `gofmt -l .` empty. learn-go `-tags solution`: 34 packages pass, vet clean, gofmt empty; lesson 33's exercise fails only its own test, as intended.
+- Forwarding probe (dev): 133 of 133 identical, including two topics requests (one with caller credentials, checking status and the cache header through Next.js).
+- Deliberate breaks against the contract, each run then restored byte for byte (13 tried, 12 caught): the old `topic:` query, a 7-day window, no star minimum, ten per topic, the list not cut, a partial answer cached for six hours, all-failed answered 200, the topic id instead of its name, an item without an owner kept, a byte-order mark not skipped, `url.QueryEscape` encoding, `generatedAt` in another format. Not caught: clearing a failed topic's repositories, because the search already returns none with an error; that line was dead and was removed.
+- `npm run handoff` runs after this record is saved.
+Not checked: how Vercel's CDN caches the answer (a gate before the switch is turned on); `-race` locally; real GitHub through the Go server (only the three direct query checks above).
+
+Remaining gates: independent review; verify CDN caching on a preview; then TREND-001b. KEYS-001 still blocked on catalog evidence. R-090, R-088 and R-086 as before.
+Next bounded action: **TREND-001b**: the trending page reads `/api/trending/topics` (degrading to no topic sections when it is unavailable, as with the switch off), drops the repeated repositories when merging the lists, and fixes R-100 with the answer's own `generatedAt`; then **TREND-001c**: a caller audit, retire `/api/trending/refresh` and the table reads, and propose a reviewed migration to drop `trending_repos`.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: TREND-PLAN-001 and BUG-009 (Claude Code, 2026-10-19)
 
 Status: **complete. TREND-PLAN-001 is a plan for the owner (documentation only); BUG-009 fixes test code only. Nothing deployed, no route switched, no database change.**
 Owner: Claude Code. Reviewer: none; no peer review claimed.

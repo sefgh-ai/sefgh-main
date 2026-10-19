@@ -1,0 +1,1434 @@
+{
+  "contract_version": 1,
+  "route": "GET /api/trending/topics",
+  "recorded_from": "written by hand for the Go endpoint (TREND-001a); there is no Next.js handler. Expected repositories were computed by scripts outside the Go code, from the trending list's mapping",
+  "boundary": "A stand-in GitHub answers each topic's search with `github[topic]` (200 with no items when not given); `network_error` means no reply. The clock is 2026-10-19T09:30:00Z, so the window starts 2026-09-19. Requests are compared as a sorted list of paths with queries, because the searches run at the same time. The caller's Authorization and X-GitHub-Token are never sent to GitHub.",
+  "now": "2026-10-19T09:30:00Z",
+  "cases": [
+    {
+      "id": "all-complete",
+      "reason": "Every topic is found: six searches, the repositories mapped as the trending list maps them, with the topic's name and icon, cached for six hours.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 1,
+            "items": [
+              {
+                "id": 101,
+                "name": "agent-kit",
+                "full_name": "octo/agent-kit",
+                "html_url": "https://github.com/octo/agent-kit",
+                "description": "Agents in Go",
+                "language": "Go",
+                "stargazers_count": 3000,
+                "forks_count": 120,
+                "created_at": "2026-10-09T09:30:00Z",
+                "owner": {
+                  "login": "octo",
+                  "avatar_url": "https://avatars.example/octo.png"
+                }
+              }
+            ]
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=21600, stale-while-revalidate=3600",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": [
+                {
+                  "trending": true,
+                  "heatLevel": 3,
+                  "id": 101,
+                  "name": "agent-kit",
+                  "stars": 3000,
+                  "forks": 120,
+                  "url": "https://github.com/octo/agent-kit",
+                  "author": "octo",
+                  "description": "Agents in Go",
+                  "language": "Go",
+                  "languageColor": "#00ADD8",
+                  "starsPerDay": 300,
+                  "contributors": [
+                    {
+                      "avatar": "https://avatars.example/octo.png",
+                      "name": "octo"
+                    }
+                  ],
+                  "topic": "AI & Machine Learning",
+                  "topicIcon": "🤖"
+                }
+              ]
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "fields-missing",
+      "reason": "A repository with only an id and an owner gets the trending list's fallbacks.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 1,
+            "items": [
+              {
+                "id": 7,
+                "owner": {
+                  "login": "u7"
+                }
+              }
+            ]
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=21600, stale-while-revalidate=3600",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": [
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 7,
+                  "author": "u7",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u7"
+                    }
+                  ],
+                  "topic": "Web Development",
+                  "topicIcon": "🌐"
+                }
+              ]
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "created-at-not-usable",
+      "reason": "Without a usable creation time there are no stars per day, and the heat level is 1.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 102,
+                "name": "agent-kit",
+                "full_name": "octo/agent-kit",
+                "html_url": "https://github.com/octo/agent-kit",
+                "description": "Agents in Go",
+                "language": "Go",
+                "stargazers_count": 3000,
+                "forks_count": 120,
+                "created_at": "yesterday",
+                "owner": {
+                  "login": "octo",
+                  "avatar_url": "https://avatars.example/octo.png"
+                }
+              }
+            ]
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=21600, stale-while-revalidate=3600",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": [
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 102,
+                  "name": "agent-kit",
+                  "stars": 3000,
+                  "forks": 120,
+                  "url": "https://github.com/octo/agent-kit",
+                  "author": "octo",
+                  "description": "Agents in Go",
+                  "language": "Go",
+                  "languageColor": "#00ADD8",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "avatar": "https://avatars.example/octo.png",
+                      "name": "octo"
+                    }
+                  ],
+                  "topic": "DevOps & Cloud",
+                  "topicIcon": "⚙️"
+                }
+              ]
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "at-most-five",
+      "reason": "GitHub is asked for five; a longer list is cut to five.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "owner": {
+                  "login": "u1"
+                }
+              },
+              {
+                "id": 2,
+                "owner": {
+                  "login": "u2"
+                }
+              },
+              {
+                "id": 3,
+                "owner": {
+                  "login": "u3"
+                }
+              },
+              {
+                "id": 4,
+                "owner": {
+                  "login": "u4"
+                }
+              },
+              {
+                "id": 5,
+                "owner": {
+                  "login": "u5"
+                }
+              },
+              {
+                "id": 6,
+                "owner": {
+                  "login": "u6"
+                }
+              }
+            ]
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=21600, stale-while-revalidate=3600",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": [
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 1,
+                  "author": "u1",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u1"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                },
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 2,
+                  "author": "u2",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u2"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                },
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 3,
+                  "author": "u3",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u3"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                },
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 4,
+                  "author": "u4",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u4"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                },
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 5,
+                  "author": "u5",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u5"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                }
+              ]
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "byte-order-mark",
+      "reason": "A reply that starts with a byte-order mark is read, as response.json() reads it.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "raw": "﻿{\"items\": [{\"id\": 9, \"owner\": {\"login\": \"u9\"}}]}"
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=21600, stale-while-revalidate=3600",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": [
+                {
+                  "trending": true,
+                  "heatLevel": 1,
+                  "id": 9,
+                  "author": "u9",
+                  "description": "No description provided",
+                  "language": "Unknown",
+                  "languageColor": "#8b949e",
+                  "starsPerDay": null,
+                  "contributors": [
+                    {
+                      "name": "u9"
+                    }
+                  ],
+                  "topic": "Mobile Development",
+                  "topicIcon": "📱"
+                }
+              ]
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "one-rate-limited",
+      "reason": "One search refused (403, rate limit): that topic is empty and not complete, and the answer is cached for five minutes only.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 403,
+          "body": {
+            "message": "API rate limit exceeded"
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=300",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": false,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "one-unreachable",
+      "reason": "No reply to one search: that topic is not complete.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "network_error": true
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=300",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": false,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "one-without-items",
+      "reason": "A reply without a list of items: that topic is not complete.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=300",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": false,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "one-not-json",
+      "reason": "A reply that is not JSON: that topic is not complete.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "raw": "<html>"
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=300",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": false,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "item-without-owner",
+      "reason": "An item without an owner makes the whole topic not complete, as it fails the whole trending list.",
+      "github": {
+        "ai-ml": {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 101,
+                "name": "agent-kit",
+                "full_name": "octo/agent-kit",
+                "html_url": "https://github.com/octo/agent-kit",
+                "description": "Agents in Go",
+                "language": "Go",
+                "stargazers_count": 3000,
+                "forks_count": 120,
+                "created_at": "2026-10-09T09:30:00Z",
+                "owner": {
+                  "login": "octo",
+                  "avatar_url": "https://avatars.example/octo.png"
+                }
+              },
+              {
+                "id": 1
+              }
+            ]
+          }
+        },
+        "web-dev": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "mobile": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "devops": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "data-science": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        },
+        "security": {
+          "status": 200,
+          "body": {
+            "total_count": 0,
+            "incomplete_results": false,
+            "items": []
+          }
+        }
+      },
+      "expect": {
+        "status": 200,
+        "cache_control": "public, max-age=0, s-maxage=300",
+        "body": {
+          "generatedAt": "2026-10-19T09:30:00.000Z",
+          "topics": [
+            {
+              "id": "ai-ml",
+              "name": "AI & Machine Learning",
+              "icon": "🤖",
+              "complete": false,
+              "repos": []
+            },
+            {
+              "id": "web-dev",
+              "name": "Web Development",
+              "icon": "🌐",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "mobile",
+              "name": "Mobile Development",
+              "icon": "📱",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "devops",
+              "name": "DevOps & Cloud",
+              "icon": "⚙️",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "data-science",
+              "name": "Data Science",
+              "icon": "📊",
+              "complete": true,
+              "repos": []
+            },
+            {
+              "id": "security",
+              "name": "Security & Privacy",
+              "icon": "🔐",
+              "complete": true,
+              "repos": []
+            }
+          ]
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    },
+    {
+      "id": "all-fail",
+      "reason": "Every search fails: 502, and nothing is cached.",
+      "github": {
+        "ai-ml": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        },
+        "web-dev": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        },
+        "mobile": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        },
+        "devops": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        },
+        "data-science": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        },
+        "security": {
+          "status": 500,
+          "body": {
+            "message": "Server Error"
+          }
+        }
+      },
+      "expect": {
+        "status": 502,
+        "cache_control": "no-store",
+        "body": {
+          "error": "Trending topics could not be loaded"
+        },
+        "requests": [
+          "/search/repositories?q=artificial-intelligence%20OR%20machine-learning%20OR%20deep-learning%20OR%20tensorflow%20OR%20pytorch%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=data-science%20OR%20analytics%20OR%20pandas%20OR%20jupyter%20OR%20visualization%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=devops%20OR%20kubernetes%20OR%20docker%20OR%20aws%20OR%20cloud%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=mobile%20OR%20android%20OR%20ios%20OR%20react-native%20OR%20flutter%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=security%20OR%20cybersecurity%20OR%20privacy%20OR%20encryption%20OR%20penetration-testing%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5",
+          "/search/repositories?q=web%20OR%20frontend%20OR%20react%20OR%20vue%20OR%20angular%20OR%20nextjs%20created%3A%3E2026-09-19%20stars%3A%3E100&sort=stars&order=desc&per_page=5"
+        ]
+      }
+    }
+  ]
+}

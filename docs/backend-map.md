@@ -456,3 +456,10 @@ calls.
 send the bearer (`fetchWithSession`). `src/lib/supabase/shares.js` calls the
 same function and table straight from the browser, but nothing imports it
 (checked at SHARE-002).
+
+## TREND-001a update (2026-10-19)
+
+`GET /api/trending/topics` is a new Go-only endpoint, `backend/internal/trendingtopics`,
+off by default (switch `trending-topics`). It is meant to replace the browser's
+reads of `trending_repos` (`src/lib/trending.js`) and the refresh route, which
+still exist; the page does not use it yet (TREND-001b).

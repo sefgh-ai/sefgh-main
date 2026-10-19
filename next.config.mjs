@@ -67,6 +67,10 @@ const goBackendRoutes = {
   "conversation-share": "/api/conversations/:id/share",
   "share-fork": "/api/share/:token/fork",
   "upload-avatar": "/api/upload-avatar",
+  // The trending page's topic sections, searched live on GitHub and cached by
+  // the CDN (TREND-001a; R-077, option A). Go only: there is no Next.js
+  // handler, so with this switch off the path is a 404.
+  "trending-topics": "/api/trending/topics",
 };
 
 function goBackendRewrites() {

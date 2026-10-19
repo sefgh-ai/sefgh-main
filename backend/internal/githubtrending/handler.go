@@ -127,27 +127,35 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			h.fail(w, "decode", errors.New("an item is not a repository with an owner"))
 			return
 		}
-		owner, _ := repo["owner"].(map[string]any)
-		out := map[string]any{"trending": true, "heatLevel": 1}
-		for dest, source := range map[string]string{"id": "id", "name": "name", "stars": "stargazers_count", "forks": "forks_count", "url": "html_url"} {
-			copyField(out, dest, repo, source)
-		}
-		copyField(out, "author", owner, "login")
-		out["description"] = fallback(repo["description"], "No description provided")
-		out["language"] = fallback(repo["language"], "Unknown")
-		if color, present := languageColor(repo["language"]); present {
-			out["languageColor"] = color
-		}
-		perDay := starsPerDay(repo["stargazers_count"], repo["created_at"], current)
-		out["starsPerDay"] = perDay
-		out["heatLevel"] = heatLevel(perDay)
-		contributor := map[string]any{}
-		copyField(contributor, "avatar", owner, "avatar_url")
-		copyField(contributor, "name", owner, "login")
-		out["contributors"] = []map[string]any{contributor}
-		result = append(result, out)
+		result = append(result, Item(repo, current))
 	}
 	write(w, 200, result)
+}
+
+// Item is one repository of GitHub's search reply as the trending page shows
+// it, given the moment its stars per day are counted to. repo must have an
+// owner. The trending topics (internal/trendingtopics) answer in the same
+// shape, so the page shows both lists alike.
+func Item(repo map[string]any, now time.Time) map[string]any {
+	owner, _ := repo["owner"].(map[string]any)
+	out := map[string]any{"trending": true, "heatLevel": 1}
+	for dest, source := range map[string]string{"id": "id", "name": "name", "stars": "stargazers_count", "forks": "forks_count", "url": "html_url"} {
+		copyField(out, dest, repo, source)
+	}
+	copyField(out, "author", owner, "login")
+	out["description"] = fallback(repo["description"], "No description provided")
+	out["language"] = fallback(repo["language"], "Unknown")
+	if color, present := languageColor(repo["language"]); present {
+		out["languageColor"] = color
+	}
+	perDay := starsPerDay(repo["stargazers_count"], repo["created_at"], now)
+	out["starsPerDay"] = perDay
+	out["heatLevel"] = heatLevel(perDay)
+	contributor := map[string]any{}
+	copyField(contributor, "avatar", owner, "avatar_url")
+	copyField(contributor, "name", owner, "login")
+	out["contributors"] = []map[string]any{contributor}
+	return out
 }
 
 var createdAtPattern = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$`)

@@ -38,6 +38,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/trendingtopics"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/videos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/vote"
 )
@@ -115,6 +116,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/ai/", aiMux(logger, verifier))
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
+	top.Handle("/api/trending/topics", topicsMux(logger, public))
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/conversations/", conversationsMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
@@ -190,6 +192,19 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		SignIn:  verifier.SignedInUser,
 		Models:  models,
 		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
+		Logger:  logger,
+	})
+	return mux
+}
+
+// topicsMux serves the trending topics (TREND-001a; R-077, option A): public
+// GitHub searches only, with the public read token when one is set and never
+// a caller's credential, so one answer can be cached for everyone.
+func topicsMux(logger *slog.Logger, public http.RoundTripper) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("GET /api/trending/topics", &trendingtopics.Handler{
+		Client:  &http.Client{Timeout: githubtrending.Timeout, Transport: public},
+		BaseURL: envOr("GITHUB_API_URL", trendingtopics.DefaultBaseURL),
 		Logger:  logger,
 	})
 	return mux

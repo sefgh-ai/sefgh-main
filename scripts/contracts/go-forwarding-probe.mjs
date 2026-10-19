@@ -226,6 +226,10 @@ const scenarios = [
   { path: '/api/upload-avatar', body: '{}', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
   { path: '/api/upload-avatar', body: avatarMultipart, headers: { Authorization: 'Bearer session-b', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 401, cache: null },
   { path: '/api/upload-avatar', body: avatarMultipart },
+  // Trending topics: six public searches, one shared answer for everyone,
+  // with the CDN cache header.
+  { path: '/api/trending/topics' },
+  { path: '/api/trending/topics', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200, cache: 'public, max-age=0, s-maxage=21600, stale-while-revalidate=3600' },
 ];
 
 try {
@@ -415,7 +419,7 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -444,6 +448,13 @@ try {
       const normalize = value => value.replace(/avatar-\d+/g, 'avatar-CLOCK').replace(/\?t=\d+/g, '?t=CLOCK');
       answer.body = normalize(answer.body);
       upstream = upstream.map(normalize);
+    }
+    if (path === '/api/trending/topics') {
+      // generatedAt is each request's own clock, and the six searches run at
+      // the same time, so their order differs between requests. The contract
+      // test pins both; here compare the rest.
+      answer.body = answer.body.replace(/"generatedAt":"[^"]*"/, '"generatedAt":"CLOCK"');
+      upstream = [...upstream].sort();
     }
     return { ...answer, upstream };
   };
