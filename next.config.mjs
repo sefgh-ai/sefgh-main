@@ -73,15 +73,28 @@ const goBackendRoutes = {
   "trending-topics": "/api/trending/topics",
 };
 
+// Areas of the browser's own database calls served by Go (DATA-001b;
+// docs/plans/browser-data.md). NEXT_PUBLIC_SEFGH_GO_DATA lists them, and the
+// browser modules read the same setting (src/lib/go-data.js), so one name
+// switches an area's module and its rewrite together. Without the rewrite
+// the module gets a 404 and uses Supabase directly, as before.
+const goDataAreas = {
+  "search-history": ["/api/search-history", "/api/search-history/:path*"],
+};
+
 function goBackendRewrites() {
   const origin = (process.env.SEFGH_GO_API_URL || "").replace(/\/+$/, "");
   if (!origin) return [];
-  const enabled = (process.env.SEFGH_GO_ROUTES || "")
-    .split(",")
-    .map((name) => name.trim());
-  return Object.entries(goBackendRoutes)
+  const listed = (setting) => (setting || "").split(",").map((name) => name.trim());
+  const enabled = listed(process.env.SEFGH_GO_ROUTES);
+  const areas = listed(process.env.NEXT_PUBLIC_SEFGH_GO_DATA);
+  const routes = Object.entries(goBackendRoutes)
     .filter(([name]) => enabled.includes(name))
     .map(([, path]) => ({ source: path, destination: `${origin}${path}` }));
+  const data = Object.entries(goDataAreas)
+    .filter(([name]) => areas.includes(name))
+    .flatMap(([, paths]) => paths.map((path) => ({ source: path, destination: `${origin}${path}` })));
+  return [...routes, ...data];
 }
 
 /** @type {import('next').NextConfig} */

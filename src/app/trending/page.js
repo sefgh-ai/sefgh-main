@@ -21,6 +21,7 @@ import {
 } from "@/lib/utils/trending/trendingHelpers";
 import { getHeatIndicator } from "@/lib/utils/colors";
 import { editorsChoice } from "@/data/editorsChoice";
+import { mergeTrending } from "@/lib/trending-topics";
 
 export default function TrendingPage() {
   const router = useRouter();
@@ -43,10 +44,9 @@ export default function TrendingPage() {
     developers,
     isRefreshing,
     lastRefresh,
-    isDataStale,
     loadError,
     handleRefreshTrending,
-    getCustomTrendingRepos,
+    topicRepos,
   } = useTrendingData(
     activeTab,
     programmingLanguage,
@@ -95,12 +95,12 @@ export default function TrendingPage() {
     fetchProgrammingLanguages();
   }, []);
 
-  // Merge and sort repositories (memoized for performance)
-  const displayRepos = useMemo(() => {
-    const customRepos = getCustomTrendingRepos();
-    const allRepos = [...customRepos, ...repositories];
-    return sortRepositories(allRepos, sortBy);
-  }, [repositories, sortBy, getCustomTrendingRepos]);
+  // The topic sections' repositories, then the main list, each repository
+  // once, sorted (memoized for performance).
+  const displayRepos = useMemo(
+    () => sortRepositories(mergeTrending(topicRepos, repositories), sortBy),
+    [topicRepos, repositories, sortBy]
+  );
 
   return (
     <SidebarProvider>
@@ -135,7 +135,6 @@ export default function TrendingPage() {
                   programmingLanguages={programmingLanguages}
                   sortOptions={SORT_OPTIONS}
                   lastRefresh={lastRefresh}
-                  isDataStale={isDataStale}
                   isRefreshing={isRefreshing}
                   handleRefreshTrending={handleRefreshTrending}
                 />

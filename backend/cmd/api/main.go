@@ -34,6 +34,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/rating"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/searchhistory"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/shares"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/sharetoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/starred"
@@ -117,6 +118,9 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/api/trending/topics", topicsMux(logger, public))
+	history := historyMux(logger, verifier)
+	top.Handle("/api/search-history", history)
+	top.Handle("/api/search-history/", history)
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/conversations/", conversationsMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
@@ -194,6 +198,21 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
 		Logger:  logger,
 	})
+	return mux
+}
+
+// historyMux serves the browser's search history (DATA-001b), the first
+// area of the browser's own database calls to move behind Go. Only a
+// signed-in caller reaches the database, with their own token.
+func historyMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	(&searchhistory.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}).Register(mux)
 	return mux
 }
 

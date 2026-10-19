@@ -230,6 +230,15 @@ const scenarios = [
   // with the CDN cache header.
   { path: '/api/trending/topics' },
   { path: '/api/trending/topics', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200, cache: 'public, max-age=0, s-maxage=21600, stale-while-revalidate=3600' },
+  // Search history (DATA-001b), a browser data area switched by
+  // NEXT_PUBLIC_SEFGH_GO_DATA: the caller's own rows only, never cached.
+  { path: '/api/search-history?user=a&offset=0&limit=50', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history/count?user=a', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history', body: '{"user":"a","query":"rust","source":"search","filters":{},"resultsCount":0}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history/h1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history/h%2F1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history?user=a&source=chat', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/search-history?user=a&offset=0&limit=50' },
 ];
 
 try {
@@ -380,6 +389,13 @@ try {
         if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
         res.end('[]');
       }
+      // Search history: the caller's own rows, with the caller's session.
+      else if (req.url.startsWith('/rest/v1/search_history')) {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        if (req.method === 'POST') { res.writeHead(201); res.end(JSON.stringify({ id: 'h9', user_id: 'a', ...JSON.parse(body) })); }
+        else if (req.method === 'DELETE') { res.writeHead(204); res.end(); }
+        else res.end(JSON.stringify([{ id: 'h1', user_id: 'a', query: 'rust', source: 'search' }, { id: 'h2', user_id: 'a', query: 'go', source: 'chat' }]));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -421,7 +437,7 @@ try {
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
   const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

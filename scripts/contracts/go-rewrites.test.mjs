@@ -5,6 +5,8 @@ import config from '../../next.config.mjs';
 test('Go routing is opt-in, exact, and independently reversible per route', async () => {
   const oldURL = process.env.SEFGH_GO_API_URL;
   const oldRoutes = process.env.SEFGH_GO_ROUTES;
+  const oldData = process.env.NEXT_PUBLIC_SEFGH_GO_DATA;
+  delete process.env.NEXT_PUBLIC_SEFGH_GO_DATA;
   try {
     delete process.env.SEFGH_GO_API_URL;
     process.env.SEFGH_GO_ROUTES = 'github-repo,github-repo-details,github-contents';
@@ -49,5 +51,34 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
   } finally {
     if (oldURL === undefined) delete process.env.SEFGH_GO_API_URL; else process.env.SEFGH_GO_API_URL = oldURL;
     if (oldRoutes === undefined) delete process.env.SEFGH_GO_ROUTES; else process.env.SEFGH_GO_ROUTES = oldRoutes;
+    if (oldData === undefined) delete process.env.NEXT_PUBLIC_SEFGH_GO_DATA; else process.env.NEXT_PUBLIC_SEFGH_GO_DATA = oldData;
+  }
+});
+
+// A browser data area (DATA-001b) is switched by NEXT_PUBLIC_SEFGH_GO_DATA,
+// the setting its browser module reads, and only when the Go server's
+// address is set; the route switches do not affect it.
+test('browser data areas are rewritten by the same setting their modules read', async () => {
+  const old = { url: process.env.SEFGH_GO_API_URL, routes: process.env.SEFGH_GO_ROUTES, data: process.env.NEXT_PUBLIC_SEFGH_GO_DATA };
+  const history = [
+    { source: '/api/search-history', destination: 'http://127.0.0.1:8787/api/search-history' },
+    { source: '/api/search-history/:path*', destination: 'http://127.0.0.1:8787/api/search-history/:path*' },
+  ];
+  try {
+    delete process.env.SEFGH_GO_ROUTES;
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'search-history';
+    delete process.env.SEFGH_GO_API_URL;
+    assert.deepEqual(await config.rewrites(), { beforeFiles: [] }, 'no Go address, no rewrite: the module falls back on the 404');
+    process.env.SEFGH_GO_API_URL = 'http://127.0.0.1:8787/';
+    assert.deepEqual(await config.rewrites(), { beforeFiles: history });
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = ' unknown , search-history ';
+    assert.deepEqual(await config.rewrites(), { beforeFiles: history });
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
+    process.env.SEFGH_GO_ROUTES = 'search-history';
+    assert.deepEqual(await config.rewrites(), { beforeFiles: [] }, 'the route list does not switch a data area');
+  } finally {
+    for (const [name, value] of [['SEFGH_GO_API_URL', old.url], ['SEFGH_GO_ROUTES', old.routes], ['NEXT_PUBLIC_SEFGH_GO_DATA', old.data]]) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
   }
 });

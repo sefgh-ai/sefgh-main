@@ -6,9 +6,17 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { usesGo, askGo, NOT_SERVED } from "@/lib/go-data";
 
 // Module-level client - created once and reused
 const supabase = createClient();
+
+// With "search-history" in NEXT_PUBLIC_SEFGH_GO_DATA, each function asks the
+// Go endpoints instead of the database (DATA-001b). They answer exactly what
+// the function returns; the argument checks stay here. Without the Go route
+// (404) the direct path is used. contracts/search-history pins both paths.
+const AREA = "search-history";
+const noCounts = () => ({ total: 0, search: 0, chat: 0 });
 
 /**
  * Save a search query to history
@@ -26,6 +34,19 @@ export async function saveSearchHistory(userId, query, source, options = {}) {
   }
 
   const { filters = {}, resultsCount = 0 } = options;
+
+  if (usesGo(AREA)) {
+    const saved = await askGo(
+      "/api/search-history",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: userId, query: query.trim(), source, filters, resultsCount }),
+      },
+      null
+    );
+    if (saved !== NOT_SERVED) return saved;
+  }
 
   const { data, error } = await supabase
     .from("search_history")
@@ -69,6 +90,15 @@ export async function getSearchHistory(userId, options = {}) {
   }
 
   const { limit = 50, offset = 0, source = null } = options;
+
+  if (usesGo(AREA)) {
+    // The page as .range(offset, offset + limit - 1) writes it.
+    const to = offset + limit - 1;
+    const params = new URLSearchParams({ user: userId, offset: `${offset}`, limit: `${to - offset + 1}` });
+    if (source) params.set("source", source);
+    const rows = await askGo(`/api/search-history?${params}`, {}, []);
+    if (rows !== NOT_SERVED) return rows;
+  }
 
   let query = supabase
     .from("search_history")
@@ -124,6 +154,11 @@ export async function getSearchHistoryGrouped(userId, options = {}) {
  * @returns {Promise<boolean>} - Success status
  */
 export async function deleteSearchHistoryItem(historyId) {
+  if (usesGo(AREA)) {
+    const done = await askGo(`/api/search-history/${encodeURIComponent(`${historyId}`)}`, { method: "DELETE" }, false);
+    if (done !== NOT_SERVED) return done;
+  }
+
   const { error } = await supabase
     .from("search_history")
     .delete()
@@ -144,6 +179,14 @@ export async function deleteSearchHistoryItem(historyId) {
  * @returns {Promise<boolean>} - Success status
  */
 export async function clearSearchHistory(userId, source = null) {
+  if (usesGo(AREA)) {
+    // Go deletes only when this id is the caller's, as row-level security does.
+    const params = new URLSearchParams({ user: `${userId}` });
+    if (source) params.set("source", source);
+    const done = await askGo(`/api/search-history?${params}`, { method: "DELETE" }, false);
+    if (done !== NOT_SERVED) return done;
+  }
+
   let query = supabase.from("search_history").delete().eq("user_id", userId);
 
   if (source) {
@@ -169,6 +212,11 @@ export async function clearSearchHistory(userId, source = null) {
 export async function getSearchHistoryCount(userId) {
   if (!userId) {
     return { total: 0, search: 0, chat: 0 };
+  }
+
+  if (usesGo(AREA)) {
+    const counts = await askGo(`/api/search-history/count?${new URLSearchParams({ user: userId })}`, {}, noCounts());
+    if (counts !== NOT_SERVED) return counts;
   }
 
   const { data, error } = await supabase

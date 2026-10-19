@@ -463,3 +463,25 @@ same function and table straight from the browser, but nothing imports it
 off by default (switch `trending-topics`). It is meant to replace the browser's
 reads of `trending_repos` (`src/lib/trending.js`) and the refresh route, which
 still exist; the page does not use it yet (TREND-001b).
+
+## TREND-001b update (2026-10-19)
+
+The trending page no longer reads `trending_repos` from the browser: its topic
+sections come from `/api/trending/topics` (`src/lib/trending-topics.js`), which
+answers 404 until the switch `trending-topics` is on. Only the refresh route
+(`src/app/api/trending/refresh/route.js`) still uses `src/lib/trending.js`.
+
+## DATA-PLAN-001 and DATA-001a update (2026-10-19)
+
+The browser's own database calls are surveyed by area in `plans/browser-data.md`.
+`scripts/contracts/browser-db-fixture.mjs` runs a browser module's real functions
+against a stand-in Supabase; `contracts/search-history` is the first area recorded
+with it. Nothing in the browser has moved yet.
+
+## DATA-001b update (2026-10-19)
+
+Search history can be served by Go (`backend/internal/searchhistory`): with
+`search-history` in `NEXT_PUBLIC_SEFGH_GO_DATA`, `src/lib/supabase/search-history.js`
+calls `/api/search-history` (through `src/lib/go-data.js`) instead of Supabase,
+and `next.config.mjs` rewrites those paths to Go. Off by default; the direct
+path remains the fallback until Phase 7.

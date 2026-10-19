@@ -83,6 +83,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [31 Bounded file streams](31-bounded-file-streams/README.md) | Multipart parts, readers, reading one extra byte, shared deadlines and bounded cleanup | `readAvatar` and `Handler.call` in `backend/internal/avatar/handler.go` |
 | [32 Request budgets and redirects](32-request-budgets-and-redirects/README.md) | One context for the whole request, connection read deadlines, copying clients and confining provider credentials | `ailimit.BoundRequest`, `aiprovider.Client.Generate`, `aienhance.Handler.post` |
 | [33 Partial answers and shared caches](33-partial-answers-and-shared-caches/README.md) | `sync.WaitGroup.Go`, keeping the searches that worked, `max-age` against `s-maxage` and `no-store`, never caching who asked, sharing one mapping across packages | `backend/internal/trendingtopics`, `Item` in `backend/internal/githubtrending` |
+| [34 A browser call moves to the server](34-a-browser-call-moves-to-the-server/README.md) | Moving a browser database call behind Go with a fallback, never trusting an id from the client, `ServeMux` precedence between a fixed path and a wildcard, closures and method values as middleware | `backend/internal/searchhistory`, `src/lib/supabase/search-history.js`, `src/lib/go-data.js` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

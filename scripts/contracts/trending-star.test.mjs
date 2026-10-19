@@ -26,5 +26,10 @@ test('the card links Star to GitHub, and curated rows carry the address', () => 
   assert.match(card, /href=\{githubRepoUrl\(repo\)\}/);
   assert.match(card, /rel="noopener noreferrer"/);
   assert.doesNotMatch(card, /<Button variant="outline" size="sm">\s*<Star/, 'the old button that did nothing');
-  assert.match(read('src/hooks/trending/useTrendingData.js'), /url: repo\.html_url,/);
+  // Topic rows come from /api/trending/topics since TREND-001b, mapped in Go
+  // by githubtrending.Item; its contract pins that they carry the address.
+  const topics = JSON.parse(read('contracts/trending-topics/cases.json'));
+  const row = topics.cases.find((c) => c.id === 'all-complete').expect.body.topics[0].repos[0];
+  assert.equal(githubRepoUrl(row), 'https://github.com/octo/agent-kit');
+  assert.equal(row.url, 'https://github.com/octo/agent-kit');
 });

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -28,7 +27,6 @@ export function TrendingFilters({
   programmingLanguages,
   sortOptions,
   lastRefresh,
-  isDataStale,
   isRefreshing,
   handleRefreshTrending,
 }) {
@@ -66,14 +64,6 @@ export function TrendingFilters({
             <span className="text-sm text-muted-foreground">
               Last updated: {new Date(lastRefresh).toLocaleDateString("en-IN")}
             </span>
-          )}
-          {isDataStale && (
-            <Badge
-              variant="outline"
-              className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-            >
-              Data is older than 3 days
-            </Badge>
           )}
           <Button
             variant="outline"

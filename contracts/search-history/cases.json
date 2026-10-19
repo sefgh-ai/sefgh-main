@@ -1,0 +1,1629 @@
+{
+  "contract_version": 1,
+  "area": "search-history",
+  "module": "src/lib/supabase/search-history.js",
+  "recorded_from": "the browser module by scripts/contracts/record-search-history.mjs",
+  "boundary": "The module's real functions run in Node with the browser's Supabase client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/browser-db-fixture.mjs). `session` is the signed-in user's access token, sent by the browser client; signed out, the public key is sent. `expect` is what the call returned (or threw) and every Data API request it made. `go_database`, when present, is the requests Go makes instead: none, because Go answers from the verified caller (401 signed out; no request for another user's id) with the outcome row-level security gives today. `expect.go_request` is the request the module sends to Go when the area is switched on (null when its own argument checks answer first); `go_status` (default 200) and `go_returns` (default `expect.returns`) are what Go answers and the module then gives. getSearchHistoryGrouped is not here: it groups getSearchHistory's list in the browser.",
+  "cases": [
+    {
+      "id": "save-search",
+      "disposition": "defect",
+      "reason": "A signed-in search is saved as the user, trimmed, with its filters and result count, and the stored row is returned. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "  rust async  ",
+        "search",
+        {
+          "filters": {
+            "language": "Rust",
+            "sort": "stars",
+            "stars": ">100"
+          },
+          "resultsCount": 42
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "h1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust async",
+            "source": "search",
+            "filters": {
+              "language": "Rust",
+              "sort": "stars",
+              "stars": ">100"
+            },
+            "results_count": 42,
+            "created_at": "2026-10-19T09:29:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "h1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "query": "rust async",
+          "source": "search",
+          "filters": {
+            "language": "Rust",
+            "sort": "stars",
+            "stars": ">100"
+          },
+          "results_count": 42,
+          "created_at": "2026-10-19T09:29:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust async",
+              "source": "search",
+              "filters": {
+                "language": "Rust",
+                "sort": "stars",
+                "stars": ">100"
+              },
+              "results_count": 42
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust async",
+            "source": "search",
+            "filters": {
+              "language": "Rust",
+              "sort": "stars",
+              "stars": ">100"
+            },
+            "resultsCount": 42
+          }
+        }
+      }
+    },
+    {
+      "id": "save-chat",
+      "disposition": "defect",
+      "reason": "A chat message is saved with source chat. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "how do lifetimes work?",
+        "chat",
+        {
+          "filters": {
+            "model": "gpt-4o",
+            "conversationId": "c1"
+          },
+          "resultsCount": 1
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "h2",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "how do lifetimes work?",
+            "source": "chat",
+            "filters": {
+              "model": "gpt-4o",
+              "conversationId": "c1"
+            },
+            "results_count": 1,
+            "created_at": "2026-10-19T09:28:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "h2",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "query": "how do lifetimes work?",
+          "source": "chat",
+          "filters": {
+            "model": "gpt-4o",
+            "conversationId": "c1"
+          },
+          "results_count": 1,
+          "created_at": "2026-10-19T09:28:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "how do lifetimes work?",
+              "source": "chat",
+              "filters": {
+                "model": "gpt-4o",
+                "conversationId": "c1"
+              },
+              "results_count": 1
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "how do lifetimes work?",
+            "source": "chat",
+            "filters": {
+              "model": "gpt-4o",
+              "conversationId": "c1"
+            },
+            "resultsCount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "save-defaults",
+      "disposition": "defect",
+      "reason": "Without options the filters are {} and the count 0. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "go generics",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "h3",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "go generics",
+            "source": "search",
+            "filters": {},
+            "results_count": 0,
+            "created_at": "2026-10-19T09:27:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "h3",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "query": "go generics",
+          "source": "search",
+          "filters": {},
+          "results_count": 0,
+          "created_at": "2026-10-19T09:27:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "go generics",
+              "source": "search",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "go generics",
+            "source": "search",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "save-without-source",
+      "disposition": "defect",
+      "reason": "Without a source the field is left out of the row, as JSON leaves out undefined. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "rust"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "h4",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "source": null,
+            "filters": {},
+            "results_count": 0,
+            "created_at": "2026-10-19T09:26:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "h4",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "query": "rust",
+          "source": null,
+          "filters": {},
+          "results_count": 0,
+          "created_at": "2026-10-19T09:26:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "save-no-user",
+      "disposition": "preserve",
+      "reason": "No user id: nothing is saved and nothing is asked.",
+      "call": "saveSearchHistory",
+      "args": [
+        null,
+        "rust",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [],
+      "expect": {
+        "returns": null,
+        "database": [],
+        "go_request": null
+      }
+    },
+    {
+      "id": "save-blank-query",
+      "disposition": "preserve",
+      "reason": "A query of white space only: nothing is saved.",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "  \t ",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [],
+      "expect": {
+        "returns": null,
+        "database": [],
+        "go_request": null
+      }
+    },
+    {
+      "id": "save-query-not-text",
+      "disposition": "preserve",
+      "reason": "A query that is not text has no trim(): the call throws before any request.",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        42,
+        "search"
+      ],
+      "session": "session-a",
+      "database": [],
+      "expect": {
+        "throws": "TypeError: query?.trim is not a function",
+        "database": [],
+        "go_request": null
+      }
+    },
+    {
+      "id": "save-fails",
+      "disposition": "preserve",
+      "reason": "The insert fails: null.",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "rust",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust",
+              "source": "search",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "source": "search",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "save-unreachable",
+      "disposition": "preserve",
+      "reason": "No reply: null.",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "rust",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust",
+              "source": "search",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "source": "search",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "save-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out, the public key is sent and row-level security refuses the row: null. Go answers 401 without asking the database, and the module gives the same null.",
+      "call": "saveSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "rust",
+        "search"
+      ],
+      "session": null,
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "details": null,
+            "hint": null,
+            "message": "new row violates row-level security policy for table \"search_history\""
+          }
+        }
+      ],
+      "go_database": [],
+      "go_status": 401,
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust",
+              "source": "search",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": null,
+          "content_type": "application/json",
+          "body": {
+            "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "source": "search",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "save-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security refuses the row: null. Go makes no request for an id that is not the caller's.",
+      "call": "saveSearchHistory",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+        "rust",
+        "search"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "details": null,
+            "hint": null,
+            "message": "new row violates row-level security policy for table \"search_history\""
+          }
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/search_history?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+              "query": "rust",
+              "source": "search",
+              "filters": {},
+              "results_count": 0
+            }
+          }
+        ],
+        "go_request": {
+          "method": "POST",
+          "path": "/api/search-history",
+          "authorization": "Bearer session-a",
+          "content_type": "application/json",
+          "body": {
+            "user": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+            "query": "rust",
+            "source": "search",
+            "filters": {},
+            "resultsCount": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "list-defaults",
+      "disposition": "preserve",
+      "reason": "The newest 50 of the user's searches.",
+      "call": "getSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "h1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "rust async",
+              "source": "search",
+              "filters": {
+                "language": "Rust",
+                "sort": "stars",
+                "stars": ">100"
+              },
+              "results_count": 42,
+              "created_at": "2026-10-19T09:29:00+00:00"
+            },
+            {
+              "id": "h2",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "how do lifetimes work?",
+              "source": "chat",
+              "filters": {
+                "model": "gpt-4o",
+                "conversationId": "c1"
+              },
+              "results_count": 1,
+              "created_at": "2026-10-19T09:28:00+00:00"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "returns": [
+          {
+            "id": "h1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust async",
+            "source": "search",
+            "filters": {
+              "language": "Rust",
+              "sort": "stars",
+              "stars": ">100"
+            },
+            "results_count": 42,
+            "created_at": "2026-10-19T09:29:00+00:00"
+          },
+          {
+            "id": "h2",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "how do lifetimes work?",
+            "source": "chat",
+            "filters": {
+              "model": "gpt-4o",
+              "conversationId": "c1"
+            },
+            "results_count": 1,
+            "created_at": "2026-10-19T09:28:00+00:00"
+          }
+        ],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&order=created_at.desc&offset=0&limit=50",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&offset=0&limit=50",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "list-paged-by-source",
+      "disposition": "preserve",
+      "reason": "A page of one source: offset and limit from the range, then the source filter.",
+      "call": "getSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "limit": 10,
+          "offset": 20,
+          "source": "chat"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "h2",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "query": "how do lifetimes work?",
+              "source": "chat",
+              "filters": {
+                "model": "gpt-4o",
+                "conversationId": "c1"
+              },
+              "results_count": 1,
+              "created_at": "2026-10-19T09:28:00+00:00"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "returns": [
+          {
+            "id": "h2",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "how do lifetimes work?",
+            "source": "chat",
+            "filters": {
+              "model": "gpt-4o",
+              "conversationId": "c1"
+            },
+            "results_count": 1,
+            "created_at": "2026-10-19T09:28:00+00:00"
+          }
+        ],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&order=created_at.desc&offset=20&limit=10&source=eq.chat",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&offset=20&limit=10&source=chat",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "list-no-user",
+      "disposition": "preserve",
+      "reason": "No user id: an empty list and no request.",
+      "call": "getSearchHistory",
+      "args": [
+        null
+      ],
+      "session": "session-a",
+      "database": [],
+      "expect": {
+        "returns": [],
+        "database": [],
+        "go_request": null
+      }
+    },
+    {
+      "id": "list-fails",
+      "disposition": "preserve",
+      "reason": "The read fails: an empty list.",
+      "call": "getSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": [],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&order=created_at.desc&offset=0&limit=50",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&offset=0&limit=50",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "list-null-reply",
+      "disposition": "preserve",
+      "reason": "A success with null: an empty list.",
+      "call": "getSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": null
+        }
+      ],
+      "expect": {
+        "returns": [],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&order=created_at.desc&offset=0&limit=50",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&offset=0&limit=50",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "list-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out, row-level security shows no rows. Go answers 401 without asking, and the module gives the same empty list.",
+      "call": "getSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "go_database": [],
+      "go_status": 401,
+      "expect": {
+        "returns": [],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&order=created_at.desc&offset=0&limit=50",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&offset=0&limit=50",
+          "authorization": null,
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "list-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security shows no rows. Go makes no request.",
+      "call": "getSearchHistory",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": [],
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=*&user_id=eq.7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5&order=created_at.desc&offset=0&limit=50",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history?user=7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5&offset=0&limit=50",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "delete-item",
+      "disposition": "preserve",
+      "reason": "One entry is deleted by its id; row-level security limits it to the user's own.",
+      "call": "deleteSearchHistoryItem",
+      "args": [
+        "h1"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?id=eq.h1",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history/h1",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "delete-item-fails",
+      "disposition": "preserve",
+      "reason": "The delete fails: false.",
+      "call": "deleteSearchHistoryItem",
+      "args": [
+        "h1"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": false,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?id=eq.h1",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history/h1",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "delete-item-unreachable",
+      "disposition": "preserve",
+      "reason": "No reply: false.",
+      "call": "deleteSearchHistoryItem",
+      "args": [
+        "h1"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "returns": false,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?id=eq.h1",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history/h1",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "delete-item-without-id",
+      "disposition": "preserve",
+      "reason": "Without an id the filter is id=eq.undefined, which matches nothing: true.",
+      "call": "deleteSearchHistoryItem",
+      "args": [],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?id=eq.undefined",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history/undefined",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "delete-item-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out, row-level security deletes nothing, and that is not an error: true. Go answers 401, and the module gives false: the one planned difference in what the caller sees.",
+      "call": "deleteSearchHistoryItem",
+      "args": [
+        "h1"
+      ],
+      "session": null,
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "go_database": [],
+      "go_status": 401,
+      "go_returns": false,
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?id=eq.h1",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history/h1",
+          "authorization": null,
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "clear-all",
+      "disposition": "preserve",
+      "reason": "All of the user's entries are deleted.",
+      "call": "clearSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "clear-source",
+      "disposition": "preserve",
+      "reason": "Only one source's entries are deleted.",
+      "call": "clearSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "chat"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&source=eq.chat",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&source=chat",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "clear-fails",
+      "disposition": "preserve",
+      "reason": "The delete fails: false.",
+      "call": "clearSearchHistory",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": false,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "clear-no-user",
+      "disposition": "preserve",
+      "reason": "No user id is not checked: the filter becomes user_id=eq.null, which matches nothing: true. Go makes no request for an id that is not the caller's, and deletes nothing either.",
+      "call": "clearSearchHistory",
+      "args": [
+        null
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?user_id=eq.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history?user=null",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "clear-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security deletes nothing: true. Go makes no request.",
+      "call": "clearSearchHistory",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/search_history?user_id=eq.7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "DELETE",
+          "path": "/api/search-history?user=7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count",
+      "disposition": "preserve",
+      "reason": "The user's searches are counted by source from their sources alone.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "source": "search"
+            },
+            {
+              "source": "chat"
+            },
+            {
+              "source": "search"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "returns": {
+          "total": 3,
+          "search": 2,
+          "chat": 1
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count-other-sources",
+      "disposition": "preserve",
+      "reason": "A source that is neither counts in the total only.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "source": "search"
+            },
+            {
+              "source": "api"
+            },
+            {
+              "source": null
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "returns": {
+          "total": 3,
+          "search": 1,
+          "chat": 0
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count-fails",
+      "disposition": "preserve",
+      "reason": "The read fails: zeros.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "total": 0,
+          "search": 0,
+          "chat": 0
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count-null-reply",
+      "disposition": "defect",
+      "reason": "A success with null: data.length throws, so the call rejects instead of giving zeros. Through Go the module gets zeros (a planned difference).",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": null
+        }
+      ],
+      "go_returns": {
+        "total": 0,
+        "search": 0,
+        "chat": 0
+      },
+      "expect": {
+        "throws": "TypeError: Cannot read properties of null (reading 'length')",
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security shows no rows: zeros. Go makes no request; it must not count the caller's own searches instead.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": {
+          "total": 0,
+          "search": 0,
+          "chat": 0
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+          "authorization": "Bearer session-a",
+          "content_type": null,
+          "body": null
+        }
+      }
+    },
+    {
+      "id": "count-no-user",
+      "disposition": "preserve",
+      "reason": "No user id: zeros and no request.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        null
+      ],
+      "session": "session-a",
+      "database": [],
+      "expect": {
+        "returns": {
+          "total": 0,
+          "search": 0,
+          "chat": 0
+        },
+        "database": [],
+        "go_request": null
+      }
+    },
+    {
+      "id": "count-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out, no rows are visible: zeros. Go answers 401, and the module gives the same zeros.",
+      "call": "getSearchHistoryCount",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": null,
+      "database": [
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "go_database": [],
+      "go_status": 401,
+      "expect": {
+        "returns": {
+          "total": 0,
+          "search": 0,
+          "chat": 0
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/search_history?select=source&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_request": {
+          "method": "GET",
+          "path": "/api/search-history/count?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "authorization": null,
+          "content_type": null,
+          "body": null
+        }
+      }
+    }
+  ]
+}

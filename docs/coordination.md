@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: TREND-001a handoff (Go endpoint for the trending topics, off by default); writer released.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-001b handoff (search history in Go behind NEXT_PUBLIC_SEFGH_GO_DATA); writer released; four tasks await the Git Agent.
 
 ## Start here
 
@@ -11,11 +11,89 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Previously: TREND-001a released 2026-10-19.
+- **Active writer:** none. Previously: DATA-001b released 2026-10-19. **Uncommitted, awaiting the Git Agent:** TREND-001b, DATA-PLAN-001, DATA-001a and DATA-001b, all in this working tree; the handoff below covers all four.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 101 entries (R-001 through R-101). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), search history served by Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default (DATA-001b). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 102 entries (R-001 through R-102). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: TREND-001a, `GET /api/trending/topics` in Go (Claude Code, 2026-10-19)
+## Latest handoff: DATA-001b, search history in Go (Claude Code, 2026-10-19)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default.** No live change: without `search-history` in `NEXT_PUBLIC_SEFGH_GO_DATA` the module takes its direct Supabase path exactly as before (the direct-path contract passes unchanged).
+**Not committed.** The Git Agent has not committed since `042b560` (TREND-001a): two watches of 15 and 10 minutes saw no commit. This tree holds TREND-001b, DATA-PLAN-001, DATA-001a and DATA-001b; this handoff's signal covers all four; their records follow below.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `e927dba`. Resulting commit: not yet made.
+
+Done:
+- `backend/internal/searchhistory`: five endpoints (`POST`, `GET`, `DELETE /api/search-history`, `DELETE /api/search-history/{id}`, `GET /api/search-history/count`), each answering exactly what its browser function returns; signed-in only, with the caller's own token; the browser's user id only as a filter checked against the verified caller (another user's id gets the row-level-security outcome without a request). R-102 copied, not fixed. `historyMux` in `cmd/api`; `history_wiring_test.go`.
+- `src/lib/go-data.js` (new): `usesGo(area)` reads `NEXT_PUBLIC_SEFGH_GO_DATA`; `askGo` answers the endpoint's value, `NOT_SERVED` on 404 (the module then takes its direct path), or the module's fallback on any other failure. `src/lib/supabase/search-history.js`: each function asks Go when the area is on, after its own argument checks.
+- `next.config.mjs`: `goDataAreas`; the same setting adds `/api/search-history` and `/api/search-history/:path*` rewrites when `SEFGH_GO_API_URL` is set; the route list cannot switch a data area. New rewrite test.
+- Contract `contracts/search-history` now 35 cases (5 `defect`; two added after deliberate breaks found gaps: `save-without-source`, `count-other-user`), with `expect.go_request` recorded from the switched module. Node: 101 tests (direct, switched, Go route missing). Go `TestContract` replays the 30 Go requests. Unit tests: two-user isolation (ADR Phase 3 gate), body limit, logs.
+- Probe: seven search-history requests through the data-area rewrite (one id holding `%2F`), with `NEXT_PUBLIC_SEFGH_GO_DATA=search-history` for Next.js.
+- Lesson 34 (a browser call moves to the server: the fallback, never trusting a client's id, `ServeMux` precedence, closures and method values; exercise `countSources`). Index updated.
+- Docs: contract README, backend README section and route row, ADR (Phase 3 row, dated note), backend map, plan status, register (R-102 status).
+
+Changed files (this task): backend/internal/searchhistory/{handler.go,handler_test.go,contract_test.go} (new), backend/cmd/api/{main.go,history_wiring_test.go (new)}, backend/README.md, src/lib/go-data.js (new), src/lib/supabase/search-history.js, next.config.mjs, scripts/contracts/{browser-db-fixture.mjs,record-search-history.mjs,search-history.test.mjs,go-rewrites.test.mjs,go-forwarding-probe.mjs}, contracts/search-history/{cases.json,README.md}, learn-go/{README.md,34-a-browser-call-moves-to-the-server/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md,plans/browser-data.md}.
+
+Checks (Claude Code, Windows, Node 24.22.0, Go 1.27.2), after the last code change:
+- `npm run test:contracts`: 1321 of 1321. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 30 packages pass; `go vet ./...` clean; `gofmt -l .` empty. learn-go `-tags solution`: 35 packages pass; lesson 34's exercise fails only its own test, as intended.
+- Forwarding probe (dev): 140 of 140 identical, including seven search-history requests.
+- Deliberate breaks against the Go contract, each restored byte for byte: 14 tried, all caught after two cases were added (the client's user id trusted on save, list, clear and count; signed out let through; ascending order; the source filter dropped on list and clear; an empty list answered null; missing fields written as null; a failed save answered with the error; a failed delete answered true; chat not counted; the counter called early, which would fix R-102 before the switch).
+- `npm run handoff` runs after this record is saved.
+Not checked: the area switched on against a real Supabase project or in a browser; `-race` locally.
+
+Remaining gates: the Git Agent's commit of the four tasks; independent review; turning `search-history` on (a preview first: it needs `SEFGH_GO_API_URL` and the setting, and then the page's history, saving and clearing checked in a browser); then R-102 fixed once in Go. KEYS-001 blocked on catalog evidence; R-090, R-088, R-086 as before.
+Next bounded action: DATA-002 (onboarding) and DATA-003 (user stats) the same way, from `docs/plans/browser-data.md`; each needs its table's definitions checked before its writes move.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: DATA-PLAN-001 and DATA-001a, browser database calls (Claude Code, 2026-10-19)
+
+Status: **complete: a plan (documentation) and a characterization (tests and fixtures only). No application behaviour changed.** Not committed: the Git Agent did not commit TREND-001b after about half an hour (no commit within a 15-minute watch either), so this batch is stacked on it. The tree now holds TREND-001b, DATA-PLAN-001 and DATA-001a, and this handoff's signal covers all three. TREND-001b's own record is below.
+Owner: Claude Code. Reviewer: none; no peer review claimed.
+Branch main; base `e927dba` (TREND-001a at `042b560`). Resulting commit: not yet made.
+Owner decision (2026-10-19, asked in this session): browser areas switch by a per-area list in a public build setting (option A of the plan). Recorded in the ADR's decisions log and in the plan.
+
+Done:
+- **DATA-PLAN-001:** `docs/plans/browser-data.md`: survey of the browser's direct database calls (25 files, 19 tables, 3 functions, 7 Realtime channels), what stays (Auth, Realtime, row-level security), how one area moves (characterize, port with the user's bearer, switch the module by area, Phase 7 removes the direct path), the owner's choice, an order of nine areas, and the evidence still needed for writes.
+- **R-102 (found):** `saveSearchHistory` never sends `increment_platform_stat` because the call is not awaited; checked with the real supabase-js. Characterized as `defect` cases; fixed once in Go.
+- **DATA-001a:** `scripts/contracts/browser-db-loader.mjs` and `browser-db-fixture.mjs` (a runner for browser modules: the real supabase-js with the browser client's session, installed before the module loads); `contracts/search-history` version 1, 32 cases (3 `defect`), recorded by `record-search-history.mjs`; `search-history.test.mjs` (33 tests). `go_database` marks the cases where Go will ask nothing (signed out, another user's id).
+- Corrected this agent's three earlier records of today: they ran on Node 24.22.0, not 21.7.1.
+- Docs: plan, contract README, ADR (decision, dated note), backend map, register (R-102).
+
+Changed files (this batch): docs/plans/browser-data.md (new), contracts/search-history/{cases.json,README.md} (new), scripts/contracts/{browser-db-loader,browser-db-fixture,record-search-history,search-history.test}.mjs (new), docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}. Plus TREND-001b's files, listed in its record.
+
+Checks (Claude Code, Windows, Node 24.22.0, Go 1.27.2):
+- `node --test scripts/contracts/search-history.test.mjs`: 33 of 33. The full suites run in `npm run handoff` below.
+- `git diff --check`: clean.
+Not checked: lint and build for this batch (no application code changed since TREND-001b's build); the module against a real Supabase project.
+
+Remaining gates: the Git Agent's commit of the three tasks; independent review; TREND-001b's own gates (CDN caching on a preview); KEYS-001 blocked on catalog evidence; R-090, R-088, R-086 as before.
+Next bounded action: **DATA-001b**: Go endpoints for search history (`internal/searchhistory`, the user's bearer, the module's user id as a checked filter), the module switched by `NEXT_PUBLIC_SEFGH_GO_DATA` containing `search-history`, contract and isolation tests, a lesson; then R-102 is fixed once in Go.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: TREND-001b, the trending page reads the topics endpoint (Claude Code, 2026-10-19)
+
+Status: **implementation complete; awaiting independent review; not deployed**. Live change once synchronized and deployed: the trending page asks `/api/trending/topics` for its topic sections instead of reading `trending_repos`. While the `trending-topics` switch is off that answer is a 404, so the page shows the main list only, as it effectively did with the empty table, and the browser's network log shows one 404 per visit. The "Data is older than 3 days" badge is gone.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `e927dba` (TREND-001a at `042b560`, pushed). Resulting commit: not yet made; the Git Agent commits after `npm run handoff`.
+
+Done:
+- `src/lib/trending-topics.js` (new): `fetchTrendingTopics` flattens the topics' repositories in order, each once, with `generatedAt`; any failure (404, 502, no reply, not JSON, a wrong shape) gives no repositories and no date. `mergeTrending` puts the topic rows before the main list and keeps each repository once, so one in both keeps its topic badge.
+- `useTrendingData.js`: one `fetchTopics` replaces the table read and the freshness check; returns `topicRepos`; the table-based mapping is gone (Go maps the rows now). `page.js` merges with `mergeTrending`. `TrendingFilters.jsx`: the stale badge and its unused `Badge` import removed; "Last updated" now shows the answer's search date.
+- Guard `scripts/contracts/trending-page.test.mjs` (4 tests); run against the old page code, the R-100 test fails. `trending-star.test.mjs` (R-060) checked the removed hook mapping for `url`; it now checks the trending-topics contract's row instead, through `githubRepoUrl`.
+- Register: R-100 fixed; R-077 progress. ADR dated note; backend map.
+
+Changed files: src/lib/trending-topics.js (new), src/hooks/trending/useTrendingData.js, src/app/trending/page.js, src/components/trending/TrendingFilters.jsx, scripts/contracts/trending-page.test.mjs (new), scripts/contracts/trending-star.test.mjs, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
+
+Checks (Claude Code, Windows, Node 24.22.0 (corrected 2026-10-19: first written as 21.7.1, the version earlier sessions used)):
+- `npm run test:contracts`: 1219 of 1219. `npm run lint`: 0 errors, 16 warnings (unchanged; the one in `useTrendingData.js` is the existing filter-effect warning). `npm run build`: passes. `git diff --check`: clean.
+- No Go code changed, so no lesson; `npm run handoff` runs the Go and learn-go suites.
+Not checked: the page in a browser (with the switch on or off); the switch on against real GitHub.
+
+Remaining gates: independent review; CDN caching verified on a preview before `trending-topics` is switched on; KEYS-001 blocked on catalog evidence; R-090, R-088, R-086 as before.
+Next bounded action: **TREND-001c**: a caller audit of `src/lib/trending.js` and `/api/trending/refresh`, retire the route (keeping the 25-route count honest: retired, not ported) and the table helpers, and prepare a reviewed migration to drop `trending_repos` without applying it.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: TREND-001a, `GET /api/trending/topics` in Go (Claude Code, 2026-10-19)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default**. No live change: the page does not call the endpoint yet, and without the switch Next.js has no handler for it.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
@@ -32,7 +110,7 @@ Done:
 
 Changed files: backend/internal/trendingtopics/{handler.go,handler_test.go,contract_test.go} (new), backend/internal/githubtrending/handler.go, backend/cmd/api/{main.go,main_test.go,topics_wiring_test.go (new)}, backend/README.md, contracts/trending-topics/{cases.json,README.md} (new), scripts/contracts/trending-topics.test.mjs (new), scripts/contracts/{go-rewrites.test.mjs,go-forwarding-probe.mjs}, next.config.mjs, learn-go/{README.md,33-partial-answers-and-shared-caches/* (new)}, docs/plans/trending-refresh.md, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md}.
 
-Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2), run one after another:
+Checks (Claude Code, Windows, Node 24.22.0 (corrected 2026-10-19: first written as 21.7.1, the version earlier sessions used), Go 1.27.2), run one after another:
 - `npm run test:contracts`: 1215 of 1215. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
 - backend: `go test -count=1 ./...` 29 packages pass; `go vet ./...` clean; `gofmt -l .` empty. learn-go `-tags solution`: 34 packages pass, vet clean, gofmt empty; lesson 33's exercise fails only its own test, as intended.
 - Forwarding probe (dev): 133 of 133 identical, including two topics requests (one with caller credentials, checking status and the cache header through Next.js).
@@ -58,7 +136,7 @@ Done:
 
 Changed files: docs/plans/trending-refresh.md (new), docs/{bug-register,coordination}.md, docs/adr/0002-go-backend.md, backend/internal/comments/handler_test.go, backend/internal/videos/handler_test.go, scripts/contracts/github-access.test.mjs.
 
-Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+Checks (Claude Code, Windows, Node 24.22.0 (corrected 2026-10-19: first written as 21.7.1, the version earlier sessions used), Go 1.27.2):
 - `npm run test:contracts`: 1214 of 1214. `git diff --check`: clean. `go vet` and `gofmt -l` on comments and videos: clean.
 - The three rewritten tests pass, and each was run against a deliberately broken subject, then restored byte for byte: the default 16-second budget instead of the configured one (comments and videos: "8 reads had no deadline within the 50ms budget"); no budget at all (comments: "no reply after 30 seconds"); the identity check ignoring `deadlineMs` (github-access: failed at 4042 ms).
 - `npm run handoff` runs after this record is saved; a failure would be recorded here by a further edit.

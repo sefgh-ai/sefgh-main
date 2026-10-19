@@ -31,6 +31,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `POST`, `DELETE /api/conversations/{id}/share` | `internal/shares` | `../contracts/conversation-share/` |
 | `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
 | `GET /api/trending/topics` | `internal/trendingtopics` | `../contracts/trending-topics/` (Go only) |
+| `POST`, `GET`, `DELETE /api/search-history`, `DELETE /api/search-history/{id}`, `GET /api/search-history/count` | `internal/searchhistory` | `../contracts/search-history/` (browser module) |
 | `POST /api/upload-avatar` | `internal/avatar` | `../contracts/upload-avatar/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
@@ -260,6 +261,15 @@ partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
 deployment-size checks, independent review and owner approval remain before
 cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
 back to the existing Next.js handler.
+
+## Search history (DATA-001b)
+
+The first area of the browser's own database calls served by Go (`../docs/plans/browser-data.md`). It is switched by the website's build setting `NEXT_PUBLIC_SEFGH_GO_DATA`, not `SEFGH_GO_ROUTES`: with `search-history` listed, `src/lib/supabase/search-history.js` asks these endpoints, and `next.config.mjs` adds their rewrite when `SEFGH_GO_API_URL` is set. Without the rewrite the module gets a 404 and uses Supabase directly, as before. It passes the 30 cases of `contracts/search-history` that reach Go.
+
+- **Five endpoints, one per browser function**, each answering exactly what the function returns. Only a signed-in caller reaches the database, with their own token; signed out is 401.
+- **The browser's user id is only a filter:** it must be the verified caller's, or the answer is what row-level security gave for another user's id (nothing), without asking the database. `TestAnotherUsersIDReachesNothing` is the ADR's two-user isolation check.
+- **Copied as it is:** the search counter is never increased (R-102); fixed once here after the area is switched on.
+- **Differs from the browser:** a null count reply gives zeros where the browser threw; a signed-out item delete gives `false` where the browser said `true` and deleted nothing; replies are `private, no-store`; saved searches are limited to 64 KiB.
 
 ## Trending topics (TREND-001a)
 

@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import {
-  getAllTrendingRepos,
-  isTrendingDataStale,
-  getLastRefreshTime,
-  TRENDING_TOPICS,
-} from "@/lib/trending";
-import { getLanguageColor } from "@/lib/utils/trending/trendingHelpers";
-import { starsPerDay, heatLevel } from "@/lib/utils/trending/trendingMeasure";
+import { fetchTrendingTopics } from "@/lib/trending-topics";
 
 export function useTrendingData(
   activeTab,
@@ -20,35 +13,22 @@ export function useTrendingData(
   const [loading, setLoading] = useState(true);
   const [repositories, setRepositories] = useState([]);
   const [developers, setDevelopers] = useState([]);
-  const [customTrendingData, setCustomTrendingData] = useState({});
+  // The topic sections' repositories, from /api/trending/topics.
+  const [topicRepos, setTopicRepos] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
-  const [isDataStale, setIsDataStale] = useState(false);
   // Set when a list could not be loaded. The page says so; it used to show
   // made-up repositories and developers instead (bug register R-020).
   const [loadError, setLoadError] = useState(null);
 
-  // Fetch custom curated trending data
-  const fetchCustomTrendingData = async () => {
-    try {
-      const data = await getAllTrendingRepos();
-      setCustomTrendingData(data);
-    } catch (error) {
-      console.error("Error fetching custom trending:", error);
-    }
-  };
-
-  // Check if data needs refresh
-  const checkDataFreshness = async () => {
-    try {
-      const stale = await isTrendingDataStale();
-      setIsDataStale(stale);
-
-      const lastTime = await getLastRefreshTime();
-      setLastRefresh(lastTime);
-    } catch (error) {
-      console.error("Error checking data freshness:", error);
-    }
+  // The topic sections and when they were searched (TREND-001b). They used
+  // to come from the trending_repos table, which nothing could fill, and the
+  // page then always said the data was over three days old (R-100). Without
+  // an answer there are no topic sections and no date.
+  const fetchTopics = async () => {
+    const { repos, generatedAt } = await fetchTrendingTopics();
+    setTopicRepos(repos);
+    setLastRefresh(generatedAt);
   };
 
   // Fetch trending repositories
@@ -99,8 +79,7 @@ export function useTrendingData(
       await Promise.all([
         fetchTrendingRepos(),
         fetchTrendingDevelopers(),
-        fetchCustomTrendingData(),
-        checkDataFreshness(),
+        fetchTopics(),
       ]);
       toast.success("Trending updated");
     } catch (error) {
@@ -112,45 +91,9 @@ export function useTrendingData(
     }
   };
 
-  // Get custom trending repos from Supabase data
-  const getCustomTrendingRepos = () => {
-    const allRepos = [];
-
-    Object.keys(customTrendingData).forEach((topicId) => {
-      const topic = TRENDING_TOPICS.find((t) => t.id === topicId);
-      const topicRepos = customTrendingData[topicId] || [];
-
-      topicRepos.forEach((item) => {
-        const repo = item.repo_data;
-        allRepos.push({
-          id: item.id,
-          author: repo.owner?.login || "unknown",
-          name: repo.name,
-          url: repo.html_url,
-          description: repo.description || "No description available",
-          language: repo.language || "Unknown",
-          languageColor: getLanguageColor(repo.language),
-          stars: repo.stargazers_count || 0,
-          forks: repo.forks_count || 0,
-          starsPerDay: starsPerDay(repo.stargazers_count, repo.created_at),
-          contributors: repo.owner?.login
-            ? [{ avatar: repo.owner.avatar_url, name: repo.owner.login }]
-            : [],
-          heatLevel: heatLevel(starsPerDay(repo.stargazers_count, repo.created_at)),
-          trending: true,
-          topic: topic?.name || topicId,
-          topicIcon: topic?.icon || "🔥",
-        });
-      });
-    });
-
-    return allRepos;
-  };
-
   // Initialize data
   useEffect(() => {
-    fetchCustomTrendingData();
-    checkDataFreshness();
+    fetchTopics();
   }, []);
 
   // Fetch data when filters change
@@ -178,12 +121,10 @@ export function useTrendingData(
     loading,
     repositories,
     developers,
-    customTrendingData,
+    topicRepos,
     isRefreshing,
     lastRefresh,
-    isDataStale,
     loadError,
     handleRefreshTrending,
-    getCustomTrendingRepos,
   };
 }
