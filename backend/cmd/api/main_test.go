@@ -14,6 +14,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/avatar"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/dataproxy"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
@@ -122,6 +123,11 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	// The trending topics' searches share one budget; nothing comes before it.
 	if trendingtopics.Budget >= writeTimeout {
 		t.Errorf("the trending topics' budget %v is not below the server's write timeout of %v", trendingtopics.Budget, writeTimeout)
+	}
+	// A proxied data request reads its body and the database's reply within
+	// one budget; nothing comes before it.
+	if dataproxy.Budget >= writeTimeout {
+		t.Errorf("the data proxy's budget %v is not below the server's write timeout of %v", dataproxy.Budget, writeTimeout)
 	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {

@@ -1,5 +1,6 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { PROXY_AREAS } from "./src/lib/go-areas.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -81,6 +82,8 @@ const goBackendRoutes = {
 const goDataAreas = {
   "search-history": ["/api/search-history", "/api/search-history/:path*"],
   onboarding: ["/api/onboarding"],
+  // The Go data proxy's areas (DATA-PROXY-001), from src/lib/go-areas.mjs.
+  ...Object.fromEntries(Object.keys(PROXY_AREAS).map((area) => [area, [`/api/data/${area}/:path*`]])),
 };
 
 function goBackendRewrites() {

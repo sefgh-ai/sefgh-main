@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-002 handoff (onboarding in Go behind NEXT_PUBLIC_SEFGH_GO_DATA); writer released.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-PROXY-001 handoff (the remaining browser data areas through the Go policy proxy); writer released.
 
 ## Start here
 
@@ -11,11 +11,38 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Previously: DATA-002 released 2026-10-19. `1e67beb` (TREND-001b, DATA-PLAN-001, DATA-001a/b) is a local commit, not pushed; DATA-002 is uncommitted.
+- **Active writer:** none. Previously: DATA-PROXY-001 released 2026-10-19 (committed locally at the owner's request; the Git Agent may push it).
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), search history (DATA-001b) and onboarding (DATA-002) served by Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 103 entries (R-001 through R-103). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 103 entries (R-001 through R-103). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: DATA-002, onboarding in Go (Claude Code, 2026-10-19)
+## Latest handoff: DATA-PROXY-001, the remaining browser data areas through Go (Claude Code, 2026-10-19)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default.** Live change once deployed: the browser's Supabase client has a routing fetch, which with `NEXT_PUBLIC_SEFGH_GO_DATA` unset passes every request through unchanged (checked with the real supabase-js).
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `ba354ac`. Resulting commit: a local commit made at the owner's request after this record (the Git Agent may push it).
+Owner decisions (2026-10-19, asked in this session): a Go policy proxy for the remaining areas instead of one endpoint package each; local commits per chunk.
+
+Done:
+- `backend/internal/dataproxy`: `/api/data/{area}/rest/v1/{table or rpc/name}` checks each request against the embedded `policy.json` (nine areas: notifications, profile, user-stats, home, submissions, search-stats, conversations, repo-page, activity; their tables or functions, methods and writable fields) and forwards it unchanged with the caller's token and the server's public key; the reply's status, body and `Content-Range` come back. Refusals are 403 in the Data API's error shape; 20-second budget with a read deadline, 4 MiB bodies, 16 MiB replies; logs name area, table and status only (a test caught the first version logging the URL). `dataMux` in `cmd/api`, `data_wiring_test.go`, write-timeout check.
+- Browser: `src/lib/go-areas.mjs` (the area list and `usesGo`, shared by the browser and `next.config.mjs`); `src/lib/supabase/data-routing.js` (`routedFetch`: switched-on areas' Data API requests to `/api/data`, a 404 not marked by Go falls back to Supabase directly, everything else unchanged); `client.js` uses it; `go-data.js` re-exports `usesGo`. `next.config.mjs` rewrites `/api/data/{area}/:path*` for listed areas.
+- `scripts/contracts/data-proxy.test.mjs`: the browser's area list equals the Go policy; routing rules; real supabase-js through the routing fetch; an inventory of every database write the browser code makes on a proxied table (29), each allowed by the policy except the one with no caller (`updateStats`, refused: R-103), and a failure when a write is added or removed.
+- Probe: three proxy requests through Next.js (a read, a write, a refused stats update). It showed Next's rewrite re-encodes the query (`%2A` arrives as `*`), which the Data API reads the same; recorded in the ADR.
+- Lesson 36 (a policy proxy: `go:embed`, `{rest...}`, forwarding unchanged, refusing in the library's shape; exercise `targetOf`). Docs: ADR (decision, three recorded differences, dated note), plan update, backend README section and route row, backend map, register (R-103 note).
+
+Changed files: backend/internal/dataproxy/{handler.go,handler_test.go,policy.json} (new), backend/cmd/api/{main.go,main_test.go,data_wiring_test.go (new)}, backend/README.md, src/lib/{go-areas.mjs (new),go-data.js}, src/lib/supabase/{client.js,data-routing.js (new)}, next.config.mjs, scripts/contracts/{data-proxy.test.mjs (new),go-forwarding-probe.mjs}, learn-go/{README.md,36-a-policy-proxy/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md,plans/browser-data.md}.
+
+Checks (Claude Code, Windows, Node 24.22.0, Go 1.27.2), after the last code change:
+- `npm run test:contracts`: 1427 of 1427 before the last test was added; `data-proxy.test.mjs` 4 of 4 after it. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 32 packages pass; `go vet ./...` clean; `gofmt -l .` empty. learn-go `-tags solution`: 37 packages pass; lesson 36's exercise fails only its own test.
+- Forwarding probe (dev): 149 of 149 identical, three data proxy requests among them.
+- `npm run handoff` runs after this record is saved (all suites).
+Not checked: any area switched on in a browser or against the real database; the routing fetch in a real browser (only with the real supabase-js in Node). **Before switching an area on, check it on a preview**: with the proxy every Data API call of that area takes one more hop.
+
+Remaining gates: independent review; per-area switching on a preview, then production, area by area; R-103 (owner, schema); KEYS-001 blocked on catalog evidence; R-090, R-088, R-086 as before. Phase 6 (bug fixing) and Phase 7 (retiring the direct paths, dead code and the Next.js handlers) follow the cutovers.
+Next bounded action: with every browser area and 23 of 25 routes reachable through Go, what remains is cutover work the owner switches (preview first), KEYS-001 once the catalog query can run, and Phase 6 fixes. A cutover checklist per route and area would be the next useful document.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: DATA-002, onboarding in Go (Claude Code, 2026-10-19)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default.** No live change: without `onboarding` in `NEXT_PUBLIC_SEFGH_GO_DATA` the module takes its direct path exactly as before.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

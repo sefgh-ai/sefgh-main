@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { routedFetch } from "@/lib/supabase/data-routing";
 
 /**
  * Browser Supabase client.
@@ -8,6 +9,10 @@ import { createBrowserClient } from "@supabase/ssr";
  * `window` was undefined — on the server that object is shared across every
  * concurrent request, so one user's auth state could leak into another's.
  * Never cache a Supabase client on a server global.
+ *
+ * Its fetch sends the Data API requests of areas switched to Go through the
+ * Go data proxy (src/lib/supabase/data-routing.js); everything else goes to
+ * Supabase as before.
  */
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,5 +25,5 @@ export function createClient() {
     );
   }
 
-  return createBrowserClient(url, key);
+  return createBrowserClient(url, key, { global: { fetch: routedFetch(url) } });
 }

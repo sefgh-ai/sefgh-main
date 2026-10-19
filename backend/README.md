@@ -33,6 +33,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `GET /api/trending/topics` | `internal/trendingtopics` | `../contracts/trending-topics/` (Go only) |
 | `POST`, `GET`, `DELETE /api/search-history`, `DELETE /api/search-history/{id}`, `GET /api/search-history/count` | `internal/searchhistory` | `../contracts/search-history/` (browser module) |
 | `GET`, `POST`, `PATCH /api/onboarding` | `internal/onboarding` | `../contracts/onboarding/` (browser module) |
+| any method on `/api/data/{area}/rest/v1/{table or rpc/name}` | `internal/dataproxy` | `policy.json` and its tests |
 | `POST /api/upload-avatar` | `internal/avatar` | `../contracts/upload-avatar/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
@@ -262,6 +263,16 @@ partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
 deployment-size checks, independent review and owner approval remain before
 cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
 back to the existing Next.js handler.
+
+## Data proxy (DATA-PROXY-001)
+
+The rest of the browser's own database calls: notifications, profile, user stats, home (projects and categories), submissions, search statistics, conversations, the repository page's reads and the activity log. With an area in the website's `NEXT_PUBLIC_SEFGH_GO_DATA`, the browser's Supabase client (`src/lib/supabase/data-routing.js`) sends that area's Data API requests to `/api/data/{area}/rest/v1/...`, and `next.config.mjs` rewrites them here.
+
+- **Checked, then passed on unchanged:** `policy.json` (embedded) lists each area's tables and functions, their methods and the fields a write may set. Anything else is refused with a 403 in the Data API's own error shape, so supabase-js reports it as the database's error. An allowed request goes on with the caller's own token, the server's public key and the headers the Data API reads; its reply comes back with its status, body and `Content-Range`.
+- **No extra Auth call:** the Data API checks the token, as before. Without a bearer the request goes with the public key, as a signed-out browser's does.
+- **Bounds:** 20 seconds for the body and the reply together (`dataproxy.Budget`), 4 MiB bodies, 16 MiB replies; logs name the area, the table and the status only.
+- **Closes a gap through Go:** `user_stats` cannot be updated (R-103); nothing in the code does.
+- **Without the rewrite** the browser gets a 404 that Go did not mark, and sends the request to Supabase directly, as before.
 
 ## Onboarding (DATA-002)
 

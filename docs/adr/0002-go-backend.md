@@ -158,11 +158,15 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Videos: each video's uploader lookups run for at most four videos at once within one 16-second budget, and the first rejection cancels the rest; a POST's two calls share a 20-second budget | As for comments: Next.js starts every lookup together with no bound, and lets the others run on after `Promise.all` rejects |
 | Shares: a request body that is not JSON is answered with Go's own text (V8's own only for an empty or blank body), where Next.js sends the JavaScript engine's parse error | That text changes between Node versions, so no implementation can pin it; the cases pin the status and that an error text is sent. Sending it at all is R-089 |
 | Shares: the link starts with `NEXT_PUBLIC_SITE_URL` from the Go server's environment, or else the forwarded host and scheme, where Next.js uses the request's own origin | Behind a proxy, Go sees the proxy's request, and Next.js's proxy forwards the browser's host but not its scheme |
+| Data proxy: a request is not checked with Supabase Auth before it is forwarded | The Data API verifies the token on every request, as it always did for the browser; an extra Auth call would double each request's time. The proxy adds rules about tables, methods and fields, not identity |
+| Data proxy: Next.js's rewrite writes the query again, so its percent-encoding may differ (`%2A` arrives as `*`) | The Data API decodes the query, so the meaning is the same; the forwarding probe gives queries as supabase-js writes them |
+| Data proxy: an update of `user_stats` is refused, where the browser's client may make it | Nothing calls it, and it would let a user set their own stats (R-103); the direct path stays open until the write rule changes |
 
 ## Decisions log
 
 | Date | Decision |
 |---|---|
+| 2026-10-19 | Owner chose a Go policy proxy for the remaining browser data areas (notifications, profile, user stats, home, submissions, search stats, conversations, the repository page's reads, activity): the browser's Supabase client sends those areas' Data API requests to `/api/data/{area}/rest/v1/...`, and Go forwards each unchanged with the caller's own token after checking `backend/internal/dataproxy/policy.json` (tables, methods, writable fields). Per-operation logic can move into Go later. Owner also chose local commits per chunk when the Git Agent is not committing |
 | 2026-10-19 | Owner chose how the browser's own database calls move behind Go: a per-area list in a public build setting (`NEXT_PUBLIC_SEFGH_GO_DATA`), each browser module calling Go or Supabase directly by it; rollback by removing the area and redeploying. Plan and order: `../plans/browser-data.md` (DATA-PLAN-001) |
 | 2026-10-19 | Owner answered R-077 with option A: no stored trending table; Go serves the topic searches live, cached by the CDN. Nothing writes shared data, so no worker privilege is needed. Options: `../plans/trending-refresh.md` |
 | 2026-10-18 | Owner answered R-039: build real keys, show once, store hashes only, validate on explicitly supported endpoints, and account on the server; prepare database changes for review before applying. Execution plan: `../plans/playground-keys.md`. This is more than porting the existing creation route; schema and lifecycle gates remain. R-090: owner chose to preserve current share-removal behavior until Go cutover, then fix it in Go. No live Next.js fix is authorized for R-090 by this answer |
@@ -597,3 +601,11 @@ the same setting. Its module decides by error codes, so Go answers each
 database call's own `{ data, error }` (`supabaserest.Result`), checked against
 answers the real postgrest-js produced. Updates are limited to the fields the
 onboarding writes. Off by default.
+
+DATA-PROXY-001 (2026-10-19): the other nine areas of the plan go through
+`internal/dataproxy`, switched by the same setting (`src/lib/go-areas.mjs` is
+the browser's copy of the area list, checked against the Go policy). Requests
+pass unchanged; what the policy does not allow is refused in the Data API's
+own error shape. The proxy does not ask Supabase Auth: the Data API checks the
+token, as before. The browser's database calls are now all reachable through
+Go except the playground's (KEYS-001) and dead code (Phase 7). Off by default.

@@ -25,6 +25,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/collect"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/comments"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/commentvote"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/dataproxy"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
@@ -123,6 +124,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/search-history", history)
 	top.Handle("/api/search-history/", history)
 	top.Handle("/api/onboarding", onboardingMux(logger, verifier))
+	top.Handle("/api/data/", dataMux(logger, verifier))
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/conversations/", conversationsMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
@@ -200,6 +202,21 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
 		Logger:  logger,
 	})
+	return mux
+}
+
+// dataMux carries the browser's own database calls for the areas in
+// dataproxy's policy (DATA-PROXY-001): each request is checked against the
+// area's rules and forwarded with the caller's own token.
+func dataMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	(&dataproxy.Handler{
+		Policy:      dataproxy.DefaultPolicy(),
+		Client:      &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}).Register(mux)
 	return mux
 }
 

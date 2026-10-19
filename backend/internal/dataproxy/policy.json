@@ -1,0 +1,33 @@
+{
+  "notifications": {
+    "notifications": { "methods": ["GET", "HEAD", "POST", "PATCH", "DELETE"], "writable": ["user_id", "title", "message", "type", "link", "is_read"] }
+  },
+  "profile": {
+    "profiles": { "methods": ["GET", "HEAD", "PATCH"], "writable": ["bio", "website"] }
+  },
+  "user-stats": {
+    "user_stats": { "methods": ["GET", "HEAD", "POST"], "writable": ["user_id"] }
+  },
+  "home": {
+    "projects": { "methods": ["GET", "HEAD"] },
+    "categories": { "methods": ["GET", "HEAD", "POST", "PATCH"], "writable": ["name", "icon", "type", "description", "usage_count", "is_active"] }
+  },
+  "submissions": {
+    "repo_submissions": { "methods": ["GET", "HEAD", "POST", "DELETE"], "writable": ["user_id", "url", "title", "description", "tags"] }
+  },
+  "search-stats": {
+    "platform_stats": { "methods": ["GET", "HEAD"] }
+  },
+  "conversations": {
+    "user_conversations": { "methods": ["GET", "HEAD", "POST", "PATCH", "DELETE"], "writable": ["user_id", "title", "messages", "model", "is_pinned", "status"] }
+  },
+  "repo-page": {
+    "repo_votes": { "methods": ["GET", "HEAD"] },
+    "repo_ratings": { "methods": ["GET", "HEAD"] },
+    "repo_comments": { "methods": ["GET", "HEAD"] },
+    "repo_collections": { "methods": ["GET", "HEAD"] }
+  },
+  "activity": {
+    "rpc/log_user_activity": { "methods": ["POST"], "writable": ["p_user_id", "p_activity_type", "p_metadata"] }
+  }
+}

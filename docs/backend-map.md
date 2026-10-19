@@ -492,3 +492,12 @@ Onboarding can be served by Go (`backend/internal/onboarding`): with `onboarding
 in `NEXT_PUBLIC_SEFGH_GO_DATA`, `src/lib/supabase/onboarding.js` makes its three
 database calls through `/api/onboarding` (`resultFrom` in `src/lib/go-data.js`).
 Off by default.
+
+## DATA-PROXY-001 update (2026-10-19)
+
+The browser's Supabase client (`src/lib/supabase/client.js`) now has a routing
+fetch: Data API requests for tables of areas listed in `NEXT_PUBLIC_SEFGH_GO_DATA`
+go to the Go data proxy (`backend/internal/dataproxy`), which checks them against
+its policy and forwards them with the caller's token. All other requests, Auth,
+Storage and Realtime included, are unchanged. Off by default. Only the playground
+(`api_keys`, `api_limits`, `api_logs`) and dead code still have no Go route.

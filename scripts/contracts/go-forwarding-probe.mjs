@@ -246,6 +246,12 @@ const scenarios = [
   { path: '/api/onboarding', method: 'PATCH', body: '{"user":"a","updates":{"current_step":3}}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
   { path: '/api/onboarding', method: 'PATCH', body: '{"user":"a","updates":{"user_id":"b"}}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
   { path: '/api/onboarding?user=a' },
+  // The data proxy (DATA-PROXY-001): Data API requests passed on unchanged,
+  // or refused by the area's rules.
+  // Next's rewrite writes the query again, so it is given as supabase-js writes it.
+  { path: '/api/data/home/rest/v1/projects?select=*&order=created_at.desc', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/data/conversations/rest/v1/user_conversations?id=eq.c1', method: 'PATCH', body: '{"title":"Renamed"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/data/user-stats/rest/v1/user_stats?user_id=eq.a', method: 'PATCH', body: '{"xp":99999}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 403, cache: 'private, no-store' },
 ];
 
 try {
@@ -452,7 +458,7 @@ try {
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
   const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

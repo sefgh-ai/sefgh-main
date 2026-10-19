@@ -4,11 +4,9 @@
 // Next.js fixes it at build time, so a change needs a redeploy. The same
 // setting adds the area's rewrite to the Go server (next.config.mjs).
 import { fetchWithSession } from '@/lib/supabase/session-fetch';
+import { usesGo } from '@/lib/go-areas.mjs';
 
-/** Whether an area is switched to Go. */
-export function usesGo(area, setting = process.env.NEXT_PUBLIC_SEFGH_GO_DATA) {
-  return String(setting ?? '').split(',').map((name) => name.trim()).includes(area);
-}
+export { usesGo };
 
 /** Go has no route there (404): the module should use its direct path. */
 export const NOT_SERVED = Symbol('not served by Go');

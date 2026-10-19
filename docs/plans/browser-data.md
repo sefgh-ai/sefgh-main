@@ -62,6 +62,8 @@ From least risky to most, each one bounded task (characterize and port, then swi
 
 The playground stays with KEYS-001, and `trending_repos` goes in Phase 7.
 
+**Update, 2026-10-19 (DATA-PROXY-001):** to finish in large chunks, the owner chose a Go policy proxy for areas 2 to 8 (user stats, notifications, profile, the repository page's reads, home, submissions, activity, conversations) and the search page's statistics, instead of one endpoint package each. The browser's Supabase client routes those areas' Data API requests through `/api/data/{area}`; Go checks them against `backend/internal/dataproxy/policy.json` and forwards them unchanged. Search history and onboarding keep their own endpoints. Moving an operation's logic into Go later is a change to that operation alone.
+
 ## Evidence still needed
 
 Each write area needs its table's current definitions before its writes move, as the rules require. The 2026-10-15 snapshot (`../database/user-db.md`) records every table's read and write rules and the functions' rights, but not column types, constraints, grants or trigger bodies. The catalog query used for KEYS-001 is still refused by the connector. The owner can run a catalog-only query per area in the SQL editor, which reads no row data.
