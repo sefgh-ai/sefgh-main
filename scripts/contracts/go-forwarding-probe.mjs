@@ -239,6 +239,13 @@ const scenarios = [
   { path: '/api/search-history/h%2F1', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
   { path: '/api/search-history?user=a&source=chat', method: 'DELETE', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
   { path: '/api/search-history?user=a&offset=0&limit=50' },
+  // Onboarding (DATA-002): each answer is the database call's own result.
+  { path: '/api/onboarding?user=a', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/onboarding?user=b', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/onboarding', body: '{"user":"a"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/onboarding', method: 'PATCH', body: '{"user":"a","updates":{"current_step":3}}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/onboarding', method: 'PATCH', body: '{"user":"a","updates":{"user_id":"b"}}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
+  { path: '/api/onboarding?user=a' },
 ];
 
 try {
@@ -396,6 +403,14 @@ try {
         else if (req.method === 'DELETE') { res.writeHead(204); res.end(); }
         else res.end(JSON.stringify([{ id: 'h1', user_id: 'a', query: 'rust', source: 'search' }, { id: 'h2', user_id: 'a', query: 'go', source: 'chat' }]));
       }
+      // Onboarding: the caller's own row, with the caller's session.
+      else if (req.url.startsWith('/rest/v1/onboarding_data')) {
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
+        const row = { id: 'o1', user_id: 'a', current_step: 1, completed: false, skipped: false };
+        if (req.method === 'POST') { res.writeHead(201); res.end(JSON.stringify(row)); }
+        else if (req.method === 'PATCH') res.end(JSON.stringify({ ...row, ...JSON.parse(body) }));
+        else res.end(JSON.stringify(row));
+      }
       else if (req.url === '/user') {
         const id = { 'Bearer fixture-user': 101, 'Bearer fixture-other': 102 }[req.headers.authorization];
         if (!id) { res.writeHead(401); res.end('{}'); return; }
@@ -437,7 +452,7 @@ try {
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
   const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

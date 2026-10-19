@@ -313,6 +313,58 @@ func ErrorMessage(status int, raw []byte, err error) (message json.RawMessage, f
 	return message, true
 }
 
+// Result is supabase-js 2.78's { data, error } for one reply to a one-row
+// call (.single()), as JSON, for endpoints that hand a browser module its
+// database call's own result (DATA-002). The rules are ReadResult's and
+// ErrorMessage's: a failure's error is the reply's JSON as it is, or
+// { message } for text; without a reply it is supabase-js's own
+// { message: "TypeError: fetch failed", details: "", hint: "", code: "" },
+// whose details hold a stack trace in JavaScript and are "" here.
+func Result(status int, raw []byte, err error) []byte {
+	envelope := func(data, failure string) []byte {
+		return []byte(`{"data":` + data + `,"error":` + failure + `}`)
+	}
+	if err != nil {
+		return envelope("null", `{"message":"TypeError: fetch failed","details":"","hint":"","code":""}`)
+	}
+	text := jscompat.DecodeUTF8(raw)
+	if status >= 200 && status <= 299 {
+		if text == "" {
+			return envelope("null", "null")
+		}
+		if _, perr := jscompat.ParseJSON(text); perr != nil {
+			message, _ := jscompat.ToUTF16("SyntaxError: " + jscompat.JSONParseMessage(text)).MarshalJSON()
+			return envelope("null", `{"message":`+string(message)+`,"details":"","hint":"","code":""}`)
+		}
+		return envelope(text, "null")
+	}
+	value, perr := jscompat.ParseJSON(text)
+	if perr != nil {
+		if status == 404 && text == "" {
+			return envelope("null", "null")
+		}
+		message, _ := jscompat.ToUTF16(text).MarshalJSON()
+		return envelope("null", `{"message":`+string(message)+`}`)
+	}
+	if _, isList := value.([]any); isList && status == 404 {
+		return envelope("[]", "null")
+	}
+	return envelope("null", text)
+}
+
+// InsertListReturning is supabase-js's .insert([row, ...]).select().single():
+// POST with a list of rows, the `columns` parameter postgrest-js writes for
+// a list (each name in double quotes), and the stored row back as one
+// object.
+func (c Client) InsertListReturning(ctx context.Context, session, table string, columns []string, rows []byte) (int, []byte, error) {
+	quoted := make([]string, len(columns))
+	for i, column := range columns {
+		quoted[i] = `"` + column + `"`
+	}
+	query := Param("columns", strings.Join(quoted, ",")) + "&" + Param("select", "*")
+	return c.do(ctx, http.MethodPost, session, table+"?"+query, "application/vnd.pgrst.object+json", "return=representation", rows)
+}
+
 // MissingSettings is the message createServerClient of @supabase/ssr 0.7
 // throws without the project's address and key. Handlers that send a thrown
 // error's message to the browser send this one (bug register R-081, R-089).

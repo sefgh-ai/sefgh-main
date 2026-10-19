@@ -32,6 +32,7 @@ It uses only Go's standard library: there are no third-party dependencies.
 | `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
 | `GET /api/trending/topics` | `internal/trendingtopics` | `../contracts/trending-topics/` (Go only) |
 | `POST`, `GET`, `DELETE /api/search-history`, `DELETE /api/search-history/{id}`, `GET /api/search-history/count` | `internal/searchhistory` | `../contracts/search-history/` (browser module) |
+| `GET`, `POST`, `PATCH /api/onboarding` | `internal/onboarding` | `../contracts/onboarding/` (browser module) |
 | `POST /api/upload-avatar` | `internal/avatar` | `../contracts/upload-avatar/` |
 | `GET /healthz` | `cmd/api` | Answers `{"status":"ok"}` |
 
@@ -261,6 +262,15 @@ partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
 deployment-size checks, independent review and owner approval remain before
 cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
 back to the existing Next.js handler.
+
+## Onboarding (DATA-002)
+
+The second browser data area, switched like search history by `onboarding` in `NEXT_PUBLIC_SEFGH_GO_DATA`. Its three endpoints answer each database call's own result, `{ data, error }`, as supabase-js gives it (`supabaserest.Result`, new). The module branches on the error's code, so only the calls changed. It passes all 34 cases of `contracts/onboarding`, whose expected answers come from the real postgrest-js.
+
+- **Signed-in only, as the caller;** the browser's user id is a checked filter. Another user's id gets row-level security's own error (`PGRST116` or `42501`) without a request.
+- **Only the onboarding's fields can change:** `onboarding.Writable` lists the fourteen; anything else, `user_id` included, is refused with `42501`.
+- **The insert is a list** with postgrest-js's `columns` parameter (`supabaserest.InsertListReturning`, new).
+- **Differs from the browser:** signed out is 401; fields outside the list are refused by Go; timestamps still come from the browser's clock, as before.
 
 ## Search history (DATA-001b)
 

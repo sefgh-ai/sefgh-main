@@ -32,6 +32,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/onboarding"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/rating"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/searchhistory"
@@ -121,6 +122,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	history := historyMux(logger, verifier)
 	top.Handle("/api/search-history", history)
 	top.Handle("/api/search-history/", history)
+	top.Handle("/api/onboarding", onboardingMux(logger, verifier))
 	top.Handle("/api/share/", shareMux(logger, verifier))
 	top.Handle("/api/conversations/", conversationsMux(logger, verifier))
 	top.Handle("/api/repo/collect", collectMux(logger, verifier))
@@ -198,6 +200,21 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		Limiter: ailimit.New(ailimit.Requests, ailimit.Window),
 		Logger:  logger,
 	})
+	return mux
+}
+
+// onboardingMux serves the browser's onboarding (DATA-002). Only a signed-in
+// caller reaches the database, with their own token; each endpoint answers
+// the database call's own result, { data, error }.
+func onboardingMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
+	mux := http.NewServeMux()
+	(&onboarding.Handler{
+		User:        verifier.User,
+		Database:    &http.Client{Timeout: supabaserest.Timeout},
+		SupabaseURL: verifier.SupabaseURL,
+		SupabaseKey: verifier.SupabaseKey,
+		Logger:      logger,
+	}).Register(mux)
 	return mux
 }
 

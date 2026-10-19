@@ -73,6 +73,8 @@ test('browser data areas are rewritten by the same setting their modules read', 
     assert.deepEqual(await config.rewrites(), { beforeFiles: history });
     process.env.NEXT_PUBLIC_SEFGH_GO_DATA = ' unknown , search-history ';
     assert.deepEqual(await config.rewrites(), { beforeFiles: history });
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'onboarding,search-history';
+    assert.deepEqual(await config.rewrites(), { beforeFiles: [...history, { source: '/api/onboarding', destination: 'http://127.0.0.1:8787/api/onboarding' }] });
     process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
     process.env.SEFGH_GO_ROUTES = 'search-history';
     assert.deepEqual(await config.rewrites(), { beforeFiles: [] }, 'the route list does not switch a data area');

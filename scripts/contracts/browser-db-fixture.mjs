@@ -22,9 +22,31 @@
 // The result is { returns, database }, or { throws, database } when the call
 // rejects. Requests are recorded as in route-db-fixture.mjs.
 import { createClient } from '@supabase/supabase-js';
+import { PostgrestClient } from '@supabase/postgrest-js';
+
+/**
+ * What supabase-js 2.78 gives for one Data API reply to a one-row call
+ * (.single()): { data, error }, worked out by the real postgrest-js. Areas
+ * whose Go endpoints answer that result use it as the answer Go must give.
+ * Without a reply, supabase-js puts the error's stack in `details`; that is
+ * written as "" here.
+ */
+export async function postgrestResult(reply) {
+  const fetch = async () => {
+    if (reply.network_error) throw new TypeError('fetch failed');
+    const status = reply.status ?? 200;
+    const body = status === 204 ? null : reply.raw ?? (reply.body === undefined ? '' : JSON.stringify(reply.body));
+    return new Response(body, { status, headers: { 'content-type': 'application/json' } });
+  };
+  const { data, error } = await new PostgrestClient('https://contract-supabase.invalid/rest/v1', { fetch }).from('t').select('*').single();
+  if (error && reply.network_error) error.details = '';
+  return JSON.parse(JSON.stringify({ data, error }));
+}
 
 export const SUPABASE_URL = 'https://contract-supabase.invalid';
 export const SUPABASE_KEY = 'public-fixture-key';
+// The moment `new Date()` returns while a call runs.
+export const NOW = '2026-10-19T09:30:00.000Z';
 
 let current = null;
 let requests = [];
@@ -64,9 +86,10 @@ export function installBrowserClient() {
 /**
  * Runs a call with the module's area switched to Go
  * (NEXT_PUBLIC_SEFGH_GO_DATA). Requests to this site's /api go to a stand-in
- * Go server that answers `goAnswer` ({ status, body }); the result also lists
- * them, as `go`. Direct Data API requests, made when Go is not there (404),
- * are recorded as usual.
+ * Go server that answers `goAnswer` ({ status, body }), or, given a list,
+ * the list's answers in order; the result also lists the requests, as `go`.
+ * Direct Data API requests, made when Go is not there (404), are recorded
+ * as usual.
  */
 export async function runSwitchedFixture(module, fixture, area, goAnswer) {
   const saved = { fetch: globalThis.fetch, setting: process.env.NEXT_PUBLIC_SEFGH_GO_DATA };
@@ -81,8 +104,9 @@ export async function runSwitchedFixture(module, fixture, area, goAnswer) {
       content_type: headers.get('content-type'),
       body: init.body === undefined ? null : JSON.parse(init.body),
     });
-    const body = goAnswer.status === 204 ? null : JSON.stringify(goAnswer.body ?? null);
-    return new Response(body, { status: goAnswer.status, headers: { 'content-type': 'application/json' } });
+    const answer = Array.isArray(goAnswer) ? goAnswer[go.length - 1] ?? goAnswer.at(-1) : goAnswer;
+    const body = answer.status === 204 ? null : JSON.stringify(answer.body ?? null);
+    return new Response(body, { status: answer.status, headers: { 'content-type': 'application/json' } });
   };
   try {
     return { ...(await runBrowserFixture(module, fixture)), go };
@@ -94,11 +118,23 @@ export async function runSwitchedFixture(module, fixture, area, goAnswer) {
 }
 
 export async function runBrowserFixture(module, fixture) {
-  const quiet = console.error;
+  const quiet = { error: console.error, log: console.log, Date: globalThis.Date };
   current = fixture;
   requests = [];
   try {
     console.error = () => {};
+    console.log = () => {};
+    const RealDate = quiet.Date;
+    const fixed = RealDate.parse(NOW);
+    globalThis.Date = class extends RealDate {
+      constructor(...args) {
+        if (args.length === 0) super(fixed);
+        else super(...args);
+      }
+      static now() {
+        return fixed;
+      }
+    };
     let result;
     try {
       result = { returns: await module[fixture.call](...(fixture.args ?? [])) };
@@ -109,7 +145,9 @@ export async function runBrowserFixture(module, fixture) {
     for (let i = 0; i < 3; i++) await new Promise((resolve) => setImmediate(resolve));
     return { ...result, database: requests };
   } finally {
-    console.error = quiet;
+    console.error = quiet.error;
+    console.log = quiet.log;
+    globalThis.Date = quiet.Date;
     current = null;
   }
 }

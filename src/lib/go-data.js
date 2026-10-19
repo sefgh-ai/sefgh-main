@@ -30,3 +30,39 @@ export async function askGo(path, init, fallback) {
     return fallback;
   }
 }
+
+/**
+ * Asks an area's Go endpoint for one database call's result, in the shape
+ * supabase-js gives it: { data, error }. Areas whose module decides by the
+ * error's code use this, so everything after the call stays as it was.
+ * NOT_SERVED on a 404, as for askGo. Without a reply, the error is the one
+ * supabase-js gives when the database cannot be reached.
+ */
+export async function goResult(path, init) {
+  let response;
+  try {
+    response = await fetchWithSession(path, init);
+  } catch (error) {
+    return { data: null, error: { message: `${error?.name ?? 'FetchError'}: ${error?.message}`, details: '', hint: '', code: '' } };
+  }
+  if (response.status === 404) return NOT_SERVED;
+  try {
+    const answer = await response.json();
+    if (answer && typeof answer === 'object' && 'error' in answer) return { data: answer.data ?? null, error: answer.error };
+  } catch {
+    // Not the expected answer; reported below.
+  }
+  return { data: null, error: { message: `Go answered ${response.status}`, details: null, hint: null, code: `${response.status}` } };
+}
+
+/**
+ * One database call's result: from Go when the area is switched on and Go
+ * serves it, and otherwise from `direct`, the supabase-js call itself.
+ */
+export async function resultFrom(area, path, init, direct) {
+  if (usesGo(area)) {
+    const result = await goResult(path, init);
+    if (result !== NOT_SERVED) return result;
+  }
+  return direct();
+}

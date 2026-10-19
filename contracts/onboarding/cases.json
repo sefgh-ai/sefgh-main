@@ -1,0 +1,3271 @@
+{
+  "contract_version": 1,
+  "area": "onboarding",
+  "module": "src/lib/supabase/onboarding.js",
+  "recorded_from": "the browser module by scripts/contracts/record-onboarding.mjs",
+  "boundary": "The module's real functions run in Node with the browser's Supabase client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/browser-db-fixture.mjs); the clock is fixed at 2026-10-19T09:30:00.000Z. `expect` is what the call returned (or threw) and every Data API request it made. Through Go, the module asks for each database call's own result, {data, error}: `expect.go_requests` are the requests the switched module sends, and `expect.go_answers` what Go must answer to each, computed by the real postgrest-js from the same database replies, or given in the case (`go_answers`) where Go answers by itself. `go_database`, when present, is the requests Go makes instead; `go_status` (default 200) is Go's status. resetOnboarding is not here: nothing imports it, and it cannot run (Phase 7 list).",
+  "cases": [
+    {
+      "id": "get-row",
+      "disposition": "preserve",
+      "reason": "The user's onboarding row, read as one row.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 3,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 3,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "get-none",
+      "disposition": "preserve",
+      "reason": "No row yet (PGRST116): null.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "PGRST116",
+              "details": "The result contains 0 rows",
+              "hint": null,
+              "message": "JSON object requested, multiple (or no) rows returned"
+            }
+          }
+        ],
+        "go_outcome": {
+          "returns": null
+        }
+      }
+    },
+    {
+      "id": "get-no-table",
+      "disposition": "preserve",
+      "reason": "The table is missing (42P01): an Error that says so.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 404,
+          "body": {
+            "code": "42P01",
+            "details": null,
+            "hint": null,
+            "message": "relation \"public.onboarding_data\" does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "Error: Onboarding table does not exist. Please run the database migration.",
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "42P01",
+              "details": null,
+              "hint": null,
+              "message": "relation \"public.onboarding_data\" does not exist"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "Error: Onboarding table does not exist. Please run the database migration."
+        }
+      }
+    },
+    {
+      "id": "get-error",
+      "disposition": "preserve",
+      "reason": "Any other failure: the database's error is thrown as it is.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "undefined: internal error",
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "XX000",
+              "details": null,
+              "hint": null,
+              "message": "internal error"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: internal error"
+        }
+      }
+    },
+    {
+      "id": "get-unreachable",
+      "disposition": "preserve",
+      "reason": "No reply: supabase-js's error is thrown.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "throws": "undefined: TypeError: fetch failed",
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "message": "TypeError: fetch failed",
+              "details": "",
+              "hint": "",
+              "code": ""
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: TypeError: fetch failed"
+        }
+      }
+    },
+    {
+      "id": "get-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security shows no row: null. Go gives the same answer without asking.",
+      "call": "getOnboardingData",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "PGRST116",
+              "details": "The result contains 0 rows",
+              "hint": null,
+              "message": "JSON object requested, multiple (or no) rows returned"
+            }
+          }
+        ],
+        "go_outcome": {
+          "returns": null
+        }
+      }
+    },
+    {
+      "id": "get-signed-out",
+      "disposition": "preserve",
+      "reason": "Signed out, row-level security shows no row: null. Go answers 401, so the module throws, and needsOnboarding still says true.",
+      "call": "getOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": null,
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "go_database": [],
+      "go_answers": [
+        {
+          "data": null,
+          "error": {
+            "message": "Unauthorized",
+            "code": "401",
+            "details": null,
+            "hint": null
+          }
+        }
+      ],
+      "go_status": 401,
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": null,
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "message": "Unauthorized",
+              "code": "401",
+              "details": null,
+              "hint": null
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: Unauthorized"
+        }
+      }
+    },
+    {
+      "id": "create-row",
+      "disposition": "preserve",
+      "reason": "The row is created at step 1 and returned.",
+      "call": "createOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 1,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/onboarding_data?columns=%22user_id%22%2C%22current_step%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+                "current_step": 1
+              }
+            ]
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "POST",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-duplicate",
+      "disposition": "preserve",
+      "reason": "A row already exists (23505): it is read and returned instead.",
+      "call": "createOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "details": "Key (user_id)=(0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b) already exists.",
+            "hint": null,
+            "message": "duplicate key value violates unique constraint \"onboarding_data_user_id_key\""
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 2,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 2,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/onboarding_data?columns=%22user_id%22%2C%22current_step%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+                "current_step": 1
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "POST",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "23505",
+              "details": "Key (user_id)=(0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b) already exists.",
+              "hint": null,
+              "message": "duplicate key value violates unique constraint \"onboarding_data_user_id_key\""
+            }
+          },
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 2,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 2,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "create-no-table",
+      "disposition": "preserve",
+      "reason": "The table is missing: an Error that names the setup file.",
+      "call": "createOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 404,
+          "body": {
+            "code": "42P01",
+            "details": null,
+            "hint": null,
+            "message": "relation \"public.onboarding_data\" does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "Error: Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql",
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/onboarding_data?columns=%22user_id%22%2C%22current_step%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+                "current_step": 1
+              }
+            ]
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "POST",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "42P01",
+              "details": null,
+              "hint": null,
+              "message": "relation \"public.onboarding_data\" does not exist"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "Error: Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql"
+        }
+      }
+    },
+    {
+      "id": "create-error",
+      "disposition": "preserve",
+      "reason": "Any other failure is thrown as it is.",
+      "call": "createOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "undefined: internal error",
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/onboarding_data?columns=%22user_id%22%2C%22current_step%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+                "current_step": 1
+              }
+            ]
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "POST",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "XX000",
+              "details": null,
+              "hint": null,
+              "message": "internal error"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: internal error"
+        }
+      }
+    },
+    {
+      "id": "create-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: row-level security refuses the row (42501), which is thrown. Go gives the same error without asking.",
+      "call": "createOnboardingData",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "details": null,
+            "hint": null,
+            "message": "new row violates row-level security policy for table \"onboarding_data\""
+          }
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "throws": "undefined: new row violates row-level security policy for table \"onboarding_data\"",
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/onboarding_data?columns=%22user_id%22%2C%22current_step%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+                "current_step": 1
+              }
+            ]
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "POST",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "42501",
+              "details": null,
+              "hint": null,
+              "message": "new row violates row-level security policy for table \"onboarding_data\""
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: new row violates row-level security policy for table \"onboarding_data\""
+        }
+      }
+    },
+    {
+      "id": "update-row",
+      "disposition": "preserve",
+      "reason": "The given fields are written to the user's row, which is returned.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": "student",
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 1,
+          "role": "student",
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": "student",
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": "student",
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "update-none",
+      "disposition": "preserve",
+      "reason": "No row to update (PGRST116): the error is thrown.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "undefined: JSON object requested, multiple (or no) rows returned",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "PGRST116",
+              "details": "The result contains 0 rows",
+              "hint": null,
+              "message": "JSON object requested, multiple (or no) rows returned"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: JSON object requested, multiple (or no) rows returned"
+        }
+      }
+    },
+    {
+      "id": "update-no-table",
+      "disposition": "preserve",
+      "reason": "The table is missing: an Error that names the setup file.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 404,
+          "body": {
+            "code": "42P01",
+            "details": null,
+            "hint": null,
+            "message": "relation \"public.onboarding_data\" does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "throws": "Error: Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "42P01",
+              "details": null,
+              "hint": null,
+              "message": "relation \"public.onboarding_data\" does not exist"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "Error: Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql"
+        }
+      }
+    },
+    {
+      "id": "update-empty-reply",
+      "disposition": "preserve",
+      "reason": "A success with no body has no data and no error: null is returned.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "returns": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": null
+        }
+      }
+    },
+    {
+      "id": "update-unreachable",
+      "disposition": "preserve",
+      "reason": "No reply: supabase-js's error is thrown.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "throws": "undefined: TypeError: fetch failed",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "message": "TypeError: fetch failed",
+              "details": "",
+              "hint": "",
+              "code": ""
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: TypeError: fetch failed"
+        }
+      }
+    },
+    {
+      "id": "update-other-user",
+      "disposition": "preserve",
+      "reason": "Another user's id: no row is reached (PGRST116), which is thrown. Go gives the same error without asking.",
+      "call": "updateOnboardingData",
+      "args": [
+        "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+        {
+          "role": "student"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "go_database": [],
+      "expect": {
+        "throws": "undefined: JSON object requested, multiple (or no) rows returned",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5",
+              "updates": {
+                "role": "student"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "PGRST116",
+              "details": "The result contains 0 rows",
+              "hint": null,
+              "message": "JSON object requested, multiple (or no) rows returned"
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: JSON object requested, multiple (or no) rows returned"
+        }
+      }
+    },
+    {
+      "id": "update-unknown-column",
+      "disposition": "preserve",
+      "reason": "A field the onboarding never writes: the database refuses it. Go refuses it itself, without asking (a deliberate difference).",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "is_admin": true
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 400,
+          "body": {
+            "code": "PGRST204",
+            "details": null,
+            "hint": null,
+            "message": "Could not find the 'is_admin' column of 'onboarding_data' in the schema cache"
+          }
+        }
+      ],
+      "go_database": [],
+      "go_answers": [
+        {
+          "data": null,
+          "error": {
+            "message": "onboarding_data.is_admin cannot be changed here",
+            "code": "42501",
+            "details": null,
+            "hint": null
+          }
+        }
+      ],
+      "expect": {
+        "throws": "undefined: Could not find the 'is_admin' column of 'onboarding_data' in the schema cache",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_admin": true
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "is_admin": true
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "message": "onboarding_data.is_admin cannot be changed here",
+              "code": "42501",
+              "details": null,
+              "hint": null
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: onboarding_data.is_admin cannot be changed here"
+        }
+      }
+    },
+    {
+      "id": "update-user-id",
+      "disposition": "preserve",
+      "reason": "Moving the row to another user: row-level security refuses it. Go refuses any change of user_id itself, without asking.",
+      "call": "updateOnboardingData",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        {
+          "user_id": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+        }
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "details": null,
+            "hint": null,
+            "message": "new row violates row-level security policy for table \"onboarding_data\""
+          }
+        }
+      ],
+      "go_database": [],
+      "go_answers": [
+        {
+          "data": null,
+          "error": {
+            "message": "onboarding_data.user_id cannot be changed here",
+            "code": "42501",
+            "details": null,
+            "hint": null
+          }
+        }
+      ],
+      "expect": {
+        "throws": "undefined: new row violates row-level security policy for table \"onboarding_data\"",
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "user_id": "7d6c5b4a-3f2e-4d1c-8b9a-a0b1c2d3e4f5"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "message": "onboarding_data.user_id cannot be changed here",
+              "code": "42501",
+              "details": null,
+              "hint": null
+            }
+          }
+        ],
+        "go_outcome": {
+          "throws": "undefined: onboarding_data.user_id cannot be changed here"
+        }
+      }
+    },
+    {
+      "id": "step",
+      "disposition": "preserve",
+      "reason": "updateOnboardingStep writes current_step.",
+      "call": "updateOnboardingStep",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        3
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 3,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "current_step": 3
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "current_step": 3
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 3,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "complete",
+      "disposition": "preserve",
+      "reason": "completeOnboarding writes completed and the browser's time.",
+      "call": "completeOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": true,
+            "completed_at": "2026-10-19T09:30:00.000Z",
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 1,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": true,
+          "completed_at": "2026-10-19T09:30:00.000Z",
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "completed": true,
+              "completed_at": "2026-10-19T09:30:00.000Z"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "completed": true,
+                "completed_at": "2026-10-19T09:30:00.000Z"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": true,
+              "completed_at": "2026-10-19T09:30:00.000Z",
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": true,
+            "completed_at": "2026-10-19T09:30:00.000Z",
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "skip",
+      "disposition": "preserve",
+      "reason": "skipOnboarding writes skipped and the browser's time.",
+      "call": "skipOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": true,
+            "skipped_at": "2026-10-19T09:30:00.000Z",
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 1,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": true,
+          "skipped_at": "2026-10-19T09:30:00.000Z",
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "skipped": true,
+              "skipped_at": "2026-10-19T09:30:00.000Z"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "skipped": true,
+                "skipped_at": "2026-10-19T09:30:00.000Z"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": true,
+              "skipped_at": "2026-10-19T09:30:00.000Z",
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": true,
+            "skipped_at": "2026-10-19T09:30:00.000Z",
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-role",
+      "disposition": "preserve",
+      "reason": "Step 1: role, experience, then step 2.",
+      "call": "saveStepRole",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "student",
+        "beginner"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 2,
+            "role": "student",
+            "experience_level": "beginner",
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 2,
+          "role": "student",
+          "experience_level": "beginner",
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "role": "student",
+              "experience_level": "beginner",
+              "current_step": 2
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "role": "student",
+                "experience_level": "beginner",
+                "current_step": 2
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 2,
+              "role": "student",
+              "experience_level": "beginner",
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 2,
+            "role": "student",
+            "experience_level": "beginner",
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-tech-stack",
+      "disposition": "preserve",
+      "reason": "Step 2: technologies and primary language, then step 3.",
+      "call": "saveStepTechStack",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        [
+          "react",
+          "go"
+        ],
+        "Go"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [
+              "react",
+              "go"
+            ],
+            "primary_language": "Go",
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 3,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [
+            "react",
+            "go"
+          ],
+          "primary_language": "Go",
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "tech_stack": [
+                "react",
+                "go"
+              ],
+              "primary_language": "Go",
+              "current_step": 3
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "tech_stack": [
+                  "react",
+                  "go"
+                ],
+                "primary_language": "Go",
+                "current_step": 3
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 3,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [
+                "react",
+                "go"
+              ],
+              "primary_language": "Go",
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [
+              "react",
+              "go"
+            ],
+            "primary_language": "Go",
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-goals",
+      "disposition": "preserve",
+      "reason": "Step 3: goals, then step 4.",
+      "call": "saveStepGoals",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        [
+          "learn",
+          "build"
+        ]
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 4,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [
+              "learn",
+              "build"
+            ],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 4,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [
+            "learn",
+            "build"
+          ],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "goals": [
+                "learn",
+                "build"
+              ],
+              "current_step": 4
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "goals": [
+                  "learn",
+                  "build"
+                ],
+                "current_step": 4
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 4,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [
+                "learn",
+                "build"
+              ],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 4,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [
+              "learn",
+              "build"
+            ],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-github",
+      "disposition": "preserve",
+      "reason": "Step 4: GitHub connection and username, then step 5.",
+      "call": "saveStepGitHub",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        true,
+        "octo"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": true,
+            "github_username": "octo",
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 5,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": true,
+          "github_username": "octo",
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "github_connected": true,
+              "github_username": "octo",
+              "current_step": 5
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "github_connected": true,
+                "github_username": "octo",
+                "current_step": 5
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 5,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": true,
+              "github_username": "octo",
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": true,
+            "github_username": "octo",
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-github-without-username",
+      "disposition": "preserve",
+      "reason": "Without a username it is written as null.",
+      "call": "saveStepGitHub",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        false
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 5,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": null,
+          "preferred_language": null,
+          "completed": false,
+          "completed_at": null,
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "github_connected": false,
+              "github_username": null,
+              "current_step": 5
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "github_connected": false,
+                "github_username": null,
+                "current_step": 5
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 5,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "save-preferences",
+      "disposition": "preserve",
+      "reason": "Step 5: preferences, and onboarding is completed at the browser's time.",
+      "call": "saveStepPreferences",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "weekly",
+        "en"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": "weekly",
+            "preferred_language": "en",
+            "completed": true,
+            "completed_at": "2026-10-19T09:30:00.000Z",
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": {
+          "id": "o1",
+          "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+          "current_step": 5,
+          "role": null,
+          "experience_level": null,
+          "tech_stack": [],
+          "primary_language": null,
+          "goals": [],
+          "github_connected": false,
+          "github_username": null,
+          "notification_preference": "weekly",
+          "preferred_language": "en",
+          "completed": true,
+          "completed_at": "2026-10-19T09:30:00.000Z",
+          "skipped": false,
+          "skipped_at": null,
+          "created_at": "2026-10-19T09:00:00+00:00",
+          "updated_at": "2026-10-19T09:00:00+00:00"
+        },
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/onboarding_data?user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "notification_preference": "weekly",
+              "preferred_language": "en",
+              "current_step": 5,
+              "completed": true,
+              "completed_at": "2026-10-19T09:30:00.000Z"
+            }
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "PATCH",
+            "path": "/api/onboarding",
+            "authorization": "Bearer session-a",
+            "content_type": "application/json",
+            "body": {
+              "user": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "updates": {
+                "notification_preference": "weekly",
+                "preferred_language": "en",
+                "current_step": 5,
+                "completed": true,
+                "completed_at": "2026-10-19T09:30:00.000Z"
+              }
+            }
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 5,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": "weekly",
+              "preferred_language": "en",
+              "completed": true,
+              "completed_at": "2026-10-19T09:30:00.000Z",
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 5,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": "weekly",
+            "preferred_language": "en",
+            "completed": true,
+            "completed_at": "2026-10-19T09:30:00.000Z",
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "id": "needs-without-row",
+      "disposition": "preserve",
+      "reason": "No row yet: true.",
+      "call": "needsOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "hint": null,
+            "message": "JSON object requested, multiple (or no) rows returned"
+          }
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "PGRST116",
+              "details": "The result contains 0 rows",
+              "hint": null,
+              "message": "JSON object requested, multiple (or no) rows returned"
+            }
+          }
+        ],
+        "go_outcome": {
+          "returns": true
+        }
+      }
+    },
+    {
+      "id": "needs-unfinished",
+      "disposition": "preserve",
+      "reason": "Neither completed nor skipped: true.",
+      "call": "needsOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 3,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 3,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": true
+        }
+      }
+    },
+    {
+      "id": "needs-completed",
+      "disposition": "preserve",
+      "reason": "Completed: false.",
+      "call": "needsOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": true,
+            "completed_at": null,
+            "skipped": false,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": false,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": true,
+              "completed_at": null,
+              "skipped": false,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": false
+        }
+      }
+    },
+    {
+      "id": "needs-skipped",
+      "disposition": "preserve",
+      "reason": "Skipped: false.",
+      "call": "needsOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "o1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "current_step": 1,
+            "role": null,
+            "experience_level": null,
+            "tech_stack": [],
+            "primary_language": null,
+            "goals": [],
+            "github_connected": false,
+            "github_username": null,
+            "notification_preference": null,
+            "preferred_language": null,
+            "completed": false,
+            "completed_at": null,
+            "skipped": true,
+            "skipped_at": null,
+            "created_at": "2026-10-19T09:00:00+00:00",
+            "updated_at": "2026-10-19T09:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "returns": false,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": {
+              "id": "o1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "current_step": 1,
+              "role": null,
+              "experience_level": null,
+              "tech_stack": [],
+              "primary_language": null,
+              "goals": [],
+              "github_connected": false,
+              "github_username": null,
+              "notification_preference": null,
+              "preferred_language": null,
+              "completed": false,
+              "completed_at": null,
+              "skipped": true,
+              "skipped_at": null,
+              "created_at": "2026-10-19T09:00:00+00:00",
+              "updated_at": "2026-10-19T09:00:00+00:00"
+            },
+            "error": null
+          }
+        ],
+        "go_outcome": {
+          "returns": false
+        }
+      }
+    },
+    {
+      "id": "needs-on-error",
+      "disposition": "preserve",
+      "reason": "Any error: true, so the flow starts and creates the row.",
+      "call": "needsOnboarding",
+      "args": [
+        "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      ],
+      "session": "session-a",
+      "database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ],
+      "expect": {
+        "returns": true,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/onboarding_data?select=*&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ],
+        "go_requests": [
+          {
+            "method": "GET",
+            "path": "/api/onboarding?user=0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "content_type": null,
+            "body": null
+          }
+        ],
+        "go_answers": [
+          {
+            "data": null,
+            "error": {
+              "code": "XX000",
+              "details": null,
+              "hint": null,
+              "message": "internal error"
+            }
+          }
+        ],
+        "go_outcome": {
+          "returns": true
+        }
+      }
+    }
+  ]
+}

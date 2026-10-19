@@ -52,7 +52,7 @@ The ported API routes switch with a Next.js rewrite, and rolling back sends traf
 From least risky to most, each one bounded task (characterize and port, then switch):
 
 1. **Search history** (DATA-001; characterized in DATA-001a, served by Go behind the setting in DATA-001b, off by default): six functions, rows owned by the user, one function call; used on every signed-in search, so it exercises the switch early.
-2. **Onboarding** (DATA-002) and **user stats** (DATA-003): rows owned by the user.
+2. **Onboarding** (DATA-002; served by Go behind the setting, off by default; answers each call's `{ data, error }` because the module branches on error codes) and **user stats** (DATA-003): rows owned by the user. User stats lives inside a React hook, and its write rule lets users set their own stats (R-103), which moving it does not fix.
 3. **Notifications** (DATA-004): four browser sources; Realtime parity matters.
 4. **Profile** (DATA-005): reads and updates; `auth.updateUser` stays in the browser.
 5. **Repository page reads** (DATA-006): switch `sefghData.js` and `commentHelpers.js` to the routes Go already serves (vote, rating, collect, comments) instead of new endpoints; R-040 and R-075 come with them.

@@ -80,6 +80,7 @@ const goBackendRoutes = {
 // the module gets a 404 and uses Supabase directly, as before.
 const goDataAreas = {
   "search-history": ["/api/search-history", "/api/search-history/:path*"],
+  onboarding: ["/api/onboarding"],
 };
 
 function goBackendRewrites() {

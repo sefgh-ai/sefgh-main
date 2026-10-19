@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-001b handoff (search history in Go behind NEXT_PUBLIC_SEFGH_GO_DATA); writer released; four tasks await the Git Agent.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: DATA-002 handoff (onboarding in Go behind NEXT_PUBLIC_SEFGH_GO_DATA); writer released.
 
 ## Start here
 
@@ -11,11 +11,39 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Previously: DATA-001b released 2026-10-19. **Uncommitted, awaiting the Git Agent:** TREND-001b, DATA-PLAN-001, DATA-001a and DATA-001b, all in this working tree; the handoff below covers all four.
+- **Active writer:** none. Previously: DATA-002 released 2026-10-19. `1e67beb` (TREND-001b, DATA-PLAN-001, DATA-001a/b) is a local commit, not pushed; DATA-002 is uncommitted.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), search history served by Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default (DATA-001b). One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 102 entries (R-001 through R-102). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), search history (DATA-001b) and onboarding (DATA-002) served by Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 103 entries (R-001 through R-103). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: DATA-001b, search history in Go (Claude Code, 2026-10-19)
+## Latest handoff: DATA-002, onboarding in Go (Claude Code, 2026-10-19)
+
+Status: **implementation complete; awaiting independent review; not deployed; off by default.** No live change: without `onboarding` in `NEXT_PUBLIC_SEFGH_GO_DATA` the module takes its direct path exactly as before.
+Owner: Claude Code. Reviewer: unassigned; no peer review claimed.
+Branch main; base `1e67beb` (local commit of TREND-001b, DATA-PLAN-001 and DATA-001a/b, made at the owner's request; not pushed). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `1e67beb`).
+
+Done:
+- `backend/internal/onboarding`: `GET`, `POST` and `PATCH /api/onboarding`, each answering the database call's own result `{ data, error }` (the module branches on error codes, so only its three calls changed). Signed-in only, as the caller; the browser's user id a checked filter (another user's id gets row-level security's own `PGRST116` or `42501` without a request); updates limited to the fourteen fields the steps write (`Writable`), `user_id` included in what is refused.
+- `supabaserest.Result` (supabase-js's `{ data, error }` for one reply) and `InsertListReturning` (a list insert with postgrest-js's quoted `columns`).
+- `src/lib/go-data.js`: `goResult` and `resultFrom`; `src/lib/supabase/onboarding.js`: the three calls through `resultFrom`.
+- Browser runner: a fixed clock, console quieted, a list of Go answers in order, and `postgrestResult` (the real postgrest-js works out what Go must answer).
+- Contract `contracts/onboarding` v1, 34 cases (`record-onboarding.mjs`, `onboarding.test.mjs`: 103 tests on the direct path, switched, and with the Go route missing); Go `TestContract` 34 of 34; unit tests: two-user isolation on all three endpoints, bad bodies, logs. `onboardingMux` and `onboarding_wiring_test.go`; `next.config.mjs` area `onboarding`; rewrite test; six probe requests.
+- Register: R-103 (any user can set their own stats; `user_stats` write rule), and three Phase 7 dead-code items (`resetOnboarding`, `shares.js`, the trending refresh). Lesson 35 (answering the library's own result; a map as a set; exercise `firstNotAllowed`).
+
+Changed files: backend/internal/onboarding/{handler.go,handler_test.go,contract_test.go} (new), backend/internal/supabaserest/supabaserest.go, backend/cmd/api/{main.go,onboarding_wiring_test.go (new)}, backend/README.md, src/lib/go-data.js, src/lib/supabase/onboarding.js, next.config.mjs, scripts/contracts/{browser-db-fixture.mjs,go-rewrites.test.mjs,go-forwarding-probe.mjs}, scripts/contracts/{record-onboarding,onboarding.test}.mjs (new), contracts/onboarding/{cases.json,README.md} (new), learn-go/{README.md,35-answering-the-librarys-own-result/* (new)}, docs/{adr/0002-go-backend.md,backend-map.md,bug-register.md,coordination.md,plans/browser-data.md}.
+
+Checks (Claude Code, Windows, Node 24.22.0, Go 1.27.2), after the last code change:
+- `npm run test:contracts`: 1424 of 1424. `npm run lint`: 0 errors, 16 warnings (unchanged). `npm run build`: passes. `git diff --check`: clean.
+- backend: `go test -count=1 ./...` 31 packages pass; `go vet ./...` clean; `gofmt -l .` empty. learn-go `-tags solution`: 36 packages pass; lesson 35's exercise fails only its own test.
+- Forwarding probe (dev): 146 of 146 identical, six onboarding requests among them (another user's id answered without a database request).
+- Deliberate breaks, each restored byte for byte: 14 tried, all caught after one case was added (`update-empty-reply`) and one break that did not compile was redone: the client's id trusted on read, create and update; the allowlist skipped; `user_id` writable; signed out let through; the insert as an object, without `columns`, or with unquoted columns; the update without the row back; another error code for no row; the network error without supabase-js's text; a refusal answered as data; an empty success answered as an error.
+- `npm run handoff` runs after this record is saved.
+Not checked: the area switched on against a real Supabase project or in a browser.
+
+Remaining gates: committing DATA-002 (and pushing `1e67beb`, when the owner wants); independent review; switching `onboarding` on after a preview; R-103 needs the owner. KEYS-001 blocked; R-090, R-088, R-086 as before.
+Next bounded action: notifications (DATA-004), the next area in the plan's order after user stats. User stats (DATA-003) needs a React hook harness and the owner's R-103 decision first, so it is the better one to take after notifications.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: DATA-001b, search history in Go (Claude Code, 2026-10-19)
 
 Status: **implementation complete; awaiting independent review; not deployed; off by default.** No live change: without `search-history` in `NEXT_PUBLIC_SEFGH_GO_DATA` the module takes its direct Supabase path exactly as before (the direct-path contract passes unchanged).
 **Not committed.** The Git Agent has not committed since `042b560` (TREND-001a): two watches of 15 and 10 minutes saw no commit. This tree holds TREND-001b, DATA-PLAN-001, DATA-001a and DATA-001b; this handoff's signal covers all four; their records follow below.

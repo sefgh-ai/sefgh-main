@@ -591,3 +591,9 @@ and the browser module asks it when `NEXT_PUBLIC_SEFGH_GO_DATA` lists
 `search-history`; the same setting adds the rewrite. The module falls back to
 Supabase on a 404, so the setting alone never breaks the area. The browser's
 user id is only a filter checked against the verified caller. Off by default.
+
+DATA-002 (2026-10-19): onboarding is served by `internal/onboarding` behind
+the same setting. Its module decides by error codes, so Go answers each
+database call's own `{ data, error }` (`supabaserest.Result`), checked against
+answers the real postgrest-js produced. Updates are limited to the fields the
+onboarding writes. Off by default.

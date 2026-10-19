@@ -485,3 +485,10 @@ Search history can be served by Go (`backend/internal/searchhistory`): with
 calls `/api/search-history` (through `src/lib/go-data.js`) instead of Supabase,
 and `next.config.mjs` rewrites those paths to Go. Off by default; the direct
 path remains the fallback until Phase 7.
+
+## DATA-002 update (2026-10-19)
+
+Onboarding can be served by Go (`backend/internal/onboarding`): with `onboarding`
+in `NEXT_PUBLIC_SEFGH_GO_DATA`, `src/lib/supabase/onboarding.js` makes its three
+database calls through `/api/onboarding` (`resultFrom` in `src/lib/go-data.js`).
+Off by default.
