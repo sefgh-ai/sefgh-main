@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code / Git Agent: PHASE2-001 complete locally; all Phase 2 implementation/review/verification gates closed; handoff below.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code: TREND-PLAN-001 and BUG-009 handoff; writer released; R-077 waits for the owner.
 
 ## Start here
 
@@ -11,11 +11,39 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code completed PHASE2-001 pickup and verification after Codex hit usage limit; writer released; Git Agent synchronization in progress.
+- **Active writer:** none. Previously: TREND-PLAN-001 and BUG-009 released 2026-10-19.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 99 entries (R-001 through R-099). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 100 entries (R-001 through R-100). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: PHASE2-001, whole Phase 2 gate closure and verification (Codex & Claude Code, 2026-10-19)
+## Latest handoff: TREND-PLAN-001 and BUG-009 (Claude Code, 2026-10-19)
+
+Status: **complete. TREND-PLAN-001 is a plan for the owner (documentation only); BUG-009 fixes test code only. Nothing deployed, no route switched, no database change.**
+Owner: Claude Code. Reviewer: none; no peer review claimed.
+Branch main; base `24ed16a` (PHASE2-001 at `80bc459`, pushed, `go-backend` at `80bc459`). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `24ed16a`).
+Owner instruction (2026-10-19): "continue where codex stopped". Codex's next batch was: Git Agent sync (done), monitor hosted CI, then `trending/refresh` (R-077) or KEYS-001 if catalog access is granted. Both routes need the owner, so this batch prepared the R-077 decision and fixed an approved bug instead.
+
+Done:
+- **TREND-PLAN-001:** `docs/plans/trending-refresh.md`, four options for R-077 with a recommendation: (A) no stored table, Go serves the topic searches live behind the CDN's cache; (B) keep the table, a secret-gated `SECURITY DEFINER` replace function; (C) keep the table, a least-privilege Postgres role over a direct connection (needs a third-party driver); (D) remove the topic sections. Recommended A. Found and registered R-100: `/trending` always says "Data is older than 3 days" because the freshness check reads the empty table; it is fixed with whichever option is chosen. ADR dated note; R-077 points to the plan.
+- **BUG-009 (R-091):** the comments and videos `TestDetailsBudgetBoundsHangingReads` now check that every hanging read carries the budget's deadline (deterministic), and stop waiting after 30 seconds instead of timing the reply against 2 seconds. The github-access deadline test is bounded by the four-second default deadline, with a 10-second test timeout. The chat allowance test had already been fixed in PHASE2-001.
+- R-098 and R-099 statuses brought up to date: fixed in `80bc459`, reviewed in PHASE2-001.
+
+Changed files: docs/plans/trending-refresh.md (new), docs/{bug-register,coordination}.md, docs/adr/0002-go-backend.md, backend/internal/comments/handler_test.go, backend/internal/videos/handler_test.go, scripts/contracts/github-access.test.mjs.
+
+Checks (Claude Code, Windows, Node 21.7.1, Go 1.27.2):
+- `npm run test:contracts`: 1214 of 1214. `git diff --check`: clean. `go vet` and `gofmt -l` on comments and videos: clean.
+- The three rewritten tests pass, and each was run against a deliberately broken subject, then restored byte for byte: the default 16-second budget instead of the configured one (comments and videos: "8 reads had no deadline within the 50ms budget"); no budget at all (comments: "no reply after 30 seconds"); the identity check ignoring `deadlineMs` (github-access: failed at 4042 ms).
+- `npm run handoff` runs after this record is saved; a failure would be recorded here by a further edit.
+- Hosted CI for PHASE2-001: **not checked**. `gh` is not installed here, the repository is private, and the GitHub tools available have no workflow-run call.
+Not checked: lint and build (no application code changed).
+
+Remaining gates and owner decisions:
+- **R-077: choose A, B, C or D** in `docs/plans/trending-refresh.md`. R-100 follows the choice.
+- **KEYS-001:** catalog evidence still blocked. The Supabase connector needs authorizing in claude.ai connector settings, or the owner runs `supabase/checks/keys_001_catalog.sql` in the SQL editor and shares the output (no key values are selected).
+- Still open from before: R-090 (owner's after-cutover decision recorded by AVATAR-001), R-088, R-086; switching any route on.
+Next bounded action: on the owner's R-077 choice, TREND-001a (option A) or the option's first task as listed in the plan; KEYS-001a when catalog evidence is available.
+Writer released: yes. No processes left running. Account usage is not visible to Claude Code.
+
+## Previous handoff: PHASE2-001, whole Phase 2 gate closure and verification (Codex & Claude Code, 2026-10-19)
 
 Status: **implementation and verification complete for all seven Phase 2 routes; independently reviewed; off by default (trending on in prod); not deployed**.
 Owner: Codex (implementation & safety fixes), Claude Code (pickup, verification, and handoff closure).

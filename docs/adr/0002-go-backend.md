@@ -556,3 +556,11 @@ own token. Lesson 31 explains bounded streams and deadlines. Two of the original
 25 API routes remain without a Go implementation: `playground/keys` (R-039;
 real lifecycle/schema gate) and `trending/refresh` (R-077; worker privileges and
 atomic replacement). No browser data-operation migration or cutover is implied.
+
+TREND-PLAN-001 (2026-10-19): the options for R-077 are written in
+`../plans/trending-refresh.md`. Recommended: no stored table, with Go serving the
+topic searches live behind the CDN's cache, so nothing needs a privileged
+write; the alternatives keep the table (a secret-gated replace function, or a
+least-privilege Postgres role) or remove the topic sections. Waiting for the
+owner. BUG-009 the same day made three wall-clock tests check deadlines instead
+of speed (R-091).

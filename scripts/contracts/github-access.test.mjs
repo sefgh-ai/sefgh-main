@@ -96,7 +96,7 @@ test('an identity reply over 1 MiB is an outage', async () => {
   assert.deepEqual(result, { status: 503 });
 });
 
-test('an issuer that never answers is given up on at the deadline', async () => {
+test('an issuer that never answers is given up on at the deadline', { timeout: 10_000 }, async () => {
   // backend/internal/githubaccess uses the same four seconds.
   assert.equal(IDENTITY_DEADLINE_MS, 4000);
   const started = Date.now();
@@ -109,7 +109,10 @@ test('an issuer that never answers is given up on at the deadline', async () => 
       fetch: (url, init) => new Promise((resolve, reject) => init.signal.addEventListener('abort', () => reject(init.signal.reason))),
     });
     assert.deepEqual(result, { status: 503 });
-    assert.ok(Date.now() - started < 2000, 'waited far longer than the 30 ms deadline');
+    // Only an abort settles the stand-in, so a 503 here means the deadline
+    // fired. The bound tells the 30 ms deadline from the four-second default
+    // while leaving a busy machine almost four seconds of slack (R-091).
+    assert.ok(Date.now() - started < IDENTITY_DEADLINE_MS, 'waited as long as the default deadline, not the 30 ms one');
   } finally {
     clearInterval(keepRunning);
   }

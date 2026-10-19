@@ -72,26 +72,48 @@ func TestDetailsRunFourAtATime(t *testing.T) {
 	}
 }
 
-// One budget bounds every comment's details together. Here every profile
-// read hangs: when the budget runs out the reads count as failed, and the
-// reply still comes, quickly, with no names and no replies.
+// One budget bounds every comment's details together. Here every read after
+// the list hangs until it is cancelled: each must carry the budget's
+// deadline, and when it runs out the reads count as failed and the reply
+// still comes, with no names and no replies. The deadline is checked rather
+// than how fast the reply came, so a busy machine cannot fail this test
+// (R-091); without a budget the reply never comes, and the test stops
+// waiting after 30 seconds.
 func TestDetailsBudgetBoundsHangingReads(t *testing.T) {
+	const budget = 50 * time.Millisecond
+	var mu sync.Mutex
+	unbounded := 0
 	h := &Handler{
 		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
 			if strings.Contains(r.URL.RawQuery, "repo_full_name=") {
 				return reply(r, 200, twenty()), nil
 			}
+			if deadline, ok := r.Context().Deadline(); !ok || time.Until(deadline) > budget {
+				mu.Lock()
+				unbounded++
+				mu.Unlock()
+			}
 			<-r.Context().Done()
 			return nil, r.Context().Err()
 		})},
 		SupabaseURL: "https://project.invalid", SupabaseKey: "public-key", Logger: discard,
-		DetailsBudget: 50 * time.Millisecond,
+		DetailsBudget: budget,
 	}
-	start := time.Now()
 	w := httptest.NewRecorder()
-	h.ServeHTTP(w, httptest.NewRequest("GET", "/api/repo/comments?repo=octo/demo", nil))
-	if elapsed := time.Since(start); elapsed > 2*time.Second {
-		t.Errorf("the reply took %v", elapsed)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		h.ServeHTTP(w, httptest.NewRequest("GET", "/api/repo/comments?repo=octo/demo", nil))
+	}()
+	select {
+	case <-done:
+	case <-time.After(30 * time.Second):
+		t.Fatal("no reply after 30 seconds: the hanging reads were waited for")
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if unbounded != 0 {
+		t.Errorf("%d reads had no deadline within the %v budget", unbounded, budget)
 	}
 	if w.Code != 200 || strings.Count(w.Body.String(), `"user_name":null`) != 20 || strings.Count(w.Body.String(), `"reply_count":0`) != 20 {
 		t.Errorf("%d %.300s", w.Code, w.Body)
