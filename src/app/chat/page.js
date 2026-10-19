@@ -110,18 +110,20 @@ function ChatPageContent() {
     if (user) loadProfile();
   }, [user]);
 
-  // Load conversation messages when selected
+  // Load conversation messages when selected. Only a change of id loads:
+  // loading sets currentConversation again, with the same id.
+  const conversationId = currentConversation?.id;
   useEffect(() => {
     const loadMessages = async () => {
-      if (!currentConversation) return;
-      const conv = await loadConversation(currentConversation.id);
+      if (!conversationId) return;
+      const conv = await loadConversation(conversationId);
       if (conv) {
         setMessages(conv.messages || []);
       }
     };
 
     loadMessages();
-  }, [currentConversation?.id]);
+  }, [conversationId, loadConversation, setMessages]);
 
   // Handle opening code in canvas
   const handleOpenInCanvas = (code, language) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import {
   getUserConversations,
@@ -57,8 +57,9 @@ export function useChatConversations(user) {
     }
   };
 
-  // Load conversation messages
-  const loadConversation = async (convId) => {
+  // Load conversation messages. It keeps its identity while the user does,
+  // so the chat page can load a conversation when its id changes.
+  const loadConversation = useCallback(async (convId) => {
     try {
       const conv = await getConversation(convId, user.id);
       setCurrentConversation(conv);
@@ -69,7 +70,7 @@ export function useChatConversations(user) {
       });
       return null;
     }
-  };
+  }, [user]);
 
   // Delete conversation
   const handleDelete = async (convId) => {

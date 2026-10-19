@@ -3,6 +3,7 @@
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
@@ -69,9 +70,12 @@ export default function RepoDetailsLayout({
           <div className="flex flex-col md:flex-row gap-6 mb-6">
             {/* Avatar */}
             <div className="flex-shrink-0">
-              <img
+              <Image
                 src={repoData.owner.avatar_url}
                 alt={repoData.owner.login}
+                width={96}
+                height={96}
+                unoptimized
                 className="w-20 h-20 md:w-24 md:h-24 rounded-xl border-2 border-border"
               />
             </div>

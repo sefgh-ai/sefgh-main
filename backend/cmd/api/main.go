@@ -512,7 +512,7 @@ func serve(logger *slog.Logger, srv *http.Server, addr string) error {
 // response. Next.js does not add them to responses it forwards here, so Go
 // sends them itself. TestSecurityHeadersMatchNextConfig catches drift.
 var securityHeaders = map[string]string{
-	"Content-Security-Policy":   "default-src 'self'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://api.github.com https://vitals.vercel-insights.com https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+	"Content-Security-Policy":   "default-src 'self'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.github.com https://vitals.vercel-insights.com https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
 	"Referrer-Policy":           "strict-origin-when-cross-origin",
 	"X-Content-Type-Options":    "nosniff",
 	"X-Frame-Options":           "DENY",

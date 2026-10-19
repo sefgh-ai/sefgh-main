@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { Play, Plus, Trash2, ExternalLink } from 'lucide-react'
@@ -28,11 +29,7 @@ export function RepoVideoTab({ repoFullName }) {
   const [newVideoDescription, setNewVideoDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    fetchVideos()
-  }, [repoFullName])
-
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     try {
       const response = await fetchWithSession(`/api/repo/videos?repo=${encodeURIComponent(repoFullName)}`)
       const data = await response.json()
@@ -48,7 +45,11 @@ export function RepoVideoTab({ repoFullName }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [repoFullName])
+
+  useEffect(() => {
+    fetchVideos()
+  }, [fetchVideos])
 
   const handleAddVideo = async () => {
     if (!newVideoUrl.trim()) {
@@ -256,9 +257,12 @@ export function RepoVideoTab({ repoFullName }) {
               >
                 <div className="flex gap-3">
                   {video.thumbnail_url && (
-                    <img
+                    <Image
                       src={video.thumbnail_url}
                       alt={video.title || 'Video'}
+                      width={96}
+                      height={64}
+                      unoptimized
                       className="w-24 h-16 object-cover rounded"
                     />
                   )}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   saveNotificationData,
@@ -27,14 +27,7 @@ export function useNotifications(
     }
   }, [user]);
 
-  // Fetch notifications
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-    }
-  }, [user]);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       setLoadingNotifications(true);
       let query = supabase
@@ -53,7 +46,14 @@ export function useNotifications(
     } finally {
       setLoadingNotifications(false);
     }
-  };
+  }, [supabase, user]);
+
+  // Fetch notifications
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user, fetchNotifications]);
 
   // Compute filtered notifications
   const notifications = useMemo(() => {

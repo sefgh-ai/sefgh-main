@@ -185,7 +185,7 @@ export function useGitHubSearch(userId) {
         setLoading(false);
       }
     },
-    [searchQuery, sort, language, stars, userId]
+    [searchQuery, sort, language, stars, view, userId]
   );
 
   // Auto-search when there's an initial query from URL params
@@ -256,7 +256,7 @@ export function useGitHubSearch(userId) {
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, searchQuery, sort, language, stars, currentPage]);
+  }, [loadingMore, searchQuery, sort, language, stars, currentPage, searchResults, totalCount, searchTime, view]);
 
   const handlePageChange = useCallback(
     async (page) => {
@@ -308,7 +308,7 @@ export function useGitHubSearch(userId) {
         setLoadingMore(false);
       }
     },
-    [loadingMore, searchQuery, sort, language, stars, currentPage]
+    [loadingMore, searchQuery, sort, language, stars, currentPage, searchTime, view]
   );
 
   // Pages are 30 results; GitHub serves only the first 1,000 (R-018).

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,11 +24,7 @@ export default function ApiKeysTab({ userId }) {
   const supabase = createClient();
   const { sendFromTemplate } = useSendNotification();
 
-  useEffect(() => {
-    fetchApiKeys();
-  }, [userId]);
-
-  const fetchApiKeys = async () => {
+  const fetchApiKeys = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('api_keys')
@@ -43,7 +39,11 @@ export default function ApiKeysTab({ userId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, userId]);
+
+  useEffect(() => {
+    fetchApiKeys();
+  }, [fetchApiKeys]);
 
   const createApiKey = async () => {
     if (!newKeyName.trim()) return;

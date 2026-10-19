@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
@@ -21,21 +21,7 @@ export default function MonitoringTab({ userId }) {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchRecentLogs();
-    calculateHealthMetrics();
-
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        fetchRecentLogs();
-        calculateHealthMetrics();
-      }, 5000); // Refresh every 5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [userId, filterStatus, autoRefresh]);
-
-  const fetchRecentLogs = async () => {
+  const fetchRecentLogs = useCallback(async () => {
     try {
       let query = supabase
         .from('api_logs')
@@ -61,9 +47,9 @@ export default function MonitoringTab({ userId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, userId, filterStatus]);
 
-  const calculateHealthMetrics = async () => {
+  const calculateHealthMetrics = useCallback(async () => {
     try {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
@@ -91,7 +77,21 @@ export default function MonitoringTab({ userId }) {
     } catch (error) {
       console.error('Error calculating health metrics:', error);
     }
-  };
+  }, [supabase, userId]);
+
+  useEffect(() => {
+    fetchRecentLogs();
+    calculateHealthMetrics();
+
+    if (autoRefresh) {
+      const interval = setInterval(() => {
+        fetchRecentLogs();
+        calculateHealthMetrics();
+      }, 5000); // Refresh every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [fetchRecentLogs, calculateHealthMetrics, autoRefresh]);
 
   const getStatusBadge = (statusCode) => {
     if (statusCode >= 200 && statusCode < 300) {

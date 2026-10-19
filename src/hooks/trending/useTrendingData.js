@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchTrendingTopics } from "@/lib/trending-topics";
 
@@ -32,7 +32,7 @@ export function useTrendingData(
   };
 
   // Fetch trending repositories
-  const fetchTrendingRepos = async () => {
+  const fetchTrendingRepos = useCallback(async () => {
     try {
       // Built with URLSearchParams so the "?" is never lost. Previously, when
       // programmingLanguage was "any" (the initial state) the URL came out as
@@ -49,10 +49,10 @@ export function useTrendingData(
       setRepositories([]);
       setLoadError("Trending repositories could not be loaded right now. Please try again in a moment.");
     }
-  };
+  }, [programmingLanguage, spokenLanguage, dateRange]);
 
   // Fetch trending developers
-  const fetchTrendingDevelopers = async () => {
+  const fetchTrendingDevelopers = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/github/trending-developers?since=${dateRange}`
@@ -65,7 +65,7 @@ export function useTrendingData(
       setDevelopers([]);
       setLoadError("Trending developers could not be loaded right now. Please try again in a moment.");
     }
-  };
+  }, [dateRange]);
 
   // Reload what this visitor is looking at.
   //
@@ -115,7 +115,7 @@ export function useTrendingData(
     };
 
     fetchData();
-  }, [activeTab, programmingLanguage, spokenLanguage, dateRange]);
+  }, [activeTab, fetchTrendingRepos, fetchTrendingDevelopers]);
 
   return {
     loading,

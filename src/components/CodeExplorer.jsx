@@ -1,7 +1,7 @@
 'use client'
 
 import { formatCompactNumber } from "@/lib/utils/formatters";
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ArrowLeft, Star, GitFork, Eye, ExternalLink, Copy, FileText, BarChart3, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -15,13 +15,7 @@ export function CodeExplorer({ repository, onClose }) {
   const [repoDetails, setRepoDetails] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (repository) {
-      loadRepositoryDetails()
-    }
-  }, [repository])
-
-  const loadRepositoryDetails = async () => {
+  const loadRepositoryDetails = useCallback(async () => {
     setLoading(true)
     try {
       const [owner, repo] = repository.full_name.split('/')
@@ -34,7 +28,13 @@ export function CodeExplorer({ repository, onClose }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [repository])
+
+  useEffect(() => {
+    if (repository) {
+      loadRepositoryDetails()
+    }
+  }, [repository, loadRepositoryDetails])
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(repository.html_url)

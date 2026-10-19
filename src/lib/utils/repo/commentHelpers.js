@@ -22,13 +22,13 @@ export async function fetchRepliesRecursively(supabase, commentId) {
           // Get user profile
           const { data: profile } = await supabase
             .from("profiles")
-            .select("username, avatar_url")
+            .select("full_name, avatar_url")
             .eq("id", reply.user_id)
             .maybeSingle();
 
-          // Fallback to email if no username
+          // Fallback to email if no name
           let userEmail = null;
-          if (!profile?.username) {
+          if (!profile?.full_name) {
             try {
               const {
                 data: { user: replyUser },
@@ -47,7 +47,7 @@ export async function fetchRepliesRecursively(supabase, commentId) {
 
           return {
             ...reply,
-            user_name: profile?.username || null,
+            user_name: profile?.full_name || null,
             user_email: userEmail,
             user_avatar: profile?.avatar_url || null,
             replies: nestedReplies,
@@ -88,13 +88,13 @@ export async function enrichCommentsWithUserData(supabase, rawComments) {
           // Get user profile
           const { data: profile } = await supabase
             .from("profiles")
-            .select("username, avatar_url")
+            .select("full_name, avatar_url")
             .eq("id", comment.user_id)
             .maybeSingle();
 
-          // Fallback to email if no username
+          // Fallback to email if no name
           let userEmail = null;
-          if (!profile?.username) {
+          if (!profile?.full_name) {
             try {
               const {
                 data: { user: commentUser },
@@ -110,7 +110,7 @@ export async function enrichCommentsWithUserData(supabase, rawComments) {
 
           return {
             ...comment,
-            user_name: profile?.username || null,
+            user_name: profile?.full_name || null,
             user_email: userEmail,
             user_avatar: profile?.avatar_url || null,
             replies: replies,

@@ -2,6 +2,60 @@
 
 import React, { useRef, useEffect } from 'react';
 
+// One dot of the text. It is declared outside the component so the React
+// compiler can compile the component (an inline class stops it, R-045);
+// the canvas context and the pointer are passed in.
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.size = 1.5; // Reduced from 2 to prevent overlapping
+    this.baseX = x;
+    this.baseY = y;
+    this.density = Math.random() * 30 + 5;
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  update(mouse) {
+    // Always move back to base position
+    if (this.x !== this.baseX) {
+      let dx = this.x - this.baseX;
+      this.x -= dx / 5;
+    }
+    if (this.y !== this.baseY) {
+      let dy = this.y - this.baseY;
+      this.y -= dy / 5;
+    }
+
+    // Only apply mouse force if mouse is on canvas
+    if (mouse.x !== null && mouse.y !== null) {
+      let dx = mouse.x - this.x;
+      let dy = mouse.y - this.y;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < mouse.radius) {
+        let forceDirectionX = dx / distance;
+        let forceDirectionY = dy / distance;
+        let maxDistance = mouse.radius;
+        let force = (maxDistance - distance) / maxDistance;
+        let directionX = forceDirectionX * force * this.density;
+        let directionY = forceDirectionY * force * this.density;
+
+        this.x -= directionX;
+        this.y -= directionY;
+      }
+    }
+  }
+}
+
 const ParticleText = ({ text = 'SEFGH', className = '' }) => {
   const canvasRef = useRef(null);
   const mouse = useRef({ x: null, y: null, radius: 100 });
@@ -24,57 +78,6 @@ const ParticleText = ({ text = 'SEFGH', className = '' }) => {
 
     let particlesArray = [];
     let animationFrameId;
-
-    class Particle {
-      constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.size = 1.5; // Reduced from 2 to prevent overlapping
-        this.baseX = x;
-        this.baseY = y;
-        this.density = Math.random() * 30 + 5;
-      }
-
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      update() {
-        // Always move back to base position
-        if (this.x !== this.baseX) {
-          let dx = this.x - this.baseX;
-          this.x -= dx / 5;
-        }
-        if (this.y !== this.baseY) {
-          let dy = this.y - this.baseY;
-          this.y -= dy / 5;
-        }
-
-        // Only apply mouse force if mouse is on canvas
-        if (mouse.current.x !== null && mouse.current.y !== null) {
-          let dx = mouse.current.x - this.x;
-          let dy = mouse.current.y - this.y;
-          let distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < mouse.current.radius) {
-            let forceDirectionX = dx / distance;
-            let forceDirectionY = dy / distance;
-            let maxDistance = mouse.current.radius;
-            let force = (maxDistance - distance) / maxDistance;
-            let directionX = forceDirectionX * force * this.density;
-            let directionY = forceDirectionY * force * this.density;
-            
-            this.x -= directionX;
-            this.y -= directionY;
-          }
-        }
-      }
-    }
 
     function init() {
       particlesArray = [];
@@ -114,8 +117,8 @@ const ParticleText = ({ text = 'SEFGH', className = '' }) => {
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particlesArray.forEach(p => {
-        p.draw();
-        p.update();
+        p.draw(ctx);
+        p.update(mouse.current);
       });
       animationFrameId = requestAnimationFrame(animate);
     }

@@ -29,7 +29,6 @@ const MIGRATION = 'supabase/migrations/20261015140000_sec_001_close_data_exposur
 const KNOWN = new Map([
   ['src/app/api/repo/comments/route.js username', 'R-075'],
   ['src/app/api/repo/videos/route.js username', 'R-075'],
-  ['src/lib/utils/repo/commentHelpers.js username', 'R-075'],
 ]);
 
 const columns = (list) => list.split(',').map((c) => c.trim()).filter(Boolean);

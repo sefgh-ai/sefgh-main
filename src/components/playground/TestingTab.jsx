@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,11 +25,7 @@ export default function TestingTab({ userId }) {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchApiKeys();
-  }, [userId]);
-
-  const fetchApiKeys = async () => {
+  const fetchApiKeys = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('api_keys')
@@ -45,7 +41,11 @@ export default function TestingTab({ userId }) {
     } catch (error) {
       console.error('Error fetching API keys:', error);
     }
-  };
+  }, [supabase, userId]);
+
+  useEffect(() => {
+    fetchApiKeys();
+  }, [fetchApiKeys]);
 
   const sendRequest = async () => {
     setLoading(true);

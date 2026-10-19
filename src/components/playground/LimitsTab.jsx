@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,12 +33,7 @@ export default function LimitsTab({ userId }) {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchLimits();
-    fetchCurrentUsage();
-  }, [userId]);
-
-  const fetchLimits = async () => {
+  const fetchLimits = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('api_limits')
@@ -57,42 +52,47 @@ export default function LimitsTab({ userId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, userId]);
 
-  const fetchCurrentUsage = async () => {
+  const fetchCurrentUsage = useCallback(async () => {
     try {
       const now = new Date();
       const oneMinuteAgo = new Date(now.getTime() - 60000);
       const oneHourAgo = new Date(now.getTime() - 3600000);
       const oneDayAgo = new Date(now.getTime() - 86400000);
 
-      const { data: minuteData } = await supabase
+      const { count: minuteCount } = await supabase
         .from('api_logs')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', userId)
         .gte('created_at', oneMinuteAgo.toISOString());
 
-      const { data: hourData } = await supabase
+      const { count: hourCount } = await supabase
         .from('api_logs')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', userId)
         .gte('created_at', oneHourAgo.toISOString());
 
-      const { data: dayData } = await supabase
+      const { count: dayCount } = await supabase
         .from('api_logs')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', userId)
         .gte('created_at', oneDayAgo.toISOString());
 
       setCurrentUsage({
-        minute: minuteData?.length || 0,
-        hour: hourData?.length || 0,
-        day: dayData?.length || 0,
+        minute: minuteCount || 0,
+        hour: hourCount || 0,
+        day: dayCount || 0,
       });
     } catch (error) {
       console.error('Error fetching current usage:', error);
     }
-  };
+  }, [supabase, userId]);
+
+  useEffect(() => {
+    fetchLimits();
+    fetchCurrentUsage();
+  }, [fetchLimits, fetchCurrentUsage]);
 
   const saveLimits = async () => {
     setSaving(true);

@@ -21,7 +21,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - Go backend: `backend/`, one Go module using only the standard library. Routes move there one at a time and stay off until enabled by environment variables. See `backend/README.md`.
 - Contracts: `contracts/` holds fixtures that every implementation of a route must pass.
 - Browser data access is substantial: `src/lib/supabase`, hooks, contexts, and playground components. Migrating API routes alone is not a full backend migration.
-- Checks for the app: `npm run lint`, `npm run build`, and `npm run test:contracts` (fixtures against the Next.js handlers). There is no general `npm test` script. `npm run lint` already fails on the baseline; see `docs/backend-map.md`.
+- Checks for the app: `npm run lint`, `npm run build`, and `npm run test:contracts` (fixtures against the Next.js handlers). There is no general `npm test` script. `npm run lint` fails on any error or warning (`--max-warnings 0`, since BUG-010); see `docs/backend-map.md`.
 - Checks for Go, run inside `backend/`: `go test ./...`, `go vet ./...`, and `gofmt -l .`, which must print nothing.
 - After fixture changes, use `go test -count=1 ./...`: `contracts/` is outside the Go module, so cached results are not verification of changed fixtures.
 - Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go\bin`. A shell started before the install may not find `go`; add that folder to `PATH` for the command.

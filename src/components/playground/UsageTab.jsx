@@ -1,7 +1,7 @@
 'use client';
 
 import { formatNumber } from "@/lib/utils/formatters";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -9,6 +9,66 @@ import { TrendingUp, Activity, Clock, DollarSign } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+
+const processUsageByDay = (logs, days) => {
+  const dayMap = {};
+
+  for (let i = 0; i < days; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - (days - 1 - i));
+    const dateStr = date.toISOString().split('T')[0];
+    dayMap[dateStr] = { date: dateStr, requests: 0, success: 0, errors: 0 };
+  }
+
+  logs.forEach(log => {
+    const dateStr = log.created_at.split('T')[0];
+    if (dayMap[dateStr]) {
+      dayMap[dateStr].requests++;
+      if (log.status_code >= 200 && log.status_code < 300) {
+        dayMap[dateStr].success++;
+      } else {
+        dayMap[dateStr].errors++;
+      }
+    }
+  });
+
+  return Object.values(dayMap).map(day => ({
+    date: new Date(day.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+    requests: day.requests,
+    success: day.success,
+    errors: day.errors,
+  }));
+};
+
+const processEndpointUsage = (logs) => {
+  const endpointMap = {};
+
+  logs.forEach(log => {
+    if (!endpointMap[log.endpoint]) {
+      endpointMap[log.endpoint] = { name: log.endpoint, value: 0 };
+    }
+    endpointMap[log.endpoint].value++;
+  });
+
+  return Object.values(endpointMap).slice(0, 5);
+};
+
+const calculateStats = (logs) => {
+  if (logs.length === 0) {
+    return { totalRequests: 0, successRate: 0, avgResponseTime: 0, totalCost: 0 };
+  }
+
+  const successCount = logs.filter(log => log.status_code >= 200 && log.status_code < 300).length;
+  const totalResponseTime = logs.reduce((sum, log) => sum + (log.response_time || 0), 0);
+  const totalCost = logs.reduce((sum, log) => sum + (log.cost || 0), 0);
+
+  return {
+    totalRequests: logs.length,
+    successRate: ((successCount / logs.length) * 100).toFixed(1),
+    avgResponseTime: (totalResponseTime / logs.length).toFixed(0),
+    totalCost: totalCost.toFixed(2),
+  };
+};
 
 export default function UsageTab({ userId }) {
   const [usageData, setUsageData] = useState([]);
@@ -24,11 +84,7 @@ export default function UsageTab({ userId }) {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchUsageData();
-  }, [userId, timeRange]);
-
-  const fetchUsageData = async () => {
+  const fetchUsageData = useCallback(async () => {
     try {
       const daysMap = { '24h': 1, '7d': 7, '30d': 30, '90d': 90 };
       const days = daysMap[timeRange];
@@ -58,67 +114,11 @@ export default function UsageTab({ userId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, userId, timeRange]);
 
-  const processUsageByDay = (logs, days) => {
-    const dayMap = {};
-    
-    for (let i = 0; i < days; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - (days - 1 - i));
-      const dateStr = date.toISOString().split('T')[0];
-      dayMap[dateStr] = { date: dateStr, requests: 0, success: 0, errors: 0 };
-    }
-
-    logs.forEach(log => {
-      const dateStr = log.created_at.split('T')[0];
-      if (dayMap[dateStr]) {
-        dayMap[dateStr].requests++;
-        if (log.status_code >= 200 && log.status_code < 300) {
-          dayMap[dateStr].success++;
-        } else {
-          dayMap[dateStr].errors++;
-        }
-      }
-    });
-
-    return Object.values(dayMap).map(day => ({
-      date: new Date(day.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-      requests: day.requests,
-      success: day.success,
-      errors: day.errors,
-    }));
-  };
-
-  const processEndpointUsage = (logs) => {
-    const endpointMap = {};
-    
-    logs.forEach(log => {
-      if (!endpointMap[log.endpoint]) {
-        endpointMap[log.endpoint] = { name: log.endpoint, value: 0 };
-      }
-      endpointMap[log.endpoint].value++;
-    });
-
-    return Object.values(endpointMap).slice(0, 5);
-  };
-
-  const calculateStats = (logs) => {
-    if (logs.length === 0) {
-      return { totalRequests: 0, successRate: 0, avgResponseTime: 0, totalCost: 0 };
-    }
-
-    const successCount = logs.filter(log => log.status_code >= 200 && log.status_code < 300).length;
-    const totalResponseTime = logs.reduce((sum, log) => sum + (log.response_time || 0), 0);
-    const totalCost = logs.reduce((sum, log) => sum + (log.cost || 0), 0);
-
-    return {
-      totalRequests: logs.length,
-      successRate: ((successCount / logs.length) * 100).toFixed(1),
-      avgResponseTime: (totalResponseTime / logs.length).toFixed(0),
-      totalCost: totalCost.toFixed(2),
-    };
-  };
+  useEffect(() => {
+    fetchUsageData();
+  }, [fetchUsageData]);
 
   if (loading) {
     return <div className="text-center py-8">Loading usage data...</div>;

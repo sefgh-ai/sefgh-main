@@ -200,6 +200,8 @@ Baseline recorded on 2026-10-11 by Claude Code at `42759dd` application source, 
 - `npm run build`: **passes**, exit 0.
 - No latency, resource, or cost measurement was taken.
 
+Later: BUG-003 fixed the ten errors (R-043), and BUG-010 (Claude Code, 2026-10-20) the 16 warnings (R-019, R-044, R-045). `npm run lint` now runs `eslint --max-warnings 0`, so a new warning fails it.
+
 
 ## AUTH-002 and GO-006a implementation update (2026-10-13)
 
