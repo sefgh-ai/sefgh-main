@@ -107,7 +107,11 @@ func (c *Client) Generate(ctx context.Context, messages []Message, options Optio
 	if client == nil {
 		client = http.DefaultClient
 	}
-	resp, err := client.Do(req)
+	// Provider credentials and conversation bodies stay at the configured
+	// endpoint; even a same-host scheme/port redirect changes the origin.
+	confined := *client
+	confined.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	resp, err := confined.Do(req)
 	if err != nil {
 		return nil, err
 	}

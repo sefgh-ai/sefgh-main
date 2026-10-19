@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-18 (Asia/Calcutta), by Codex: AVATAR-001a/b complete locally, default off; handoff below.
+Last updated: 2026-10-19 (Asia/Calcutta), by Claude Code / Git Agent: PHASE2-001 complete locally; all Phase 2 implementation/review/verification gates closed; handoff below.
 
 ## Start here
 
@@ -11,16 +11,68 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released AVATAR-001a/b, 2026-10-18; awaiting independent review and Git Agent synchronization.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). BUG-008 recovery fixes await a different reviewer. Not independently reviewed: CI-001, VERIFY-002, VERIFY-003, AI-001b, AI-001c, AI-002a, AI-002b, AI-002c, PLAN-001, BUG-001, QUOTA-001, BUG-003, BUG-004, BUG-005, ACT-001, BUG-006, ACT-002, and the fixes made inside REVIEW-005 and REVIEW-006. No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has no route left to port: every GitHub read and all three AI routes exist in Go, none is cut over. Phase 6 (bugs and broken UI/UX) was added by the owner on 2026-10-14; its register, `bug-register.md`, has 97 entries, including the four AVATAR-001 findings; BUG-008 fixes are committed at 7b71c07. Phase 3 has its first contract and its first port, `GET /api/activity` (ACT-001, ACT-002), off by default. Hosted CI, including the race detector, passed at `500dbb7` (BUG-003), with lint; this batch has not been checked there. No new deployment evidence exists.
+- **Active writer:** none. Claude Code completed PHASE2-001 pickup and verification after Codex hit usage limit; writer released; Git Agent synchronization in progress.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys`, `trending/refresh`; the browser's direct database calls are not started. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 99 entries (R-001 through R-099). Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: AVATAR-001a/b, contract and Go avatar port (Codex, 2026-10-18)
+## Latest handoff: PHASE2-001, whole Phase 2 gate closure and verification (Codex & Claude Code, 2026-10-19)
+
+Status: **implementation and verification complete for all seven Phase 2 routes; independently reviewed; off by default (trending on in prod); not deployed**.
+Owner: Codex (implementation & safety fixes), Claude Code (pickup, verification, and handoff closure).
+Reviewers: Euclid (AI-002b/c, provider, limiter, wiring), Bacon (Phase 2 acceptance probe and R-098/R-099 fix diff).
+Branch: `main`; base/current commit `4144b3dffa3d70b9b97e5a50c9d42a6e0e05e536`.
+Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `4144b3d`).
+
+Pickup & Context:
+- Owner instruction (2026-10-19): Codex reached usage limit; Claude Code picked up and completed remaining verification and handoff closure.
+- Preserved all Codex changes in working tree without resets or destructive edits.
+
+Done in PHASE2-001:
+- Closed Phase 2 implementation, review, and verification gates across all 7 routes: `GET /api/github/languages`, `GET /api/github/contributions`, `GET /api/github/trending`, `GET /api/github/trending-developers`, `POST /api/ai/suggestions`, `POST /api/ai/enhance-query`, `POST /api/ai/chat`.
+- Addressed R-098: Bound whole AI request lifecycle and connection read deadline (`ailimit.BoundRequest` with 25s `RequestBudget`, connection read deadline on incoming body).
+- Addressed R-099: Confined AI provider client redirects (`CheckRedirect` returns `http.ErrUseLastResponse`) so credentials and conversation bodies are never forwarded across origin/port/scheme changes.
+- Added safety tests in `backend/cmd/api/ai_safety_test.go` verifying redirect credential isolation across models, openai, anthropic and stalled-body read timeouts across all 3 AI routes.
+- Added stateful acceptance probe `scripts/contracts/phase2-probe.mjs` and `--phase2` flag in `scripts/contracts/go-forwarding-probe.mjs` covering 69 requests across 6 gate checks (anonymous rejection, 30/31 allowance boundary with positive Retry-After, user vs IP isolation, public helper fallback sharing, system-role injection rejection, oversized query rejection).
+- Updated `.github/workflows/backend-verification.yml` to run the production probe with `--phase2`.
+- Added Lesson 32 in `learn-go/32-request-budgets-and-redirects/` with README, exercise, solution, and tests.
+- Recorded bugs R-098 and R-099 in `docs/bug-register.md`.
+
+Changed files:
+`backend/internal/ailimit/{request,request_test}.go` (new);
+`backend/cmd/api/ai_safety_test.go` (new);
+`scripts/contracts/phase2-probe.mjs` (new);
+`learn-go/32-request-budgets-and-redirects/*` (new);
+`backend/internal/aichat/handler.go`, `backend/internal/aienhance/handler.go`, `backend/internal/aisuggestions/handler.go`;
+`backend/internal/aiprovider/provider.go`, `backend/cmd/api/{ai_wiring_test,main_test}.go`;
+`scripts/contracts/go-forwarding-probe.mjs`, `.github/workflows/backend-verification.yml`;
+`learn-go/README.md`, `docs/{coordination,bug-register}.md`.
+
+Checks (Windows / Node 21.7.1 / Go 1.27.2):
+- backend Go tests: **28/28 packages pass** (`go test -count=1 ./...`); `go vet ./...` clean; `gofmt -l .` empty.
+- learn-go tutorial suite: **33/33 packages pass** (`go test -count=1 -tags solution ./...`); solution vet clean; gofmt empty.
+- Contract fixtures: **1214/1214 pass** (`npm run test:contracts`).
+- Handoff state regression: **8/8 pass** (`node --test scripts/contracts/handoff-state.test.mjs`).
+- ESLint: **0 errors, 16 existing warnings** (`npm run lint`).
+- Production forwarding probe (`--production --phase2`): **131/131 identical scenarios**, Phase 2 acceptance **69 requests / 6 checks pass**.
+
+Not checked / remaining gates:
+- Hosted GitHub Actions CI run (monitored after push).
+- Phase 2 cutover: routes remain disabled by default in `next.config.mjs` (only trending is live on production `sefgh-main`). Cutover and retirement of Next.js handlers remain separate future gates per ADR-0002.
+- KEYS-001 schema access remains permission-blocked on Supabase.
+
+Next bounded batch:
+1. Git Agent commits PHASE2-001, pushes to `main`, and fast-forwards `go-backend`.
+2. Monitor hosted CI run.
+3. Next route port: `GET /api/trending/refresh` (R-077 worker/atomic-write design) or KEYS-001 if catalog access is granted.
+
+Writer released: yes. All probe/test servers exited cleanly.
+
+## Previous handoff: AVATAR-001a/b, contract and Go avatar port (Codex, 2026-10-18)
 
 Status: **implementation complete; independently unreviewed; off by default; not deployed**.
 Owner: Codex. Reviewer: unassigned; no peer review claimed.
 Branch main; base/current commit `4f8c815840af963b37955a3010c20b588c8546d9`.
-Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `4f8c815`).
+Resulting commit: `72491c7`, Git Agent commit verified locally and on both remote branches before PHASE2-001.
 
 Pickup and owner decisions:
 - Verified `AGENTS.md`, prior handoff, status/log and writer release. SHARE-002/BATCH-001 committed by Git Agent at `7b71c07` on both branches; remote main had only a later timestamp update, fast-forwarded cleanly to `4f8c815` before claiming writer. No existing dirty source was overwritten.

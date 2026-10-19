@@ -45,6 +45,8 @@ type Handler struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r, stop := ailimit.BoundRequest(w, r)
+	defer stop()
 	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBytes))
 	if err != nil {
 		h.fail(w, "read_body", err)
@@ -212,7 +214,10 @@ func (h *Handler) post(ctx context.Context, url string, headers map[string]strin
 	if client == nil {
 		client = http.DefaultClient
 	}
-	resp, err := client.Do(req)
+	// Constrain both bearer and x-api-key credentials to this endpoint.
+	confined := *client
+	confined.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	resp, err := confined.Do(req)
 	if err != nil {
 		return nil, err
 	}

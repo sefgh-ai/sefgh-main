@@ -42,6 +42,8 @@ type Handler struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r, cancel := ailimit.BoundRequest(w, r)
+	defer cancel()
 	// Order matters and is pinned by the contract: sign-in, then the
 	// allowance, then the body. A refused request never reaches the provider,
 	// and a request refused for its allowance is not counted.

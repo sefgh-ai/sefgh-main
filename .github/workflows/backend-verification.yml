@@ -59,4 +59,4 @@ jobs:
         working-directory: backend
         run: go build -o bin/api ./cmd/api
       - name: Production Next.js forwarding (local fake GitHub)
-        run: node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api --production
+        run: node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api --production --phase2

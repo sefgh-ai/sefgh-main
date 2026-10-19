@@ -38,6 +38,8 @@ type Handler struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r, cancel := ailimit.BoundRequest(w, r)
+	defer cancel()
 	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBytes))
 	if err != nil {
 		h.fail(w, "read_body", err)

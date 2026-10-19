@@ -23,10 +23,12 @@ import { spawn } from "node:child_process";
 import { once } from "node:events";
 import http from "node:http";
 import { setTimeout as delay } from "node:timers/promises";
+import { checkPhase2 } from './phase2-probe.mjs';
 
 const executable = process.argv[2];
 if (!executable) throw new Error("pass the path to the built Go API executable");
 const production = process.argv.includes('--production');
+const phase2 = process.argv.includes('--phase2');
 const children = [];
 let upstream;
 
@@ -235,6 +237,9 @@ try {
       res.setHeader("Content-Type", "application/json");
       res.setHeader("x-ratelimit-remaining", "59");
       if (req.url === '/auth/v1/user') {
+        if (phase2 && ['Bearer phase2-a', 'Bearer phase2-b'].includes(req.headers.authorization) && req.headers.apikey === 'fixture-public-key') {
+          res.end(JSON.stringify({ id: req.headers.authorization.slice(7), identities: [{ provider: 'github', id: '101' }] })); return;
+        }
         if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key') {
           res.writeHead(401); res.end('{}'); return;
         }
@@ -376,7 +381,16 @@ try {
         if (!id) { res.writeHead(401); res.end('{}'); return; }
         res.end(JSON.stringify({ id }));
       }
-      else if (req.url === '/models') res.end(JSON.stringify({ choices: [{ message: { content: 'Hello!' } }] }));
+      else if (req.url === '/models') {
+        const messages = JSON.parse(body).messages;
+        const suggestions = messages[0]?.content === 'You are a helpful GitHub search assistant that completes user queries.';
+        const content = phase2 && suggestions ? JSON.stringify(['fixture completion']) : 'Hello!';
+        res.end(JSON.stringify({ choices: [{ message: { content } }] }));
+      }
+      else if (phase2 && req.url === '/openai') {
+        if (req.headers.authorization !== 'Bearer phase2-fixture-key') { res.writeHead(401); res.end('{}'); return; }
+        res.end(JSON.stringify({ choices: [{ message: { content: 'enhanced by fixture' } }] }));
+      }
       else if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
       else if (req.url.startsWith("/search/")) res.end(JSON.stringify({ total_count: 0, items: [] }));
       else if (req.url.endsWith("/languages")) res.end('{"Go":42}');
@@ -394,7 +408,7 @@ try {
   const go = start(executable, [], { SEFGH_API_ADDR: `127.0.0.1:${goPort}`, GITHUB_API_URL: github, GITHUB_TOKEN: "fixture-token", NEXT_PUBLIC_SUPABASE_URL: github, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-public-key',
     // Never let a real key from the surrounding shell reach a real provider:
     // the keys are emptied and every provider address points at the stand-in.
-    OPENAI_API_KEY: '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic`,
+    OPENAI_API_KEY: phase2 ? 'phase2-fixture-key' : '', ANTHROPIC_API_KEY: '', SEFGH_AI_MODELS_URL: `${github}/models`, SEFGH_OPENAI_URL: `${github}/openai`, SEFGH_ANTHROPIC_URL: `${github}/anthropic`,
     // The public read token's rules have their own contract; here it is off.
     GITHUB_PUBLIC_READ_TOKEN: '',
     // The start of a conversation's share link, so it does not depend on
@@ -452,6 +466,11 @@ try {
   }
   console.log(`identical through Next.js and direct: ${same} of ${scenarios.length}`);
   if (different.length > 0) process.exitCode = 1;
+  if (phase2 && different.length === 0) {
+    const acceptance = await checkPhase2({ base: `http://127.0.0.1:${nextPort}`, seen });
+    console.log(`Phase 2 acceptance: ${acceptance.requests} stateful requests, ${acceptance.checks.length} gate checks passed`);
+    for (const check of acceptance.checks) console.log(`  ok ${check}`);
+  }
   for (const d of different) {
     console.log(`\nDIFFERENT  ${d.path}`);
     console.log(`  direct   : ${d.direct.status} backend=${d.direct.backend} ${d.direct.body.slice(0, 90)} | upstream ${JSON.stringify(d.direct.upstream)}`);

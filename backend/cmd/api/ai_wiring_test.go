@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -290,8 +291,10 @@ func TestChatAllowanceIsPerUserAndSeparate(t *testing.T) {
 		}
 	}
 	upstream.take()
-	if rec := postJSON(handler, "/api/ai/chat", chatBody, userA); rec.Code != 429 || rec.Header().Get("Retry-After") != "300" {
+	if rec := postJSON(handler, "/api/ai/chat", chatBody, userA); rec.Code != 429 {
 		t.Errorf("chat request 31: %d, Retry-After %q", rec.Code, rec.Header().Get("Retry-After"))
+	} else if seconds, err := strconv.Atoi(rec.Header().Get("Retry-After")); err != nil || seconds < 1 || seconds > 300 {
+		t.Errorf("invalid remaining allowance window: %q", rec.Header().Get("Retry-After"))
 	}
 	if got := upstream.take(); len(got) != 1 {
 		t.Errorf("past the allowance, after asking Supabase: %q", got)

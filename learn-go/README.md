@@ -81,6 +81,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [29 A JavaScript pattern in Go](29-a-javascript-pattern-in-go/README.md) | Where Go's `\s` and `.` differ from JavaScript's, patterns that count UTF-16 units, byte offsets from `regexp`, `includes` on text and on a list | `backend/internal/videos`, `backend/internal/jscompat/regexp.go` |
 | [30 Defaults, fallbacks and values that vanish](30-defaults-and-missing-values/README.md) | Destructuring defaults against `||`, `undefined` fields that JSON leaves out, `slice(-50)` without negative indexes, error text that reaches the browser | `backend/internal/shares`, `ErrorMessage` in `backend/internal/supabaserest` |
 | [31 Bounded file streams](31-bounded-file-streams/README.md) | Multipart parts, readers, reading one extra byte, shared deadlines and bounded cleanup | `readAvatar` and `Handler.call` in `backend/internal/avatar/handler.go` |
+| [32 Request budgets and redirects](32-request-budgets-and-redirects/README.md) | One context for the whole request, connection read deadlines, copying clients and confining provider credentials | `ailimit.BoundRequest`, `aiprovider.Client.Generate`, `aienhance.Handler.post` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 
