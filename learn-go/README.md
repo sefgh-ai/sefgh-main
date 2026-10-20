@@ -89,6 +89,8 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [37 Two copies kept in step](37-two-copies-kept-in-step/README.md) | A test that checks two copies of a setting agree, reading a file outside the module from a test, `-count=1`, raw strings, `strings.Split` and `strings.Fields` | `securityHeaders` and `TestSecurityHeadersMatchNextConfig` in `backend/cmd/api`, `next.config.mjs` |
 | [38 Confining proxied requests](38-confining-proxied-requests/README.md) | Schema-selection headers, checking repeated values, copying an HTTP client to refuse redirects, and bounding identity/body/database time together | `backend/internal/dataproxy`, `BoundRequest` in `backend/internal/supabaserest/request.go` |
 
+| [39 Comparing frozen search runs](39-comparing-frozen-search-runs/README.md) | Comparable structs, maps as sets, float division, strict JSON and testing CLI exit codes | `backend/internal/searchparity`, `backend/cmd/searchparity` |
+
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 
 - Lesson 02: fix the navbar's "Most Stars" button, which currently does nothing.

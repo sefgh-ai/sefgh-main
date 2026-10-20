@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "identity": {
+    "pipeline": "synthetic-only",
+    "model": "synthetic-fixture-model",
+    "model_revision": "fixture-v1",
+    "dimensions": 3,
+    "normalization": "none",
+    "document_task": "fixture-document",
+    "query_task": "fixture-query",
+    "vector_column": "fixture.embedding",
+    "rpc": "fixture_match",
+    "metric": "cosine",
+    "corpus_sha256": "3392879ca74dac0026f5d3fdece7b116edbb5008cfe87c0ad0664152179c586f",
+    "preparation_sha256": "691572e105b122412d529202d2afc9d9b46cb667aac605db2abaa2a1d5fa13f5"
+  },
+  "queries": [
+    {
+      "id": "query-1",
+      "request_sha256": "d587b307a638c00df5ce2a43869e6605c4b2825c631780e6d9f972eeb2daea16",
+      "hits": [
+        {
+          "id": "repo-alpha",
+          "score": 0.9
+        },
+        {
+          "id": "repo-beta",
+          "score": 0.8
+        },
+        {
+          "id": "repo-gamma",
+          "score": 0.7
+        }
+      ]
+    }
+  ]
+}

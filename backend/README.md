@@ -4,6 +4,16 @@ API routes that have moved out of Next.js. The plan and its rules are in `../doc
 
 It uses only Go's standard library: there are no third-party dependencies.
 
+## Offline worker migration check
+
+`cmd/searchparity` compares frozen local retrieval runs before a Python worker is replaced. It is not an HTTP endpoint and has no model/database client. See [the evidence format](../contracts/semantic-search/README.md) and [worker plan](../docs/plans/analysis-search-workers.md). From `backend/`:
+
+```powershell
+go run ./cmd/searchparity -baseline ../contracts/semantic-search/example-baseline.json -candidate ../contracts/semantic-search/example-candidate.json -k 3
+```
+
+The example is synthetic. Passing it verifies the checker, not a production corpus or worker. Mismatched model/corpus/preparation/RPC/request identities are rejected; matching lists alone do not establish relevance. Production worker selection and live parity remain gated.
+
 ## Routes
 
 | Route | Package | Contract |

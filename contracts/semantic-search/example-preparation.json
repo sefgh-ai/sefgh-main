@@ -1,0 +1,9 @@
+{
+  "synthetic_only": true,
+  "version": 1,
+  "document_text": "fixture text verbatim",
+  "query_text": "fixture query verbatim",
+  "normalization": "none",
+  "model": "synthetic-fixture-model",
+  "model_revision": "fixture-v1"
+}

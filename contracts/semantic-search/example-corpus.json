@@ -1,0 +1,17 @@
+{
+  "synthetic_only": true,
+  "repositories": [
+    {
+      "id": "repo-alpha",
+      "text": "local vector search"
+    },
+    {
+      "id": "repo-beta",
+      "text": "image utilities"
+    },
+    {
+      "id": "repo-gamma",
+      "text": "offline repository retrieval"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-20 (Asia/Calcutta), by Codex: REVIEW-011 / BUG-012 complete locally; trending/BUG-010 reviewed, seven findings fixed, owner topic-scope choice implemented; writer released.
+Last updated: 2026-10-20 (Asia/Calcutta), by Claude Code: PHASE5-001 completed and verified; offline parity tooling and Python lineage foundation ready.
 
 ## Start here
 
@@ -11,11 +11,49 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released REVIEW-011 / BUG-012 on 2026-10-20; completed handoff below.
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 115 entries (R-001 through R-115). R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed locally in BUG-012. Phase 3 has its first contract and port (`GET /api/activity`).
+- **Active writer:** none. Claude Code released PHASE5-001 on 2026-10-20; completed handoff below.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code reviewed PHASE5-001 offline search parity and pipeline lineage (`REVIEW-012`), acceptable with switches off / no live route or worker replaced. Details in `claude-review.md`.
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 119 entries (R-001 through R-119); four local worker defects added in PHASE5-001 remain gated on active lineage/schema. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: REVIEW-011 / BUG-012 (Codex, 2026-10-20)
+## Latest handoff: PHASE5-001 (Codex & Claude Code, 2026-10-20)
+
+Status: **implementation complete; independently reviewed; locally verified; not enabled or deployed**.
+Owner: Codex (implementation) & Claude Code (handoff verification & pickup). Reviewer: Mill (independent read-only review of lineage/parity tooling) & Claude Code (REVIEW-012, full verification).
+Branch main; base/current `0ebd7435bd77f68ff1292b1076fd838846e9fbb4`. Resulting commit: explicitly uncommitted at handoff; actual Git Agent receipt pending. Remote branches synchronized at 0ebd743; hosted CI 39386698512 passed on previous commit 49c33b2.
+
+Done:
+- Inspected read-only sibling pipelines under `D:/SEFGH` (RepoAnalyser-ai, RepoAnalyser, RepoSync, and search engine/RepoAnalyser). Frontend search calls GitHub (`/api/github/search`); no executable connection to sibling semantic search exists in this repository.
+- Registered four sibling pipeline defects in `docs/bug-register.md` without editing unselected source: R-116 (buffered config mismatch between nomic-embed-text corpus and Google query embedding), R-117 (embed_repos loop skips empty documents without terminal status), R-118 (RepoSync treats exhausted insert errors as duplicates), and R-119 (reanalysis does not invalidate stored embedding).
+- Created read-only sibling source checker `scripts/semantic-source-snapshot.mjs` and frozen hashes in `contracts/semantic-search/source-snapshot.json` (32 allowlisted files match). Contract test `scripts/contracts/semantic-evidence.test.mjs` passes 2/2.
+- Created offline standard-library search parity comparator in `backend/internal/searchparity` and CLI `backend/cmd/searchparity`. Validates strict identities (model, revision, dimensions, normalization, tasks, vector column, RPC, metric convention, corpus SHA-256, preparation SHA-256), query set equality, top-k ranking and score differences under configurable tolerance, and baseline relevance metrics (recall@k, reciprocal_rank@k).
+- Version 1 frozen evidence documentation and synthetic examples in `contracts/semantic-search/` (5 example JSON files). CLI exit codes: 0 for parity, 1 for ranking/score difference, 2 for invalid or incompatible inputs.
+- Lesson 39 added in `learn-go/39-comparing-frozen-search-runs/` teaching comparable structs, map sets, float division, strict JSON, and CLI exit codes. Solution passes; exercise intentionally red without `-tags solution`.
+- Independent review recorded in `docs/claude-review.md` (`REVIEW-012`). Architecture snapshot updated in `docs/backend-map.md`. Full worker migration plan in `docs/plans/analysis-search-workers.md`. No live worker, model execution, or database write.
+
+Changed files:
+`backend/cmd/searchparity/{main.go,main_test.go}`;
+`backend/internal/searchparity/{parity.go,parity_test.go}`;
+`contracts/semantic-search/{README.md,example-baseline.json,example-candidate.json,example-corpus.json,example-preparation.json,example-request.json,source-snapshot.json}`;
+`docs/plans/analysis-search-workers.md`, `docs/bug-register.md`, `docs/backend-map.md`, `docs/claude-review.md`, `docs/coordination.md`;
+`learn-go/README.md`, `learn-go/39-comparing-frozen-search-runs/{README.md,exercise.go,exercise_test.go,solution.go}`;
+`scripts/contracts/semantic-evidence.test.mjs`, `scripts/semantic-source-snapshot.mjs`.
+
+Actual checks (Claude Code & Codex, Windows):
+- npm run test:contracts: 1,451 / 1,451 pass (including semantic evidence 2/2).
+- backend/ go test -count=1 ./...: 34 / 34 packages pass (searchparity and cmd/searchparity included); go vet clean; gofmt clean.
+- learn-go/ go test -count=1 -tags solution ./...: 40 / 40 lesson solutions pass; go vet clean; gofmt clean.
+- learn-go/39-comparing-frozen-search-runs go test -count=1 ./...: 3 intentional failures on unfinished exercise without solution tag.
+- npm run lint: exit 0 under --max-warnings 0; no ESLint errors or warnings.
+- scripts/semantic-source-snapshot.mjs --root D:/SEFGH: 32 / 32 sibling source files match.
+- searchparity CLI tested on synthetic fixtures: exit 0 for matching run, exit 1 for difference, exit 2 on invalid input.
+
+Resolved failures: earlier parallel test execution encountered Windows paging/allocation limits; sequential runs pass cleanly. No current application failure known.
+Not checked: live model execution, real database vector queries, unselected pipeline cutover, deployment.
+Remaining gates: selecting active worker/deployment, verified database definitions, freeze real corpus and judged queries before Phase 5 live parity.
+Next bounded task: owner decision on active pipeline/deployment or KEYS-001 catalog definitions when permissions permit.
+Writer released: yes. Normal handoff runs next.
+
+## Previous handoff: REVIEW-011 / BUG-012 (Codex, 2026-10-20)
 
 Status: **implementation complete; independently reviewed; locally verified; not enabled or deployed**.
 Owner: Codex. Reviewer: Codex independently reviewed Claude Code's TREND-001a/b; Mill independently reviewed BUG-010 and Codex's resulting fixes, final verdict acceptable with switches off/no unresolved finding in reviewed scope. The read-only key-preflight artifact correction also accepted separately by Mill. No claim an existing Claude session has received this record.

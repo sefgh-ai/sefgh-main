@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "captured_on": "2026-10-20",
+  "evidence": "local source bytes only; no deployment/corpus claim",
+  "files": [
+    {
+      "path": "RepoAnalyser-ai/pyproject.toml",
+      "sha256": "b51d10e593c1106b97d2733bf56c93c00a3cdbe31836c9c6c6fe56fd60965e92",
+      "bytes": 2973
+    },
+    {
+      "path": "RepoAnalyser-ai/sql/vector_search_functions.sql",
+      "sha256": "be67f1baf66869fcb893e9c5cddfe7ada6f9fa7388d2557ddf116a40572c819b",
+      "bytes": 3086
+    },
+    {
+      "path": "RepoAnalyser-ai/src/analyzer/core.py",
+      "sha256": "8a3e584d735d7268fa2b4002baca47f5764d41962658ad88c2df5df9278f305d",
+      "bytes": 29702
+    },
+    {
+      "path": "RepoAnalyser-ai/src/cli.py",
+      "sha256": "1819750f66042f63bf27c71bfe46a52329c6e2cf9a3eed2465943e1b83442700",
+      "bytes": 12471
+    },
+    {
+      "path": "RepoAnalyser-ai/src/config/settings.py",
+      "sha256": "00fe9bf3ffc2406f6c9db5c8bca976f0b67df7a3bf437212ffcfe1f355beac23",
+      "bytes": 5172
+    },
+    {
+      "path": "RepoAnalyser-ai/src/database/repository.py",
+      "sha256": "d21e8186a853f3c794a460496ab80681eabdb0dd5d4ba97156a463ba558eeba4",
+      "bytes": 17541
+    },
+    {
+      "path": "RepoAnalyser-ai/src/llm/ollama.py",
+      "sha256": "48c2dbf8cd64f07d07854164fb09e944e39205b0d762a7735a96aec0062bbfe9",
+      "bytes": 9243
+    },
+    {
+      "path": "RepoAnalyser-ai/src/web/routes.py",
+      "sha256": "8cdfe8c1ccdd43b48d4bcc162d745397ea564efc55aa694bedb1c3090cd93968",
+      "bytes": 25056
+    },
+    {
+      "path": "RepoAnalyser-ai/src/web_server.py",
+      "sha256": "23f7b5c19e294b1b1ae6d10fd004ce61e8988dbeca438b7deb231fe8d60b4d5b",
+      "bytes": 1282
+    },
+    {
+      "path": "RepoAnalyser/buffer/app.py",
+      "sha256": "b37b8279b34c32f97382edb21c4afc36591dc2fadbf896e05bb322b30cdf1c8c",
+      "bytes": 2674
+    },
+    {
+      "path": "RepoAnalyser/buffer/config.py",
+      "sha256": "f74b46ab941a48a0d57bacf84a6f5eef464fdd0437e17c6f7ef44f781feb75f7",
+      "bytes": 2524
+    },
+    {
+      "path": "RepoAnalyser/buffer/database/supabase_client.py",
+      "sha256": "af7b61c72524078800eaad8791c938c598fc306bd132f82f2129df27a08496d0",
+      "bytes": 12861
+    },
+    {
+      "path": "RepoAnalyser/buffer/run.py",
+      "sha256": "b7fd934f23fa15f0e8f419938c6d358711924383210027ac5ba5c5a7651fdb9f",
+      "bytes": 2672
+    },
+    {
+      "path": "RepoAnalyser/buffer/services/embedding_service.py",
+      "sha256": "1d582d702934bf7f156912f69264816a1c77f32ef764ff9edc9a0b94ec75a1dd",
+      "bytes": 7683
+    },
+    {
+      "path": "RepoAnalyser/buffer/services/search_service.py",
+      "sha256": "6717f4a25b1ff699dc1dc70780b00a5ef8a0c3c62b73761e9c5ec2eb5d2b0497",
+      "bytes": 6406
+    },
+    {
+      "path": "RepoAnalyser/buffer/services/simple_analysis_service.py",
+      "sha256": "bab20f381501b5dfcacb27a2660a9cf4209284ccfd3dacbaf07296f19dfa1502",
+      "bytes": 10838
+    },
+    {
+      "path": "RepoAnalyser/main.py",
+      "sha256": "8b2d260ff1f1eceb75d087a9042ccd38b536438591ac466722bd504f46a75151",
+      "bytes": 7321
+    },
+    {
+      "path": "RepoSync/db_writers.py",
+      "sha256": "0b0be1a534173cc8ef59a67610d3cbe98237957b9ed6c95610bbb3140a2b0ade",
+      "bytes": 7368
+    },
+    {
+      "path": "RepoSync/main.py",
+      "sha256": "18e2a9f63c43a0794ee22cb79ea698aa95a875096d3fa9bb201e5567c0e07e3e",
+      "bytes": 48592
+    },
+    {
+      "path": "RepoSync/setup_database.sql",
+      "sha256": "8f51ad159c659eb3601d3df900e8f9191229581a3e1b501bae37b73970853347",
+      "bytes": 1650
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/app.py",
+      "sha256": "b37b8279b34c32f97382edb21c4afc36591dc2fadbf896e05bb322b30cdf1c8c",
+      "bytes": 2674
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/config.py",
+      "sha256": "f74b46ab941a48a0d57bacf84a6f5eef464fdd0437e17c6f7ef44f781feb75f7",
+      "bytes": 2524
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/database/supabase_client.py",
+      "sha256": "af7b61c72524078800eaad8791c938c598fc306bd132f82f2129df27a08496d0",
+      "bytes": 12861
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/run.py",
+      "sha256": "b7fd934f23fa15f0e8f419938c6d358711924383210027ac5ba5c5a7651fdb9f",
+      "bytes": 2672
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/services/embedding_service.py",
+      "sha256": "1d582d702934bf7f156912f69264816a1c77f32ef764ff9edc9a0b94ec75a1dd",
+      "bytes": 7683
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/services/search_service.py",
+      "sha256": "6717f4a25b1ff699dc1dc70780b00a5ef8a0c3c62b73761e9c5ec2eb5d2b0497",
+      "bytes": 6406
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/services/simple_analysis_service.py",
+      "sha256": "bab20f381501b5dfcacb27a2660a9cf4209284ccfd3dacbaf07296f19dfa1502",
+      "bytes": 10838
+    },
+    {
+      "path": "search engine/RepoAnalyser/embed_repos.py",
+      "sha256": "9a0ae2275157435a80d72fc4c7ba2e06cb82d2afc90e6f20c07a25ea10876b2b",
+      "bytes": 3595
+    },
+    {
+      "path": "search engine/RepoAnalyser/main.py",
+      "sha256": "8b2d260ff1f1eceb75d087a9042ccd38b536438591ac466722bd504f46a75151",
+      "bytes": 7321
+    },
+    {
+      "path": "search engine/RepoAnalyser/requirements.txt",
+      "sha256": "c32432af444a321a84f90867965d811634da2f9749cfca85e19382d6407c2726",
+      "bytes": 64
+    },
+    {
+      "path": "search engine/RepoAnalyser/search_api.py",
+      "sha256": "20a5ee8753436394d0d1a905ea01ceed21316f897beba42282678ea9979651ef",
+      "bytes": 2038
+    },
+    {
+      "path": "search engine/RepoAnalyser/supabase_setup.sql",
+      "sha256": "38a02989e4843e8320f06a606f5110e73677e173ad3d30144a2b5dfeae6f3dc2",
+      "bytes": 1126
+    }
+  ]
+}

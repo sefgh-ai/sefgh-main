@@ -1,5 +1,35 @@
 # Claude Code review and reconciliation
 
+## REVIEW-012: PHASE5-001 offline search parity and pipeline lineage, 2026-10-20
+
+Independent review of PHASE5-001 offline search parity (`backend/internal/searchparity`,
+`backend/cmd/searchparity`), frozen evidence format (`contracts/semantic-search/`),
+sibling Python lineage mappings (`docs/plans/analysis-search-workers.md`,
+`contracts/semantic-search/source-snapshot.json`), registered defects R-116 through R-119
+in `docs/bug-register.md`, and lesson 39 (`learn-go/39-comparing-frozen-search-runs/`).
+
+Findings and verified boundaries:
+- Parity comparator (`backend/internal/searchparity`): strict identity verification
+  enforces exact match of pipeline, model, revision, dimensions, normalization, tasks,
+  vector column, RPC, metric, corpus SHA-256, and preparation SHA-256. Queries must match
+  exactly; top-k rankings and scores are compared within absolute tolerance (default 1e-6).
+  Strict JSON decoder rejects unknown fields, duplicates, and malformed numeric scores.
+- Relevance metrics: baseline-only judgments compute per-query `recall_at_k` and
+  `reciprocal_rank_at_k` using floating-point division; missing judgments produce `null`
+  rather than unverified zero or guessed quality scores.
+- CLI tool (`backend/cmd/searchparity`): clean exit code convention (0 = match, 1 = difference,
+  2 = error/incompatible), tested in `main_test.go` and verified against synthetic fixtures.
+- Sibling lineage: 32 allowlisted source files mapped across RepoAnalyser-ai, RepoAnalyser,
+  RepoSync, and search engine/RepoAnalyser. Read-only verification confirms no executable
+  connection from the frontend to semantic services. Worker defects R-116 through R-119
+  are recorded in the bug register for resolution when an active worker is selected.
+- Lesson 39: accurately teaches comparable structs, map sets, float division, strict JSON,
+  and CLI exit codes. Solution passes cleanly; exercise intentionally fails without
+  `-tags solution`.
+
+Verdict: **acceptable; offline evaluation and lineage foundation sound**. No production route,
+switch, live worker, model execution, or database migration is added or authorized.
+
 ## REVIEW-011: TREND-001a/b, BUG-010 and BUG-012, 2026-10-20
 
 Codex reviewed Claude Code's trending backend, contract and page integration at
