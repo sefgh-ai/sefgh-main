@@ -129,6 +129,9 @@ func TestHandlersFinishInsideTheWriteTimeout(t *testing.T) {
 	if dataproxy.Budget >= writeTimeout {
 		t.Errorf("the data proxy's budget %v is not below the server's write timeout of %v", dataproxy.Budget, writeTimeout)
 	}
+	if supabaserest.RequestBudget >= writeTimeout {
+		t.Errorf("the browser-data request budget %v must be below the write timeout %v", supabaserest.RequestBudget, writeTimeout)
+	}
 	// Activity asks Supabase who is calling, then the database once.
 	if total := githubaccess.DefaultTimeout + activity.Timeout; total >= writeTimeout {
 		t.Errorf("sign-in check plus the activity query can take %v, which is not below the server's write timeout of %v", total, writeTimeout)

@@ -252,6 +252,10 @@ const scenarios = [
   { path: '/api/data/home/rest/v1/projects?select=*&order=created_at.desc', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
   { path: '/api/data/conversations/rest/v1/user_conversations?id=eq.c1', method: 'PATCH', body: '{"title":"Renamed"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
   { path: '/api/data/user-stats/rest/v1/user_stats?user_id=eq.a', method: 'PATCH', body: '{"xp":99999}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 403, cache: 'private, no-store' },
+  // BUG-011: the public-schema policy cannot select another schema.
+  { path: '/api/data/home/rest/v1/projects?select=*', headers: { Authorization: 'Bearer session-a', 'Accept-Profile': 'private' }, status: 403, cache: 'private, no-store' },
+  { path: '/api/data/conversations/rest/v1/user_conversations?id=eq.c1', method: 'PATCH', body: '{"title":"Renamed"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json', 'Content-Profile': 'private' }, status: 403, cache: 'private, no-store' },
+  { path: '/api/data/home/rest/v1/projects?select=*', headers: { Authorization: 'Bearer session-a', 'Accept-Profile': 'public' }, status: 200, cache: 'private, no-store' },
 ];
 
 try {

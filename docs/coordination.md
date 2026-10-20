@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-20 (Asia/Calcutta), by Claude Code: BUG-010 handed off (Phase 6 batch: signed-out walk-through, the 16 lint warnings, R-104 and R-105 found and fixed, R-054 to the owner).
+Last updated: 2026-10-20 (Asia/Calcutta), by Codex: DATA-REVIEW-001 / BUG-011 locally complete; three browser-data migrations reviewed, R-106/R-107/R-108 fixed, lesson 38 added, writer released.
 
 ## Start here
 
@@ -11,11 +11,48 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released BUG-010 on 2026-10-20 (handoff below).
-- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). No additional route is approved to switch on. Details in `claude-review.md`.
-- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 105 entries (R-001 through R-105). Phase 3 has its first contract and port (`GET /api/activity`).
+- **Active writer:** none. Codex released DATA-REVIEW-001 / BUG-011 on 2026-10-20; completed handoff below.
+- **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. BUG-010 and TREND-001 reviews remain separate. No additional route is approved to switch on. Details in `claude-review.md`.
+- **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, blocked on catalog evidence) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 108 entries (R-001 through R-108); R-106/R-107/R-108 fixed locally in BUG-011. Phase 3 has its first contract and port (`GET /api/activity`).
 
-## Latest handoff: BUG-010, a Phase 6 batch: signed-out walk-through, lint warnings, security policy (Claude Code, 2026-10-20)
+## Latest handoff: DATA-REVIEW-001 / BUG-011 (Codex, 2026-10-20)
+
+Status: **implementation complete; independently reviewed; locally verified; not enabled or deployed**.
+Owner: Codex. Reviewer: Codex independently reviewed Claude Code's DATA-001b, DATA-002 and DATA-PROXY-001. James, read-only independent Codex reviewer, reviewed Codex's safety fixes; final verdict acceptable with switches off, no unresolved finding in that scope (REVIEW-010). No claim that an existing Claude session received this handoff.
+Branch main; base/current commit `189604f`. Resulting commit: explicitly uncommitted at handoff; Git Agent commit/push not yet observed. Pickup clean and Claude's writer release confirmed before claim. All existing owner exercise.go files preserved.
+
+Done:
+- Reviewed search history, onboarding and proxy/browser routing, caller credentials, ownership/filtering, library result/fallback semantics and unchanged contracts. Search-history v1 has 35 cases; onboarding v1 has 34. Domain tests include two-user isolation; proxy uses the Data API's own token verification/RLS.
+- R-106: reproduced all five redirect variants reaching another destination. Proxy clones client and refuses redirects; local Data API-shaped 502, no credential/write destination call. New actual-newHandler regression too.
+- R-107: reproduced non-public schema headers; rejects every conflicting/non-public value. Reviewer found headerless default gap, reproduced by a new five-method red test; now every outgoing method explicitly selects public.
+- R-108: reproduced stalled-body timeouts in history/onboarding. Shared supabaserest.BoundRequest starts a 24-second context/read deadline before identity, retains deadline during net/http drain. Actual-socket and no-sleep deadline-order/inheritance regressions; write-timeout guard.
+- Three production forwarding scenarios for schema accepted/refused. Lesson 38 plus updates34/35/36/index; existing exercises untouched. Register, ADR, map, backend README, REVIEW-010 and durable evidence report updated.
+
+Changed files:
+`backend/internal/dataproxy/{handler.go,policy_safety_test.go (new)}`;
+`backend/internal/supabaserest/{request.go,request_test.go,browser_budget_test.go}` (new);
+`backend/internal/{searchhistory,onboarding}/handler.go`;
+`backend/cmd/api/{main_test.go,data_deadline_test.go (new)}`;
+`scripts/contracts/go-forwarding-probe.mjs`, `backend/README.md`;
+`learn-go/README.md`, lesson 34/35/36 README files, new `learn-go/38-confining-proxied-requests/*`;
+`docs/{coordination,bug-register,claude-review,backend-map}.md`, `docs/adr/0002-go-backend.md`, new `docs/verification/browser-data-review.md`.
+
+Checks (Codex, Windows, after final production fixes):
+- npm run test:contracts: 1431/1431 pass. Backend go test -count=1 ./...: 32 packages pass; vet clean; gofmt empty.
+- learn-go solution suite: 39 packages pass; exercise and solution vet clean; gofmt empty. New unfinished lesson 38 exercise fails intentionally, not a regression.
+- npm run lint: exit 0, no ESLint errors/warnings with --max-warnings 0; existing baseline-browser-mapping data-age notice still printed. Git diff --check and probe syntax pass.
+- Final Go build and isolated production Next.js build/probe --production --phase2: 152/152 comparisons, plus 69 stateful AI requests/six groups pass. An earlier passing probe before the schema-default fix is superseded by this final rerun.
+- James independently ran focused schema/redirect/budget/socket/write-timeout/inheritance checks and diff check. His actual commands/verdict are summarized in REVIEW-010 and the evidence report.
+- npm run handoff will run after this completed record and writer release are saved; it repeats required suites and signals Git Agent on success. Check its actual outcome and actual commit receipt before the next batch.
+
+Failures resolved: initial red tests reproduced R-106/R-107/R-108; follow-up red test reproduced upstream default schema gap. No current failing application check known.
+Not run: local race detector (no configured C compiler), hosted CI for this uncommitted tree, live Supabase/RLS/Realtime/two-account browser preview, signed-in walkthrough or deployment. All upstream/Auth/providers in tests were local stand-ins. No SQL mutation, route switch, real provider request or retirement.
+
+Remaining gates: approved preview/cutover per docs/cutover.md, live per-area isolation/schema/Realtime evidence, R-011 atomic conversation behavior; R-102 preserved until history cutover; R-103 database policy remains owner/schema-gated. KEYS-001 catalog still needed; hashed/show-once/server-accounting direction already decided. R-090 remains Go fix after share cutover. BUG-010 and TREND-001 still need their separate reviews. Phase 3/whole migration not complete; Phase 7 remains gated.
+Next bounded batch: inspect actual Git Agent commit and remote receipt, then independent review of TREND-001a/b and BUG-010, or KEYS-001 schema/contract work if catalog access becomes available. Do not redo Phase 2 or these three domain reviews. Preview switching still needs owner authorization; no deployment inferred from this handoff.
+Writer released: yes. All local production probe/test/server processes have exited; only normal handoff itself will run next. No account quota meter visible.
+
+## Previous handoff: BUG-010, a Phase 6 batch: signed-out walk-through, lint warnings, security policy (Claude Code, 2026-10-20)
 
 Status: **implementation complete; not reviewed; not deployed.** Once deployed, the live changes are the security policy fix (Supabase Realtime may connect, R-104) and the browser fixes below. The Go server's copy of the policy changed with it; no contract fixture or switch changed.
 Owner: Claude Code. Reviewer: unassigned; no peer review claimed.

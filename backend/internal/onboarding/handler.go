@@ -78,6 +78,8 @@ type caller struct {
 
 func (h *Handler) signedIn(next func(http.ResponseWriter, *http.Request, caller)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		r, cancel := supabaserest.BoundRequest(w, r)
+		defer cancel()
 		db := supabaserest.Client{HTTP: h.Database, URL: h.SupabaseURL, Key: h.SupabaseKey}
 		if !db.Configured() {
 			h.log("settings", 0, nil)

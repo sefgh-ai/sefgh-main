@@ -1,5 +1,15 @@
 # SEFGH backend map
 
+Update 2026-10-20 (DATA-REVIEW-001 / BUG-011): the browser-data proxy now
+confines requests to the configured Data API destination and explicitly selects
+the public schema. Non-public or conflicting profile headers are refused before
+I/O. Search history and onboarding share a 24-second whole-route context/read
+deadline from before identity verification. Existing caller credentials, row-level
+security and JSON contracts are preserved. Independent review and local evidence
+are in [the review report](verification/browser-data-review.md); preview/live
+isolation and Realtime gates remain. Lesson 38 teaches the new boundaries.
+
+
 Update 2026-10-18 (AVATAR-001a/b): `POST /api/upload-avatar` has 45 recorded
 cases and a default-off standard-library Go port in `backend/internal/avatar`.
 The browser sends its session bearer. Storage upload/list/remove, Auth metadata

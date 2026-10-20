@@ -47,6 +47,13 @@ for _, name := range forwarded {
 
 Only the headers the Data API reads are copied: `Accept`, `Prefer`, `Content-Type` and a few more. The caller's own token goes along unchanged, so row-level security sees the same user the browser was. The `apikey` is always the server's own public key. The reply comes back with its status, its body and the `Content-Range` header that counts read. `io.LimitReader` keeps a huge reply from filling memory, as in lesson 31.
 
+Safety update (BUG-011): both schema-selection headers are checked before
+forwarding; every supplied value must be `public`, because the rules describe
+only that schema; the outgoing method's schema is always set to `public`.
+The HTTP client is copied with redirects disabled, keeping
+the caller's token and write body at the configured destination. A redirect
+answers a Data API-shaped 502. Lesson 38 covers both boundaries.
+
 ## Saying no in the right shape
 
 A refused request gets a 403 that looks like the database's own error:

@@ -70,6 +70,11 @@ The browser called `increment_platform_stat` without `await`, and supabase-js on
 
 ## Your turn
 
+Safety update (BUG-011): the `signedIn` wrapper now calls
+`supabaserest.BoundRequest` before checking identity. One 24-second context
+and connection read deadline cover sign-in, the incoming body and the
+database call. See lesson 38 for why an outbound timeout alone is not enough.
+
 Open `exercise.go` and write `countSources`, which counts rows by source as `getSearchHistoryCount` does.
 
 ```text

@@ -125,6 +125,9 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 
 | Difference | Reason |
 |---|---|
+| Browser data proxy: only public-schema objects are served; supplied schema headers must all say public, and the outgoing method explicitly selects public | Policy names are for that schema, regardless of the Data API deployment's default. User-token verification and RLS still belong to the Data API |
+| Browser data proxy: redirects are refused; a redirect returns a local Data API-shaped 502 | Keep caller credentials and write bodies at the configured destination; clone the client instead of changing shared settings |
+| Onboarding/search history: 24 seconds for identity, incoming body and database work together, with a retained connection read deadline | Per-call timeouts do not interrupt incoming Body.Read; one budget fits inside the 30-second server write limit |
 | Avatar: six-MiB request bound, 24-second whole workflow (including identity and inbound reading), connection read deadline, ten seconds per upstream call, eight-MiB replies and no redirects | Bounds memory/time and confines the caller's credential to the configured project; the existing five-MiB file limit is preserved |
 | Avatar: best-effort cleanup finishes before responding, within a three-second child budget; parse-error text is fixed rather than Node-version-specific | No detached post-response goroutine for a serverless platform to abandon; the cleanup selection and failure response remain fixture-compatible |
 | Go abandons a GitHub call after 10 seconds; Next.js has no timeout | A backend must bound upstream waits. Both answer the same generic failure |
@@ -609,3 +612,5 @@ pass unchanged; what the policy does not allow is refused in the Data API's
 own error shape. The proxy does not ask Supabase Auth: the Data API checks the
 token, as before. The browser's database calls are now all reachable through
 Go except the playground's (KEYS-001) and dead code (Phase 7). Off by default.
+
+DATA-REVIEW-001 / BUG-011 (2026-10-20): Codex independently reviewed Claude Code's search-history, onboarding and data-proxy implementations. Controlled tests found R-106/R-107/R-108 (redirects, schema selection, incoming body/whole-route limits). Go-only fixes preserve existing JSON contracts. Independent reviewer James accepted the final safety fixes with switches off. Lesson 38 and lessons 34-36 explain them. Evidence and remaining live/preview gates: `../verification/browser-data-review.md`. No cutover or deployment is implied.

@@ -55,6 +55,11 @@ Before, the browser could send any update. Row-level security stopped it from to
 
 ## Your turn
 
+Safety update (BUG-011): `signedIn` starts a 24-second whole-request budget
+with `supabaserest.BoundRequest` before identity verification. The helper
+also bounds incoming body reads and keeps that connection deadline during
+server cleanup. Lesson 38 explains the context and socket boundaries.
+
 Open `exercise.go` and write `firstNotAllowed`, which finds the first field that may not be changed.
 
 ```text

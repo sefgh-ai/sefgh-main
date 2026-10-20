@@ -269,12 +269,15 @@ back to the existing Next.js handler.
 The rest of the browser's own database calls: notifications, profile, user stats, home (projects and categories), submissions, search statistics, conversations, the repository page's reads and the activity log. With an area in the website's `NEXT_PUBLIC_SEFGH_GO_DATA`, the browser's Supabase client (`src/lib/supabase/data-routing.js`) sends that area's Data API requests to `/api/data/{area}/rest/v1/...`, and `next.config.mjs` rewrites them here.
 
 - **Checked, then passed on unchanged:** `policy.json` (embedded) lists each area's tables and functions, their methods and the fields a write may set. Anything else is refused with a 403 in the Data API's own error shape, so supabase-js reports it as the database's error. An allowed request goes on with the caller's own token, the server's public key and the headers the Data API reads; its reply comes back with its status, body and `Content-Range`.
+- **Destination and schema (BUG-011):** redirects are refused on a copy of the HTTP client; a redirect answers a Data API-shaped 502. Both profile headers must be absent or `public`, and the outgoing method explicitly selects `public` regardless of deployment defaults. Every repeated header value is checked.
 - **No extra Auth call:** the Data API checks the token, as before. Without a bearer the request goes with the public key, as a signed-out browser's does.
 - **Bounds:** 20 seconds for the body and the reply together (`dataproxy.Budget`), 4 MiB bodies, 16 MiB replies; logs name the area, the table and the status only.
 - **Closes a gap through Go:** `user_stats` cannot be updated (R-103); nothing in the code does.
 - **Without the rewrite** the browser gets a 404 that Go did not mark, and sends the request to Supabase directly, as before.
 
 ## Onboarding (DATA-002)
+
+BUG-011: `supabaserest.BoundRequest` begins a 24-second context and connection read deadline before identity verification. It covers identity, incoming JSON and database I/O together and keeps the deadline during server body draining.
 
 The second browser data area, switched like search history by `onboarding` in `NEXT_PUBLIC_SEFGH_GO_DATA`. Its three endpoints answer each database call's own result, `{ data, error }`, as supabase-js gives it (`supabaserest.Result`, new). The module branches on the error's code, so only the calls changed. It passes all 34 cases of `contracts/onboarding`, whose expected answers come from the real postgrest-js.
 
@@ -284,6 +287,8 @@ The second browser data area, switched like search history by `onboarding` in `N
 - **Differs from the browser:** signed out is 401; fields outside the list are refused by Go; timestamps still come from the browser's clock, as before.
 
 ## Search history (DATA-001b)
+
+BUG-011: the same 24-second whole-request context and connection read deadline starts before identity verification. Per-call database timeouts cannot extend it.
 
 The first area of the browser's own database calls served by Go (`../docs/plans/browser-data.md`). It is switched by the website's build setting `NEXT_PUBLIC_SEFGH_GO_DATA`, not `SEFGH_GO_ROUTES`: with `search-history` listed, `src/lib/supabase/search-history.js` asks these endpoints, and `next.config.mjs` adds their rewrite when `SEFGH_GO_API_URL` is set. Without the rewrite the module gets a 404 and uses Supabase directly, as before. It passes the 30 cases of `contracts/search-history` that reach Go.
 

@@ -87,6 +87,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [35 Answering the library's own result](35-answering-the-librarys-own-result/README.md) | Answering supabase-js's `{ data, error }` so the code around a call stays the same, a reference implementation for expected answers, a `map[string]bool` as a set, why field rules belong on the server | `backend/internal/onboarding`, `Result` in `backend/internal/supabaserest`, `src/lib/go-data.js` |
 | [36 A policy proxy](36-a-policy-proxy/README.md) | `go:embed`, the `{rest...}` wildcard, forwarding a request unchanged with chosen headers, refusing in the library's own error shape, logs without URLs | `backend/internal/dataproxy`, `src/lib/supabase/data-routing.js` |
 | [37 Two copies kept in step](37-two-copies-kept-in-step/README.md) | A test that checks two copies of a setting agree, reading a file outside the module from a test, `-count=1`, raw strings, `strings.Split` and `strings.Fields` | `securityHeaders` and `TestSecurityHeadersMatchNextConfig` in `backend/cmd/api`, `next.config.mjs` |
+| [38 Confining proxied requests](38-confining-proxied-requests/README.md) | Schema-selection headers, checking repeated values, copying an HTTP client to refuse redirects, and bounding identity/body/database time together | `backend/internal/dataproxy`, `BoundRequest` in `backend/internal/supabaserest/request.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

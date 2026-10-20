@@ -1,5 +1,42 @@
 # Claude Code review and reconciliation
 
+## REVIEW-010: browser data migration and BUG-011, 2026-10-20
+
+Codex independently reviewed Claude Code's DATA-001b (search history), DATA-002
+(onboarding) and DATA-PROXY-001 at base `189604f`: domain handlers and actual
+server wiring, user filters and caller credentials, library result/fallback
+semantics, browser routing/policy and the shared Data API client. This review
+used source inspection, existing fixtures and local stand-ins, not live RLS.
+
+Initial verdict required changes. New executable regressions reproduced:
+
+- R-106: redirects reached another local destination for all five 30x variants;
+  307/308 could replay writes. Client cloning now refuses redirects and returns
+  a Data API-shaped 502. Actual-newHandler wiring is tested too.
+- R-107: profile headers selected unreviewed schemas. Every supplied header
+  value is now checked. Independent reviewer James additionally found that
+  omitted headers inherited a configurable default; a five-method regression
+  failed before the final outgoing public-schema pin and passes afterward.
+- R-108: unfinished onboarding/history bodies exceeded the socket deadline;
+  the proxy control passed. A shared 24-second budget now begins before User,
+  bounds incoming reads and stays installed during net/http body draining.
+
+James independently reviewed Codex's safety fixes read-only. Final verdict:
+**acceptable with switches off; no unresolved finding in the fix scope**.
+He independently ran focused schema, redirect, helper budget, stalled-body,
+write-timeout and pre-identity/deadline-inheritance checks. No files edited,
+no agents spawned and no external network or live database used by the reviewer.
+His first schema-default finding was fixed and reviewed again. Broader suites
+and production forwarding are Codex's separate evidence in coordination and
+[the report](verification/browser-data-review.md).
+
+Codex's verdict on the three underlying migrations: compatible with the reviewed
+contracts and local authorization/routing tests, after BUG-011; acceptable with
+switches off. This closes this batch's independent code review, not Phase 3's
+preview/live gates. Database token verification and RLS remain authoritative in
+the policy proxy. Direct Supabase fallback remains until Phase 7. R-102, R-011,
+R-103 and other recorded defects are unchanged. No cutover/deployment approval.
+
 ## REVIEW-008: Codex review of SHARE-002, 2026-10-18
 
 Independent review of Claude Code's uncommitted SHARE-002 diff against base

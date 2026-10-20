@@ -116,6 +116,16 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.refuse(w, 403, area, target, r.Method+" "+target+" is not allowed for "+area)
 		return
 	}
+	// The rules describe public-schema tables and functions. A matching
+	// name in another exposed schema has not been reviewed by this policy.
+	for _, name := range []string{"Accept-Profile", "Content-Profile"} {
+		for _, value := range r.Header.Values(name) {
+			if strings.TrimSpace(value) != "public" {
+				h.refuse(w, 403, area, target, "only the public schema is served")
+				return
+			}
+		}
+	}
 
 	var body []byte
 	if r.Method == http.MethodPost || r.Method == http.MethodPatch {
@@ -153,6 +163,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			req.Header.Set(name, value)
 		}
 	}
+	// Do not inherit a deployment-specific default exposed schema.
+	if r.Method == http.MethodGet || r.Method == http.MethodHead {
+		req.Header.Set("Accept-Profile", "public")
+	} else {
+		req.Header.Set("Content-Profile", "public")
+	}
 	bearer := r.Header.Get("Authorization")
 	if !strings.HasPrefix(bearer, "Bearer ") || strings.TrimSpace(bearer[len("Bearer "):]) == "" {
 		bearer = "Bearer " + h.SupabaseKey
@@ -164,13 +180,21 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if client == nil {
 		client = &http.Client{Timeout: 10 * time.Second}
 	}
-	resp, err := client.Do(req)
+	// Do not mutate an injected/shared client. Neither the token nor the
+	// write body may leave the configured project's endpoint on a redirect.
+	confined := *client
+	confined.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	resp, err := confined.Do(req)
 	if err != nil {
 		h.log(area, target, 0, err)
 		h.refuse(w, 502, area, target, "the database could not be reached")
 		return
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
+		h.refuse(w, 502, area, target, "the database redirect was refused")
+		return
+	}
 	reply, err := io.ReadAll(io.LimitReader(resp.Body, MaxReplyBytes+1))
 	if err != nil || len(reply) > MaxReplyBytes {
 		h.log(area, target, resp.StatusCode, errors.New("the reply could not be read whole"))
