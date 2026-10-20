@@ -6,7 +6,7 @@ select table_name, column_name, data_type, udt_schema, udt_name,
        is_nullable, column_default
 from information_schema.columns
 where table_schema = 'public'
-  and (table_name in ('api_keys', 'api_usage_logs', 'api_usage', 'usage_logs')
+  and (table_name in ('api_keys', 'api_limits', 'api_logs', 'api_usage_logs', 'api_usage', 'usage_logs')
        or table_name like '%api%key%' or table_name like '%usage%')
 order by table_name, ordinal_position;
 
@@ -15,13 +15,13 @@ select c.relname as table_name, c.relrowsecurity, c.relforcerowsecurity,
 from pg_catalog.pg_class c
 join pg_catalog.pg_namespace n on n.oid = c.relnamespace
 where n.nspname = 'public' and c.relkind in ('r', 'p', 'v')
-  and (c.relname like '%api%key%' or c.relname like '%usage%')
+  and (c.relname in ('api_keys', 'api_limits', 'api_logs') or c.relname like '%api%key%' or c.relname like '%usage%')
 order by c.relname;
 
 select tablename, policyname, roles, cmd, qual, with_check
 from pg_catalog.pg_policies
 where schemaname = 'public'
-  and (tablename like '%api%key%' or tablename like '%usage%')
+  and (tablename in ('api_keys', 'api_limits', 'api_logs') or tablename like '%api%key%' or tablename like '%usage%')
 order by tablename, policyname;
 
 select r.relname as table_name, c.conname,
@@ -30,7 +30,7 @@ from pg_catalog.pg_constraint c
 join pg_catalog.pg_class r on r.oid = c.conrelid
 join pg_catalog.pg_namespace n on n.oid = r.relnamespace
 where n.nspname = 'public'
-  and (r.relname like '%api%key%' or r.relname like '%usage%')
+  and (r.relname in ('api_keys', 'api_limits', 'api_logs') or r.relname like '%api%key%' or r.relname like '%usage%')
 order by r.relname, c.conname;
 
 select r.relname as table_name, t.tgname,
@@ -40,7 +40,7 @@ from pg_catalog.pg_trigger t
 join pg_catalog.pg_class r on r.oid = t.tgrelid
 join pg_catalog.pg_namespace n on n.oid = r.relnamespace
 where n.nspname = 'public' and not t.tgisinternal
-  and (r.relname like '%api%key%' or r.relname like '%usage%')
+  and (r.relname in ('api_keys', 'api_limits', 'api_logs') or r.relname like '%api%key%' or r.relname like '%usage%')
 order by r.relname, t.tgname;
 
 select n.nspname as schema_name, p.proname,

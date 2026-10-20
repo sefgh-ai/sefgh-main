@@ -54,6 +54,15 @@ A response with `public` and `s-maxage` is handed to everyone. So this handler n
 
 The topic sections must look like the main trending list. Instead of copying the code that turns a GitHub repository into a page item, `githubtrending` now exports it as `Item`: a capital letter makes it visible to other packages (lesson 23). Both lists call the same function.
 
+## Browser integration after review
+
+REVIEW-011 / BUG-012 keeps these global searches in a separate topic-highlights
+section, labeled "last 30 days, across all languages" (the owner's choice).
+The main daily/weekly list still uses its own filters. Its refresh no longer
+claims success on a failed load, and stale browser requests cannot replace a
+newer view. The Go endpoint and its version-1 JSON contract are unchanged.
+CDN behavior still needs verification on an approved preview.
+
 ## Your turn
 
 Open `exercise.go` and write `answer`, which picks the status and the cache header from how many topics were found.

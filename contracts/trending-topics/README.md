@@ -25,4 +25,4 @@ A stand-in GitHub answers each topic's search from `github[topic]`; `network_err
 
 ## Not yet
 
-The page does not read this endpoint yet (TREND-001b), and its switch, `trending-topics`, is off. With it off, Next.js has no handler and the path is a 404. How Vercel's CDN caches the answer is to be verified before the switch is turned on.
+The page reads this endpoint (TREND-001b). REVIEW-011 / BUG-012 displays its rows in a separate section labeled last 30 days, across all languages, as chosen by the owner on 2026-10-20. The main list keeps its filters. The switch, `trending-topics`, remains off. With it off, Next.js has no handler and the path is a 404. How Vercel's CDN caches the answer is to be verified before the switch is turned on.

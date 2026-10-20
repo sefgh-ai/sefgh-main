@@ -60,3 +60,5 @@ jobs:
         run: go build -o bin/api ./cmd/api
       - name: Production Next.js forwarding (local fake GitHub)
         run: node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api --production --phase2
+      - name: Trending browser flows (local API fixtures)
+        run: node scripts/trending-browser-probe.mjs --production

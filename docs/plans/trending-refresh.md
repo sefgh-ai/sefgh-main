@@ -56,3 +56,11 @@ Not proposed: the service-role key (ruled out), and `pg_cron` with `pg_net` insi
 - **B or C:** obtain the catalog evidence first (`supabase/checks/` style, no row data), prepare the migration, verification and rollback for review without applying them, then build the worker.
 
 R-100 is fixed as part of whichever option is chosen, so it is not fixed twice.
+
+## Browser scope decision, 2026-10-20 (REVIEW-011 / BUG-012)
+
+The owner chose to show global 30-day/all-language topic highlights in their
+own labeled section. They are no longer merged into the main filtered list.
+The timestamp belongs to that section only. The Go topics contract and CDN
+policy are unchanged; a new filtered topics API was not requested. Tests and
+remaining preview gates: [review evidence](../verification/trending-ui-review.md).

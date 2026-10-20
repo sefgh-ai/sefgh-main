@@ -7,7 +7,9 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { fetchTrendingTopics, mergeTrending } from '../../src/lib/trending-topics.js';
 
-const repo = (id, extra = {}) => ({ id, name: `r${id}`, trending: true, ...extra });
+const repo = (id, extra = {}) => ({ id, name: `r${id}`, trending: true, author: 'fixture', description: 'No description provided',
+  topic: '', topicIcon: '', language: 'Unknown', languageColor: '#888888', stars: 0, forks: 0, views: 0,
+  discussions: 0, heatLevel: 1, starsPerDay: null, contributors: [], ...extra });
 const answer = {
   generatedAt: '2026-10-19T09:30:00.000Z',
   topics: [
@@ -38,9 +40,16 @@ test('any failure means no topic sections and no date, never an error', async ()
   }
 });
 
-test('a repository in a topic and in the main list is shown once, with its topic', () => {
+test('malformed topic entries cannot crash cards or invent a 1970 timestamp', async () => {
+  const result = await fetchTrendingTopics(async () => Response.json({ generatedAt: null,
+    topics: [{ repos: [null, 'bad', 42, [], repo(1)] }, null] }));
+  assert.deepEqual(result, { repos: [repo(1)], generatedAt: null });
+  assert.deepEqual(mergeTrending([null, repo(1)], [undefined, 'bad', repo(2)]), [repo(1), repo(2)]);
+});
+
+test('the legacy merge helper deduplicates while the page keeps the lists separate', () => {
   const merged = mergeTrending([repo(1, { topic: 'AI' }), repo(2, { topic: 'AI' })], [repo(2), repo(4), repo(4), { name: 'no id' }]);
-  assert.deepEqual(merged.map((r) => [r.id, r.topic]), [[1, 'AI'], [2, 'AI'], [4, undefined], [undefined, undefined]]);
+  assert.deepEqual(merged.map((r) => [r.id, r.topic]), [[1, 'AI'], [2, 'AI'], [4, ''], [undefined, undefined]]);
 });
 
 test('no page reads trending_repos or says the data is older than three days (R-100)', async () => {

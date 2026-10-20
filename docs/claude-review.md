@@ -1,5 +1,37 @@
 # Claude Code review and reconciliation
 
+## REVIEW-011: TREND-001a/b, BUG-010 and BUG-012, 2026-10-20
+
+Codex reviewed Claude Code's trending backend, contract and page integration at
+`5d07218`. Backend public credentials, encoding, UTC window, bounded concurrency,
+partial/all-failed response and cache rules match the reviewed version-1 contract.
+No Go/contract edit was needed. Browser integration required R-109 through R-112:
+latest-request protection, truthful active-list refresh, safe row/date handling
+and owner-approved separation of global 30-day/all-language highlights.
+
+Mill independently reviewed BUG-010 read-only and found R-113: same-user metadata
+changes caused another conversation snapshot load, overwriting newer local
+messages. Follow-up review exposed R-114 direct-selection/clear/delete races,
+a duplicate snapshot owner, a pending-topic refresh toast and sparse renderer
+rows. Codex fixed each with executable regressions. Snapshot loading now belongs
+to the direct wrapper; user-ID callbacks, request generations and functional
+delete setters preserve newer selection state. These are local-state findings;
+no persisted-row loss/restoration was established.
+
+Final UI verdict from Mill: **acceptable with switches off; no unresolved finding
+in the reviewed BUG-010/TREND fixes**. He independently passed six final chat
+regressions and scoped diff checks; earlier targeted checks and limitations are
+in [the evidence report](verification/trending-ui-review.md). No reviewer edits,
+subagents, external services or persistent servers. Parent production build,
+full suites and actual-browser checks are separately attributed to Codex.
+
+The final small key-preflight correction (R-115) names api_keys/api_limits/api_logs
+in every table metadata section; the guard proves coverage and read-only intent.
+No SQL was applied. Live/preview/CDN/schema/Realtime and signed-in browser gates
+remain; this review is not cutover approval. BUG-010's other inspected changes
+(counts, notifications, images, CSP copies, profile column and lint fixes) had no
+additional concrete regression found by the reviewer. R-054 remains owner-gated.
+
 ## REVIEW-010: browser data migration and BUG-011, 2026-10-20
 
 Codex independently reviewed Claude Code's DATA-001b (search history), DATA-002

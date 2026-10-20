@@ -110,20 +110,8 @@ function ChatPageContent() {
     if (user) loadProfile();
   }, [user]);
 
-  // Load conversation messages when selected. Only a change of id loads:
-  // loading sets currentConversation again, with the same id.
-  const conversationId = currentConversation?.id;
-  useEffect(() => {
-    const loadMessages = async () => {
-      if (!conversationId) return;
-      const conv = await loadConversation(conversationId);
-      if (conv) {
-        setMessages(conv.messages || []);
-      }
-    };
-
-    loadMessages();
-  }, [conversationId, loadConversation, setMessages]);
+  // Selection loading belongs to loadConversationWrapper below. Loading
+  // again in an effect after selection could overwrite newer messages.
 
   // Handle opening code in canvas
   const handleOpenInCanvas = (code, language) => {
@@ -253,8 +241,8 @@ function ChatPageContent() {
           onOpenChange={setClearDialogOpen}
           title="Clear All Conversations?"
           description="This will permanently delete all your conversations. This action cannot be undone."
-          onConfirm={() => {
-            handleClearAll();
+          onConfirm={async () => {
+            if (await handleClearAll()) setMessages([]);
             setClearDialogOpen(false);
           }}
           confirmText="Clear All"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import {
   getUserConversations,
@@ -12,9 +12,13 @@ import {
 } from "@/lib/supabase/conversations";
 
 export function useChatConversations(user) {
+  const userId = user?.id;
+  const loadRequest = useRef(0);
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => () => { loadRequest.current++; }, [userId]);
 
   // Load conversations
   useEffect(() => {
@@ -40,11 +44,13 @@ export function useChatConversations(user) {
   // Create new conversation
   const handleNewChat = async (model = "SEFGH V1") => {
     if (!user) return;
+    const request = ++loadRequest.current;
 
     try {
       const conv = await createConversation(user.id, "New Conversation", null, {
         model,
       });
+      if (request !== loadRequest.current) return null;
       setConversations([conv, ...conversations]);
       setCurrentConversation(conv);
       toast.success("New chat created!");
@@ -57,29 +63,32 @@ export function useChatConversations(user) {
     }
   };
 
-  // Load conversation messages. It keeps its identity while the user does,
-  // so the chat page can load a conversation when its id changes.
+  // Metadata/token updates for the same account must not trigger a snapshot
+  // reload. A newer selection/account also invalidates an older reply.
   const loadConversation = useCallback(async (convId) => {
+    if (!userId || !convId) return null;
+    const request = ++loadRequest.current;
     try {
-      const conv = await getConversation(convId, user.id);
+      const conv = await getConversation(convId, userId);
+      if (request !== loadRequest.current) return null;
       setCurrentConversation(conv);
       return conv;
     } catch (error) {
+      if (request !== loadRequest.current) return null;
       toast.error("Failed to load conversation", {
         description: error.message,
       });
       return null;
     }
-  }, [user]);
+  }, [userId]);
 
   // Delete conversation
   const handleDelete = async (convId) => {
+    loadRequest.current++;
     try {
       await deleteConversation(convId, user.id);
-      setConversations(conversations.filter((c) => c.id !== convId));
-      if (currentConversation?.id === convId) {
-        setCurrentConversation(null);
-      }
+      setConversations((prev) => prev.filter((c) => c.id !== convId));
+      setCurrentConversation((prev) => prev?.id === convId ? null : prev);
       toast.success("Conversation deleted");
       return true;
     } catch (error) {
@@ -109,6 +118,7 @@ export function useChatConversations(user) {
 
   // Clear all conversations
   const handleClearAll = async () => {
+    loadRequest.current++;
     try {
       await deleteAllConversations(user.id);
       setConversations([]);

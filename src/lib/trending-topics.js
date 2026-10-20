@@ -5,6 +5,7 @@
 //
 // With the route's switch off there is no handler, and the answer is a 404.
 // Any failure means no topic sections; the page still shows the main list.
+import { repositoryEntry } from './utils/trending/entries.js';
 
 /**
  * The topic repositories, flattened in the answer's order with each
@@ -12,15 +13,15 @@
  * @param {typeof fetch} [fetchImpl]
  * @returns {Promise<{ repos: object[], generatedAt: Date | null }>}
  */
-export async function fetchTrendingTopics(fetchImpl = fetch) {
+export async function fetchTrendingTopics(fetchImpl = fetch, { signal } = {}) {
   const none = { repos: [], generatedAt: null };
   try {
-    const response = await fetchImpl('/api/trending/topics');
+    const response = await fetchImpl('/api/trending/topics', { signal });
     if (!response.ok) return none;
     const answer = await response.json();
     const topics = Array.isArray(answer?.topics) ? answer.topics : [];
-    const repos = uniqueById(topics.flatMap((topic) => (Array.isArray(topic?.repos) ? topic.repos : [])));
-    const generatedAt = new Date(answer?.generatedAt);
+    const repos = uniqueById(topics.flatMap((topic) => (Array.isArray(topic?.repos) ? topic.repos : [])).map(repositoryEntry));
+    const generatedAt = new Date(typeof answer?.generatedAt === 'string' ? answer.generatedAt : NaN);
     return { repos, generatedAt: Number.isNaN(generatedAt.getTime()) ? null : generatedAt };
   } catch {
     return none;
@@ -41,6 +42,7 @@ export function mergeTrending(topicRepos, repositories) {
 function uniqueById(items) {
   const seen = new Set();
   return items.filter((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
     if (item?.id === undefined || item?.id === null) return true;
     if (seen.has(item.id)) return false;
     seen.add(item.id);

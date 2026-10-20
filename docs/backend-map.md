@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update 2026-10-20 (REVIEW-011 / BUG-012): trending topics are displayed in a
+separate 30-day/all-language section, per the owner's decision; they no longer
+bypass main-list filters. The topics endpoint's JSON/cache/access behavior is
+unchanged. Browser request generations/cancellation and row normalization protect
+refreshes and rendering. Chat selection loads one snapshot, with stale-response
+invalidation. No Go API, schema or routing switch changed. See
+[review evidence](verification/trending-ui-review.md).
+
 Update 2026-10-20 (DATA-REVIEW-001 / BUG-011): the browser-data proxy now
 confines requests to the configured Data API destination and explicitly selects
 the public schema. Non-public or conflicting profile headers are refused before

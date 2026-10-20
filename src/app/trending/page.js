@@ -21,7 +21,6 @@ import {
 } from "@/lib/utils/trending/trendingHelpers";
 import { getHeatIndicator } from "@/lib/utils/colors";
 import { editorsChoice } from "@/data/editorsChoice";
-import { mergeTrending } from "@/lib/trending-topics";
 
 export default function TrendingPage() {
   const router = useRouter();
@@ -95,11 +94,10 @@ export default function TrendingPage() {
     fetchProgrammingLanguages();
   }, []);
 
-  // The topic sections' repositories, then the main list, each repository
-  // once, sorted (memoized for performance).
+  // Main-list filters never mix with the global 30-day topic highlights.
   const displayRepos = useMemo(
-    () => sortRepositories(mergeTrending(topicRepos, repositories), sortBy),
-    [topicRepos, repositories, sortBy]
+    () => sortRepositories(repositories, sortBy),
+    [repositories, sortBy]
   );
 
   return (
@@ -134,7 +132,6 @@ export default function TrendingPage() {
                   spokenLanguages={SPOKEN_LANGUAGES}
                   programmingLanguages={programmingLanguages}
                   sortOptions={SORT_OPTIONS}
-                  lastRefresh={lastRefresh}
                   isRefreshing={isRefreshing}
                   handleRefreshTrending={handleRefreshTrending}
                 />
@@ -182,6 +179,21 @@ export default function TrendingPage() {
                         />
                       ))}
                 </div>
+                {activeTab === "repositories" && topicRepos.length > 0 && (
+                  <section aria-labelledby="topic-highlights-heading" className="mt-10 space-y-4">
+                    <div className="space-y-2 border-t border-border pt-6">
+                      <h2 id="topic-highlights-heading" className="text-xl font-semibold">Topic highlights</h2>
+                      <p className="text-sm text-muted-foreground">Repositories created in the last 30 days, across all languages.</p>
+                      {lastRefresh && (
+                        <p className="text-xs text-muted-foreground">Topics checked: {lastRefresh.toLocaleDateString("en-IN")}</p>
+                      )}
+                    </div>
+                    {topicRepos.map((repo, index) => (
+                      <TrendingRepositoryCard key={repo.id ?? `topic-${index}`} repo={repo} index={index}
+                        onNavigate={(path) => router.push(path)} getHeatIndicator={getHeatIndicator} />
+                    ))}
+                  </section>
+                )}
               </div>
             </main>
           </SidebarInset>
