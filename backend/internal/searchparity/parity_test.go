@@ -170,18 +170,34 @@ func TestStrictJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 	for name, input := range map[string]string{
-		"unknown":          strings.Replace(valid, `"version":1`, `"version":1,"surprise":true`, 1),
-		"duplicate":        strings.Replace(valid, `"version":1`, `"version":1,"version":1`, 1),
-		"nested duplicate": strings.Replace(valid, `"score":0.9`, `"score":0.9,"score":0.9`, 1),
-		"missing score":    strings.Replace(valid, `,"score":0.9`, "", 1),
-		"null score":       strings.Replace(valid, `"score":0.9`, `"score":null`, 1),
-		"unknown hit":      strings.Replace(valid, `"score":0.9`, `"score":0.9,"other":0`, 1),
-		"trailing":         valid + " {}", "malformed": valid[:len(valid)-1], "null": "null",
+		"unknown":            strings.Replace(valid, `"version":1`, `"version":1,"surprise":true`, 1),
+		"duplicate":          strings.Replace(valid, `"version":1`, `"version":1,"version":1`, 1),
+		"nested duplicate":   strings.Replace(valid, `"score":0.9`, `"score":0.9,"score":0.9`, 1),
+		"model case alias":   strings.Replace(valid, `"model":"fixture-model"`, `"model":"different-model","Model":"fixture-model"`, 1),
+		"model alias alone":  strings.Replace(valid, `"model":`, `"Model":`, 1),
+		"hit case alias":     strings.Replace(valid, `"id":"repo-a"`, `"id":"wrong","ID":"repo-a"`, 1),
+		"unicode case alias": strings.Replace(valid, `"score":`, `"ſcore":`, 1),
+		"missing score":      strings.Replace(valid, `,"score":0.9`, "", 1),
+		"null score":         strings.Replace(valid, `"score":0.9`, `"score":null`, 1),
+		"unknown hit":        strings.Replace(valid, `"score":0.9`, `"score":0.9,"other":0`, 1),
+		"trailing":           valid + " {}", "malformed": valid[:len(valid)-1], "null": "null",
 		"oversize": strings.Repeat(" ", MaxBytes+1),
 	} {
 		t.Run(name, func(t *testing.T) {
 			if _, err := Read(strings.NewReader(input)); err == nil {
 				t.Fatal("bad JSON accepted")
+			}
+		})
+	}
+}
+
+func TestNoncanonicalKeysAtEveryLevel(t *testing.T) {
+	data, _ := json.Marshal(frozen())
+	for _, key := range []string{"version", "identity", "pipeline", "model_revision", "dimensions", "normalization", "document_task", "query_task", "vector_column", "rpc", "metric", "corpus_sha256", "preparation_sha256", "queries", "id", "request_sha256", "hits", "score", "relevant_ids"} {
+		t.Run(key, func(t *testing.T) {
+			aliased := strings.Replace(string(data), `"`+key+`":`, `"`+strings.ToUpper(key[:1])+key[1:]+`":`, 1)
+			if _, err := Read(strings.NewReader(aliased)); err == nil {
+				t.Fatal("case alias accepted")
 			}
 		})
 	}

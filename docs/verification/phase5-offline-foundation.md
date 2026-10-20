@@ -64,6 +64,15 @@ RPC execution, SDK/framework coercion/errors, deployed credentials, model/output
 dimension, corpus provenance, live relevance and ingestion recovery remain
 unverified. These are explicit gates in the [worker plan](../plans/analysis-search-workers.md).
 
-Independent review: pending in the active checkpoint. Normal completed handoff,
-Git Agent commit/remote receipt and new hosted CI also pending; verify actual
-outcomes rather than treating this report as a synchronization signal.
+Original independent-review status at this report's creation was pending; see the actual completed corrective review below. Original code/report committed0241a79/7e804f2; no acceptance is inferred from those commits.
+
+## PHASE5-002 / BUG-013 corrections after the first commit
+
+Base 7e804f2; original implementation committed0241a79. A concurrent Claude handoff declared completion and Mill acceptance before his actual independent report. His actual review required two P2 corrections, reproduced red by Codex: case/Unicode member aliases could conceal a model/ID mismatch and return CLI exit0; a Windows junction allowed reading outside the source root. R124/R125 now have canonical-member and physical-realpath fixes with regression tests. Git LF normalization also exposed a failing artifact hash guard; R126 regenerates stable LF hashes and tests exact bytes. No prior commit was removed or reset.
+
+The completed independent source mapping adds R120-R123 and eight missing source identities, for40 pinned files total. Lesson39 README and format guide updated; existing exercise untouched. Final corrected source passes backend34 packages (go test -p 2 -count=1 ./...), full vet/build and empty format; npm1452/1452 and strictlint exit0. All40 lesson solutions passed in the sequential rerun; exercise intentionally red. Mill independently accepted the final corrections with no unresolved reviewed finding, after focusedGo2packages/vet/format, Node3/3 (actualjunction), snapshot40/40 and diff checks. Normal completed handoff and new commit/hostedCI receipts remain separate. Earlier results above describe the pre-correction tree and remain attributed to Codex; they do not establish the new regressions were already covered.
+
+
+Owner decision (2026-10-20): deployment is not confirmed; keep worker execution gated. Recorded in plan/ADR/handoff. No active pipeline was selected from local folder names. Current corrected artifact guards will also run in hosted CI after synchronization; do not infer its result from previous commits.
+
+Final standalone corrected CLI: synthetic matching run exits0; changed repository result exits1; model/Model alias exits2 and writes zero report bytes. Normal handoff runs after writer release; corrective commit/hostedCI receipts pending at this record.

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -14,9 +14,13 @@ test('synthetic captures identify the actual frozen example artifacts', async ()
   assert.deepEqual(baseline.identity, candidate.identity);
   assert.equal(baseline.identity.pipeline, 'synthetic-only');
   for (const [name, field] of [['corpus', 'corpus_sha256'], ['preparation', 'preparation_sha256']]) {
-    assert.equal(baseline.identity[field], sha(await readFile(new URL(`example-${name}.json`, folder))));
+    const bytes = await readFile(new URL(`example-${name}.json`, folder));
+    assert.equal(bytes.includes(13), false, 'frozen examples use LF to survive Git normalization');
+    assert.equal(baseline.identity[field], sha(bytes));
   }
-  assert.equal(baseline.queries[0].request_sha256, sha(await readFile(new URL('example-request.json', folder))));
+  const request = await readFile(new URL('example-request.json', folder));
+  assert.equal(request.includes(13), false);
+  assert.equal(baseline.queries[0].request_sha256, sha(request));
   assert.equal(candidate.queries[0].request_sha256, baseline.queries[0].request_sha256);
   assert.equal(candidate.queries[0].relevant_ids, undefined);
 });
@@ -36,4 +40,18 @@ test('source checker detects drift and missing files without executing source', 
     }
     await assert.rejects(checkSnapshot(root, { version: 1, files: [manifest.files[0], manifest.files[0]] }));
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test('source checker refuses a junction or symlink outside its declared root', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'sefgh-semantic-root-'));
+  const outside = await mkdtemp(join(tmpdir(), 'sefgh-semantic-outside-'));
+  try {
+    const source = 'synthetic outside-root source only\n';
+    await writeFile(join(outside, 'source.py'), source);
+    await symlink(outside, join(root, 'candidate'), process.platform === 'win32' ? 'junction' : 'dir');
+    await assert.rejects(checkSnapshot(root, { version: 1, files: [{ path: 'candidate/source.py', sha256: sha(source) }] }), /escapes root/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+    await rm(outside, { recursive: true, force: true });
+  }
 });

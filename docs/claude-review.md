@@ -1,5 +1,13 @@
 # Claude Code review and reconciliation
 
+## REVIEW-013: PHASE5-002 / BUG-013 corrective review, 2026-10-20
+
+Mill's actual independent PHASE5-001 review found two P2 defects before acceptance: case-insensitive/Unicode JSON aliases could overwrite a mismatching model or repository ID and falsely return parity; source checker lexical containment followed an outside-root Windows junction. Both were reproduced by Codex with failing-before tests against the actual parser/CLI/checker. This supersedes REVIEW-012's broad acceptance and the prior handoff's premature attribution of Mill acceptance. Claude's original review record is preserved below as an attributed historical result, not evidence these cases passed.
+
+Codex corrections: canonical lowercase ASCII JSON names checked before struct decoding (case aliases tested throughout schema and through CLI), physical realpath containment before reading source, LF-stable synthetic artifact hashes and byte/hash regression after Git normalization exposed stale CRLF hashes. Lesson39 and format guide explain the Go alias behavior and artifact bytes. The completed source mapping and cited missing legacy variants are now included in the 40-file snapshot; additional source defects R120-R123 are recorded open. No HTTP contract or sibling source changed.
+
+Final actual verdict from Mill: **acceptable as an offline foundation; no unresolved findings in reviewed PHASE5-002 / BUG-013 scope**. He independently ran focused Go tests and vet with -p 1 (both packages pass), four-file gofmt (empty), Node3/3 including actual Windows junction, source checker40/40, artifact hashes and diff check. He confirmed R124-R126 corrected, completed lineage paragraph accurate, missing snapshot files included, R120-R123 appropriately gated. Parent full backend34 packages/vet/build/format pass after corrections; final Node/lint and normal handoff recorded separately. No worker selection/cutover/deployment or live corpus parity is claimed.
+
 ## REVIEW-012: PHASE5-001 offline search parity and pipeline lineage, 2026-10-20
 
 Independent review of PHASE5-001 offline search parity (`backend/internal/searchparity`,

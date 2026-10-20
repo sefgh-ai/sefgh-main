@@ -47,6 +47,12 @@ the baseline's judgments. Missing/empty judgments produce `null` quality fields
 and do not certify quality. The format does not yet distinguish an explicitly
 judged query with no relevant documents; do not claim no-answer accuracy from it.
 
+Frozen example artifacts use LF line endings, matching this repository's Git
+attributes. Hash their exact bytes after normalization; do not regenerate a
+Windows CRLF file while retaining its old hash. The artifact guard checks both
+the hashes and LF bytes. Sibling source hashes intentionally describe the local
+source bytes, whose line endings are outside this repository's control.
+
 The checker trusts the supplied metadata. It validates hash syntax and identity
 agreement, but does not read a corpus, verify the claimed hashes against files,
 generate embeddings, prove a model revision, or check the SQL metric. Verify
@@ -61,7 +67,8 @@ the absolute `-score-tolerance` (default `0.000001`). Exit `1` prints a valid
 report with a ranking/score difference. Exit `2` means invalid/incompatible input
 or an I/O error; no parity report is emitted. `-k` defaults to 10 (range 1..1000).
 Files are limited to 8 MiB, 10,000 queries and 1,000 hits per query. Unknown fields,
-duplicate JSON members, omitted scores and trailing JSON are rejected.
+duplicate JSON members, case/Unicode aliases of canonical lowercase ASCII keys,
+omitted scores and trailing JSON are rejected.
 
 Scores are compared by repository ID within top-k, so a rank change is visible
 even when the underlying scores match. Differences below k are outside the

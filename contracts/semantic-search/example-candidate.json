@@ -11,13 +11,13 @@
     "vector_column": "fixture.embedding",
     "rpc": "fixture_match",
     "metric": "cosine",
-    "corpus_sha256": "3392879ca74dac0026f5d3fdece7b116edbb5008cfe87c0ad0664152179c586f",
-    "preparation_sha256": "691572e105b122412d529202d2afc9d9b46cb667aac605db2abaa2a1d5fa13f5"
+    "corpus_sha256": "47d5ecccf4df7dc7dace4c31650723dd7e509b32cd8132d35149c3eef0e206d7",
+    "preparation_sha256": "37f79546715ae72f925c586da340d232450c63d61fe22b2f7b5e9ec445b60289"
   },
   "queries": [
     {
       "id": "query-1",
-      "request_sha256": "d587b307a638c00df5ce2a43869e6605c4b2825c631780e6d9f972eeb2daea16",
+      "request_sha256": "5a2131625fb54c6900cd753bf31e39a579002b9039efcf78c45eb47a300fc904",
       "hits": [
         {
           "id": "repo-alpha",

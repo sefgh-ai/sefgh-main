@@ -65,6 +65,14 @@ turn a missing score into zero. `Hit.UnmarshalJSON` first decodes into `*float64
 requires a supplied numeric score. The outer reader rejects unknown fields,
 duplicate members, trailing JSON and files larger than 8 MiB.
 
+There is another Go detail to watch: `encoding/json` matches struct fields
+without requiring the same letter case. Both `model` and `Model` can fill the
+same field; the later one wins. Version 1 requires lowercase ASCII keys, so the
+token pass rejects case variants before decoding into structs. It also rejects
+Unicode letters that Go could fold to an ASCII field name. This prevents a
+capture from hiding a different model or repository ID behind a second spelling.
+The regression tests try aliases at every level and through the actual CLI.
+
 ## The command has three outcomes
 
 `main` is small: `os.Exit(run(...))`. Passing writers to `run` lets a test capture

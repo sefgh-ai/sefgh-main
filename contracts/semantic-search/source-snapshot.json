@@ -59,9 +59,29 @@
       "bytes": 2524
     },
     {
+      "path": "RepoAnalyser/buffer/database/migrate_add_embedding.sql",
+      "sha256": "525a2907a470b23a4fada13885a703675fdfdf860729fcf5d2c7e2d047b2bb76",
+      "bytes": 2273
+    },
+    {
+      "path": "RepoAnalyser/buffer/database/setup.sql",
+      "sha256": "adb1a460f15b558ddee4257e7790ab50cb3d533785dd36b18b546f860d614ddc",
+      "bytes": 6425
+    },
+    {
+      "path": "RepoAnalyser/buffer/database/setup_v2.sql",
+      "sha256": "5c63b379b27f3447dd33c920a0ea065fb1f11b1dda2c699052ae80ea0f0bfc68",
+      "bytes": 11247
+    },
+    {
       "path": "RepoAnalyser/buffer/database/supabase_client.py",
       "sha256": "af7b61c72524078800eaad8791c938c598fc306bd132f82f2129df27a08496d0",
       "bytes": 12861
+    },
+    {
+      "path": "RepoAnalyser/buffer/main.py",
+      "sha256": "1e00103acf6beffb342759851f1a9310d1ee4f79334793bf66c4791e3397914f",
+      "bytes": 2429
     },
     {
       "path": "RepoAnalyser/buffer/run.py",
@@ -69,9 +89,19 @@
       "bytes": 2672
     },
     {
+      "path": "RepoAnalyser/buffer/services/analysis_service_optimized.py",
+      "sha256": "20eee1c4b6d953b7da000af5fc443a0aa819920e4cd94d60d5a6fe4549ff2717",
+      "bytes": 22859
+    },
+    {
       "path": "RepoAnalyser/buffer/services/embedding_service.py",
       "sha256": "1d582d702934bf7f156912f69264816a1c77f32ef764ff9edc9a0b94ec75a1dd",
       "bytes": 7683
+    },
+    {
+      "path": "RepoAnalyser/buffer/services/ollama_embedding_service.py",
+      "sha256": "020876e45392b065abcd6485c0bfd02b41cefa86a243bd0ec7923e554394dfb2",
+      "bytes": 9891
     },
     {
       "path": "RepoAnalyser/buffer/services/search_service.py",
@@ -114,6 +144,11 @@
       "bytes": 2524
     },
     {
+      "path": "search engine/RepoAnalyser/buffer/database/setup_v2.sql",
+      "sha256": "5c63b379b27f3447dd33c920a0ea065fb1f11b1dda2c699052ae80ea0f0bfc68",
+      "bytes": 11247
+    },
+    {
       "path": "search engine/RepoAnalyser/buffer/database/supabase_client.py",
       "sha256": "af7b61c72524078800eaad8791c938c598fc306bd132f82f2129df27a08496d0",
       "bytes": 12861
@@ -127,6 +162,11 @@
       "path": "search engine/RepoAnalyser/buffer/services/embedding_service.py",
       "sha256": "1d582d702934bf7f156912f69264816a1c77f32ef764ff9edc9a0b94ec75a1dd",
       "bytes": 7683
+    },
+    {
+      "path": "search engine/RepoAnalyser/buffer/services/ollama_embedding_service.py",
+      "sha256": "020876e45392b065abcd6485c0bfd02b41cefa86a243bd0ec7923e554394dfb2",
+      "bytes": 9891
     },
     {
       "path": "search engine/RepoAnalyser/buffer/services/search_service.py",

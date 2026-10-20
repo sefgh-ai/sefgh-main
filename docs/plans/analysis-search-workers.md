@@ -1,6 +1,6 @@
 # Analysis and search workers: lineage and migration gate
 
-Task PHASE5-001, 2026-10-20. This records inspected local source, not the active
+Tasks PHASE5-001 and PHASE5-002 / BUG-013, 2026-10-20. This records inspected local source, not the active
 deployment or verified database configuration. No sibling checkout was changed,
 no Python service imported, and no provider/database call made.
 
@@ -25,7 +25,8 @@ on this snapshot:
 node scripts/semantic-source-snapshot.mjs --root D:/SEFGH
 ```
 
-It reads the explicit allowlist only, prints paths/statuses, never imports Python
+It reads the explicit allowlist only, prints paths/statuses, rejects real paths
+that escape the declared root through symlinks/junctions, never imports Python
 or reads `.env`, and cannot establish deployment or corpus identity. Missing
 siblings are expected on hosted CI; its own tests use temporary source files.
 
@@ -88,10 +89,13 @@ The inspected Flask app does not register this search helper as a search route.
 
 ### Packaged Ollama and legacy checkout
 
-Independent source mapping is pending in this active checkpoint. Do not assume
-either is authoritative based on the folder name or apparent code age. The
-accepted migration keeps these candidates separate until the corpus and runtime
-are identified.
+Independent read-only mapping by Mill confirms `RepoAnalyser-ai/pyproject.toml:45` exposes `src.cli:main` and `src.web_server:main`. Settings defaults are generation `gemma3:4b`, embeddings `nomic-embed-text`, declared 768 dimensions. `src/llm/ollama.py:199` posts `{model,prompt}` to `/api/embeddings`, returns the provider vector unchanged and formats it as a pgvector string. No explicit caller normalization, dimension or finite-value check occurs; provider behavior is unverified. CLI/parallel and separate web-batch paths embed `llm_description`; CLI/web search embed the query with the same client. Storage is `repo_analysis.description_embedding`.
+
+`src/database/repository.py:271` calls `match_repos_cosine` with string `query_embedding` and `match_count`. Saved `sql/vector_search_functions.sql:12` declares vector(768), joins `"ReposMeta"`, and returns analysis UUID, integer repo_id, full_name, description, JSONB labels, spoken_language and similarity. Its additional L2/inner-product functions use different score conventions. Web `POST /api/search` takes query and limit (default 10), returns `{success:true,data:results}`; empty query/errors return `{success:false,error}` without an explicit non-200 status. This is different from the Google `{results}` API. Exact framework parsing/status and installed RPC definitions still need executable characterization. Writers hard-code model provenance despite configurable models (R-120); separate metadata completion and missing-vector paths need recovery work (R-121/R-122). Flask analysis controls have no local auth gate (R-123); live exposure is unknown.
+
+Legacy `RepoAnalyser/main.py:118` is a single-repository Gemini description/label writer with no embedding call. Its buffer runner/app use `SimpleAnalysisService`; `buffer/main.py` selects `OptimizedAnalysisService`. Both support provider selection, defaulting to Ollama ingestion. Standalone `SearchService` always uses Google text-embedding-004/768 and retrieval task types, confirming the same R-116 mismatch; no caller wiring that helper into the inspected Flask app was found. SQL proposes `repo_analysis.description_embedding` and optional `repo_chunks.embedding`, both vector(768). Same-named `search_repositories` in `buffer/database/setup_v2.sql:127` returns full_name; `migrate_add_embedding.sql:37` omits it. These are separate candidate contracts until the installed definition is obtained.
+
+The 40-file snapshot includes these cited legacy launchers/services/SQL variants. Local launchers and README deployment claims do not identify an authoritative deployment or corpus. Keep candidates separate.
 
 ### RepoSync is not yet a proven upstream for these analyzers
 
@@ -121,10 +125,7 @@ runtime/cost, or approve a relevance threshold. It adds no production route.
 
 ## Next implementation sequence
 
-1. Identify the authoritative worker/search deployment and operator, actual
-   entrypoint/configuration, model revision/digest and corpus lineage. The owner
-   was asked; no answer is inferred from elapsed time. If unknown, obtain
-   deployment records before choosing a worker.
+1. Owner decision (2026-10-20): **deployment is not confirmed; keep worker execution gated**. No candidate is selected by default. Identify the authoritative worker/search deployment and operator, actual entrypoint/configuration, model revision/digest and corpus lineage from deployment records before worker execution or replacement.
 2. Obtain read-only catalog definitions for the selected database: actual table,
    key types, vector dimensions/index/opclass, RPC signatures/bodies/permissions,
    RLS/grants/triggers and the RepoSync-to-analyzer transfer if one exists.

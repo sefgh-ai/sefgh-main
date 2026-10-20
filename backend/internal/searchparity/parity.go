@@ -137,6 +137,14 @@ func uniqueMembers(dec *json.Decoder) error {
 				if !ok || seen[name] {
 					return errors.New("duplicate JSON member")
 				}
+				// Version 1 names are lowercase ASCII with underscores/digits.
+				// encoding/json also matches case aliases (including Unicode
+				// folds such as long-s), which could overwrite a canonical key.
+				for _, c := range name {
+					if !(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '_') {
+						return errors.New("noncanonical JSON member")
+					}
+				}
 				seen[name] = true
 				if err := value(); err != nil {
 					return err

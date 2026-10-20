@@ -1,5 +1,5 @@
 // Read-only source-drift check. Never imports Python or loads environment files.
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +9,7 @@ export async function checkSnapshot(root, manifest) {
     throw new Error('expected a version-1 source snapshot');
   }
   const base = resolve(root);
+  const physicalBase = await realpath(base);
   const seen = new Set();
   const results = [];
   for (const file of manifest.files) {
@@ -24,7 +25,10 @@ export async function checkSnapshot(root, manifest) {
     const rel = relative(base, path);
     if (rel.startsWith('..') || isAbsolute(rel)) throw new Error('source path escapes root');
     try {
-      const bytes = await readFile(path);
+      const physicalPath = await realpath(path);
+      const physicalRel = relative(physicalBase, physicalPath);
+      if (physicalRel.startsWith('..') || isAbsolute(physicalRel)) throw new Error('resolved source path escapes root');
+      const bytes = await readFile(physicalPath);
       results.push({ path: file.path, status: createHash('sha256').update(bytes).digest('hex') === file.sha256 ? 'match' : 'changed' });
     } catch (error) {
       if (error.code !== 'ENOENT') throw error;

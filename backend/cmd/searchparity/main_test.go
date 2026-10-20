@@ -24,6 +24,22 @@ func TestCommandExitCodes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	for _, pair := range [][2]string{
+		{`"model": "synthetic-fixture-model"`, `"model": "different-model", "Model": "synthetic-fixture-model"`},
+		{`"id": "repo-alpha"`, `"id": "wrong-repository", "ID": "repo-alpha"`},
+	} {
+		aliasPath := filepath.Join(t.TempDir(), "alias.json")
+		if err := os.WriteFile(aliasPath, bytes.Replace(data, []byte(pair[0]), []byte(pair[1]), 1), 0600); err != nil {
+			t.Fatal(err)
+		}
+		aliasArgs := append([]string(nil), args...)
+		aliasArgs[3] = aliasPath
+		out.Reset()
+		errOut.Reset()
+		if code := run(aliasArgs, &out, &errOut); code != 2 || out.Len() != 0 {
+			t.Fatalf("case alias accepted: %d %s %s", code, &out, &errOut)
+		}
+	}
 	changed := bytes.Replace(data, []byte(`"repo-alpha"`), []byte(`"repo-wrong"`), 1)
 	path := filepath.Join(t.TempDir(), "changed.json")
 	if err := os.WriteFile(path, changed, 0600); err != nil {
