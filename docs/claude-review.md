@@ -1,5 +1,34 @@
 # Claude Code review and reconciliation
 
+## REVIEW-015: KEYS-HTTP-001, 2026-10-20
+
+Sartre independently reviewed the unregistered key HTTP adapters, proposed
+HTTP fixtures and lesson41, read-only. First verdict required three changes:
+cancellation during detached completion could release provider success (R139),
+cloned/default transports could inject credentials after headers were cleared
+(R140), and conflicting/aliased/wrong-type visibility was accepted (R141).
+Codex reproduced all three with failing tests against actual HTTP/core/local
+upstream paths. Final cancellation guard, owned client/fresh transport without
+inherited client/transport/proxy hooks, and canonical public visibility checks
+correct them. Self-review duplicate-reader and I/O timer ordering corrections
+are R137/R138; detailed original search logger issue R136 remains open and is
+suppressed in the new adapter.
+
+Actual final verdict: **accepted for the unwired adapters, proposed fixtures and
+lesson41; no unresolved findings in the reviewed scope**. Independently passed
+focused HTTP tests with -p1/-count1 (including36 fixtures/edge cases), apikey vet,
+lesson41 ordinary/solution builds, solution tests/both vets, lesson-index Node
+guard, targeted format/diff checks. No reviewer edits, additional agents, full
+suites, production probes, live calls, handoff hooks or writer release. Codex's
+full suites and handoff are separate evidence in coordination and the
+[report](verification/keys-http.md).
+
+This accepts an unregistered HTTP foundation, not production session/DB/RLS,
+distributed quota/recovery durability, rollout policy, runtime/browser wiring,
+cutover or deployment. Existing Next key contracts and original route count are
+unchanged. A fresh transport intentionally inherits no credential wrapper or
+ambient proxy; deployment networking must be reviewed before activation.
+
 ## REVIEW-014: KEYS-CORE-001 / BUG-014, 2026-10-20
 
 Sartre independently reviewed the new, unwired `internal/apikey` package, its

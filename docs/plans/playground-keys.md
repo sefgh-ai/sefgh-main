@@ -98,6 +98,22 @@ Next batch once definitions are available: independently review additive migrati
 
 ## Rollout and acceptance
 
+KEYS-HTTP-001 (2026-10-20) adds an independent unregistered HTTP foundation:
+POST/GET /api/v1/keys, owner-scoped idempotent DELETE and GET /api/v1/search
+using the reviewed key core. The [proposed HTTP contract](../../contracts/api-key-http/README.md)
+is separate from legacy v2; this is not a parity port of the plaintext route.
+Strict JSON/body bounds, verified-owner factory, private-result refusal,
+server-generated IDs, an owned credential-free public transport, bounded
+completion/recovery and accounting-before-response are tested locally. No
+actual database/recovery adapter, UI or production registration is included.
+Independent review findings are recorded in REVIEW-015 and the bug register.
+
+Access update: owner confirmed SEFGH is a custom MCP connection in ChatGPT
+settings. Its tools are absent in this session; resource inventory reports
+unknown server, and the older Supabase connector still denies catalog access.
+Do not substitute unrelated listed projects. Refresh connection/session tool
+availability, then run the read-only catalog query against the expected ref.
+
 Prepare an additive schema first, verify role-denial tests, deploy compatible
 code, and switch on one endpoint only after owner review. Existing plaintext
 keys require an explicit rotate/revoke or one-way conversion plan, based on

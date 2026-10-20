@@ -4,6 +4,19 @@ API routes that have moved out of Next.js. The plan and its rules are in `../doc
 
 It uses only Go's standard library: there are no third-party dependencies.
 
+## Unregistered key HTTP adapters
+
+KEYS-HTTP-001 adds `internal/apikey.NewHTTP` for bearer-only key management
+and API-key public search. These adapters are not registered in `cmd/api` or
+Next.js. Session verification must return a management capability bound to the
+verified user's token; accounting/recovery require separate server capabilities.
+Public search owns its client/transport and sends no incoming credential,
+cookie jar, ambient transport or proxy callback. Success is buffered until
+accounting is confirmed, with a final cancellation check. See the
+[proposed HTTP contract](../contracts/api-key-http/README.md) and
+[key plan](../docs/plans/playground-keys.md). Actual DB adapters, reviewed SQL,
+rollout policy/recovery, UI and activation remain gates; route count stays23/25.
+
 ## Offline worker migration check
 
 `cmd/searchparity` compares frozen local retrieval runs before a Python worker is replaced. It is not an HTTP endpoint and has no model/database client. See [the evidence format](../contracts/semantic-search/README.md) and [worker plan](../docs/plans/analysis-search-workers.md). From `backend/`:

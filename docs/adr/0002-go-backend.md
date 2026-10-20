@@ -630,3 +630,19 @@ Owner decision, 2026-10-20: deployment is not confirmed; keep worker execution g
 The accepted hashed/show-once/server-accounting direction permits an independent unwired standard-library credential/lifecycle core while existing schema evidence is unavailable. Explicit policy and separate management/accounting interfaces are required; a test-only atomic shared store is a conformance model, not evidence of live RLS or production distributed quotas. Eleven proposed core scenarios are separate from the old HTTP contract. Proposed format/charging/limits are not approved rollout values. Actual adapters, SQL review, authentication/provider budgets, recovery/retention and browser flows remain gated. See [key plan](../plans/playground-keys.md).
 
 The current plaintext handler has an immediate privacy correction under AGENTS' security/privacy exception: no-store on every response and a fixed failure log with no provider/database payload. Current contract advances to version2, preserving status/body/ownership/write/retry behavior; version1 synthetic evidence retained. No Go implementation of that HTTP route yet exists. This does not close R039 or change database/route switches. Owner offered catalog restoration, but the expected SEFGH project is not visible through the current connection; no other project queried or SQL applied. Worker execution remains explicitly gated.
+
+### KEYS-HTTP-001: unregistered HTTP boundary (2026-10-20)
+
+Dependency-free KEYS-001b work may continue with a separate proposed HTTP
+contract: bearer-only management at /api/v1/keys and public API-key search at
+/api/v1/search. The session factory must verify the Supabase bearer and bind
+management to that same user's token; no ordinary CRUD service-role shortcut.
+The search adapter owns its transport, omits ambient/caller credentials and
+proxies, refuses redirects, and validates explicit public result visibility.
+Successful output is bounded/buffered until accounting completion, then checked
+again for cancellation. Recovery receives only a safe exact receipt under a
+separate short budget. These interfaces/mock tests do not establish durable
+SQL/RLS/quotas/recovery. No runtime registration, default enablement or new
+deployment setting. Limits/charging/expiry remain synthetic proposals. Actual
+catalog, owner-reviewed SQL/rollout, adapter conformance, browser/forwarding and
+cutover remain gates. See [HTTP contract](../../contracts/api-key-http/README.md).
