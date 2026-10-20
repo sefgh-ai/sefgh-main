@@ -14,6 +14,12 @@ go run ./cmd/searchparity -baseline ../contracts/semantic-search/example-baselin
 
 The example is synthetic. Passing it verifies the checker, not a production corpus or worker. Mismatched model/corpus/preparation/RPC/request identities are rejected; matching lists alone do not establish relevance. Production worker selection and live parity remain gated.
 
+## Unwired API-key lifecycle core
+
+`internal/apikey` implements credential generation/verifiers, one-time reveal, explicit lifecycle policy, separate management/accounting capabilities and reservation-before-upstream execution. It has **no production store or HTTP registration**. Tests include a test-only shared atomic memory model and proposed [core fixtures](../contracts/api-key-lifecycle/README.md); those do not establish live RLS, grants or distributed transaction behavior. Production schema/adapter, approved policy, recovery/retention and public-endpoint/UI acceptance remain gated. [Key plan](../docs/plans/playground-keys.md), [lesson40](../learn-go/40-secret-handles-and-capabilities/README.md).
+
+The current Next playground key route has its own [version2 contract](../contracts/playground-keys/README.md), adding no-store and secret-free error logging while retaining the existing data/status behavior. It has not been ported or enabled in Go.
+
 ## Routes
 
 | Route | Package | Contract |

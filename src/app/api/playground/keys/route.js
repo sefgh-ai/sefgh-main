@@ -16,6 +16,12 @@ function generateApiKey() {
  * Create a new API key for the authenticated user
  */
 export async function POST(request) {
+  const response = await createKey(request);
+  response.headers.set('Cache-Control', 'no-store');
+  return response;
+}
+
+async function createKey(request) {
   try {
     const supabase = await createClient();
     
@@ -90,8 +96,8 @@ export async function POST(request) {
       data: data,
     });
 
-  } catch (error) {
-    console.error('API key creation error:', error);
+  } catch {
+    console.error('API key creation failed');
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

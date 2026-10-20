@@ -1,0 +1,1340 @@
+{
+  "contract_version": 1,
+  "implementation": "legacy-next-plaintext",
+  "cases": [
+    {
+      "id": "signed-out",
+      "disposition": "preserve",
+      "reason": "Authentication precedes parsing and entropy.",
+      "method": "POST",
+      "session": null,
+      "user": null,
+      "body": "{}",
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to create API keys."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "auth-rejected",
+      "disposition": "preserve",
+      "reason": "Auth rejection is sanitized.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "error": "revoked"
+      },
+      "body": "{}",
+      "database": [],
+      "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to create API keys."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "missing-project",
+      "disposition": "preserve",
+      "reason": "Client setup failure is generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{}",
+      "database": [],
+      "client_throws": true,
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "missing-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "empty-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"\"}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "whitespace-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"  \\n \"}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "false-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":false}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "zero-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":0}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "null-name",
+      "disposition": "preserve",
+      "reason": "Falsy/empty name is400 without entropy/database.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":null}",
+      "database": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "API key name is required"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "numeric-name",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":1}",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "object-name",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":{}}",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "array-name",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":[]}",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "null-body",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "null",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "bad-json",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "empty-body",
+      "disposition": "defect",
+      "reason": "Malformed name/body collapses into generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "",
+      "database": [],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 0
+      }
+    },
+    {
+      "id": "created-plaintext",
+      "disposition": "defect",
+      "reason": "Stores raw credential, returns the full row, and omits no-store; owner and active state are server selected.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"  Test  \",\"user_id\":\"owner-b\",\"is_active\":false}",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 1
+      }
+    },
+    {
+      "id": "unicode-name",
+      "disposition": "preserve",
+      "reason": "Unicode name is trimmed without rewriting other fields.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\" Go \\ud83d\\ude80 \"}",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Go 🚀",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 1
+      }
+    },
+    {
+      "id": "long-name",
+      "disposition": "defect",
+      "reason": "No name length/resource bound at route level.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\"}",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 1
+      }
+    },
+    {
+      "id": "duplicate-then-created",
+      "disposition": "preserve",
+      "reason": "Unique conflict retries with fresh entropy.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "message": "duplicate"
+          }
+        },
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 2
+      }
+    },
+    {
+      "id": "three-duplicates",
+      "disposition": "preserve",
+      "reason": "Three unique conflicts use the exhausted-uniqueness error.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "message": "duplicate"
+          }
+        },
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "message": "duplicate"
+          }
+        },
+        {
+          "status": 409,
+          "body": {
+            "code": "23505",
+            "message": "duplicate"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to generate unique API key after multiple attempts"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 3
+      }
+    },
+    {
+      "id": "three-permission-errors",
+      "disposition": "defect",
+      "reason": "Retries permanent authorization failures as if transient, then generic500.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "denied"
+          }
+        },
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "denied"
+          }
+        },
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "denied"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 3
+      }
+    },
+    {
+      "id": "permission-error-then-created",
+      "disposition": "defect",
+      "reason": "Permanent error is retried and may be hidden by later success.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "denied"
+          }
+        },
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 2
+      }
+    },
+    {
+      "id": "network-error-then-created",
+      "disposition": "defect",
+      "reason": "Ambiguous failed insert retries with new credential; first write may already have committed.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "network_error": true
+        },
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 2
+      }
+    },
+    {
+      "id": "three-network-errors",
+      "disposition": "preserve",
+      "reason": "Retry cap bounds failed Data API attempts.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "network_error": true
+        },
+        {
+          "network_error": true
+        },
+        {
+          "network_error": true
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 3
+      }
+    },
+    {
+      "id": "empty-single-row-then-created",
+      "disposition": "defect",
+      "reason": "Single-row shape failure causes a second write attempt.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 201,
+          "body": []
+        },
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 1
+      }
+    },
+    {
+      "id": "extra-columns-returned",
+      "disposition": "defect",
+      "reason": "select-star/full-row response exposes any returned extra field.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "private_extra": "fixture-internal-column"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "private_extra": "fixture-internal-column"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 1
+      }
+    },
+    {
+      "id": "entropy-error-then-created",
+      "disposition": "preserve",
+      "reason": "Entropy failure before DB write retries fresh material.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        }
+      ],
+      "entropy_failure_at": [
+        1
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {
+            "id": "key-row-a",
+            "user_id": "owner-a",
+            "name": "Test",
+            "key": "fixture-returned-plaintext",
+            "is_active": true
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "entropy_calls": 2
+      }
+    },
+    {
+      "id": "three-entropy-errors",
+      "disposition": "preserve",
+      "reason": "Entropy failure is sanitized and never writes DB.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "database": [],
+      "entropy_failure_at": [
+        1,
+        2,
+        3
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [],
+        "entropy_calls": 3
+      }
+    },
+    {
+      "id": "database-error-log-privacy",
+      "disposition": "defect",
+      "reason": "Free-form database payload is logged after failed creation; a payload can include credential material.",
+      "method": "POST",
+      "session": "fixture-owner-token",
+      "user": {
+        "id": "owner-a"
+      },
+      "body": "{\"name\":\"Test\"}",
+      "capture_errors": true,
+      "database": [
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "fixture failure",
+            "details": "SYNTHETIC_SECRET_IN_DB_ERROR"
+          }
+        },
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "fixture failure",
+            "details": "SYNTHETIC_SECRET_IN_DB_ERROR"
+          }
+        },
+        {
+          "status": 403,
+          "body": {
+            "code": "42501",
+            "message": "fixture failure",
+            "details": "SYNTHETIC_SECRET_IN_DB_ERROR"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+                "is_active": true
+              }
+            ]
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/api_keys?columns=%22user_id%22%2C%22name%22%2C%22key%22%2C%22is_active%22&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer fixture-owner-token",
+            "apikey": "public-fixture-key",
+            "body": [
+              {
+                "user_id": "owner-a",
+                "name": "Test",
+                "key": "sk_404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+                "is_active": true
+              }
+            ]
+          }
+        ],
+        "errors": [
+          [
+            "API key creation error:",
+            {
+              "message": "fixture failure",
+              "code": "42501",
+              "details": "SYNTHETIC_SECRET_IN_DB_ERROR",
+              "hint": null
+            }
+          ]
+        ],
+        "entropy_calls": 3
+      }
+    }
+  ]
+}

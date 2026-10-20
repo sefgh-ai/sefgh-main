@@ -20,6 +20,8 @@
 //   user           what getUser() answers for that session: an object, null
 //                  (no session), or { "error": "..." }
 //   client_throws  true when the project's settings are missing
+//   capture_errors optional synthetic console-error capture for privacy tests;
+//                  absent leaves the existing result shape unchanged.
 //   params         the route's path parameters, as Next.js hands them to
 //                  the handler (decoded): { "id": "c1" }. Each [name] in the
 //                  route is written into the request's path, percent-encoded.
@@ -49,8 +51,14 @@ export const NOW = '2026-10-17T09:30:00.000Z';
 export async function runRouteFixture(handlers, route, fixture) {
   const original = { error: console.error, client: globalThis.__routeClient, Date: globalThis.Date, siteURL: process.env.NEXT_PUBLIC_SITE_URL };
   const database = [];
+  const errors = [];
   try {
-    console.error = () => {};
+    console.error = (...args) => {
+      if (fixture.capture_errors) errors.push(args.map((arg) => typeof arg === 'string' ? arg : {
+        message: arg?.message ?? null, code: arg?.code ?? null,
+        details: arg?.details ?? null, hint: arg?.hint ?? null,
+      }));
+    };
     if (fixture.site_url == null) delete process.env.NEXT_PUBLIC_SITE_URL;
     else process.env.NEXT_PUBLIC_SITE_URL = fixture.site_url;
     const RealDate = original.Date;
@@ -119,6 +127,7 @@ export async function runRouteFixture(handlers, route, fixture) {
       content_type: response.headers.get('content-type'),
       cache_control: response.headers.get('cache-control'),
       database,
+      ...(fixture.capture_errors ? { errors } : {}),
     };
   } finally {
     console.error = original.error;

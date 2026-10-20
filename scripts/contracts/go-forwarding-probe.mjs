@@ -475,6 +475,13 @@ try {
   }
   const next = start(process.execPath, ["node_modules/next/dist/bin/next", production ? "start" : "dev", "--port", String(nextPort), "--hostname", "127.0.0.1"], nextEnv);
   await ready(`http://127.0.0.1:${nextPort}/api/github/languages`, next);
+  // Legacy key creation stays in Next. Check the live privacy fix through the
+  // actual server, with no session and placeholder Supabase settings only.
+  const legacyKeyPrivacy = await raw(nextPort, '/api/playground/keys', {}, JSON.stringify({ name: 'synthetic-privacy-probe' }), 'POST');
+  if (legacyKeyPrivacy.status !== 401 || legacyKeyPrivacy.cache !== 'no-store' || legacyKeyPrivacy.backend !== null) {
+    throw new Error(`legacy key privacy probe failed: status=${legacyKeyPrivacy.status}, cache=${legacyKeyPrivacy.cache}, backend=${legacyKeyPrivacy.backend}`);
+  }
+  console.log('Legacy key privacy: anonymous 401/no-store, Next.js route retained');
   console.log("servers ready; probing", scenarios.length, "requests\n");
 
   // Summary answers are cached by the Go server, so a second identical

@@ -1,0 +1,649 @@
+{
+  "contract_version": 1,
+  "status": "proposed-unwired-core-not-http",
+  "policy_provenance": "synthetic-only-not-approved-rollout",
+  "policy": {
+    "max_active": 2,
+    "max_name_runes": 40,
+    "per_key": 2,
+    "per_owner": 3,
+    "lifetime_seconds": 3600,
+    "window_seconds": 60,
+    "completion_timeout_seconds": 1,
+    "charge_mode": "attempt",
+    "endpoints": {
+      "public-search": "repo:read:public"
+    }
+  },
+  "cases": [
+    {
+      "id": "show-once-list-never-reveals",
+      "reason": "Only issuance supplies a one-time handle; metadata list has no secret/digest.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": "revealed"
+          }
+        },
+        {
+          "op": "list",
+          "owner": "owner-a",
+          "expect": {
+            "error": "",
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "cross-owner-and-anonymous-management",
+      "reason": "Management identity is an adapter-verified subject; foreign revocation is an indistinguishable no-op.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "list",
+          "owner": "owner-b",
+          "expect": {
+            "error": "",
+            "count": 0
+          }
+        },
+        {
+          "op": "list",
+          "owner": "",
+          "expect": {
+            "error": "owner"
+          }
+        },
+        {
+          "op": "revoke",
+          "owner": "owner-b",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "still-active",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "revocation-is-idempotent",
+      "reason": "No reservation ordered after revocation is admitted.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "revoke",
+          "owner": "owner-a",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "revoke",
+          "owner": "owner-a",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "revoked",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "denied",
+            "status": 0,
+            "events": 0,
+            "upstream_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact-expiry-boundary",
+      "reason": "At expires_at the credential is no longer valid.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "advance",
+          "milliseconds": 3600000,
+          "expect": {}
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "expired",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "denied",
+            "status": 0,
+            "events": 0,
+            "upstream_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "before-expiry-still-admits",
+      "reason": "A request immediately before expiry can reserve.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "advance",
+          "milliseconds": 3599999,
+          "expect": {}
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "before-expiry",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "unsupported-endpoint-never-calls-upstream",
+      "reason": "Scope does not confer support for another endpoint.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "private",
+          "endpoint": "private-search",
+          "expect": {
+            "error": "denied",
+            "status": 0,
+            "events": 0,
+            "upstream_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "replay-never-double-executes",
+      "reason": "A repeated server request identity cannot grant upstream work twice.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "once",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "once",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "replay",
+            "status": 0,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "per-key-quota-denial-is-atomic",
+      "reason": "The third request exceeds the explicitly configured two-unit per-key budget.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "one",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "two",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 2,
+            "upstream_calls": 2
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "three",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "limit",
+            "status": 0,
+            "events": 2,
+            "upstream_calls": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "owner-quota-spans-keys",
+      "reason": "Two keys share an owner budget; a denied key request spends neither counter.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "issue",
+          "key": "b",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "b",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "one",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 1,
+            "upstream_calls": 1
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "two",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 2,
+            "upstream_calls": 2
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "key-denied",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "limit",
+            "status": 0,
+            "events": 2,
+            "upstream_calls": 2
+          }
+        },
+        {
+          "op": "execute",
+          "key": "b",
+          "request_id": "three",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 3,
+            "upstream_calls": 3
+          }
+        },
+        {
+          "op": "execute",
+          "key": "b",
+          "request_id": "owner-denied",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "limit",
+            "status": 0,
+            "events": 3,
+            "upstream_calls": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "window-boundary",
+      "reason": "The storage clock starts a new minute bucket at the exact boundary.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "take",
+          "key": "a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "one",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200
+          }
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "two",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200
+          }
+        },
+        {
+          "op": "advance",
+          "milliseconds": 59999,
+          "expect": {}
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "before",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "limit",
+            "status": 0,
+            "events": 2,
+            "upstream_calls": 2
+          }
+        },
+        {
+          "op": "advance",
+          "milliseconds": 1,
+          "expect": {}
+        },
+        {
+          "op": "execute",
+          "key": "a",
+          "request_id": "boundary",
+          "endpoint": "public-search",
+          "expect": {
+            "error": "",
+            "status": 200,
+            "events": 3,
+            "upstream_calls": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "active-key-limit-is-explicit",
+      "reason": "The third active key fails without returning a secret; revoking one frees a slot.",
+      "steps": [
+        {
+          "op": "issue",
+          "key": "a",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "issue",
+          "key": "b",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "issue",
+          "key": "c",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": "active-limit"
+          }
+        },
+        {
+          "op": "revoke",
+          "key": "a",
+          "owner": "owner-a",
+          "expect": {
+            "error": ""
+          }
+        },
+        {
+          "op": "issue",
+          "key": "replacement",
+          "owner": "owner-a",
+          "name": "Test",
+          "scopes": [
+            "repo:read:public"
+          ],
+          "expect": {
+            "error": ""
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,47 @@
 # Claude Code review and reconciliation
 
+## REVIEW-014: KEYS-CORE-001 / BUG-014, 2026-10-20
+
+Sartre independently reviewed the new, unwired `internal/apikey` package, its
+proposed lifecycle fixtures and test-only atomic store, the legacy Next key
+route's privacy correction, and lesson40. Read-only review; no reviewer edits,
+live database/provider operations or additional agents.
+
+Three findings required correction: a Secret value copy duplicated the raw
+credential and bypassed pointer-only redaction (R132); callback panic plus failed
+completion lost the exact recovery record, with a nil-panic compatibility gap
+(R133); a blank line placed lesson40 outside its index table (R134). Codex
+reproduced the credential and panic failures before fixing shared private reveal
+state/value-receiver redaction and callback-return tracking. Nil-panic modes0/1
+and a contiguous lesson-table guard now have regressions. Lesson40 was updated
+alongside the Go changes. Earlier self-review also corrected storage-authoritative
+admission time (R131).
+
+Actual independent regression verdict: **accepted for the unwired foundation
+and bounded legacy privacy correction; no unresolved blocking findings in the
+reviewed scope**. Sartre independently passed focused apikey tests/vet with
+`-p 1`, nil-panic modes0/1, lesson40 solution tests/vet, Node33/33 (legacy key
+privacy/contract tests and lesson-index guard), targeted formatting and diff
+checks. These are distinct from Codex's full suites and production probe.
+
+After that acceptance, Codex added the reviewer's two suggested conformance
+cases: completion committed before its response fails, and completion deadline
+exhaustion after parent cancellation. Both recover the exact receipt twice
+without repeating upstream work or recording another event. A subsequent parent
+ordinary-build check found lesson types declared only in `_test.go` (R135);
+they moved to regular `state.go`. The exercise remains unfinished and untouched.
+Ordinary/solution builds, both vets and solution tests pass; all three ordinary
+exercise tests intentionally fail. Sartre then inspected the final conformance
+deltas and independently passed ordinary/solution builds, both vets, solution
+tests and format for the final scaffold. His final verdict confirms acceptance
+with no unresolved review findings, including these deltas. Full suites and the
+handoff hook remain Codex's separately attributed checks.
+
+No production database adapter, HTTP route, new switch, live credential, cutover
+or deployment is included. The proposed policy is not a rollout approval. Actual
+catalog/RLS/transaction, recovery/retention and browser evidence remain gates;
+the accepted core cannot establish those properties for a future SQL adapter.
+
 ## REVIEW-013: PHASE5-002 / BUG-013 corrective review, 2026-10-20
 
 Mill's actual independent PHASE5-001 review found two P2 defects before acceptance: case-insensitive/Unicode JSON aliases could overwrite a mismatching model or repository ID and falsely return parity; source checker lexical containment followed an outside-root Windows junction. Both were reproduced by Codex with failing-before tests against the actual parser/CLI/checker. This supersedes REVIEW-012's broad acceptance and the prior handoff's premature attribution of Mill acceptance. Claude's original review record is preserved below as an attributed historical result, not evidence these cases passed.

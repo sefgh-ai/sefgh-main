@@ -1,5 +1,7 @@
 # SEFGH backend map
 
+Update2026-10-20 (KEYS-CORE-001 / BUG-014): `POST /api/playground/keys` now sets no-store and logs only a fixed failure event; its version2 contract retains other legacy behavior. An isolated standard-library `internal/apikey` core implements hashed random credentials, one-time reveal, explicit policy and management/accounting interfaces, with test-only shared-store conformance. It is not registered in `cmd/api`, has no production storage adapter or credentials, and adds no route-count progress. R039 remains open. Catalog recheck denied; expected project absent from connector project list, owner restoring access. See [key plan](plans/playground-keys.md) and [core contract](../contracts/api-key-lifecycle/README.md).
+
 Update 2026-10-20 (REVIEW-011 / BUG-012): trending topics are displayed in a
 separate 30-day/all-language section, per the owner's decision; they no longer
 bypass main-list filters. The topics endpoint's JSON/cache/access behavior is

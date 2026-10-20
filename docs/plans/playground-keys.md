@@ -81,6 +81,21 @@ and port together as **AVATAR-001a/b**, after SHARE-002 is committed; keep keys
 blocked explicitly. Trending refresh is a separate worker task with R-077,
 worker privilege and atomic replacement gates, not a shortcut to 25/25.
 
+## KEYS-CORE-001 / BUG-014 foundation (2026-10-20)
+
+The owner requested larger batches. Implemented independent work while catalog access remains blocked:
+
+- Current route characterized in29 synthetic cases using the actual Next handler and supabase-js. Version1 is archived; version2 adds only no-store and fixed secret-free failure logging under AGENTS' live security/privacy exception. Status/body/ownership/legacy generation/retries otherwise unchanged. R127-R129 remain pinned/open; R130 corrected locally, not deployed. See [legacy contract](../../contracts/playground-keys/README.md).
+- Standard-library `backend/internal/apikey` provides a proposed credential format, SHA-256 verifier, explicit one-time secret handle, redacted formatting/JSON boundaries, and isolated lifecycle service. No HTTP registration, database adapter, new environment switch or service-role credential. The browser still uses its existing route/data flow; R039 is not resolved.
+- Management and server-only accounting capabilities are separate Go interfaces. Explicit policy is mandatory. Test-only shared storage models atomic creation limits, validation/reservation/quota/attempt writes, replay rejection, and at-most-once/idempotent completion. Two service instances test shared per-key/per-owner limits, revocation/expiry/scope races, ambiguous writes, cancellation and recovery records. A real adapter must independently prove these properties in its actual transaction/roles; mocks do not establish RLS or distributed quota enforcement.
+- [Proposed core contract](../../contracts/api-key-lifecycle/README.md) has11 serial scenarios plus Go concurrency/failure tests. Synthetic scope/endpoint/limits/expiry/window and explicit attempt-charging are test/implementation proposals, not approved production settings. The format is independent of the existing HTTP version2 contract. No existing key conversion/revocation chosen.
+- Completion uses a bounded uncancelled context; failure returns a typed safe record for exact retry without repeating upstream work. Ambiguous reservations remain pending and deny replay. Storage-authoritative time controls admission/window, not caller timestamps. Retention/recovery worker and HTTP/provider budgets remain later implementation work.
+- Lesson40 covers private secret handles and capability interfaces; owner's existing exercises untouched.
+
+Access checkpoint: owner offered to restore read-only catalog access2026-10-20. A columns-only recheck was still denied MCP-32600. list_projects succeeded but the expected project kohwfuxqbllsmvmsfqci was absent from this connection. No other project queried, rows/credentials read or SQL mutated. Reconnect the account/organization with access to that project; retry catalog only after access changes.
+
+Next batch once definitions are available: independently review additive migration/role-denial/rollback plan; implement the actual user-scoped management and narrowly privileged accounting adapters with conformance/two-user tests, then the default-off supported public endpoint and playground UI. Prepare SQL for owner review before applying it. Preserve no-store/fixed error logging in the replacement rather than reintroducing the privacy defect. Do not choose/run Python workers while their explicit owner gate remains.
+
 ## Rollout and acceptance
 
 Prepare an additive schema first, verify role-denial tests, deploy compatible
