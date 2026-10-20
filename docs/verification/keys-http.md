@@ -81,6 +81,17 @@ Normal handoff will repeat all contracts/fresh Go tests/vet/format/lesson
 solutions after final files and writer release. Actual handoff/commit/remote/
 hosted CI are separate receipts to inspect, not established by writing this report.
 
+Post-commit receipt: Git Agent committed the21-file batch as
+3b52018e9e491f4a597cba07598c4707d3cae573 and pushed it to main/go-backend;
+origin/main also has timestamp-only49bc285. The first normal handoff49383 passed
+contracts/backend but failed during lesson compilation with solution.go briefly
+unavailable while shared-checkout branch synchronization occurred. It emitted
+no completed signal. The file exists again and both branches contain it; local
+full lesson checks had already passed. R142 records the coordination race; a
+stable-checkout full handoff retry follows. Hosted run39443276925 on3b52018 is
+in progress at this receipt, not yet claimed successful. Receipt-only follow-up
+does not change application, fixture or lesson code.
+
 New lesson/contract local links,141 unique contiguous register IDs and diff check
 pass. Existing exercise.go files untouched. No application/UI/HTTP wiring changed,
 so parent did not repeat production Next build/browser/forwarding; hosted workflow
