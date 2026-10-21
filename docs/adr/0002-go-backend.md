@@ -663,3 +663,15 @@ UI pagination, trusted role-JWT rotation, hosted gateway/two-user tests and
 rollout settings remain activation gates. Review SQL before apply. Rollback
 retains hashes/audit; no legacy conversion/revocation. R143 hardening is separate.
 See [SQL review](../database/keys-001-review.md).
+
+### KEYS-UI-001 / BUG-017 (2026-10-21)
+
+The accepted show-once direction now has a separate build-time UI gate,
+`NEXT_PUBLIC_SEFGH_KEYS_V1=1`, off by default. It mounts no legacy key/usage
+components, sends only fixed same-origin bearer requests, treats uncertain
+creation as requiring metadata refresh, and confines the secret to dialog state.
+Reference and pasted-key testing describe public repository search only.
+No Go registration, rewrite, policy value, SQL apply or deployed setting is
+included. Existing legacy behavior remains until an approved transition.
+[UI evidence](../verification/playground-key-ui.md) distinguishes local synthetic
+browser proof from hosted SQL/Auth/accounting and actual rollout gates.

@@ -1,5 +1,12 @@
 # SEFGH backend map
 
+Update2026-10-21 (KEYS-UI-001): separate v1 playground UI under default-off
+NEXT_PUBLIC_SEFGH_KEYS_V1=1, metadata-only owner management and show-once secret,
+pasted-key public search, no legacy fallback/browser usage writes. Reference
+advertises only implemented scope and says unavailable with flag off. Browser
+build flag does not register a backend or create a rewrite; no live setting
+changed. SQL/provisioning/runtime/legacy/cutover gates remain. [UI evidence](verification/playground-key-ui.md).
+
 Update2026-10-21 (KEYS-DB-001): named SEFGH MCP access now works for catalog-only
 inspection of expected User-DB kohwfuxqbllsmvmsfqci. The [snapshot](database/key-catalog-2026-10-21.json)
 contains definitions/grants, no user/key/usage rows. The [review proposal](database/keys-001-review.md)

@@ -98,6 +98,15 @@ Next batch once definitions are available: independently review additive migrati
 
 ## Rollout and acceptance
 
+KEYS-UI-001 (2026-10-21) implements the separate default-off show-once view,
+metadata-only client, owner/tab/unmount lifetime, pasted public-search test and
+truthful reference. `NEXT_PUBLIC_SEFGH_KEYS_V1=1` is a build-time UI selection,
+not runtime registration or rollout approval. No environment was enabled;
+missing v1 service fails closed, never falls back to plaintext or browser usage
+writes. Protected-page synthetic production probes and independent review are
+recorded in [UI evidence](../verification/playground-key-ui.md). Backend
+registration/forwarding and all SQL/provisioning/legacy/cutover gates remain.
+
 KEYS-DB-001 (2026-10-21): catalog access now works through the named SEFGH account.
 The [SQL review](../database/keys-001-review.md) and [snapshot](../database/key-catalog-2026-10-21.json)
 supersede earlier access-denied status. Catalog SELECTs only; additive SQL and

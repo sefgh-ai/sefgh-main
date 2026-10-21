@@ -85,3 +85,7 @@ jobs:
         run: node scripts/contracts/go-forwarding-probe.mjs ./backend/bin/api --production --phase2
       - name: Trending browser flows (local API fixtures)
         run: node scripts/trending-browser-probe.mjs --production
+      - name: Show-once playground (synthetic sessions, no live keys)
+        run: node scripts/keys-browser-probe.mjs
+      - name: Playground default-off gate (separate production build)
+        run: node scripts/keys-browser-probe.mjs --off

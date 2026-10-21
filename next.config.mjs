@@ -106,7 +106,7 @@ function goBackendRewrites() {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // The local production forwarding probe must not replace a developer's build.
-  distDir: process.env.SEFGH_FORWARDING_PROBE === '1' ? '.next-forwarding-probe' : '.next',
+  distDir: process.env.SEFGH_KEYS_UI_PROBE === '1' ? '.next-key-ui-probe' : process.env.SEFGH_FORWARDING_PROBE === '1' ? '.next-forwarding-probe' : '.next',
   reactCompiler: false, // Disabled - causing 50s+ compile times
   compress: true,
   poweredByHeader: false,

@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     ".next-forwarding-probe/**",
+    ".next-key-ui-probe/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

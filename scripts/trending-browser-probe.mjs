@@ -24,6 +24,7 @@ console.log(`Browser probe executable: ${chrome}`);
 const portServer = net.createServer(); portServer.listen(0, '127.0.0.1'); await once(portServer, 'listening');
 const port = portServer.address().port; await new Promise(done => portServer.close(done));
 const profile = mkdtempSync(join(tmpdir(), 'sefgh-trending-browser-'));
+const launchStarted = performance.now();
 const browser = spawn(chrome, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', 'about:blank'], { stdio: ['ignore','ignore','pipe'], windowsHide: true });
 const browserMonitor=observeBrowser(browser);
 const sleep = ms => new Promise(done => setTimeout(done, ms));
@@ -87,6 +88,12 @@ async function session(view) {
 const results = [];
 let next;
 try {
+  // Readiness has its own cold-launch budget. Target creation keeps the short
+  // per-command budget; the previous eight-second wait could not distinguish
+  // a slow, still-live runner process from a protocol failure.
+  const version = await devtoolsEndpoint({ monitor: browserMonitor, port, path: '/json/version', timeout: 45000 });
+  assert.ok(typeof version?.Browser === 'string' && typeof version?.['Protocol-Version'] === 'string', 'invalid DevTools version response');
+  console.log(`Browser ready after ${Math.round(performance.now() - launchStarted)}ms: ${version.Browser.slice(0, 100)}`);
   if (startProduction) {
     next = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', base.port], {
       env: { ...process.env, SEFGH_FORWARDING_PROBE: '1', NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid', NEXT_PUBLIC_SUPABASE_ANON_KEY: 'probe-placeholder', NEXT_TELEMETRY_DISABLED: '1' },

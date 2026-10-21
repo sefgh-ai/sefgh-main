@@ -1,5 +1,41 @@
 # Claude Code review and reconciliation
 
+## REVIEW-019: KEYS-UI-001 / BUG-017 and CI-BROWSER-001b, 2026-10-21
+
+Hume read-only accepted corrected default-off client/UI/reference/fixture source;
+no remaining blocking source finding. Initial review reproduced post-dispatch
+session ambiguity, blocked-session cancellation, history response cap, numeric
+selector, encoded query and stale-search/modal accessibility gaps (R159-R165).
+Parent added failing regressions before client correction; final13client tests
+pass independently under Hume. Hume also passed syntax/diff and three isolated
+checks: real fixture cookie filter matches base/chunks, ignored-abort fetch
+cancels, and stalled body with never-resolving cancel promise still settles.
+No reviewer production build/browser or live/SQL/Go runtime calls.
+
+Parent actual protected Next production probe passes desktop1280, narrow390 and
+CSSzoom200percent at640, zoom set before forms/dialogs. SDK-generated sessions
+include chunked ownerB and removal of old cookie chunks. Checks cover exact
+pasted bearer, no legacy requests, single submission, Enter/Tab/ShiftTab/Escape,
+honest/deferred clipboard, reveal bounds/focus, metadata-only list/404 refusal,
+failed/successful revoke with modal feedback/focus, input-edit stale invalidation,
+pending owner switch and client navigation, ambiguous no-retry and cookie choice
+hit-testing above navigation. Manually inspected phone/zoom reveal screenshots.
+Default-off separate production build/probe87508 exits0 with no v1 UI/requests.
+These are parent-run synthetic proofs, not hosted authorization/accounting.
+
+R158 focus and R166 CookieBar clipping were reproduced through actual browser
+checks/screenshots and corrected. Full lint first hit generated-output ENOENT
+(R168); isolated build directory now excluded alongside existing forwarding
+output. Final lint outcome belongs to parent coordination, not reviewer claims.
+
+Hume separately accepts the fixed45s/json/version startup experiment with
+unchanged sandbox/launch flags and short subsequent target commands. Hosted
+39601025772 established alive Chrome/ECONNREFUSED after8s plus bounded D-Bus
+messages, not a sandbox cause. Serializing Chrome readiness before Next changes
+both timing/overlap: a green run proves that arrangement, not a unique D-Bus
+or old-timeout cause. R155 remains open until actual hosted evidence. No SQL
+apply, policy/credential provisioning, environment activation or cutover approved.
+
 ## REVIEW-018: CI-BROWSER-001a diagnostics, 2026-10-21
 
 Final source acceptance includes R156 stdout+stderr reporting and R157

@@ -45,3 +45,9 @@ test('oversized DevTools reply retains a fixed diagnostic reason',async()=>{
  const server=await fixture((_,response)=>response.end(JSON.stringify({payload:'x'.repeat(70000)})));const monitor=observeBrowser(idleBrowser());
  try{await assert.rejects(devtoolsEndpoint({monitor,port:server.port,path:'/json/new',timeout:1000,probeTimeout:500}),/REPLY_TOO_LARGE/);}finally{monitor.dispose();await server.close();}
 });
+
+test('cold startup readiness has one bounded budget distinct from target commands',async()=>{
+ let ready=false;const server=await fixture((request,response)=>{if(!ready){response.writeHead(503).end();return;}assert.equal(request.url,'/json/version');response.end(JSON.stringify({Browser:'Synthetic/1','Protocol-Version':'1.3'}));});
+ const monitor=observeBrowser(idleBrowser());
+ try{await assert.rejects(devtoolsEndpoint({monitor,port:server.port,path:'/json/version',timeout:40,probeTimeout:20}),/DevTools not ready/);setTimeout(()=>{ready=true;},100);assert.deepEqual(await devtoolsEndpoint({monitor,port:server.port,path:'/json/version',timeout:1000}),{Browser:'Synthetic/1','Protocol-Version':'1.3'});}finally{monitor.dispose();await server.close();}
+});

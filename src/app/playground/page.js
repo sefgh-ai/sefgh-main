@@ -12,6 +12,7 @@ import { SearchSidebar } from "@/components/search/SearchSidebar";
 import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import Footer from "@/components/Footer";
 import PlaygroundHeader from "@/components/playground/PlaygroundHeader";
+import V1Playground from "@/components/playground/V1Playground";
 import { playgroundTabs } from "@/lib/utils/playground/tabConfig";
 import { Button } from "@/components/ui/button";
 
@@ -75,7 +76,7 @@ export default function PlaygroundPage() {
               <div className="container mx-auto max-w-7xl">
                 <PlaygroundHeader />
 
-                <Tabs
+                {process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1' ? <V1Playground key={user.id} userId={user.id} /> : <Tabs
                   value={activeTab}
                   onValueChange={setActiveTab}
                   className="space-y-6"
@@ -102,7 +103,7 @@ export default function PlaygroundPage() {
                       <Component userId={user.id} />
                     </TabsContent>
                   ))}
-                </Tabs>
+                </Tabs>}
               </div>
             </div>
           </SidebarInset>

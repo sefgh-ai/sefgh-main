@@ -1,5 +1,19 @@
 # R155 browser startup evidence
 
+CI-BROWSER-001a committed791b471; hosted39601025772 failed only final browser
+step119225250210. PostgreSQL, race/vet, lessons, production build,152forwarding
+and Phase2 passed. Actual bounded failure: Chrome child alive, code/signalnull,
+ECONNREFUSED8s, three D-Bus address messages. No sandbox cause established.
+
+CI-BROWSER-001b experiments with one45s GET/json/version startup deadline before
+starting Next, validates version fields and logs monotonic elapsed from spawn.
+Target creation still uses the short8s command budget; launch/sandbox flags
+unchanged. Hume accepted evidence plan. Deterministic regression first denies
+readiness then delays acceptance under a separate longer bound. Local actual
+Chrome155.0.8059.85 ready417ms; desktop/phone each7checks pass. Hosted result
+pending new commit; if it succeeds it establishes this serial arrangement, not
+the sole cause of the prior delay. No product/API timeout changed.
+
 Final follow-up: six focused diagnostic/CLI cases pass on Windows and actual
 Linux Docker Node24 (pinned91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4).
 R156 real CLI regression first reproduced discarded assertion stdout; four

@@ -1,90 +1,34 @@
 import Link from "next/link";
-import { Code2, KeyRound, ShieldCheck, Gauge, ArrowRight } from "lucide-react";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {
   title: "API Reference | SEFGH",
-  description: "Mock API reference overview. Swap with live docs when ready.",
+  description: "Personal API keys and public repository search.",
   alternates: { canonical: "https://sefgh.org/api-reference" },
 };
-
-const endpoints = [
-  {
-    method: "GET",
-    path: "/api/v1/search",
-    desc: "Semantic + keyword search across GitHub.",
-    note: "Query, language, stars, pagination parameters supported.",
-  },
-  {
-    method: "POST",
-    path: "/api/v1/chat",
-    desc: "Chat with repositories or code snippets.",
-    note: "Send message, repo context, and mode (explain / summarize).",
-  },
-  {
-    method: "GET",
-    path: "/api/v1/trending",
-    desc: "Trending repositories with filters.",
-    note: "Params: since=daily|weekly|monthly, language, spokenLanguage.",
-  },
-];
-
+const available = process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1';
 export default function ApiReferencePage() {
-  return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-        <header className="space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-200 text-sm font-medium">
-            <Code2 className="w-4 h-4" />
-            API reference
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold">SEFGH API</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Mock endpoint list for now. Swap this page to your generated docs once the API is live.
-          </p>
-        </header>
-
-        <section className="grid md:grid-cols-3 gap-4">
-          {endpoints.map((ep) => (
-            <div
-              key={ep.path}
-              className="rounded-2xl border border-border bg-card/60 p-5 space-y-2"
-            >
-              <div className="flex items-center gap-2 text-sm text-emerald-200">
-                <span className="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 uppercase font-semibold text-xs">
-                  {ep.method}
-                </span>
-                <span className="text-muted-foreground font-mono text-sm">{ep.path}</span>
-              </div>
-              <div className="text-foreground font-semibold">{ep.desc}</div>
-              <p className="text-muted-foreground text-sm">{ep.note}</p>
-            </div>
-          ))}
+  return <main className="min-h-screen bg-background text-foreground">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+      <header className="space-y-3"><h1 className="text-3xl font-bold">SEFGH API reference</h1>
+        <p className="text-muted-foreground">Personal keys provide read access to public GitHub repository search.</p></header>
+      {!available ? <section className="rounded-xl border p-5 space-y-3">
+        <h2 className="text-xl font-semibold">The new API is not available yet</h2>
+        <p>API key access will be announced when it is ready. Existing playground keys cannot be used with the new API.</p>
+      </section> : <>
+        <section className="rounded-xl border p-5 space-y-3"><h2 className="text-xl font-semibold">Create and protect a key</h2>
+          <p><Link className="underline" href="/playground">Open the playground</Link> while signed in to create, list or revoke your keys. Save a new key when it appears: it is shown once and cannot be retrieved later.</p>
+          <p>Each key allows public repository search only. It cannot access private repositories, chat or your account data. Keep it on your server, outside source control. Use HTTPS.</p>
+          <p>Keys expire and can be revoked. A revoked or expired key no longer works. If you lose a key, revoke it and create a replacement.</p>
         </section>
-
-        <section className="grid md:grid-cols-3 gap-4">
-          {[{ title: "Auth", desc: "Use bearer tokens from account settings.", Icon: KeyRound }, { title: "Rate limits", desc: "Tier-based limits; contact us for higher quotas.", Icon: Gauge }, { title: "Security", desc: "HTTPS required; keys must be kept secret.", Icon: ShieldCheck }].map(({ title, desc, Icon }) => (
-            <div key={title} className="rounded-2xl border border-border bg-card/60 p-5 space-y-2">
-              <Icon className="w-5 h-5 text-primary" />
-              <div className="text-foreground font-semibold">{title}</div>
-              <p className="text-muted-foreground text-sm">{desc}</p>
-            </div>
-          ))}
+        <section className="rounded-xl border p-5 space-y-3"><h2 className="text-xl font-semibold">GET /api/v1/search</h2>
+          <p>Send a repository query in the <code>q</code> parameter and your key in the <code>Authorization: Bearer</code> header. Responses use <code>total_count</code> and <code>items</code>.</p>
+          <pre className="whitespace-pre-wrap break-all rounded bg-muted p-4 text-sm"><code>{'curl --get https://sefgh.org/api/v1/search --data-urlencode "q=Go HTTP server" --header "Authorization: Bearer $SEFGH_API_KEY"'}</code></pre>
+          <p>The playground can test this endpoint with a pasted key. Tests count toward your quota. Quotas and key availability depend on your account; this page does not promise an unlimited allowance.</p>
+          <dl className="space-y-2 text-sm"><div><dt className="font-semibold">401</dt><dd>Check that your API key is complete, active and unexpired.</dd></div><div><dt className="font-semibold">429</dt><dd>Your quota has been reached. Wait before trying again.</dd></div><div><dt className="font-semibold">503 or 404</dt><dd>The key service is unavailable. Creation may be unconfirmed: refresh the metadata list and revoke unexpected keys before trying again.</dd></div></dl>
         </section>
-
-        <div className="rounded-2xl border border-border bg-card/60 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="text-foreground">
-            Need SDK samples? This is a placeholder—link it to your real docs repo later.
-          </div>
-          <Link
-            href="/docs"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-primary text-white text-sm font-medium"
-          >
-            Go to Docs <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-      <AppFooter />
-    </main>
-  );
+      </>}
+      <Link className="inline-block underline" href="/playground">Back to playground</Link>
+    </div><AppFooter />
+  </main>;
 }

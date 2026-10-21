@@ -13,13 +13,13 @@ export default function CookieBar() {
   if (consent !== "") return null;
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-auto">
-      <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-background/90 backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+    <div role="region" aria-label="Cookie choices" className="fixed bottom-20 md:bottom-3 inset-x-3 z-40 mx-auto w-auto max-w-4xl max-h-[70dvh] overflow-y-auto rounded-2xl border border-border bg-background/90 backdrop-blur-xl shadow-2xl shadow-black/40">
+      <div className="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="flex-1 text-sm text-foreground">
           We use analytics cookies (Google Analytics) to see how SEFGH is used
           and make it better. You can opt out at any time.
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Button variant="ghost" size="sm" asChild>
             <a href="/cookie-policy">Cookie Policy</a>
           </Button>
