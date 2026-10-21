@@ -26,12 +26,14 @@
 
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, delimiter } from 'node:path';
 import { computeTreeHash, stampPendingSync } from './handoff-state.mjs';
 
 const ROOT = resolve(process.cwd());
 const GO_BIN_PATH = `${process.env.LOCALAPPDATA || ''}\\Programs\\Go\\bin`;
-const PATH_WITH_GO = `${GO_BIN_PATH};${process.env.PATH || ''}`;
+const PATH_WITH_GO = process.platform === 'win32'
+  ? `${GO_BIN_PATH}${delimiter}${process.env.PATH || ''}`
+  : process.env.PATH || '';
 const SIGNAL_PATH = resolve(ROOT, '.agent-signal.json');
 const COORD_PATH = resolve(ROOT, 'docs/coordination.md');
 
@@ -205,7 +207,7 @@ console.log('=== SEFGH Multi-Agent Handoff & Verification ===\n');
 console.log('1. Checking contract fixtures (npm run test:contracts)...');
 const contracts = run('npm run test:contracts');
 if (!contracts.ok) {
-  console.error('❌ Contract tests failed:\n', contracts.err || contracts.out);
+  console.error('❌ Contract tests failed:\n', [contracts.out, contracts.err].filter(Boolean).join('\n'));
   process.exit(1);
 }
 console.log('✅ Contracts passed.');
@@ -214,12 +216,12 @@ console.log('✅ Contracts passed.');
 console.log('\n2. Checking Go backend (go test, go vet, gofmt)...');
 const goTest = run('go test -count=1 ./...', resolve(ROOT, 'backend'));
 if (!goTest.ok) {
-  console.error('❌ backend/ go test failed:\n', goTest.err || goTest.out);
+  console.error('❌ backend/ go test failed:\n', [goTest.out, goTest.err].filter(Boolean).join('\n'));
   process.exit(1);
 }
 const goVet = run('go vet ./...', resolve(ROOT, 'backend'));
 if (!goVet.ok) {
-  console.error('❌ backend/ go vet failed:\n', goVet.err || goVet.out);
+  console.error('❌ backend/ go vet failed:\n', [goVet.out, goVet.err].filter(Boolean).join('\n'));
   process.exit(1);
 }
 const goFmt = run('gofmt -l .', resolve(ROOT, 'backend'));
@@ -233,7 +235,7 @@ console.log('✅ Go backend passed.');
 console.log('\n3. Checking learn-go solutions (go test -tags solution ./...)...');
 const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
 if (!learnGo.ok) {
-  console.error('❌ learn-go solution tests failed:\n', learnGo.err || learnGo.out);
+  console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
   process.exit(1);
 }
 console.log('✅ learn-go solutions passed.');

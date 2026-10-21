@@ -8,6 +8,7 @@ import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
 import net from 'node:net';
+import { observeBrowser, devtoolsEndpoint } from './browser-startup.mjs';
 
 async function freePort() {
   const server = net.createServer(); server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -19,17 +20,15 @@ assert.ok(base.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(base.
 const report = process.argv[3];
 const chrome = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/google-chrome', '/usr/bin/chromium'].find(existsSync);
 assert.ok(chrome, 'Chrome or Edge required');
+console.log(`Browser probe executable: ${chrome}`);
 const portServer = net.createServer(); portServer.listen(0, '127.0.0.1'); await once(portServer, 'listening');
 const port = portServer.address().port; await new Promise(done => portServer.close(done));
 const profile = mkdtempSync(join(tmpdir(), 'sefgh-trending-browser-'));
-const browser = spawn(chrome, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', 'about:blank'], { stdio: 'ignore', windowsHide: true });
+const browser = spawn(chrome, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', 'about:blank'], { stdio: ['ignore','ignore','pipe'], windowsHide: true });
+const browserMonitor=observeBrowser(browser);
 const sleep = ms => new Promise(done => setTimeout(done, ms));
 async function endpoint(path, method = 'GET') {
-  for (let i = 0; i < 80; i++) {
-    try { const r = await fetch(`http://127.0.0.1:${port}${path}`, { method }); if (r.ok) return r.json(); } catch {}
-    await sleep(100);
-  }
-  throw new Error(`DevTools not ready: ${path}`);
+  return devtoolsEndpoint({monitor:browserMonitor,port,path,method});
 }
 
 function fixtures() {
@@ -143,7 +142,8 @@ try {
   if (report) writeFileSync(report, JSON.stringify(results, null, 2) + '\n');
 } finally {
   if (next && next.exitCode === null) { const stopped = once(next, 'exit'); next.kill(); await Promise.race([stopped, sleep(3000)]); }
-  if (browser.exitCode === null) { const stopped = once(browser, 'exit'); browser.kill(); await Promise.race([stopped, sleep(3000)]); }
+  if (browser.pid && browser.exitCode === null && browser.signalCode === null) { const stopped = once(browser, 'exit'); browser.kill(); await Promise.race([stopped, sleep(3000)]); }
+  browserMonitor.dispose();
   const root = resolve(tmpdir()) + sep;
   if (resolve(profile).startsWith(root) && resolve(profile).split(sep).at(-1).startsWith('sefgh-trending-browser-')) {
     try { rmSync(profile, { recursive: true, force: true }); } catch {}

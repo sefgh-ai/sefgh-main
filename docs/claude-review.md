@@ -1,5 +1,24 @@
 # Claude Code review and reconciliation
 
+## REVIEW-018: CI-BROWSER-001a diagnostics, 2026-10-21
+
+Final source acceptance includes R156 stdout+stderr reporting and R157
+Windows-only Go PATH prefix. Hume independently passed six final Windows cases,
+two extra permanent-size/timeout observations, syntax/diff. Parent reproduced
+Linux PATH red and passed all six tests after fixes in disposable pinned Node24
+container. First unidentified normal-handoff contract failure is not attributed
+to oversize without evidence. Final parent1491contracts and strictlint0 pass.
+
+Hume read-only accepted the three-file bounded Chrome diagnostics patch for
+evidence collection. Independently passed four committed real-process/HTTP
+tests, five temporary adversarial cases (stalled body, oversize, malformed JSON,
+HTTP403 and signal), Node syntax and diff. Parent local desktop/phone production
+probe passed14checks; parent Node contracts1489 and strict lint0 passed before
+one extra regression. Suggested preserving fixed size/network error reasons;
+implemented with bounded identifier-only codes and a fifth committed test.
+Root Linux startup cause remains unconfirmed; no sandbox/launch flags changed.
+This does not accept runtime enablement, SQL apply, show-once UI or full CI.
+
 ## REVIEW-017: KEYS-DB-002 / BUG-015, 2026-10-21
 
 Hume independently accepted the readiness correction and subsequent atomic test
