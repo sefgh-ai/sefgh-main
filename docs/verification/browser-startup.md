@@ -1,5 +1,13 @@
 # R155 browser startup evidence
 
+Hosted39606408872 on6a1ee1a: trending browserSUCCESS, actual
+Chrome155.0.8059.39 readiness8055ms, followed by desktop/phone assertions.
+PostgreSQL/race/vet/lessons/forwarding/build also passed. The whole run isFAILED
+because the later new-key fixture clicked disabled Revoke during metadata
+refresh (R169), not because of Chrome startup. Default-off key step skipped.
+The measured launch exceeds8s; serialization plus45s startup budget establishes
+a working arrangement, without isolating CPU overlap or D-Bus as sole cause.
+
 CI-BROWSER-001a committed791b471; hosted39601025772 failed only final browser
 step119225250210. PostgreSQL, race/vet, lessons, production build,152forwarding
 and Phase2 passed. Actual bounded failure: Chrome child alive, code/signalnull,

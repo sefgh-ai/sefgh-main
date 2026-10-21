@@ -42,7 +42,7 @@ let next,browser,monitor,profile;
 const results=[];
 function installFixture(config){
  localStorage.removeItem('sefgh-cookie-consent');
- const original=window.fetch.bind(window),state=window.__keysProbe={calls:[],unexpected:[],rows:[],pending:[],copyPending:[],slowCopy:false,slowCreate:false,slowSearch:false,createStatus:201,listStatus:200,revokeStatus:204,copyFails:true,clipboard:'',creates:0,expectedKey:'sk_sefgh_v1_'+'B'.repeat(16)+'.'+'A'.repeat(43)};
+ const original=window.fetch.bind(window),state=window.__keysProbe={calls:[],unexpected:[],rows:[],pending:[],pendingLists:[],copyPending:[],slowCopy:false,slowCreate:false,slowSearch:false,slowList:false,createStatus:201,listStatus:200,revokeStatus:204,copyFails:true,clipboard:'',creates:0,expectedKey:'sk_sefgh_v1_'+'B'.repeat(16)+'.'+'A'.repeat(43)};
  Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{if(state.copyFails)throw Error('Synthetic clipboard denial');if(state.slowCopy)return new Promise(done=>state.copyPending.push(()=>{state.clipboard=value;done();}));state.clipboard=value;}}});
  const id=index=>String.fromCharCode(65+index).repeat(16);
  const make=owner=>{const keyId=id(state.creates);return {id:keyId,owner_id:owner,name:'Fixture key',prefix:`sk_sefgh_v1_${keyId}.`,scopes:['repo:read:public'],created_at:'2026-10-21T00:00:00Z',expires_at:'2099-10-21T00:00:00Z',revoked_at:null};};
@@ -52,7 +52,7 @@ function installFixture(config){
   const session=config.sessions.find(s=>bearer===`Bearer ${s.access_token}`);
   if(url.pathname.startsWith('/api/v1/')){
    state.calls.push({path:url.pathname,method,owner:session?.user.id||'api-key',pasted:bearer===`Bearer ${state.expectedKey}`});
-   if(url.pathname==='/api/v1/keys'&&method==='GET')return Response.json(state.listStatus===200?{keys:state.rows.filter(row=>row.owner_id===session?.user.id)}:{error:'Synthetic outage'},{status:state.listStatus});
+   if(url.pathname==='/api/v1/keys'&&method==='GET'){const answer=()=>Response.json(state.listStatus===200?{keys:state.rows.filter(row=>row.owner_id===session?.user.id)}:{error:'Synthetic outage'},{status:state.listStatus});if(state.slowList)return new Promise(done=>state.pendingLists.push(()=>done(answer())));return answer();}
    if(url.pathname==='/api/v1/keys'&&method==='POST'){
     state.creates++;const row=make(session?.user.id);row.name=JSON.parse(init.body).name;state.rows.push(row);
     const answer=()=>Response.json({key:row,secret:row.prefix+'A'.repeat(43)},{status:state.createStatus});
@@ -81,7 +81,9 @@ async function browserSession(view){
  const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>{pending.delete(n);reject(Error('CDP timeout: '+method));},8000);pending.set(n,{resolve,reject,timer});ws.send(JSON.stringify({id:n,method,params}));});
  const evaluate=async expression=>{const result=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(result.exceptionDetails)throw Error(String(result.exceptionDetails.exception?.description||result.exceptionDetails.text).slice(0,1000));return result.result.value;};
  const wait=async expression=>{const end=Date.now()+12000;while(Date.now()<end){if(await evaluate(`Boolean(document.body && (${expression}))`))return;await sleep(80);}throw Error('UI wait failed: '+expression);};
- const click=async label=>{const expression=`[...document.querySelectorAll('button,a')].find(e=>e.textContent.trim()===${JSON.stringify(label)})`;await wait(`!!(${expression})`);await evaluate(`(${expression}).click()`);};
+ const clickExpression=async expression=>{await wait(`!!(${expression}) && !(${expression}).disabled && (${expression}).getBoundingClientRect().height>0`);await evaluate(`(${expression}).click()`);};
+ const click=label=>clickExpression(`[...document.querySelectorAll('button,a')].find(e=>e.textContent.trim()===${JSON.stringify(label)})`);
+ const clickSelector=selector=>clickExpression(`document.querySelector(${JSON.stringify(selector)})`);
  const input=async(selector,value)=>{await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.focus();e.select();})()`);await send('Input.insertText',{text:value});};
  const key=async(key,code=key,modifiers=0)=>{await send('Input.dispatchKeyEvent',{type:'keyDown',key,code,modifiers,windowsVirtualKeyCode:key==='Enter'?13:key==='Escape'?27:9,...(key==='Enter'?{text:'\r',unmodifiedText:'\r'}:{})});await send('Input.dispatchKeyEvent',{type:'keyUp',key,code,modifiers,windowsVirtualKeyCode:key==='Enter'?13:key==='Escape'?27:9});};
  await send('Page.enable');await send('Runtime.enable');await send('Network.enable');
@@ -92,7 +94,7 @@ async function browserSession(view){
  await setOwner(0);
  await send('Page.navigate',{url:base+'/playground'});
  if(view.name==='zoom200')await evaluate(`document.documentElement.style.zoom='2'`);
- return {send,evaluate,wait,click,input,key,setOwner,exceptions,close:async()=>{rejectAll();ws.close();await fetch(`http://127.0.0.1:${debugPort}/json/close/${target.id}`).catch(()=>{});}};
+ return {send,evaluate,wait,click,clickSelector,input,key,setOwner,exceptions,close:async()=>{rejectAll();ws.close();await fetch(`http://127.0.0.1:${debugPort}/json/close/${target.id}`).catch(()=>{});}};
 }
 try {
  if(!reuse){
@@ -128,10 +130,13 @@ try {
    await s.key('Escape');await s.wait(`!document.querySelector('[aria-label="New API key"]')`);await s.evaluate('window.__keysProbe.copyPending.shift()()');await sleep(100);assert.equal(await s.evaluate(`document.body.textContent.includes('Copied.')`),false,'late copy success cleared');
    await s.wait(`document.activeElement.id==='v1-key-name'`);
    await s.click('Refresh key list');await sleep(120);assert.equal(await s.evaluate(`document.body.textContent.includes('A'.repeat(43))`),false,'secret not listed');
-   await s.evaluate('window.__keysProbe.listStatus=404');await s.click('Refresh key list');await s.wait(`document.body.textContent.includes('The key service is unavailable.')`);await s.evaluate('window.__keysProbe.listStatus=200');await s.click('Refresh key list');await s.wait(`!document.body.textContent.includes('The key service is unavailable.')`);
-   await s.evaluate(`window.__keysProbe.revokeStatus=503;document.querySelector('button[aria-label="Revoke Fixture key"]').click()`);await s.click('Confirm revocation');await s.wait(`document.querySelector('[role="dialog"] [role="status"]').textContent.includes('unavailable')`);
+   await s.evaluate('window.__keysProbe.listStatus=404');await s.click('Refresh key list');await s.wait(`document.body.textContent.includes('The key service is unavailable.')`);
+   await s.evaluate('window.__keysProbe.listStatus=200;window.__keysProbe.slowList=true');await s.click('Refresh key list');await s.wait('window.__keysProbe.pendingLists.length===1');
+   assert.equal(await s.evaluate(`document.querySelector('button[aria-label="Revoke Fixture key"]').disabled`),true,'refresh locks revoke');
+   await s.evaluate(`window.__keysProbe.revokeStatus=503;setTimeout(()=>{window.__keysProbe.slowList=false;window.__keysProbe.pendingLists.shift()();},150)`);
+   await s.clickSelector('button[aria-label="Revoke Fixture key"]');await s.click('Confirm revocation');await s.wait(`!!document.querySelector('[role="dialog"] [role="status"]') && document.querySelector('[role="dialog"] [role="status"]').textContent.includes('unavailable')`);
    await s.click('Cancel');await s.wait(`document.activeElement.getAttribute('aria-label')==='Revoke Fixture key'`);
-   await s.evaluate(`window.__keysProbe.revokeStatus=204;document.querySelector('button[aria-label="Revoke Fixture key"]').click()`);await s.click('Confirm revocation');await s.wait(`document.body.textContent.includes('Key revoked.')`);await s.wait(`document.activeElement.textContent==='Refresh key list'`);
+   await s.evaluate(`window.__keysProbe.revokeStatus=204`);await s.clickSelector('button[aria-label="Revoke Fixture key"]');await s.click('Confirm revocation');await s.wait(`document.body.textContent.includes('Key revoked.')`);await s.wait(`document.activeElement.textContent==='Refresh key list'`);
    assert.equal(await s.evaluate(`document.querySelector('button[aria-label="Revoke Fixture key"]').disabled`),true);
    await s.click('Test public search');await s.input('#v1-test-key','sk_sefgh_v1_'+ 'B'.repeat(16)+'.'+'A'.repeat(43));await s.input('#v1-test-query','Go server');await s.click('Run public search');await s.wait(`document.body.textContent.includes('fixture/public-repo')`);
    assert.equal(await s.evaluate(`window.__keysProbe.calls.find(c=>c.path==='/api/v1/search').pasted`),true);

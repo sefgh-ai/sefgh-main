@@ -1,5 +1,18 @@
 # Claude Code review and reconciliation
 
+## REVIEW-020: CI-BROWSER-001c / BUG-018, 2026-10-21
+
+Hume read-only accepted R169 fixture synchronization; no remaining blocker.
+Click helpers wait enabled/positive-height controls. Deliberately deferred list
+asserts disabled Revoke before release; subsequent modal error/cancel focus/
+successful revoke/disabled revoked-row checks remain intact. Parent actual
+production probe55014 passes desktop/390/200percent zoom; focused lint0/syntax/
+diff pass. Reviewer independently syntax/diff pass; no browser/build/live calls.
+No application/Go/SQL/lesson source changed. Hosted39606408872 remains failed
+overall/default-off skipped, despite successful Chrome readiness8055ms and
+all pre-key checks. Replacement whole CI required. Earlier source acceptance
+stands; serial45s readiness proves this arrangement, not a unique D-Bus cause.
+
 ## REVIEW-019: KEYS-UI-001 / BUG-017 and CI-BROWSER-001b, 2026-10-21
 
 Hume read-only accepted corrected default-off client/UI/reference/fixture source;

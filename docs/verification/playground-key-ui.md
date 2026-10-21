@@ -1,5 +1,14 @@
 # Show-once playground verification
 
+Hosted follow-up:39606408872 on6a1ee1a passed all pre-key checks, but enabled
+key fixture failed a premature disabled-Revoke click after404 refresh recovery.
+R169 is a fixture synchronization defect; no product DELETE/dialog occurred.
+CI-BROWSER-001c / BUG-018 waits enabled/visible controls and deliberately delays
+metadata refresh to verify the product lock and eventual revoke interaction.
+Corrected parent production desktop/390/zoom200 probe passes; syntax/focused
+lint/diff pass. Replacement hosted acceptance remains pending. No app/Go/SQL
+changed in this follow-up; final default-off hosted result still required.
+
 KEYS-UI-001 / BUG-017, 2026-10-21. Source base791b471, result uncommitted
 until normal handoff/Git Agent receipt. SQL remains a review proposal.
 
