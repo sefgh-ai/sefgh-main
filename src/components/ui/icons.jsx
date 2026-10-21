@@ -170,7 +170,7 @@ import {
 /**
  * Higher-order component wrapping Hugeicons into Lucide/Heroicon compatible React forwardRef components.
  */
-function createIcon(iconDef, defaultStrokeWidth = 2) {
+export function createIcon(iconDef, defaultStrokeWidth = 2) {
   const IconComponent = React.forwardRef(function IconComponent(
     { strokeWidth = defaultStrokeWidth, className, ...props },
     ref
@@ -188,6 +188,8 @@ function createIcon(iconDef, defaultStrokeWidth = 2) {
   IconComponent.displayName = (iconDef && iconDef.name) || "HugeIcon";
   return IconComponent;
 }
+
+export { HugeiconsIcon, HugeiconsIcon as HugeIcon, HugeiconsIcon as Icon };
 
 // -------------------------------------------------------------
 // Lucide-compatible icon exports

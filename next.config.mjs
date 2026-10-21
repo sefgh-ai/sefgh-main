@@ -190,6 +190,8 @@ const nextConfig = {
 
   experimental: {
     optimizePackageImports: [
+      '@hugeicons/react',
+      '@hugeicons/core-free-icons',
       'lucide-react',
       'recharts',
       '@radix-ui/react-icons',
