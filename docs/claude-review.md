@@ -1,5 +1,28 @@
 # Claude Code review and reconciliation
 
+## REVIEW-016: KEYS-DB-001, 2026-10-21
+
+Independent read-only reviewer Hume accepted the corrected unregistered SQL/RPC
+foundation, with no unresolved source blocker. Initial review found timestamp
+representation comparison, conflicting completion against a saved recovery
+receipt and100pending starvation; parent reproduced the first two RED and fixed
+all three. Additional finite-time, same-name overload, unbounded owner-history
+and legacy project-key configuration findings were corrected/regressed. These
+are R146-R152; native self-review R144/R145 also corrected. R143 excess live
+legacy TRUNCATE privilege has a separate tested proposal, not live apply.
+
+Hume independently passed full apikey test/vet, targeted format/diff, lesson42
+solution tests, ordinary/solution builds and both vets. Native120checks are
+Codex evidence, not reviewer-run. Source acceptance excludes live SQL, trusted
+role-JWT provisioning/effective hosted privileges, policy/retention/recovery,
+UI, runtime/forwarding/legacy transition, cutover and deployment. Final reviewed
+SQL SHA256 CE091529781D5A6522431CEF4BCBACA6540F04D16383D695FE7E9BC7AA16B211;
+owner RPC27D4FF7E95769EFA2DEC96BC10E124C6BBA71F4A4BD4CD2C9A4EE12690731A04;
+accounting D797BC1B0F5FED0CF196D855A0056982F986255D218FA295736F0434BCFC67C7.
+Review was source-only/no edits, other agents, ownership changes or hooks.
+Documentation follow-ups (pagination, evidence link, initial JS cursor payload)
+were corrected after acceptance. See [verification](verification/keys-db.md).
+
 ## REVIEW-015: KEYS-HTTP-001, 2026-10-20
 
 Sartre independently reviewed the unregistered key HTTP adapters, proposed

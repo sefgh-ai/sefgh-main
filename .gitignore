@@ -50,5 +50,6 @@ next-env.d.ts
 
 # Go build output
 /backend/bin/
+/supabase/.temp/
 *.exe
 *.test

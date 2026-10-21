@@ -1,5 +1,12 @@
 # SEFGH Go backend
 
+KEYS-DB-001 adds unregistered `internal/apikey` RPC adapters: a verified user
+manager and separate server accountant. No runtime switch, policy seed or live
+SQL apply is included. See [SQL review](../docs/database/keys-001-review.md),
+[RPC protocol](../contracts/api-key-rpc/README.md) and
+[verification](../docs/verification/keys-db.md). The accountant never replaces
+the user's bearer for ordinary CRUD.
+
 API routes that have moved out of Next.js. The plan and its rules are in `../docs/adr/0002-go-backend.md`. This file covers running, testing and switching.
 
 It uses only Go's standard library: there are no third-party dependencies.

@@ -646,3 +646,20 @@ SQL/RLS/quotas/recovery. No runtime registration, default enablement or new
 deployment setting. Limits/charging/expiry remain synthetic proposals. Actual
 catalog, owner-reviewed SQL/rollout, adapter conformance, browser/forwarding and
 cutover remain gates. See [HTTP contract](../../contracts/api-key-http/README.md).
+
+### KEYS-DB-001: catalog-backed SQL/RPC capabilities (2026-10-21)
+
+The named SEFGH connection now permits catalog-only verification of expected
+User-DB. The hashed/show-once direction has an additive review-only SQL proposal
+and unregistered standard-library Go adapters. SQL generates material/derives
+owner, then makes atomic quota decisions with its post-lock clock. Management
+retains the verified user bearer. Separate NOLOGIN/NOBYPASSRLS accounting has
+designated RPC grants; effective PUBLIC/inherited access still requires hosted
+verification. No policy, credential provisioning, live apply or runtime switch.
+Exact safe receipt comparison and indexed history/recovery pages address
+contradictory completion and starvation. Go preserves the proposed HTTP array
+within18s/100pages and fails closed above its cap. Recovery worker, retention,
+UI pagination, trusted role-JWT rotation, hosted gateway/two-user tests and
+rollout settings remain activation gates. Review SQL before apply. Rollback
+retains hashes/audit; no legacy conversion/revocation. R143 hardening is separate.
+See [SQL review](../database/keys-001-review.md).

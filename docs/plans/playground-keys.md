@@ -98,6 +98,19 @@ Next batch once definitions are available: independently review additive migrati
 
 ## Rollout and acceptance
 
+KEYS-DB-001 (2026-10-21): catalog access now works through the named SEFGH account.
+The [SQL review](../database/keys-001-review.md) and [snapshot](../database/key-catalog-2026-10-21.json)
+supersede earlier access-denied status. Catalog SELECTs only; additive SQL and
+Go owner/accounting adapters implemented/tested locally. No policy seeded or
+live SQL applied. Trusted accountant JWT provisioning, hosted effective grants,
+owner SQL review, recovery/retention, UI, runtime and cutover remain gates.
+This advances KEYS-001a/b, not original route count or R039 closure. See
+[verification](../verification/keys-db.md). SQL derives owner/generates secrets;
+Go retains the same verified user bearer, with a separate accounting capability.
+Indexed100row keyset pages bound history and pending discovery. Go preserves the
+proposed HTTP array within18s/100pages and refuses truncation. Recovery pages
+include lost receipts without authorizing provider replay or a worker.
+
 KEYS-HTTP-001 (2026-10-20) adds an independent unregistered HTTP foundation:
 POST/GET /api/v1/keys, owner-scoped idempotent DELETE and GET /api/v1/search
 using the reviewed key core. The [proposed HTTP contract](../../contracts/api-key-http/README.md)

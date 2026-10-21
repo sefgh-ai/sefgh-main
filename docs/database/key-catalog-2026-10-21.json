@@ -1,0 +1,1519 @@
+{
+  "captured_on": "2026-10-21",
+  "project_id": "kohwfuxqbllsmvmsfqci",
+  "account_name": "SEFGH",
+  "scope": "catalog-only-no-table-row-values",
+  "sections": [
+    {
+      "section": "columns",
+      "query": "select table_name, column_name, data_type, udt_schema, udt_name,\n       is_nullable, column_default\nfrom information_schema.columns\nwhere table_schema = 'public'\n  and (table_name in ('api_keys', 'api_limits', 'api_logs', 'api_usage_logs', 'api_usage', 'usage_logs')\n       or table_name like '%api%key%' or table_name like '%usage%')\norder by table_name, ordinal_position",
+      "rows": [
+        {
+          "table_name": "api_keys",
+          "column_name": "id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": "gen_random_uuid()"
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "user_id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "name",
+          "data_type": "text",
+          "udt_schema": "pg_catalog",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "key",
+          "data_type": "text",
+          "udt_schema": "pg_catalog",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "is_active",
+          "data_type": "boolean",
+          "udt_schema": "pg_catalog",
+          "udt_name": "bool",
+          "is_nullable": "YES",
+          "column_default": "true"
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_schema": "pg_catalog",
+          "udt_name": "timestamptz",
+          "is_nullable": "NO",
+          "column_default": "timezone('utc'::text, now())"
+        },
+        {
+          "table_name": "api_keys",
+          "column_name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_schema": "pg_catalog",
+          "udt_name": "timestamptz",
+          "is_nullable": "NO",
+          "column_default": "timezone('utc'::text, now())"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": "gen_random_uuid()"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "user_id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "rate_limit_per_minute",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "YES",
+          "column_default": "60"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "rate_limit_per_hour",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "YES",
+          "column_default": "1000"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "rate_limit_per_day",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "YES",
+          "column_default": "10000"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "max_request_size",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "YES",
+          "column_default": "10"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "enable_rate_limiting",
+          "data_type": "boolean",
+          "udt_schema": "pg_catalog",
+          "udt_name": "bool",
+          "is_nullable": "YES",
+          "column_default": "true"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "enable_ip_whitelist",
+          "data_type": "boolean",
+          "udt_schema": "pg_catalog",
+          "udt_name": "bool",
+          "is_nullable": "YES",
+          "column_default": "false"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "enable_cors",
+          "data_type": "boolean",
+          "udt_schema": "pg_catalog",
+          "udt_name": "bool",
+          "is_nullable": "YES",
+          "column_default": "true"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "ip_whitelist",
+          "data_type": "jsonb",
+          "udt_schema": "pg_catalog",
+          "udt_name": "jsonb",
+          "is_nullable": "YES",
+          "column_default": "'[]'::jsonb"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_schema": "pg_catalog",
+          "udt_name": "timestamptz",
+          "is_nullable": "NO",
+          "column_default": "timezone('utc'::text, now())"
+        },
+        {
+          "table_name": "api_limits",
+          "column_name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_schema": "pg_catalog",
+          "udt_name": "timestamptz",
+          "is_nullable": "NO",
+          "column_default": "timezone('utc'::text, now())"
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": "gen_random_uuid()"
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "user_id",
+          "data_type": "uuid",
+          "udt_schema": "pg_catalog",
+          "udt_name": "uuid",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "method",
+          "data_type": "text",
+          "udt_schema": "pg_catalog",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "endpoint",
+          "data_type": "text",
+          "udt_schema": "pg_catalog",
+          "udt_name": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "status_code",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "response_time",
+          "data_type": "integer",
+          "udt_schema": "pg_catalog",
+          "udt_name": "int4",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "request_body",
+          "data_type": "text",
+          "udt_schema": "pg_catalog",
+          "udt_name": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "cost",
+          "data_type": "numeric",
+          "udt_schema": "pg_catalog",
+          "udt_name": "numeric",
+          "is_nullable": "YES",
+          "column_default": "0"
+        },
+        {
+          "table_name": "api_logs",
+          "column_name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_schema": "pg_catalog",
+          "udt_name": "timestamptz",
+          "is_nullable": "NO",
+          "column_default": "timezone('utc'::text, now())"
+        }
+      ]
+    },
+    {
+      "section": "tables",
+      "query": "select c.relname as table_name, c.relrowsecurity, c.relforcerowsecurity,\n       pg_catalog.pg_get_userbyid(c.relowner) as owner, c.relacl\nfrom pg_catalog.pg_class c\njoin pg_catalog.pg_namespace n on n.oid = c.relnamespace\nwhere n.nspname = 'public' and c.relkind in ('r', 'p', 'v')\n  and (c.relname in ('api_keys', 'api_limits', 'api_logs') or c.relname like '%api%key%' or c.relname like '%usage%')\norder by c.relname",
+      "rows": [
+        {
+          "table_name": "api_keys",
+          "relrowsecurity": true,
+          "relforcerowsecurity": false,
+          "owner": "postgres",
+          "relacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+        },
+        {
+          "table_name": "api_limits",
+          "relrowsecurity": true,
+          "relforcerowsecurity": false,
+          "owner": "postgres",
+          "relacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+        },
+        {
+          "table_name": "api_logs",
+          "relrowsecurity": true,
+          "relforcerowsecurity": false,
+          "owner": "postgres",
+          "relacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+        }
+      ]
+    },
+    {
+      "section": "policies",
+      "query": "select tablename, policyname, roles, cmd, qual, with_check\nfrom pg_catalog.pg_policies\nwhere schemaname = 'public'\n  and (tablename in ('api_keys', 'api_limits', 'api_logs') or tablename like '%api%key%' or tablename like '%usage%')\norder by tablename, policyname",
+      "rows": [
+        {
+          "tablename": "api_keys",
+          "policyname": "Users can delete their own API keys",
+          "roles": "{public}",
+          "cmd": "DELETE",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        },
+        {
+          "tablename": "api_keys",
+          "policyname": "Users can insert their own API keys",
+          "roles": "{public}",
+          "cmd": "INSERT",
+          "qual": null,
+          "with_check": "(auth.uid() = user_id)"
+        },
+        {
+          "tablename": "api_keys",
+          "policyname": "Users can update their own API keys",
+          "roles": "{public}",
+          "cmd": "UPDATE",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        },
+        {
+          "tablename": "api_keys",
+          "policyname": "Users can view their own API keys",
+          "roles": "{public}",
+          "cmd": "SELECT",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        },
+        {
+          "tablename": "api_limits",
+          "policyname": "Users can insert their own API limits",
+          "roles": "{public}",
+          "cmd": "INSERT",
+          "qual": null,
+          "with_check": "(auth.uid() = user_id)"
+        },
+        {
+          "tablename": "api_limits",
+          "policyname": "Users can update their own API limits",
+          "roles": "{public}",
+          "cmd": "UPDATE",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        },
+        {
+          "tablename": "api_limits",
+          "policyname": "Users can view their own API limits",
+          "roles": "{public}",
+          "cmd": "SELECT",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        },
+        {
+          "tablename": "api_logs",
+          "policyname": "Users can insert their own API logs",
+          "roles": "{public}",
+          "cmd": "INSERT",
+          "qual": null,
+          "with_check": "(auth.uid() = user_id)"
+        },
+        {
+          "tablename": "api_logs",
+          "policyname": "Users can view their own API logs",
+          "roles": "{public}",
+          "cmd": "SELECT",
+          "qual": "(auth.uid() = user_id)",
+          "with_check": null
+        }
+      ]
+    },
+    {
+      "section": "constraints",
+      "query": "select r.relname as table_name, c.conname,\n       pg_catalog.pg_get_constraintdef(c.oid) as definition\nfrom pg_catalog.pg_constraint c\njoin pg_catalog.pg_class r on r.oid = c.conrelid\njoin pg_catalog.pg_namespace n on n.oid = r.relnamespace\nwhere n.nspname = 'public'\n  and (r.relname in ('api_keys', 'api_limits', 'api_logs') or r.relname like '%api%key%' or r.relname like '%usage%')\norder by r.relname, c.conname",
+      "rows": [
+        {
+          "table_name": "api_keys",
+          "conname": "api_keys_key_key",
+          "definition": "UNIQUE (key)"
+        },
+        {
+          "table_name": "api_keys",
+          "conname": "api_keys_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "table_name": "api_keys",
+          "conname": "api_keys_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        },
+        {
+          "table_name": "api_limits",
+          "conname": "api_limits_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "table_name": "api_limits",
+          "conname": "api_limits_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        },
+        {
+          "table_name": "api_limits",
+          "conname": "api_limits_user_id_key",
+          "definition": "UNIQUE (user_id)"
+        },
+        {
+          "table_name": "api_logs",
+          "conname": "api_logs_pkey",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "table_name": "api_logs",
+          "conname": "api_logs_user_id_fkey",
+          "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "section": "triggers",
+      "query": "select r.relname as table_name, t.tgname,\n       pg_catalog.pg_get_triggerdef(t.oid) as trigger_definition,\n       pg_catalog.pg_get_functiondef(t.tgfoid) as function_definition\nfrom pg_catalog.pg_trigger t\njoin pg_catalog.pg_class r on r.oid = t.tgrelid\njoin pg_catalog.pg_namespace n on n.oid = r.relnamespace\nwhere n.nspname = 'public' and not t.tgisinternal\n  and (r.relname in ('api_keys', 'api_limits', 'api_logs') or r.relname like '%api%key%' or r.relname like '%usage%')\norder by r.relname, t.tgname",
+      "rows": [
+        {
+          "table_name": "api_keys",
+          "tgname": "set_updated_at_api_keys",
+          "trigger_definition": "CREATE TRIGGER set_updated_at_api_keys BEFORE UPDATE ON public.api_keys FOR EACH ROW EXECUTE FUNCTION handle_updated_at()",
+          "function_definition": "CREATE OR REPLACE FUNCTION public.handle_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    NEW.updated_at = timezone('utc'::text, now());\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "table_name": "api_limits",
+          "tgname": "set_updated_at_api_limits",
+          "trigger_definition": "CREATE TRIGGER set_updated_at_api_limits BEFORE UPDATE ON public.api_limits FOR EACH ROW EXECUTE FUNCTION handle_updated_at()",
+          "function_definition": "CREATE OR REPLACE FUNCTION public.handle_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    NEW.updated_at = timezone('utc'::text, now());\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        }
+      ]
+    },
+    {
+      "section": "functions",
+      "query": "select n.nspname as schema_name, p.proname,\n       pg_catalog.pg_get_function_identity_arguments(p.oid) as arguments,\n       p.prosecdef, p.proconfig, p.proacl,\n       pg_catalog.pg_get_functiondef(p.oid) as definition\nfrom pg_catalog.pg_proc p\njoin pg_catalog.pg_namespace n on n.oid = p.pronamespace\nwhere n.nspname = 'public' and p.prokind = 'f'\n  and (p.proname like '%api%key%' or p.proname like '%usage%')\norder by p.proname, arguments",
+      "rows": [
+        {
+          "schema_name": "public",
+          "proname": "increment_category_usage",
+          "arguments": "category_name text",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.increment_category_usage(category_name text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  UPDATE public.categories\r\n  SET usage_count = usage_count + 1\r\n  WHERE name = category_name AND is_active = true;\r\nEND;\r\n$function$\n"
+        }
+      ]
+    }
+  ],
+  "extra": [
+    {
+      "section": "roles",
+      "query": "select rolname,rolsuper,rolinherit,rolcreaterole,rolcanlogin,rolbypassrls from pg_catalog.pg_roles where rolname in ('anon','authenticated','service_role','authenticator','sefgh_key_accountant') order by rolname",
+      "rows": [
+        {
+          "rolname": "anon",
+          "rolsuper": false,
+          "rolinherit": true,
+          "rolcreaterole": false,
+          "rolcanlogin": false,
+          "rolbypassrls": false
+        },
+        {
+          "rolname": "authenticated",
+          "rolsuper": false,
+          "rolinherit": true,
+          "rolcreaterole": false,
+          "rolcanlogin": false,
+          "rolbypassrls": false
+        },
+        {
+          "rolname": "authenticator",
+          "rolsuper": false,
+          "rolinherit": false,
+          "rolcreaterole": false,
+          "rolcanlogin": true,
+          "rolbypassrls": false
+        },
+        {
+          "rolname": "service_role",
+          "rolsuper": false,
+          "rolinherit": true,
+          "rolcreaterole": false,
+          "rolcanlogin": false,
+          "rolbypassrls": true
+        }
+      ]
+    },
+    {
+      "section": "crypto_functions",
+      "query": "select e.extname,n.nspname as schema_name,e.extversion from pg_catalog.pg_extension e join pg_catalog.pg_namespace n on n.oid=e.extnamespace where e.extname in ('pgcrypto','uuid-ossp'); select n.nspname,p.proname,pg_get_function_identity_arguments(p.oid) as arguments from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace where p.proname in ('gen_random_bytes','digest','gen_random_uuid') order by p.proname,n.nspname",
+      "rows": [
+        {
+          "nspname": "extensions",
+          "proname": "digest",
+          "arguments": "bytea, text"
+        },
+        {
+          "nspname": "extensions",
+          "proname": "digest",
+          "arguments": "text, text"
+        },
+        {
+          "nspname": "extensions",
+          "proname": "gen_random_bytes",
+          "arguments": "integer"
+        },
+        {
+          "nspname": "extensions",
+          "proname": "gen_random_uuid",
+          "arguments": ""
+        },
+        {
+          "nspname": "pg_catalog",
+          "proname": "gen_random_uuid",
+          "arguments": ""
+        }
+      ]
+    },
+    {
+      "section": "grants",
+      "query": "select table_name,grantee,privilege_type from information_schema.table_privileges where table_schema='public' and table_name in ('api_keys','api_limits','api_logs') order by table_name,grantee,privilege_type",
+      "rows": [
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "anon",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "authenticated",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "postgres",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_keys",
+          "grantee": "service_role",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "anon",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "authenticated",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "postgres",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_limits",
+          "grantee": "service_role",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "anon",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "authenticated",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "postgres",
+          "privilege_type": "UPDATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "DELETE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "INSERT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "SELECT"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "table_name": "api_logs",
+          "grantee": "service_role",
+          "privilege_type": "UPDATE"
+        }
+      ]
+    },
+    {
+      "section": "new_object_collisions",
+      "query": "select n.nspname,c.relname,c.relkind from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace where n.nspname='sefgh_keys' or (n.nspname='public' and c.relname like 'sefgh_key%')",
+      "rows": []
+    },
+    {
+      "section": "memberships",
+      "query": "select pg_get_userbyid(roleid) as granted_role,pg_get_userbyid(member) as member,admin_option,inherit_option,set_option from pg_catalog.pg_auth_members order by granted_role,member",
+      "rows": [
+        {
+          "granted_role": "anon",
+          "member": "authenticator",
+          "admin_option": false,
+          "inherit_option": false,
+          "set_option": true
+        },
+        {
+          "granted_role": "anon",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "authenticated",
+          "member": "authenticator",
+          "admin_option": false,
+          "inherit_option": false,
+          "set_option": true
+        },
+        {
+          "granted_role": "authenticated",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "authenticator",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "authenticator",
+          "member": "supabase_storage_admin",
+          "admin_option": false,
+          "inherit_option": false,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_create_subscription",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_monitor",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_monitor",
+          "member": "supabase_etl_admin",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_monitor",
+          "member": "supabase_read_only_user",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_read_all_data",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_read_all_data",
+          "member": "supabase_etl_admin",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_read_all_data",
+          "member": "supabase_read_only_user",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_read_all_settings",
+          "member": "pg_monitor",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_read_all_stats",
+          "member": "pg_monitor",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_signal_backend",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "pg_stat_scan_tables",
+          "member": "pg_monitor",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "service_role",
+          "member": "authenticator",
+          "admin_option": false,
+          "inherit_option": false,
+          "set_option": true
+        },
+        {
+          "granted_role": "service_role",
+          "member": "postgres",
+          "admin_option": true,
+          "inherit_option": true,
+          "set_option": true
+        },
+        {
+          "granted_role": "supabase_realtime_admin",
+          "member": "postgres",
+          "admin_option": false,
+          "inherit_option": true,
+          "set_option": true
+        }
+      ]
+    },
+    {
+      "section": "schemas",
+      "query": "select nspname,pg_get_userbyid(nspowner) as owner,nspacl from pg_catalog.pg_namespace where nspname in ('public','auth','sefgh_keys');",
+      "rows": [
+        {
+          "nspname": "auth",
+          "owner": "supabase_admin",
+          "nspacl": "{supabase_admin=UC/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin,supabase_auth_admin=UC/supabase_admin,dashboard_user=UC/supabase_admin,postgres=U/supabase_admin}"
+        },
+        {
+          "nspname": "public",
+          "owner": "pg_database_owner",
+          "nspacl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,postgres=U/pg_database_owner,anon=U/pg_database_owner,authenticated=U/pg_database_owner,service_role=U/pg_database_owner}"
+        }
+      ]
+    },
+    {
+      "section": "default_acls",
+      "query": "select defaclrole::regrole::text as owner,coalesce(n.nspname,'*') as schema_name,defaclobjtype,defaclacl from pg_catalog.pg_default_acl d left join pg_catalog.pg_namespace n on n.oid=d.defaclnamespace order by owner,schema_name,defaclobjtype",
+      "rows": [
+        {
+          "owner": "postgres",
+          "schema_name": "public",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+        },
+        {
+          "owner": "postgres",
+          "schema_name": "public",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+        },
+        {
+          "owner": "postgres",
+          "schema_name": "public",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+        },
+        {
+          "owner": "postgres",
+          "schema_name": "storage",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+        },
+        {
+          "owner": "postgres",
+          "schema_name": "storage",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+        },
+        {
+          "owner": "postgres",
+          "schema_name": "storage",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "extensions",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=r*w*U*/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "extensions",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X*/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "extensions",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=a*r*w*d*D*x*t*m*/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql_public",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql_public",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "graphql_public",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "public",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "public",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "public",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "realtime",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/supabase_admin,dashboard_user=rwU/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "realtime",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/supabase_admin,dashboard_user=X/supabase_admin}"
+        },
+        {
+          "owner": "supabase_admin",
+          "schema_name": "realtime",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=a*r*wdDxtm/supabase_admin,dashboard_user=arwdDxtm/supabase_admin}"
+        },
+        {
+          "owner": "supabase_auth_admin",
+          "schema_name": "auth",
+          "defaclobjtype": "S",
+          "defaclacl": "{postgres=rwU/supabase_auth_admin,dashboard_user=rwU/supabase_auth_admin}"
+        },
+        {
+          "owner": "supabase_auth_admin",
+          "schema_name": "auth",
+          "defaclobjtype": "f",
+          "defaclacl": "{postgres=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}"
+        },
+        {
+          "owner": "supabase_auth_admin",
+          "schema_name": "auth",
+          "defaclobjtype": "r",
+          "defaclacl": "{postgres=arwdDxtm/supabase_auth_admin,dashboard_user=arwdDxtm/supabase_auth_admin}"
+        }
+      ]
+    },
+    {
+      "section": "application_functions",
+      "query": "select p.proname,pg_get_function_identity_arguments(p.oid) as arguments,p.prosecdef,p.proconfig,p.proacl,pg_get_functiondef(p.oid) as definition from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.prokind='f' and not exists(select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e') order by p.proname,arguments",
+      "rows": [
+        {
+          "proname": "create_reply_notification",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.create_reply_notification()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n  parent_user_id UUID;\r\nBEGIN\r\n  -- Only create notification for replies (not top-level comments)\r\n  IF NEW.parent_comment_id IS NOT NULL THEN\r\n    -- Get the user_id of the parent comment\r\n    SELECT user_id INTO parent_user_id\r\n    FROM repository_comments\r\n    WHERE id = NEW.parent_comment_id;\r\n    \r\n    -- Don't notify if replying to own comment\r\n    IF parent_user_id != NEW.user_id THEN\r\n      INSERT INTO repository_notifications (user_id, type, repo_full_name, comment_id, from_user_id)\r\n      VALUES (parent_user_id, 'comment_reply', NEW.repo_full_name, NEW.id, NEW.user_id);\r\n    END IF;\r\n  END IF;\r\n  \r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "create_user_stats_on_signup",
+          "arguments": "",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.create_user_stats_on_signup()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  INSERT INTO public.user_stats (user_id)\n  VALUES (NEW.id)\n  ON CONFLICT (user_id) DO NOTHING;\n  RETURN NEW;\nEND;\n$function$\n"
+        },
+        {
+          "proname": "get_repository_stats",
+          "arguments": "repo_name text",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.get_repository_stats(repo_name text)\n RETURNS json\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n  result JSON;\r\nBEGIN\r\n  SELECT json_build_object(\r\n    'total_bookmarks', (SELECT COUNT(*) FROM repository_bookmarks WHERE repo_full_name = repo_name),\r\n    'total_votes', (SELECT COUNT(*) FROM repository_votes WHERE repo_full_name = repo_name),\r\n    'average_rating', (SELECT COALESCE(AVG(rating), 0) FROM repository_votes WHERE repo_full_name = repo_name),\r\n    'total_comments', (SELECT COUNT(*) FROM repository_comments WHERE repo_full_name = repo_name AND parent_comment_id IS NULL),\r\n    'total_shares', (SELECT COUNT(*) FROM repository_shares WHERE repo_full_name = repo_name)\r\n  ) INTO result;\r\n  \r\n  RETURN result;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "get_user_activity_heatmap",
+          "arguments": "p_user_id uuid, p_days integer",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.get_user_activity_heatmap(p_user_id uuid, p_days integer DEFAULT 365)\n RETURNS TABLE(activity_date date, total_count integer)\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n  SELECT \r\n    activity_date,\r\n    SUM(activity_count)::INTEGER as total_count\r\n  FROM public.activity_logs\r\n  WHERE user_id = p_user_id\r\n    AND activity_date >= CURRENT_DATE - p_days\r\n  GROUP BY activity_date\r\n  ORDER BY activity_date;\r\n$function$\n"
+        },
+        {
+          "proname": "get_user_activity_stats",
+          "arguments": "p_user_id uuid, p_days integer",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.get_user_activity_stats(p_user_id uuid, p_days integer DEFAULT 365)\n RETURNS TABLE(total_activities bigint, avg_per_day numeric, current_streak integer, max_streak integer, active_days bigint)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_current_streak INTEGER := 0;\r\n  v_max_streak INTEGER := 0;\r\n  v_temp_streak INTEGER := 0;\r\n  v_date DATE;\r\n  v_has_activity BOOLEAN;\r\nBEGIN\r\n  -- Get basic stats\r\n  SELECT \r\n    COALESCE(SUM(activity_count), 0),\r\n    COALESCE(ROUND(SUM(activity_count)::NUMERIC / NULLIF(p_days, 0), 1), 0),\r\n    COUNT(DISTINCT activity_date)\r\n  INTO \r\n    total_activities,\r\n    avg_per_day,\r\n    active_days\r\n  FROM public.activity_logs\r\n  WHERE user_id = p_user_id\r\n    AND activity_date >= CURRENT_DATE - p_days;\r\n\r\n  -- Calculate current streak (from today backwards)\r\n  v_current_streak := 0;\r\n  FOR i IN 0..p_days LOOP\r\n    v_date := CURRENT_DATE - i;\r\n    \r\n    SELECT EXISTS(\r\n      SELECT 1 \r\n      FROM public.activity_logs \r\n      WHERE user_id = p_user_id \r\n        AND activity_date = v_date\r\n    ) INTO v_has_activity;\r\n    \r\n    IF v_has_activity THEN\r\n      v_current_streak := v_current_streak + 1;\r\n    ELSE\r\n      EXIT;\r\n    END IF;\r\n  END LOOP;\r\n\r\n  -- Calculate max streak\r\n  v_temp_streak := 0;\r\n  v_max_streak := 0;\r\n  FOR i IN 0..p_days LOOP\r\n    v_date := CURRENT_DATE - i;\r\n    \r\n    SELECT EXISTS(\r\n      SELECT 1 \r\n      FROM public.activity_logs \r\n      WHERE user_id = p_user_id \r\n        AND activity_date = v_date\r\n    ) INTO v_has_activity;\r\n    \r\n    IF v_has_activity THEN\r\n      v_temp_streak := v_temp_streak + 1;\r\n      IF v_temp_streak > v_max_streak THEN\r\n        v_max_streak := v_temp_streak;\r\n      END IF;\r\n    ELSE\r\n      v_temp_streak := 0;\r\n    END IF;\r\n  END LOOP;\r\n\r\n  current_streak := v_current_streak;\r\n  max_streak := v_max_streak;\r\n\r\n  RETURN NEXT;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "handle_new_user",
+          "arguments": "",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  INSERT INTO public.profiles (id, email, full_name, avatar_url)\r\n  VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url');\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "handle_notification_read",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_notification_read()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    IF NEW.is_read = true AND OLD.is_read = false THEN\r\n        NEW.read_at = now();\r\n    END IF;\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "handle_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    NEW.updated_at = timezone('utc'::text, now());\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "handle_user_update",
+          "arguments": "",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_user_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  UPDATE public.profiles SET email = NEW.email, full_name = NEW.raw_user_meta_data->>'full_name', \r\n  avatar_url = NEW.raw_user_meta_data->>'avatar_url', updated_at = NOW() WHERE id = NEW.id;\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "increment_category_usage",
+          "arguments": "category_name text",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.increment_category_usage(category_name text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  UPDATE public.categories\r\n  SET usage_count = usage_count + 1\r\n  WHERE name = category_name AND is_active = true;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "increment_platform_stat",
+          "arguments": "key text",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.increment_platform_stat(key text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  UPDATE public.platform_stats \n  SET stat_value = stat_value + 1,\n      updated_at = now()\n  WHERE stat_key = key;\nEND;\n$function$\n"
+        },
+        {
+          "proname": "is_trending_data_stale",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.is_trending_data_stale()\n RETURNS boolean\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  RETURN NOT EXISTS (\r\n    SELECT 1 FROM trending_repos\r\n    WHERE fetched_at > NOW() - INTERVAL '3 days'\r\n    LIMIT 1\r\n  );\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "log_user_activity",
+          "arguments": "p_user_id uuid, p_activity_type text, p_metadata jsonb",
+          "prosecdef": false,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.log_user_activity(p_user_id uuid, p_activity_type text, p_metadata jsonb DEFAULT '{}'::jsonb)\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\r\nbegin\r\n  if p_user_id is distinct from auth.uid() then\r\n    raise exception 'activity can only be logged for the signed-in user'\r\n      using errcode = '42501';\r\n  end if;\r\n\r\n  insert into public.activity_logs as logs\r\n    (user_id, activity_type, activity_date, activity_count, metadata)\r\n  values (p_user_id, p_activity_type, current_date, 1, p_metadata)\r\n  on conflict (user_id, activity_type, activity_date)\r\n  do update set\r\n    activity_count = logs.activity_count + 1,\r\n    metadata = p_metadata,\r\n    updated_at = now();\r\nend;\r\n$function$\n"
+        },
+        {
+          "proname": "match_repo_embeddings",
+          "arguments": "query_embedding vector, match_count integer, match_offset integer, min_similarity double precision, filter_language text, min_stars integer",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.match_repo_embeddings(query_embedding vector, match_count integer, match_offset integer DEFAULT 0, min_similarity double precision DEFAULT 0.2, filter_language text DEFAULT NULL::text, min_stars integer DEFAULT NULL::integer)\n RETURNS TABLE(repo_id bigint, repo_full_name text, description text, html_url text, clone_url text, language text, topics text[], license jsonb, stargazers_count integer, forks_count integer, updated_at timestamp with time zone, similarity double precision)\n LANGUAGE sql\n STABLE\nAS $function$\r\n  select\r\n    repo_id,\r\n    repo_full_name,\r\n    description,\r\n    html_url,\r\n    clone_url,\r\n    language,\r\n    topics,\r\n    license,\r\n    stargazers_count,\r\n    forks_count,\r\n    updated_at,\r\n    1 - (embedding <=> query_embedding) as similarity\r\n  from public.repo_embeddings\r\n  where (filter_language is null or language ilike filter_language)\r\n    and (min_stars is null or stargazers_count >= min_stars)\r\n    and (1 - (embedding <=> query_embedding)) >= min_similarity\r\n  order by embedding <=> query_embedding\r\n  limit match_count offset match_offset;\r\n$function$\n"
+        },
+        {
+          "proname": "update_cache_fetch",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_cache_fetch()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.fetch_count = OLD.fetch_count + 1;\r\n  NEW.last_fetched = NOW();\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_comment_vote_count",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_comment_vote_count()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  IF TG_OP = 'INSERT' THEN\r\n    IF NEW.vote_type = 'upvote' THEN\r\n      UPDATE repo_comments SET upvotes = upvotes + 1 WHERE id = NEW.comment_id;\r\n    ELSE\r\n      UPDATE repo_comments SET downvotes = downvotes + 1 WHERE id = NEW.comment_id;\r\n    END IF;\r\n  ELSIF TG_OP = 'UPDATE' THEN\r\n    IF OLD.vote_type = 'upvote' THEN\r\n      UPDATE repo_comments SET upvotes = upvotes - 1 WHERE id = OLD.comment_id;\r\n    ELSE\r\n      UPDATE repo_comments SET downvotes = downvotes - 1 WHERE id = OLD.comment_id;\r\n    END IF;\r\n    IF NEW.vote_type = 'upvote' THEN\r\n      UPDATE repo_comments SET upvotes = upvotes + 1 WHERE id = NEW.comment_id;\r\n    ELSE\r\n      UPDATE repo_comments SET downvotes = downvotes + 1 WHERE id = NEW.comment_id;\r\n    END IF;\r\n  ELSIF TG_OP = 'DELETE' THEN\r\n    IF OLD.vote_type = 'upvote' THEN\r\n      UPDATE repo_comments SET upvotes = upvotes - 1 WHERE id = OLD.comment_id;\r\n    ELSE\r\n      UPDATE repo_comments SET downvotes = downvotes - 1 WHERE id = OLD.comment_id;\r\n    END IF;\r\n  END IF;\r\n  RETURN NULL;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_conversation_message_count",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_conversation_message_count()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN NEW.total_messages = jsonb_array_length(NEW.messages); NEW.last_message_at = NOW(); RETURN NEW; END;\r\n$function$\n"
+        },
+        {
+          "proname": "update_conversation_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_conversation_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN NEW.updated_at = NOW(); RETURN NEW; END;\r\n$function$\n"
+        },
+        {
+          "proname": "update_onboarding_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_onboarding_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.updated_at = NOW();\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_profiles_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_profiles_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.updated_at = NOW();\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_shared_conversation_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_shared_conversation_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.updated_at = now();\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_trending_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_trending_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.updated_at = NOW();\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_updated_at_column",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_updated_at_column()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n  NEW.updated_at = timezone('utc'::text, now());\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "update_user_stats_updated_at",
+          "arguments": "",
+          "prosecdef": false,
+          "proconfig": null,
+          "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.update_user_stats_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = now();\n  RETURN NEW;\nEND;\n$function$\n"
+        },
+        {
+          "proname": "upsert_shared_conversation",
+          "arguments": "p_conversation_id uuid, p_is_public boolean, p_title text, p_summary text, p_snapshot jsonb",
+          "prosecdef": true,
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "definition": "CREATE OR REPLACE FUNCTION public.upsert_shared_conversation(p_conversation_id uuid, p_is_public boolean, p_title text, p_summary text, p_snapshot jsonb)\n RETURNS shared_conversations\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_share public.shared_conversations;\r\nBEGIN\r\n  -- Try update existing share (owned by caller)\r\n  UPDATE public.shared_conversations\r\n  SET is_public = COALESCE(p_is_public, is_public),\r\n      title = COALESCE(p_title, title),\r\n      summary = COALESCE(p_summary, summary),\r\n      snapshot = COALESCE(p_snapshot, snapshot),\r\n      deleted_at = NULL\r\n  WHERE conversation_id = p_conversation_id AND created_by = auth.uid()\r\n  RETURNING * INTO v_share;\r\n\r\n  IF NOT FOUND THEN\r\n    INSERT INTO public.shared_conversations(\r\n      conversation_id, created_by, is_public, title, summary, snapshot\r\n    ) VALUES (\r\n  p_conversation_id, auth.uid(), COALESCE(p_is_public, TRUE), p_title, p_summary, COALESCE(p_snapshot, jsonb_build_array())\r\n    ) RETURNING * INTO v_share;\r\n  END IF;\r\n\r\n  RETURN v_share;\r\nEND;\r\n$function$\n"
+        }
+      ]
+    },
+    {
+      "section": "pgcrypto",
+      "query": "select e.extname,n.nspname as schema_name,e.extversion from pg_catalog.pg_extension e join pg_catalog.pg_namespace n on n.oid=e.extnamespace where e.extname='pgcrypto'",
+      "rows": [
+        {
+          "extname": "pgcrypto",
+          "schema_name": "extensions",
+          "extversion": "1.3"
+        }
+      ]
+    },
+    {
+      "section": "public_relation_privileges",
+      "query": "select n.nspname as schema_name,c.relname,c.relkind,coalesce(c.relacl::text,'') as acl from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname not in ('pg_catalog','information_schema') and n.nspname not like 'pg_toast%' and c.relkind in ('r','p','v','m','f','S') and exists(select 1 from aclexplode(coalesce(c.relacl,acldefault(case when c.relkind='S' then 's'::\"char\" else 'r'::\"char\" end,c.relowner))) a where a.grantee=0) order by n.nspname,c.relname",
+      "rows": [
+        {
+          "schema_name": "extensions",
+          "relname": "pg_stat_statements",
+          "relkind": "v",
+          "acl": "{postgres=a*r*w*d*D*x*t*m*/postgres,=r/postgres,dashboard_user=arwdDxtm/postgres}"
+        },
+        {
+          "schema_name": "extensions",
+          "relname": "pg_stat_statements_info",
+          "relkind": "v",
+          "acl": "{postgres=a*r*w*d*D*x*t*m*/postgres,=r/postgres,dashboard_user=arwdDxtm/postgres}"
+        }
+      ]
+    }
+  ]
+}

@@ -91,6 +91,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [39 Comparing frozen search runs](39-comparing-frozen-search-runs/README.md) | Comparable structs, maps as sets, float division, strict JSON and testing CLI exit codes | `backend/internal/searchparity`, `backend/cmd/searchparity` |
 | [40 Secret handles and capabilities](40-secret-handles-and-capabilities/README.md) | Private fields, explicit one-time access, interfaces as capabilities and safe formatting | `backend/internal/apikey/material.go`, `lifecycle.go` |
 | [41 HTTP boundaries](41-http-capabilities-and-buffered-replies/README.md) | Verified capability factories, strict JSON names, bounded response buffering, and I/O versus context deadlines | `backend/internal/apikey/http.go` and `http_search.go` |
+| [42 RPC capabilities and database authority](42-rpc-capabilities-and-database-authority/README.md) | Bound user tokens, separate accounting capabilities, strict replies and database-owned admission | `backend/internal/apikey/rpc.go`, `rpc_accounting.go`, `rpc_json.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

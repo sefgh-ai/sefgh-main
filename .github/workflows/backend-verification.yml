@@ -17,6 +17,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  keys-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Native PostgreSQL key roles, quotas and recovery (synthetic only)
+        shell: bash
+        run: |
+          fixture="sefgh-keys-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          docker run --rm -d --name "$fixture" --label com.sefgh.test=keys --network none --memory 512m --cpus 2 -e POSTGRES_PASSWORD=fixture-only-local-password postgres@sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929
+          trap 'docker stop --time 1 "$fixture" >/dev/null' EXIT
+          ready=false
+          for attempt in {1..60}; do
+            if docker exec "$fixture" pg_isready -U postgres; then ready=true; break; fi
+            sleep 0.25
+          done
+          test "$ready" = true
+          node scripts/keys-postgres-test.mjs "$fixture"
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20

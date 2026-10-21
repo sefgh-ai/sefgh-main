@@ -5,6 +5,10 @@ Real code: [http.go](../../backend/internal/apikey/http.go) and
 adapters are built and tested but are not registered in the running server.
 Database access and rollout are separate steps.
 
+Lesson42 implements the proposed session/RPC boundary. `ownedHTTPClient` in
+`http_search.go` is now shared by the RPC client: each call to the helper makes
+a fresh transport and refuses redirects. Public search still has no credentials.
+
 ## A function can return a smaller interface
 
 In JavaScript, a session helper could return `{ owner, keys }`. Go expresses

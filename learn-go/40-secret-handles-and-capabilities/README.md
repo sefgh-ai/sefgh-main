@@ -2,7 +2,11 @@
 
 Real code: [`material.go`](../../backend/internal/apikey/material.go) and
 [`lifecycle.go`](../../backend/internal/apikey/lifecycle.go). These form an
-unwired API-key core: no production database adapter or public route yet.
+unwired API-key core. Lesson42 adds proposed SQL-backed RPC adapters; no new
+route is registered and no SQL has been applied to the live database.
+
+`NewExecutor` now creates an accounting-only service. Its management methods
+return `ErrUnavailable`; ordinary `New` still requires both capabilities.
 
 ## Private fields, public methods
 

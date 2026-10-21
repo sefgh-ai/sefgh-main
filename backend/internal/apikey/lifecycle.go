@@ -42,7 +42,7 @@ type Record struct {
 
 func (r Record) Format(f fmt.State, _ rune) { _, _ = io.WriteString(f, "[API key record redacted]") }
 
-// Management receives only a verified owner's identity from a future adapter.
+// Management receives only a verified owner's identity from an adapter.
 // It is not the capability that may validate keys or write usage counters.
 type Management interface {
 	// CreateOwned atomically enforces selector uniqueness and per-owner active
@@ -111,8 +111,20 @@ type Service struct {
 	generate   func() (Material, error)
 }
 
+// NewExecutor is the accounting-only boundary used by API-key public endpoints.
+func NewExecutor(accounting Accounting, policy Policy, now func() time.Time) (*Service, error) {
+	return newService(nil, accounting, policy, now)
+}
+
 func New(management Management, accounting Accounting, policy Policy, now func() time.Time) (*Service, error) {
-	if management == nil || accounting == nil || policy.MaxActive < 1 || policy.MaxNameRunes < 1 || policy.PerKey < 1 || policy.PerOwner < 1 || policy.Lifetime <= 0 || policy.Window <= 0 || policy.CompletionTimeout <= 0 || policy.CompletionTimeout > 10*time.Second || policy.ChargeMode != "attempt" || len(policy.Endpoints) == 0 {
+	if management == nil {
+		return nil, ErrPolicy
+	}
+	return newService(management, accounting, policy, now)
+}
+
+func newService(management Management, accounting Accounting, policy Policy, now func() time.Time) (*Service, error) {
+	if accounting == nil || policy.MaxActive < 1 || policy.MaxNameRunes < 1 || policy.PerKey < 1 || policy.PerOwner < 1 || policy.Lifetime <= 0 || policy.Window <= 0 || policy.CompletionTimeout <= 0 || policy.CompletionTimeout > 10*time.Second || policy.ChargeMode != "attempt" || len(policy.Endpoints) == 0 {
 		return nil, ErrPolicy
 	}
 	endpoints := make(map[string]string, len(policy.Endpoints))
@@ -149,12 +161,16 @@ func copyMetadata(m Metadata) Metadata {
 	return m
 }
 
-// Issue uses a verified owner, not an owner ID from HTTP request JSON. There is
-// intentionally no HTTP adapter in this batch. A secret is returned only after
+// Issue uses a verified owner, not an owner ID from HTTP request JSON. The SQL
+// owner RPC implements Manager directly and generates material in SQL instead.
+// This core path returns a secret only after
 // CreateOwned succeeds; no ambiguous-write retry can recover its plaintext.
 func (s *Service) Issue(ctx context.Context, owner, name string, scopes []string) (Metadata, *Secret, error) {
 	if owner == "" {
 		return Metadata{}, nil, ErrOwner
+	}
+	if s.management == nil {
+		return Metadata{}, nil, ErrUnavailable
 	}
 	if err := ctx.Err(); err != nil {
 		return Metadata{}, nil, err
@@ -199,6 +215,9 @@ func (s *Service) List(ctx context.Context, owner string) ([]Metadata, error) {
 	if owner == "" {
 		return nil, ErrOwner
 	}
+	if s.management == nil {
+		return nil, ErrUnavailable
+	}
 	rows, err := s.management.ListOwned(ctx, owner)
 	if err != nil {
 		return nil, ErrUnavailable
@@ -215,6 +234,9 @@ func (s *Service) List(ctx context.Context, owner string) ([]Metadata, error) {
 func (s *Service) Revoke(ctx context.Context, owner, selector string) error {
 	if owner == "" {
 		return ErrOwner
+	}
+	if s.management == nil {
+		return ErrUnavailable
 	}
 	if !identifier(selector) {
 		return ErrInput

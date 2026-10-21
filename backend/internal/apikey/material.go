@@ -1,6 +1,6 @@
-// Package apikey is an unwired key lifecycle core. It has no HTTP routes or
-// database adapter. Its store interfaces must be implemented and reviewed before
-// production use; tests against memory storage do not establish live RLS.
+// Package apikey provides an unregistered key lifecycle, HTTP and proposed SQL
+// RPC adapters. Local tests do not establish live RLS, role-JWT provisioning,
+// rollout approval or production recovery.
 package apikey
 
 import (

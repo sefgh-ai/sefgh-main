@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update2026-10-21 (KEYS-DB-001): named SEFGH MCP access now works for catalog-only
+inspection of expected User-DB kohwfuxqbllsmvmsfqci. The [snapshot](database/key-catalog-2026-10-21.json)
+contains definitions/grants, no user/key/usage rows. The [review proposal](database/keys-001-review.md)
+adds a private hashed lifecycle and nine RPCs with separate owner/accounting
+capabilities, atomic quotas and indexed history/recovery pages. Go adapters are
+implemented locally and unregistered. No SQL/policy/credential/route enabled.
+Earlier access-denied records below are historical. Route count stays23/25.
+
 Update2026-10-20 (KEYS-HTTP-001): unregistered HTTP adapters now surround the
 key lifecycle core: verified-owner/bearer management and API-key public search,
 with strict JSON, bounded I/O/replies, server request IDs, credential-free owned

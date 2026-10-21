@@ -42,15 +42,19 @@ func publicSearch(options HTTPOptions) (http.Handler, error) {
 	// Own the transport too: cloning a client can retain credential wrappers,
 	// and cloning a Transport can retain registered protocols/proxy callbacks.
 	// No caller client, default client/transport, cookie jar or proxy hook is used.
+	client := ownedHTTPClient(timeout)
+	// No token option or inherited request headers. This reuses search parsing
+	// and response mapping but suppresses its detailed transport-error logger.
+	return &githubsearch.Handler{Client: client, BaseURL: base, Logger: slog.New(slog.NewTextHandler(io.Discard, nil))}, nil
+}
+
+func ownedHTTPClient(timeout time.Duration) *http.Client {
 	transport := &http.Transport{
 		DialContext:       (&net.Dialer{Timeout: 5 * time.Second, KeepAlive: 30 * time.Second}).DialContext,
 		ForceAttemptHTTP2: true, MaxIdleConns: 50, IdleConnTimeout: 30 * time.Second,
 		TLSHandshakeTimeout: 5 * time.Second, ExpectContinueTimeout: time.Second,
 	}
-	client := http.Client{Timeout: timeout, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
-	// No token option or inherited request headers. This reuses search parsing
-	// and response mapping but suppresses its detailed transport-error logger.
-	return &githubsearch.Handler{Client: &client, BaseURL: base, Logger: slog.New(slog.NewTextHandler(io.Discard, nil))}, nil
+	return &http.Client{Timeout: timeout, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 }
 
 func requestID() (string, error) {
