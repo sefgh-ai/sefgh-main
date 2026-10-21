@@ -120,8 +120,9 @@ two-user sessions, live grants, realtime behavior, or deployment rollback.
    verification and actual anonymous/userA/userB/accountant denial/admission
    tests through the gateway. Review effective unrelated privileges. A catalog
    snapshot and a local bootstrap are not that acceptance evidence.
-5. Implement/test the show-once playground and explicit runtime/forwarding
-   switches, preview behavior, failure recovery and route rollback before any
+5. Show-once playground implemented/tested (KEYS-UI-001, source6a1ee1a;
+   corrected fixture622f7c3, hosted39609303873 SUCCESS). Explicit runtime/forwarding
+   switches, preview behavior, failure recovery and route rollback remain before any
    cutover. Existing UI/routes remain in place meanwhile. R039 stays open.
 
 Rollback of code means disabling the new routes/forwarding and stopping new

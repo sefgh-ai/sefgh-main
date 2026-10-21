@@ -1,5 +1,11 @@
 # R155 browser startup evidence
 
+Final receipt: hosted39609303873 on622f7c3 overallSUCCESS, including both key
+UI modes. Chrome155.0.8059.84 ready1118ms and trending7checks eachdesktop/phone
+pass. Previous run measured8055ms with the same serial45s startup arrangement.
+R155 probe failure resolved under this verified arrangement; unique D-Bus or
+solely-timeout attribution remains unproven. Sandbox/launch flags unchanged.
+
 Hosted39606408872 on6a1ee1a: trending browserSUCCESS, actual
 Chrome155.0.8059.39 readiness8055ms, followed by desktop/phone assertions.
 PostgreSQL/race/vet/lessons/forwarding/build also passed. The whole run isFAILED
