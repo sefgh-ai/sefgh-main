@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update2026-10-21 (KEYS-STAGE-001 / KEYS-RECOVERY-001): separate
+`sefgh-migration-dev` project created with owner organization/cost approval;
+owner-approved additive SQL applied in development only, with catalog/definition
+checks passing and policy empty. Narrow Go receipt
+recovery helper validates one bounded pending page and retries saved receipts
+only, without scheduler/provider/runtime registration. Rotation to v1 selected;
+legacy revocation waits approved cutover. [Staging record](database/keys-staging.md).
+
 Update2026-10-21 (KEYS-UI-001): separate v1 playground UI under default-off
 NEXT_PUBLIC_SEFGH_KEYS_V1=1, metadata-only owner management and show-once secret,
 pasted-key public search, no legacy fallback/browser usage writes. Reference

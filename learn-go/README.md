@@ -93,6 +93,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [41 HTTP boundaries](41-http-capabilities-and-buffered-replies/README.md) | Verified capability factories, strict JSON names, bounded response buffering, and I/O versus context deadlines | `backend/internal/apikey/http.go` and `http_search.go` |
 | [42 RPC capabilities and database authority](42-rpc-capabilities-and-database-authority/README.md) | Bound user tokens, separate accounting capabilities, strict replies and database-owned admission | `backend/internal/apikey/rpc.go`, `rpc_accounting.go`, `rpc_json.go` |
 | [43 Atomic test counters](43-atomic-test-counters/README.md) | Goroutines in HTTP tests, atomic Add/Load and waiting for workers | `TestRPCNoRetryNoErrorPayloadAndNoCredentialRedirect` in `backend/internal/apikey/rpc_edges_test.go` |
+| [44 Bounded receipt recovery](44-bounded-receipt-recovery/README.md) | Narrow interfaces, context budgets, partial progress and retry cursors | `RecoverCompletionPage` in `backend/internal/apikey/recovery.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 
@@ -122,7 +123,7 @@ Your `exercise.go` files are yours. The agents are told not to change them.
 ## For Codex and Claude
 
 - `go test ./...` here fails by design until the owner completes the exercises. It is not a regression.
-- Check your lesson with `go vet ./...`, `go vet -tags solution ./...` and `go test -tags solution ./...`. All three must pass, and `gofmt -l .` must print nothing.
+- Owner policy (2026-10-21): generate/update lessons with backend work and keep the work lightweight. Lesson tests/vet/build are optional; avoid repeating them during migration. Default handoff/CI skips lesson checks explicitly. Use `npm run handoff -- --lessons` from the repository root, or the manual CI `verify_lessons` option, when solution verification is requested. Skipped checks are not reported as passes. Application/backend tests remain required.
 - An exercise must compile as shipped and fail its tests without panicking.
 - Point at real code by file and function name, not line number. Line numbers go stale.
 - Keep each lesson to one idea and about ten minutes of reading.

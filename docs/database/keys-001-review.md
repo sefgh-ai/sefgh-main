@@ -1,7 +1,16 @@
 # KEYS-DB-001: database proposal for owner review
 
-Status: local foundation independently reviewed; **not applied, enabled or
-deployed**. This document separates the concrete proposal from live rollout.
+Status: local foundation independently reviewed; additive SQL **applied only to
+the owner-approved development project**. No production SQL, runtime enablement
+or deployment. This document separates development acceptance from rollout.
+
+Owner update2026-10-21: the separate test project `sefgh-migration-dev`
+(`mraglhrenqwadegvwxts`, Mumbai) is now created and catalog preflight verified.
+Owner approved the exact additive SQL for this project, it applied successfully,
+and catalog/definition checks pass; no policy seeded. [Staging record](keys-staging.md) identifies the exact
+review files/hashes and hosted acceptance sequence. Owner chose rotation to v1;
+old keys may be revoked only at a separately approved cutover. No conversion,
+policy seed or production change is authorized by project creation.
 
 The named SEFGH MCP account now exposes the expected User-DB project
 `kohwfuxqbllsmvmsfqci`. On 2026-10-21 only catalog SELECTs were run. The
@@ -102,7 +111,10 @@ two-user sessions, live grants, realtime behavior, or deployment rollback.
 
 ## Remaining gates and safe rollback
 
-1. Owner reviews this additive SQL and the separate
+1. Additive SQL review/application/catalog verification is complete for the
+   isolated development project only, with explicit owner approval and the
+   [apply receipt](keys-staging.md). Do not reapply it there. Production review
+   and application remain separate gates. The owner must separately review the
    [legacy TRUNCATE privilege hardening proposal](../../supabase/proposals/keys_001_legacy_truncate.sql)
    for R-143. Current broad grants include TRUNCATE; RLS does not cover it.
    Browser/Data API exploitability has not been established. This batch does not
@@ -112,14 +124,18 @@ two-user sessions, live grants, realtime behavior, or deployment rollback.
    minted here. Do not change user Auth hooks to manufacture server roles or
    substitute a service-role credential. Until a narrowly scoped, verified
    capability is provisioned, accounting and runtime wiring stay gated.
-3. Approve policy values, operational recovery/retention and the
-   existing plaintext keys' rotate/revoke or one-way conversion plan. Existing
-   consumers have not been inferred or changed; no automatic conversion or dual
-   write is included.
-4. Apply approved SQL in the appropriate review environment, rerun catalog
-   verification and actual anonymous/userA/userB/accountant denial/admission
-   tests through the gateway. Review effective unrelated privileges. A catalog
-   snapshot and a local bootstrap are not that acceptance evidence.
+3. Approve policy values and operational recovery/retention. Owner selected
+   rotation to v1, with old-key revocation only at an approved cutover. Inventory
+   actual consumers and review that concrete transition before executing it;
+   no automatic conversion, revocation or dual write is included. The bounded
+   `RecoverCompletionPage` helper is implemented locally, with no scheduler or
+   runtime registration. Recovery capability startup with admissions disabled
+   remains a wiring decision.
+4. Development catalog/definition verification is complete; actual anonymous/
+   userA/userB/accountant denial/admission tests through the gateway remain
+   pending, including unrelated effective privilege checks under those real
+   credentials. A catalog snapshot and a local bootstrap are not that acceptance
+   evidence. Any future production application requires its own approval.
 5. Show-once playground implemented/tested (KEYS-UI-001, source6a1ee1a;
    corrected fixture622f7c3, hosted39609303873 SUCCESS). Explicit runtime/forwarding
    switches, preview behavior, failure recovery and route rollback remain before any

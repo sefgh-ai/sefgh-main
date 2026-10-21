@@ -6,7 +6,8 @@
  *
  * Modes:
  * - Default (`npm run handoff`):
- *   1. Runs contract tests, Go backend tests/vet/gofmt, and learn-go solution tests.
+ *   1. Runs contract tests and Go backend tests/vet/gofmt. Lessons are optional
+ *      with `--lessons`; default skip follows the owner's tutorial policy.
  *   2. Verifies `docs/coordination.md` has `Active writer: none` and that the latest
  *      checkpoint/handoff is NOT marked `paused` or `incomplete`.
  *   3. Computes a SHA-256 working-tree fingerprint (`treeHash`) so the Git Agent can
@@ -25,7 +26,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve, delimiter } from 'node:path';
 import { computeTreeHash, stampPendingSync } from './handoff-state.mjs';
 
@@ -156,7 +157,8 @@ if (args.has('--status')) {
     signal &&
       signal.contractsPassed &&
       signal.goBackendPassed &&
-      signal.learnGoPassed &&
+      (signal.learnGoPassed === true ||
+        (signal.learnGoPassed === null && signal.learnGoSkipped === true && signal.learnGoCheck === 'skipped-owner-policy')) &&
       signal.writerReleased &&
       !signal.isPausedOrIncomplete &&
       signal.treeHash &&
@@ -192,6 +194,7 @@ if (args.has('--status')) {
         latestStatus: coord.latestStatus,
         isPausedOrIncomplete: coord.isPausedOrIncomplete,
         signalMatchesTree,
+        learnGoCheck: signal?.learnGoCheck || (signal?.learnGoPassed === true ? 'passed' : null),
         ciRun,
       },
       null,
@@ -202,6 +205,10 @@ if (args.has('--status')) {
 }
 
 console.log('=== SEFGH Multi-Agent Handoff & Verification ===\n');
+
+// A new verification attempt supersedes its old proof, including when it
+// fails or is interrupted. Read-only/status and stamp modes above retain it.
+rmSync(SIGNAL_PATH, { force: true });
 
 // 1. Run Contracts
 console.log('1. Checking contract fixtures (npm run test:contracts)...');
@@ -231,14 +238,19 @@ if (!goFmt.ok || goFmt.out.trim().length > 0) {
 }
 console.log('✅ Go backend passed.');
 
-// 3. Run learn-go solution tests
-console.log('\n3. Checking learn-go solutions (go test -tags solution ./...)...');
-const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
-if (!learnGo.ok) {
-  console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
-  process.exit(1);
+// 3. Tutorial checks are opt-in; a skipped lesson is never a test pass.
+const checkLessons = args.has('--lessons');
+if (checkLessons) {
+  console.log('\n3. Checking learn-go solutions (explicit --lessons)...');
+  const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
+  if (!learnGo.ok) {
+    console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
+    process.exit(1);
+  }
+  console.log('✅ learn-go solutions passed.');
+} else {
+  console.log('\n3. Lesson checks skipped (owner policy; use --lessons to request them).');
 }
-console.log('✅ learn-go solutions passed.');
 
 // 4. Inspect docs/coordination.md
 console.log('\n4. Inspecting docs/coordination.md...');
@@ -266,7 +278,9 @@ const signal = {
   timestamp: new Date().toISOString(),
   contractsPassed: true,
   goBackendPassed: true,
-  learnGoPassed: true,
+  learnGoPassed: checkLessons ? true : null,
+  learnGoSkipped: !checkLessons,
+  learnGoCheck: checkLessons ? 'passed' : 'skipped-owner-policy',
   writerReleased: coord.writerReleased,
   isPausedOrIncomplete: coord.isPausedOrIncomplete,
   latestHeading: coord.latestHeading,

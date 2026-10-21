@@ -675,3 +675,27 @@ No Go registration, rewrite, policy value, SQL apply or deployed setting is
 included. Existing legacy behavior remains until an approved transition.
 [UI evidence](../verification/playground-key-ui.md) distinguishes local synthetic
 browser proof from hosted SQL/Auth/accounting and actual rollout gates.
+
+### KEYS-STAGE-001 / KEYS-RECOVERY-001 (2026-10-21)
+
+Owner chose a separate development/test Supabase project, rotation to v1 and
+old-key revocation only at a separately approved cutover. The isolated project
+is created; owner-approved additive SQL is applied in development only and
+catalog/definition checks pass. Policy/provisioning/runtime gates remain. [Staging record](../database/keys-staging.md) names the target,
+review bundle and acceptance sequence. Unknown worker deployment continues to
+gate worker execution.
+
+Standard-library `RecoverCompletionPage` receives only pending discovery and
+idempotent completion capabilities. One invocation validates a page before
+writes, scans at most an explicit1..100rows within a positive budget capped at
+30seconds, retries exact saved receipts and leaves missing ones unknown. Its
+cursor stops before an unconfirmed completion and is only a scan position;
+fresh scans revisit earlier unknown rows. No scheduler, provider replay,
+automatic abandonment, quota reservation, retention or HTTP registration is
+introduced. Recovery startup while admissions are disabled remains a runtime
+design gate; broader credentials are not a substitute. Lesson44 is generated.
+
+Owner's tutorial policy (2026-10-21): continue generating/updating lessons, but
+make solution test/vet/build optional. Default handoff/CI explicitly skip
+lessons; `--lessons` and manualCI `verify_lessons` opt in. Contract/backend
+verification remains required, and a skip is never recorded as a pass.

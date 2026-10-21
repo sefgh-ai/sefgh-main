@@ -1,0 +1,728 @@
+{
+  "task": "KEYS-STAGE-001 / KEYS-RECOVERY-001",
+  "project": {
+    "name": "sefgh-migration-dev",
+    "ref": "mraglhrenqwadegvwxts",
+    "organization_id": "hithuduntbsajjhmnntm",
+    "region": "ap-south-1",
+    "database_version": "17.11.0.003"
+  },
+  "approval": "Owner explicitly approved quoted0USD/month creation and then additive key SQL on this development project only.",
+  "migration": {
+    "name": "keys_001_hashed_lifecycle",
+    "source_file": "supabase/migrations/20261021063751_keys_001_hashed_lifecycle.sql",
+    "source_sha256": "ce091529781d5a6522431cef4bcbaca6540f04d16383d695fe7e9bc7aa16b211",
+    "hosted_version": "20261021174847",
+    "apply_success": true
+  },
+  "queries": [
+    "select rolname,rolsuper,rolinherit,rolcreaterole,rolcreatedb,rolcanlogin,rolbypassrls\nfrom pg_roles where rolname in ('sefgh_key_accountant','authenticator')",
+    "select parent.rolname as granted_role,member.rolname as member,m.inherit_option,m.set_option\nfrom pg_auth_members m join pg_roles parent on parent.oid=m.roleid\njoin pg_roles member on member.oid=m.member\nwhere parent.rolname='sefgh_key_accountant' or member.rolname='sefgh_key_accountant'",
+    "select r,c.relname,\n has_table_privilege(r,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as any_direct_privilege,\n c.relrowsecurity\nfrom unnest(array['anon','authenticated','service_role','sefgh_key_accountant']) r\ncross join pg_class c join pg_namespace n on n.oid=c.relnamespace\nwhere n.nspname='sefgh_keys' and c.relkind='r' order by r,c.relname",
+    "select n.nspname,p.proname,p.prosecdef,p.proconfig,p.proacl,\n has_function_privilege('anon',p.oid,'EXECUTE') as anon_exec,\n has_function_privilege('authenticated',p.oid,'EXECUTE') as user_exec,\n has_function_privilege('service_role',p.oid,'EXECUTE') as service_exec,\n has_function_privilege('sefgh_key_accountant',p.oid,'EXECUTE') as accountant_exec\nfrom pg_proc p join pg_namespace n on n.oid=p.pronamespace\nwhere n.nspname='sefgh_keys' or (n.nspname='public' and p.proname like 'sefgh_key_%')\norder by n.nspname,p.proname",
+    "select n.nspname,c.relname,c.relkind,c.relacl\nfrom pg_class c join pg_namespace n on n.oid=c.relnamespace\nwhere n.nspname not in ('pg_catalog','information_schema') and n.nspname not like 'pg_toast%'\nand n.nspname<>'sefgh_keys' and c.relkind in ('r','p','v','m','f')\nand has_schema_privilege('sefgh_key_accountant',n.oid,'USAGE')\nand has_table_privilege('sefgh_key_accountant',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')\norder by n.nspname,c.relname",
+    "select n.nspname,p.proname,p.prosecdef,p.proacl\nfrom pg_proc p join pg_namespace n on n.oid=p.pronamespace\nwhere n.nspname not in ('pg_catalog','information_schema') and n.nspname not like 'pg_toast%'\nand n.nspname<>'sefgh_keys' and p.prokind='f'\nand has_schema_privilege('sefgh_key_accountant',n.oid,'USAGE')\nand has_function_privilege('sefgh_key_accountant',p.oid,'EXECUTE')\norder by n.nspname,p.proname"
+  ],
+  "catalog": {
+    "roles": [
+      {
+        "rolname": "sefgh_key_accountant",
+        "rolsuper": false,
+        "rolinherit": false,
+        "rolcreaterole": false,
+        "rolcreatedb": false,
+        "rolcanlogin": false,
+        "rolbypassrls": false
+      },
+      {
+        "rolname": "authenticator",
+        "rolsuper": false,
+        "rolinherit": false,
+        "rolcreaterole": false,
+        "rolcreatedb": false,
+        "rolcanlogin": true,
+        "rolbypassrls": false
+      }
+    ],
+    "memberships": [
+      {
+        "granted_role": "sefgh_key_accountant",
+        "member": "postgres",
+        "inherit_option": false,
+        "set_option": false
+      },
+      {
+        "granted_role": "sefgh_key_accountant",
+        "member": "authenticator",
+        "inherit_option": false,
+        "set_option": true
+      }
+    ],
+    "private_table_privileges": [
+      {
+        "r": "anon",
+        "relname": "events",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "anon",
+        "relname": "key_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "anon",
+        "relname": "keys",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "anon",
+        "relname": "owner_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "anon",
+        "relname": "policy",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "anon",
+        "relname": "recovery",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "events",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "key_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "keys",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "owner_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "policy",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "authenticated",
+        "relname": "recovery",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "events",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "key_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "keys",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "owner_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "policy",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "sefgh_key_accountant",
+        "relname": "recovery",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "events",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "key_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "keys",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "owner_windows",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "policy",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      },
+      {
+        "r": "service_role",
+        "relname": "recovery",
+        "any_direct_privilege": false,
+        "relrowsecurity": true
+      }
+    ],
+    "functions": [
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_complete",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_issue",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_list",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_lookup",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_pending",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_policy",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_recovery",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_reserve",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_revoke",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "active_policy",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "complete_key",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "get_policy",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "issue_owned",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "list_owned",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "lookup_key",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "metadata",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "pending_keys",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "receipts_match",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "reserve_key",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "revoke_owned",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "anon_exec": false,
+        "user_exec": true,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "save_recovery",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": true
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "validate_receipt",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": false
+      },
+      {
+        "nspname": "sefgh_keys",
+        "proname": "verified_owner",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=\"\""
+        ],
+        "proacl": "{postgres=X/postgres}",
+        "anon_exec": false,
+        "user_exec": false,
+        "service_exec": false,
+        "accountant_exec": false
+      }
+    ],
+    "unrelated_relations": [],
+    "accountant_callable_functions": [
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_complete",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_lookup",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_pending",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_policy",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_recovery",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      },
+      {
+        "nspname": "public",
+        "proname": "sefgh_key_reserve",
+        "prosecdef": false,
+        "proacl": "{postgres=X/postgres,sefgh_key_accountant=X/postgres}"
+      }
+    ]
+  },
+  "deployed_definition_check": {
+    "method": "Each deployed prosrc equals the reviewed CREATE FUNCTION body after CRLF-to-LF normalization and edge whitespace trim; count/name matching required.",
+    "matching_function_bodies": 23,
+    "policy_rows": 0,
+    "schema_owner": "postgres",
+    "signatures": [
+      {
+        "name": "sefgh_key_complete",
+        "result": "void",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_receipt jsonb"
+      },
+      {
+        "name": "sefgh_key_issue",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_name text, p_scopes text[]"
+      },
+      {
+        "name": "sefgh_key_list",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_after_created timestamp with time zone, p_after_selector text"
+      },
+      {
+        "name": "sefgh_key_lookup",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_selector text"
+      },
+      {
+        "name": "sefgh_key_pending",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_after_started timestamp with time zone, p_after_request text"
+      },
+      {
+        "name": "sefgh_key_policy",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": ""
+      },
+      {
+        "name": "sefgh_key_recovery",
+        "result": "void",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_receipt jsonb"
+      },
+      {
+        "name": "sefgh_key_reserve",
+        "result": "jsonb",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_selector text, p_verifier_hex text, p_request_id text, p_endpoint text, p_revision text"
+      },
+      {
+        "name": "sefgh_key_revoke",
+        "result": "void",
+        "schema": "public",
+        "language": "sql",
+        "arguments": "p_selector text"
+      },
+      {
+        "name": "active_policy",
+        "result": "sefgh_keys.policy",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": ""
+      },
+      {
+        "name": "complete_key",
+        "result": "void",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_receipt jsonb"
+      },
+      {
+        "name": "get_policy",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": ""
+      },
+      {
+        "name": "issue_owned",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_name text, p_scopes text[]"
+      },
+      {
+        "name": "list_owned",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_after_created timestamp with time zone, p_after_selector text"
+      },
+      {
+        "name": "lookup_key",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_selector text"
+      },
+      {
+        "name": "metadata",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "sql",
+        "arguments": "k sefgh_keys.keys"
+      },
+      {
+        "name": "pending_keys",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_after_started timestamp with time zone, p_after_request text"
+      },
+      {
+        "name": "receipts_match",
+        "result": "boolean",
+        "schema": "sefgh_keys",
+        "language": "sql",
+        "arguments": "a jsonb, b jsonb"
+      },
+      {
+        "name": "reserve_key",
+        "result": "jsonb",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_selector text, p_verifier_hex text, p_request_id text, p_endpoint text, p_revision text"
+      },
+      {
+        "name": "revoke_owned",
+        "result": "void",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_selector text"
+      },
+      {
+        "name": "save_recovery",
+        "result": "void",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_receipt jsonb"
+      },
+      {
+        "name": "validate_receipt",
+        "result": "sefgh_keys.events",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": "p_receipt jsonb"
+      },
+      {
+        "name": "verified_owner",
+        "result": "uuid",
+        "schema": "sefgh_keys",
+        "language": "plpgsql",
+        "arguments": ""
+      }
+    ]
+  },
+  "limitations": [
+    "Catalog and definition checks only; no hosted JWT/gateway authorization or two-user test",
+    "No policy seed, accountant credential provisioning, test users, production/legacy/runtime/worker action",
+    "No secrets or application row values recorded"
+  ]
+}

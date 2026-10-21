@@ -1,5 +1,35 @@
 # Claude Code review and reconciliation
 
+## REVIEW-021: LESSON-POLICY-001 / KEYS-RECOVERY-001 / KEYS-STAGE-001, 2026-10-21
+
+Hume read-only accepted the unwired recovery helper, truthful optional lesson
+checks and staging receipt after corrections. No unresolved blocking source or
+documentation findings. Initial review reproduced stale success proof after a
+later failed handoff; R170 fixed with a red/green real CLI sequence. Distinct
+R142 shared-checkout overlap remains open. Full-page validation includes rows
+beyond the processing cap; completion failure/deadline preserves partial
+progress before the unconfirmed row. No production caller/scheduler/provider
+capability is registered.
+
+Independent checks: five isolated CLI cases with fake commands; updated12group
+recovery suite and malformed-page subcases; full apikey package uncached; package
+vet, targetformat/Node syntax/diff. Final docsdelta/23relative link targets pass.
+Lesson44 source inspected only, no lesson tests/vet/build. Writer performed
+broad backend suites/vet/format and strictlint separately; final normalhandoff
+and Git/hosted receipts belong to coordination.md.
+
+Owner explicitly approved isolated project creation and then exact additiveSQL
+in dev only. Codex performed MCP apply/version receipt, six read-only catalog
+queries and23deployed-body comparisons. Hume checked the local artifact/hash,
+query correspondence,24distinct denied role/table pairs/RLS,23function names,
+9invoker wrappers/3owner+6accountant grants, fixed paths, policycount0 and scoped
+unrelatedaccess results, without live calls. Body comparisons remain writer-run
+evidence. Corrections mark devapplycomplete/donotreapply, limit callable claims
+to inspected non-system schemas (not procedures), and update README dev/CIstatus.
+No production SQL, policyseed, accountant credentials, test identities, runtime,
+legacy revocation or worker authorization. External Git Agent compatibility
+awaits actual handoff/synchronization; skipped lessons must not be marked passed.
+
 ## REVIEW-020: CI-BROWSER-001c / BUG-018, 2026-10-21
 
 Hume read-only accepted R169 fixture synchronization; no remaining blocker.

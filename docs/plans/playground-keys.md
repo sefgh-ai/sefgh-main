@@ -5,6 +5,20 @@ checked on explicitly supported endpoints, with usage written by the server.
 Prepare database changes for review before applying them. This is the accepted
 product direction, not approval to apply SQL or cut a route over.
 
+Current update2026-10-21 (KEYS-STAGE-001 / KEYS-RECOVERY-001): owner chose
+isolated staging and rotation to v1, with old-key revocation only at an approved
+cutover. `sefgh-migration-dev` / `mraglhrenqwadegvwxts` was created in Mumbai
+after explicit organization and quoted-cost approval. Catalog prerequisites
+are verified; owner-approved additive SQL applied and catalog/definitions checked.
+No policy or accountant credential provisioned. [Staging and review
+sequence](../database/keys-staging.md) is authoritative for the target and gates.
+The narrow, unregistered Go helper retries exact stored completion receipts
+within explicit row/time limits and leaves missing outcomes pending. Runtime,
+scheduler, retention and hosted authorization remain gated. Workers stay off
+while their deployment is unknown. Historical records below retain their
+original evidence boundaries; the earlier absence of a transition choice is
+superseded by the owner's rotation decision.
+
 ## Evidence and the current boundary
 
 The Next.js `POST /api/playground/keys` generates 32 random bytes and stores the

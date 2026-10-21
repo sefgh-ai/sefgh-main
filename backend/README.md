@@ -1,11 +1,20 @@
 # SEFGH Go backend
 
 KEYS-DB-001 adds unregistered `internal/apikey` RPC adapters: a verified user
-manager and separate server accountant. No runtime switch, policy seed or live
-SQL apply is included. See [SQL review](../docs/database/keys-001-review.md),
+manager and separate server accountant. That original foundation had no SQL
+apply. KEYS-STAGE-001 subsequently applied the exact owner-approved additive
+SQL to the isolated development project only, with catalog/definition checks
+passing. No runtime switch, policy seed or production SQL apply is included.
+See [SQL review](../docs/database/keys-001-review.md),
 [RPC protocol](../contracts/api-key-rpc/README.md) and
 [verification](../docs/verification/keys-db.md). The accountant never replaces
 the user's bearer for ordinary CRUD.
+
+KEYS-RECOVERY-001 adds unregistered `apikey.RecoverCompletionPage`: explicit
+row/time limits, full-page validation and exact saved-completion retry, with
+partial progress/cursors. Missing outcomes remain pending. No scheduler,
+provider replay, retention or runtime registration. [Staging gates](../docs/database/keys-staging.md)
+include verified recovery startup while admissions are disabled.
 
 API routes that have moved out of Next.js. The plan and its rules are in `../docs/adr/0002-go-backend.md`. This file covers running, testing and switching.
 
@@ -202,7 +211,8 @@ for callers without credentials are built with no token; `wiring_test.go`
 fails if the server's own `GITHUB_TOKEN` ever reaches GitHub.
 
 .github/workflows/backend-verification.yml runs Linux contracts, the race detector,
-vet/formatting, lesson solutions and production forwarding. It has read-only
+vet/formatting and production forwarding. Tutorial solution checks are optional
+through manual `verify_lessons`, following the owner's lesson policy. It has read-only
 permissions and no deployment credentials. Its presence is not evidence of a
 successful hosted run.
 
