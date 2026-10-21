@@ -28,7 +28,7 @@ import {
   MicOff,
   Send,
   Loader2,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 
 export function ChatInput({

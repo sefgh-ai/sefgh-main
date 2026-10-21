@@ -2,7 +2,7 @@
 
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useEffect, useState, useMemo } from "react";
-import { TrendingUp, Search, Users, Database } from "lucide-react";
+import { TrendingUp, Search, Users, Database } from "@/components/ui/icons";
 import { createClient } from "@/lib/supabase/client";
 
 export function SearchStats() {

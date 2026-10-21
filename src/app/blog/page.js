@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ArrowRight, PenLine } from "lucide-react";
+import { CalendarDays, ArrowRight, PenLine } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {

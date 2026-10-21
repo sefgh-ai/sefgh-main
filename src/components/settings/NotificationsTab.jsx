@@ -12,7 +12,7 @@ import {
   Sparkles,
   MessageSquare,
   GitBranch,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 
 const notificationSettings = [

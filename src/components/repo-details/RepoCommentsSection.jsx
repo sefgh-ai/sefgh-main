@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { MessageSquare, ArrowBigUp, ArrowBigDown, Reply, MoreVertical } from 'lucide-react'
+import { MessageSquare, ArrowBigUp, ArrowBigDown, Reply, MoreVertical } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'

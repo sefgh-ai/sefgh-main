@@ -18,7 +18,7 @@ import {
   Lock,
   User,
   LogOut,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,

@@ -8,7 +8,7 @@ import {
   Smartphone,
   Globe,
   AlertTriangle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";

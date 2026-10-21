@@ -24,7 +24,7 @@ import {
   Box,
   Activity,
   Download,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, icon: Icon, ...props }, ref) => {

@@ -22,7 +22,7 @@ import {
   Sun,
   Monitor,
   Check,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
 

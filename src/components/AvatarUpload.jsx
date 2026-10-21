@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Upload, Loader2, Camera, X } from 'lucide-react'
+import { Upload, Loader2, Camera, X } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'

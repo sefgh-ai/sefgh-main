@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Users, Code2, Boxes } from "lucide-react";
+import { Building2, Users, Code2, Boxes } from "@/components/ui/icons";
 
 // Featured organizations/companies data
 const FEATURED_ORGS = [

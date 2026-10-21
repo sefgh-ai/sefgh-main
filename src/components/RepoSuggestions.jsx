@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { RepositoryCard } from '@/components/RepositoryCard'
-import { Github, ChevronDown, ChevronUp } from 'lucide-react'
+import { Github, ChevronDown, ChevronUp } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 
 /**

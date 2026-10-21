@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { BookOpen } from "@/components/ui/icons";
 
 export function AboutCard() {
   return (

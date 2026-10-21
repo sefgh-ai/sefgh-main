@@ -24,7 +24,7 @@ import {
   ArrowLeft,
   ExternalLink,
   Heart,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 export default function LinksPage() {
   const socialLinks = [

@@ -1,4 +1,4 @@
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 import SitemapList from "./SitemapList";
 

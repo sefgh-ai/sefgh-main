@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, CheckCircle2, Clock, Server, Wifi } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Clock, Server, Wifi } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 
 const services = [

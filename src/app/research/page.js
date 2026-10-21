@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Beaker, BookOpen, ExternalLink, Sparkles } from "lucide-react";
+import { ArrowUpRight, Beaker, BookOpen, ExternalLink, Sparkles } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 import { researchHighlights } from "@/data/researchHighlights";
 

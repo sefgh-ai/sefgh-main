@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import { QrCode, Download } from 'lucide-react'
+import { QrCode, Download } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

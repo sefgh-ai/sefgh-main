@@ -11,7 +11,7 @@ import {
   Database,
   MessageSquare,
   Sparkles,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";

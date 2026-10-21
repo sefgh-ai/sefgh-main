@@ -17,7 +17,7 @@ import {
   AlertTriangle,
   AlertCircle,
   Info,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 const NotificationContext = createContext(null);
 

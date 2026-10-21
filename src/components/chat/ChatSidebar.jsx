@@ -24,7 +24,7 @@ import {
   LogOut,
   Sparkles,
   ChevronDown,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

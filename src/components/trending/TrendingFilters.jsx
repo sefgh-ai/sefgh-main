@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw } from "@/components/ui/icons";
 
 export function TrendingFilters({
   activeTab,

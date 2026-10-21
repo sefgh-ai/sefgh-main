@@ -2,7 +2,7 @@
 
 import { formatNumber } from "@/lib/utils/formatters";
 import { useState, useEffect, useRef } from "react";
-import { Clock, Trash2, Search, TrendingUp } from "lucide-react";
+import { Clock, Trash2, Search, TrendingUp } from "@/components/ui/icons";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getSearchHistory,

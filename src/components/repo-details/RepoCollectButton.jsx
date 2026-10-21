@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { Bookmark, BookmarkCheck } from 'lucide-react'
+import { Bookmark, BookmarkCheck } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'

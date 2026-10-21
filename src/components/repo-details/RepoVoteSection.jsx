@@ -4,7 +4,7 @@ import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { ArrowBigUp, ArrowBigDown } from 'lucide-react'
+import { ArrowBigUp, ArrowBigDown } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'

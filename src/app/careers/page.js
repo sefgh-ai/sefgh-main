@@ -16,7 +16,7 @@ import {
   Building2,
   GraduationCap,
   Coffee,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 export default function CareersPage() {
   const [selectedDepartment, setSelectedDepartment] = useState("all");

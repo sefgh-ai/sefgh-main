@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/components/ui/icons";
 
 export default function FaqAccordion({ items }) {
   const [openIndex, setOpenIndex] = useState(null);

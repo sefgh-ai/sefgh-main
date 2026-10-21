@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CookieSettingsButton } from "@/components/CookieBar";
 import { SefghLogo } from "@/components/brand/SefghMark";
 import Image from "next/image";
-import { Instagram, Twitter } from "lucide-react";
+import { Instagram, Twitter } from "@/components/ui/icons";
 
 export default function FooterNewsletter() {
   return (

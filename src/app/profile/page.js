@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "@/components/ui/icons";
 import { Header } from "@/components/Header";
 import { ActivityLogger } from "@/lib/activity-logger";
 import UsageContributionsCard from "@/components/usage-contributions/UsageContributionsCard";

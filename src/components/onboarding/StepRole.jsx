@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveStepRole } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { GraduationCap, Briefcase, FlaskConical, Sparkles } from "lucide-react";
+import { GraduationCap, Briefcase, FlaskConical, Sparkles } from "@/components/ui/icons";
 
 const roles = [
   {

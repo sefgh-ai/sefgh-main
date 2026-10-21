@@ -9,7 +9,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Header } from "@/components/Header";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
-import { Star, Trash2 } from "lucide-react";
+import { Star, Trash2 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { fetchWithSession } from "@/lib/supabase/session-fetch";

@@ -21,7 +21,7 @@ import {
   Moon,
   User,
   Home as HomeIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 import AppFooter from "@/components/ui/app-footer";
 import { AnimatedNavbar } from "@/components/AnimatedNavbar";

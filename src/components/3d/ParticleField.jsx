@@ -11,7 +11,7 @@ import {
   GitPullRequest,
   Search,
   Code,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 /**
  * Deterministic PRNG (mulberry32).

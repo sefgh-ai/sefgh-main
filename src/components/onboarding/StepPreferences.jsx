@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveStepPreferences } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { ChevronLeft, Sparkles, Bell, BellOff, Globe } from "lucide-react";
+import { ChevronLeft, Sparkles, Bell, BellOff, Globe } from "@/components/ui/icons";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const notificationOptions = [

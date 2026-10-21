@@ -9,7 +9,7 @@ import { StepGoals } from "./StepGoals";
 import { StepGitHub } from "./StepGitHub";
 import { StepPreferences } from "./StepPreferences";
 import { toast } from "sonner";
-import { X } from "lucide-react";
+import { X } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   useSendNotification,

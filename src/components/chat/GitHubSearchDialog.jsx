@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RepositoryCard } from "@/components/RepositoryCard";
-import { Search, Github, Loader2 } from "lucide-react";
+import { Search, Github, Loader2 } from "@/components/ui/icons";
 
 export function GitHubSearchDialog({
   open,

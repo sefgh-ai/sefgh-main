@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AppFooter from "@/components/ui/app-footer";
-import { Users, Target, Zap, Globe, Award, TrendingUp } from "lucide-react";
+import { Users, Target, Zap, Globe, Award, TrendingUp } from "@/components/ui/icons";
 
 export default function AboutPage() {
   const milestones = [

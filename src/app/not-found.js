@@ -8,7 +8,7 @@ import {
   Book,
   BookOpen,
   MessageCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import Link from "next/link";
 import { Scout } from "@/components/brand/SefghMark";
 

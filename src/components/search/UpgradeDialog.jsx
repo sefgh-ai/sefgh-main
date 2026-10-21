@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Zap, Check, ExternalLink } from "lucide-react";
+import { Zap, Check, ExternalLink } from "@/components/ui/icons";
 import {
   Dialog,
   DialogContent,

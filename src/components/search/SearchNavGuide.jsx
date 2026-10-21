@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Keyboard, Rocket, Sparkles } from "lucide-react";
+import { Compass, Keyboard, Rocket, Sparkles } from "@/components/ui/icons";
 
 const tips = [
   {

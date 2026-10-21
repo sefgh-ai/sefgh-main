@@ -7,7 +7,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
+} from "@/components/ui/icons";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import {

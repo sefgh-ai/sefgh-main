@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

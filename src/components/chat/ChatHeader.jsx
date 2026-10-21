@@ -10,7 +10,7 @@ import {
   Github,
   X,
   Share2,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import ShareDialog from "@/components/ShareDialog";
 
 export function ChatHeader({

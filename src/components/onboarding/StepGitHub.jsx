@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { saveStepGitHub } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { ChevronLeft, Sparkles, Github } from "lucide-react";
+import { ChevronLeft, Sparkles, Github } from "@/components/ui/icons";
 
 export function StepGitHub({ userId, onNext, onBack }) {
   const [githubUsername, setGithubUsername] = useState("");

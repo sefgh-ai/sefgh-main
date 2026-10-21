@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { HelpCircle } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 import FaqAccordion from "./FaqAccordion";
 

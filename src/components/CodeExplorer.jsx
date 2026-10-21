@@ -2,7 +2,7 @@
 
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState, useEffect, useCallback } from "react"
-import { ArrowLeft, Star, GitFork, Eye, ExternalLink, Copy, FileText, BarChart3, Info } from "lucide-react"
+import { ArrowLeft, Star, GitFork, Eye, ExternalLink, Copy, FileText, BarChart3, Info } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ChevronDownIcon } from "@/components/ui/icons";
 import {
   DropdownMenu,
   DropdownMenuContent,

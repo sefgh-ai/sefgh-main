@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Flame, Code } from "lucide-react";
+import { Flame, Code } from "@/components/ui/icons";
 
 /**
  * Developer card component (memoized for performance)

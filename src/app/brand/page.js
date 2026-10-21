@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AppFooter from "@/components/ui/app-footer";
-import { Download, Copy, Check, Shield } from "lucide-react";
+import { Download, Copy, Check, Shield } from "@/components/ui/icons";
 import { useState } from "react";
 
 export default function BrandPage() {

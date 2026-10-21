@@ -28,7 +28,7 @@ import {
   MessageSquare,
   Star,
   Zap,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 // Icon mapping for notification types

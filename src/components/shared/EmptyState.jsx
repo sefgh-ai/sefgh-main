@@ -11,7 +11,7 @@ import {
   FileX,
   Users,
   Settings
-} from "lucide-react"
+} from "@/components/ui/icons"
 
 const icons = {
   search: Search,

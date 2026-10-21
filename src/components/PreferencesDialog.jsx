@@ -23,7 +23,7 @@ import {
   Sparkles,
   CheckCircle2,
   Filter,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/home/useCategories";
 import { useAuth } from "@/contexts/AuthContext";

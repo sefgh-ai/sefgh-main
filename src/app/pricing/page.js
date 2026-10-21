@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
-import { Check, Sparkles, Zap, Building2, HelpCircle } from "lucide-react";
+import { Check, Sparkles, Zap, Building2, HelpCircle } from "@/components/ui/icons";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState("monthly");

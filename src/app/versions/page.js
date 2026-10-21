@@ -11,7 +11,7 @@ import {
   Globe,
   Code,
   Rocket,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 export default function VersionsPage() {
   const versions = [

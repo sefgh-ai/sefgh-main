@@ -19,7 +19,7 @@ import {
   ChevronRight,
   Zap,
   Telescope,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   Sidebar,
   SidebarContent,

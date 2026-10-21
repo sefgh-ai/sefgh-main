@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCw } from "@/components/ui/icons";
 
 async function fetchSitemapUrls() {
   const res = await fetch("/sitemap.xml");

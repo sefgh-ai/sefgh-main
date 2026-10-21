@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Sparkles } from "lucide-react"
+import { Sparkles } from "@/components/ui/icons"
 
 /**
  * Download page header component

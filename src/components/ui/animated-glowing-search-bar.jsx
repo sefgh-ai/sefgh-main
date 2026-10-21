@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter } from "@/components/ui/icons";
 
 const SearchComponent = ({ placeholder, onSearch }) => {
   const handleSubmit = (e) => {

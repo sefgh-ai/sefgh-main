@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { ArrowLeft, FileText, Code, Paintbrush, Download, Copy, Play, Settings, X } from "lucide-react"
+import { ArrowLeft, FileText, Code, Paintbrush, Download, Copy, Play, Settings, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"

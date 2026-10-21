@@ -1,6 +1,6 @@
 import AppFooter from "@/components/ui/app-footer";
 import Link from "next/link";
-import { Shield, HeartHandshake, AlertTriangle } from "lucide-react";
+import { Shield, HeartHandshake, AlertTriangle } from "@/components/ui/icons";
 
 export const metadata = {
   title: "Code of Conduct | SEFGH",

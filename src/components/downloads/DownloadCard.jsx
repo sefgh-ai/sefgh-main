@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download } from "@/components/ui/icons";
 import Image from "next/image";
 
 export default function DownloadCard({

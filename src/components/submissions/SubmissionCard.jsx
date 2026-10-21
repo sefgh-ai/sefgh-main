@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Trash2, Calendar, ExternalLink } from "lucide-react";
+import { Trash2, Calendar, ExternalLink } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { formatSubmissionDate } from "@/lib/utils/submissions/submissionHelpers";
 

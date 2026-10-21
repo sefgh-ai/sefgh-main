@@ -10,7 +10,7 @@ import {
   KeyRound,
   CheckCircle2,
   LogOut,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

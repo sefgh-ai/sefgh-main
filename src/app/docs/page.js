@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BookOpen, Sparkles, ArrowRight, CheckCircle2 } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {

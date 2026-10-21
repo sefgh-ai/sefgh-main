@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, Megaphone, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Megaphone, Sparkles } from "@/components/ui/icons";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
 import { releaseNotes } from "@/data/releaseNotes";

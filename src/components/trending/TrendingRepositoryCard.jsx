@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Star, GitFork, Code } from "lucide-react";
+import { Star, GitFork, Code } from "@/components/ui/icons";
 
 /**
  * Repository card component (memoized for performance)

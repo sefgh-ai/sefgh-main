@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Inbox } from "lucide-react";
+import { Bell, Inbox } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { NotificationItem } from "./NotificationItem";

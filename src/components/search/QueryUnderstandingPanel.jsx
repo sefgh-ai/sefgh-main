@@ -8,7 +8,7 @@ import {
   Code,
   Lightbulb,
   Layers,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 // Common programming languages for detection
 const LANGUAGES = [

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Star, MessageSquare, Clock, Flame } from "lucide-react";
+import { Eye, Star, MessageSquare, Clock, Flame } from "@/components/ui/icons";
 
 /**
  * Extract owner and repo name from GitHub URL

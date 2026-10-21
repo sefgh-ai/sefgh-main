@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Star, GitFork, Eye } from "lucide-react"
+import { ExternalLink, Star, GitFork, Eye } from "@/components/ui/icons"
 import { memo } from "react"
 
 /**

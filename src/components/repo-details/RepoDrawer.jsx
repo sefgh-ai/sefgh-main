@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { CodeExplorer } from '@/components/CodeExplorer'
-import { X } from 'lucide-react'
+import { X } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 
 export function RepoDrawer({ open, onOpenChange, repository }) {

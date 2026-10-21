@@ -10,7 +10,7 @@ import {
   HelpCircle,
   Star,
   MessageSquare,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";

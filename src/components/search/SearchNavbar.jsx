@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CodeBracketIcon } from "@heroicons/react/24/outline";
-import { Filter, Languages, Star, SortAsc, Check } from "lucide-react";
+import { CodeBracketIcon } from "@/components/ui/icons";
+import { Filter, Languages, Star, SortAsc, Check } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { SidebarTrigger } from "@/components/ui/sidebar";

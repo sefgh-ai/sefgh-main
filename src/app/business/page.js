@@ -23,7 +23,7 @@ import {
   Briefcase,
   Globe,
   Zap,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 export default function BusinessPage() {
   const solutions = [

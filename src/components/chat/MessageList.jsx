@@ -25,7 +25,7 @@ import {
   Edit2,
   RefreshCw,
   Trash2,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { AIMessageRenderer } from "@/components/AIMessageRenderer";
 
 export function MessageList({

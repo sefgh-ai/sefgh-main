@@ -3,7 +3,7 @@
 import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Sparkles, Flame } from "lucide-react";
+import { Star, Sparkles, Flame } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 export function EditorsChoice({ items, onNavigate }) {

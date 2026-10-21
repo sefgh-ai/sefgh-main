@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Code, Loader2 } from "lucide-react";
+import { Code, Loader2 } from "@/components/ui/icons";
 import { ProjectCard, ProjectCardSkeleton } from "./ProjectCard";
 
 export function ProjectsFeed({

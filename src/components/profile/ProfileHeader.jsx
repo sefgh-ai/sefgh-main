@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Shield } from "lucide-react";
+import { Calendar, Shield } from "@/components/ui/icons";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { formatDate } from "@/lib/utils/profile/profileHelpers";
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare, ExternalLink } from "lucide-react";
+import { MessageSquare, ExternalLink } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {

@@ -22,7 +22,7 @@ import {
   Bookmark,
   MoreHorizontal,
   SlidersHorizontal,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 export function NotificationTopBar({

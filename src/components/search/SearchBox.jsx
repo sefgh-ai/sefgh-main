@@ -8,7 +8,7 @@ import {
   ArrowPathIcon,
   SparklesIcon,
   ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 import { SearchHistoryDropdown } from "./SearchHistoryDropdown";
 import {

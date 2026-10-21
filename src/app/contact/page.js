@@ -10,7 +10,7 @@ import {
   MessageCircle,
   Send,
   ChevronDown,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 
 export default function ContactPage() {

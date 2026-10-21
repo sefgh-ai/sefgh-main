@@ -11,7 +11,7 @@ import {
   Search,
   GitPullRequest,
   FlaskConical,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 const goalOptions = [
   {

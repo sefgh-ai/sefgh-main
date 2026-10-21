@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, List, Rows3 } from "lucide-react";
+import { LayoutGrid, List, Rows3 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,

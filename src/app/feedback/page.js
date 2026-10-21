@@ -23,7 +23,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   Star,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { toast } from "sonner";
 
 export default function FeedbackPage() {

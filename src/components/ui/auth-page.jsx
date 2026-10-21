@@ -13,7 +13,7 @@ import {
   EyeOff,
   Lock,
   User,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
 

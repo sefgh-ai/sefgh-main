@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Settings, Loader2, Sparkles } from "lucide-react";
+import { Settings, Loader2, Sparkles } from "@/components/ui/icons";
 import { useCategories } from "@/hooks/home/useCategories";
 import { cn } from "@/lib/utils";
 

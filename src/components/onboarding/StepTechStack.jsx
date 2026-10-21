@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { saveStepTechStack } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Sparkles } from "lucide-react";
+import { ChevronLeft, Sparkles } from "@/components/ui/icons";
 
 const techCategories = {
   frontend: {

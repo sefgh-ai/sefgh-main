@@ -19,7 +19,7 @@ import {
   Filter,
   X,
   History as HistoryIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { formatDistanceToNow } from "date-fns";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";

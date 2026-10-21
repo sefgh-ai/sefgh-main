@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Code, Settings, Loader2 } from "lucide-react";
+import { Code, Settings, Loader2 } from "@/components/ui/icons";
 import { useCategories } from "@/hooks/home/useCategories";
 
 export function CategoriesSidebar({

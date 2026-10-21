@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LifeBuoy, Mail, MessageCircle, BookOpen } from "lucide-react";
+import { LifeBuoy, Mail, MessageCircle, BookOpen } from "@/components/ui/icons";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {

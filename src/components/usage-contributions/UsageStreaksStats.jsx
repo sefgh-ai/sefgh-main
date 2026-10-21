@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDate } from '@/lib/usageStats'
-import { Flame, TrendingUp } from 'lucide-react'
+import { Flame, TrendingUp } from '@/components/ui/icons'
 
 /**
  * Statistics card showing longest and current streaks

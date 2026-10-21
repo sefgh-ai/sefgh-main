@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Download } from "lucide-react"
+import { Download } from "@/components/ui/icons"
 
 /**
  * Platform download card component
