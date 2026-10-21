@@ -1,0 +1,63 @@
+{
+  "project": "mraglhrenqwadegvwxts",
+  "credential": "existing enabled modern publishable; no user Authorization header",
+  "checks": [
+    {
+      "name": "anonymous-issue",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-list",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-revoke",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-policy",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-lookup",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-reserve",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-complete",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-recovery",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "anonymous-pending",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "name": "private-schema-not-exposed",
+      "status": 406,
+      "code": "PGRST106"
+    }
+  ],
+  "policySeeded": false,
+  "post_check_counts": { "policy_rows": 0, "key_rows": 0, "event_rows": 0, "recovery_rows": 0 },
+  "limitations": "Anonymous gateway/profile denial only; userA/userB/accountant acceptance pending",
+  "task": "KEYS-GATEWAY-001a",
+  "method": "Fixed POST arguments to all nine public key RPCs using an existing enabled modern publishable key, no user Authorization; GET private schema with Accept-Profile=sefgh_keys, select=selector&limit=0. Captured only status/code.",
+  "productionTouched": false,
+  "userOrAccountantCredentialProvisioned": false
+}

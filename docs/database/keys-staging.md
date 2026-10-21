@@ -109,6 +109,16 @@ zero rows. These are catalog results, not a JWT or effective gateway test.
 
 ## Receipt recovery and rotation
 
+KEYS-GATEWAY-001a checked the actual development gateway using an existing
+enabled modern publishable key, with no user Authorization header. All nine
+key RPCs refused anonymous calls with HTTP401 / PostgreSQL42501. A limit0
+private-profile request refused exposure with HTTP406 / PGRST106. Only fixed
+test inputs and status/code were recorded; no key value or response payload was
+persisted. Read-only counts afterward show policy/keys/events/recovery allzero.
+The [anonymous receipt](keys-staging-anonymous-2026-10-21.json) is negative
+gateway evidence, not a userA/userB/accountant test or authorization to provision
+credentials, seed policy or enable runtime.
+
 `apikey.RecoverCompletionPage` is implemented as an unregistered package helper.
 Each invocation accepts an explicit1..100 row cap and a positive budget no more
 than30seconds, validates one whole pending page before writes, and replays only

@@ -1,5 +1,13 @@
 # KEYS-RECOVERY-001 / LESSON-POLICY-001
 
+Final source receipts: migration batch7a9d979 and zoom fixture55d8c35 are
+committed and present on both remote branches. Hosted39648555071 on7a9d979
+and [39649911218 on55d8c35](https://github.com/sefgh-ai/sefgh-main/actions/runs/39649911218)
+are overallSUCCESS, including backendrace/vet, production browser/default-off
+and SQL jobs. Tutorial steps are explicitly SKIPPED. Normal handoffs35515 and
+48482 passed with truthful skip signals; Git Agent synchronized them. The
+external watcher accepted the updated policy in these observed runs.
+
 Scope: an unregistered bounded receipt-recovery helper, optional tutorial
 verification, and the isolated staging/review record. Base `6dadafc`, branch
 `main`. Commit and final handoff results are recorded in `coordination.md`.

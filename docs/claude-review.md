@@ -2,6 +2,13 @@
 
 ## REVIEW-022: CI-KEYS-002 / BUG-020 (R171), 2026-10-21
 
+Receiptaddendum: Hume read-only accepted KEYS-GATEWAY-001a anonymous artifact
+and staging/review wording. Independently cross-checked same devref, nine
+unique RPCnames/all401+42501, privateprofile406+PGRST106, four zero counts,
+no credentials/identity/rawbody,11relative targets/diffpass. Codex performed
+hosted requests/counts; Hume made no live calls. This does not establish
+userA/userB/accountant behavior or authorize provisioning/policy/runtime.
+
 Hume read-only accepted destination zoom helper/probe integration/regressions,
 no blocking findings. ExactURL+fixture+body/root and atomic assignment prevent
 null-root and old about:blank mutation. Computedzoom2assertion follows page

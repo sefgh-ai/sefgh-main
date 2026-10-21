@@ -2,6 +2,15 @@
 
 ## CI-KEYS-002 / R171: destination zoom readiness (2026-10-21)
 
+Final receipt: fixture source55d8c35 is on both remote branches. Hosted
+[39649911218](https://github.com/sefgh-ai/sefgh-main/actions/runs/39649911218)
+is overall SUCCESS: verify119395210686 and keys-postgres119395211211 both pass.
+Actual desktop/phone/zoom200 checks and the separate default-off production
+build/browser step pass. Contracts1512/1512, forwarding152requests, Phase2
+69requests/6gates, backendrace/vet and nativeSQL120checks pass. Lessons are
+explicitly skipped under owner policy. This supersedes the failed R171 run for
+corrected-source acceptance without erasing that failure or implying rollout.
+
 The newer documentation-only source6dadafc hostedrun39613327377 failed in the
 zoom fixture after desktop/phone passed. Page.navigate acknowledged navigation
 before document.documentElement existed; the immediate .style dereference

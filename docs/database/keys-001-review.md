@@ -131,9 +131,10 @@ two-user sessions, live grants, realtime behavior, or deployment rollback.
    `RecoverCompletionPage` helper is implemented locally, with no scheduler or
    runtime registration. Recovery capability startup with admissions disabled
    remains a wiring decision.
-4. Development catalog/definition verification is complete; actual anonymous/
-   userA/userB/accountant denial/admission tests through the gateway remain
-   pending, including unrelated effective privilege checks under those real
+4. Development catalog/definition verification and anonymous gateway denial of
+   all nine RPCs/private-profile exposure are complete (KEYS-GATEWAY-001a).
+   Actual userA/userB/accountant denial/admission tests through the gateway
+   remain pending, including unrelated effective privilege checks under those real
    credentials. A catalog snapshot and a local bootstrap are not that acceptance
    evidence. Any future production application requires its own approval.
 5. Show-once playground implemented/tested (KEYS-UI-001, source6a1ee1a;
