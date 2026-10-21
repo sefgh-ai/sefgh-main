@@ -8,7 +8,7 @@ try {
   $created = $true
   $ready = $false
   for ($attempt = 0; $attempt -lt 60; $attempt++) {
-    docker exec $containerName pg_isready -U postgres 2>&1 | Out-Null
+    docker exec $containerName pg_isready -h 127.0.0.1 -U postgres 2>&1 | Out-Null
     if ($LASTEXITCODE -eq 0) { $ready = $true; break }
     Start-Sleep -Milliseconds 250
   }

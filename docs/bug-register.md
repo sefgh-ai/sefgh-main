@@ -221,6 +221,8 @@ KEYS-CORE-001 / BUG-014 records current behavior and implements an unwired hashe
 | R-150 | Medium | Proposed revoke loop could alter grants on unrelated same-name overloads | Hume review; native overload/ACL preservation test | - | fixed locally (KEYS-DB-001, commit pending): fail on preexisting names, revoke only exact created signatures |
 | R-151 | Medium | Proposed SQL owner listing aggregated unbounded history | Hume review; native109metadata/Go105row regressions | - | fixed locally (KEYS-DB-001, commit pending): indexed100row pages; Go18s/100page cap, refuses truncation; UI pagination remains rollout consideration |
 | R-152 | Medium | RPC constructor accepted legacy service-role JWT as configured public project key | Hume review; service/user JWT refusal regression | - | fixed locally (KEYS-DB-001, commit pending): JWT-shaped project key must declare anon; config refusal only, never auth proof |
+| R-153 | Medium | Native SQL CI readiness accepted Docker entrypoint's temporary unix-only PostgreSQL server, which stopped before bootstrap; first SQL connection failed | hosted39563561717 job119100316463 accepted unix readiness then socket vanished before line37bootstrap | - | fixed locally (KEYS-DB-002 / BUG-015, commit pending): final TCP readiness in both launchers and runner; wrapper/direct cold starts120checks each; no bootstrap retry |
+| R-154 | Medium | RPC ambiguous-connection test races its plain request counter between HTTP handler and test goroutines | hosted39563561717 job119100316408 Linux race detector points rpc_edges_test.go lines74/92 | - | fixed locally (KEYS-DB-002 / BUG-015, commit pending): atomic Add/Load counters; focused10repeat regression and vet pass; hosted race recheck required |
 
 ## Analysis and ingestion workers
 

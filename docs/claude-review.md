@@ -1,5 +1,23 @@
 # Claude Code review and reconciliation
 
+## REVIEW-017: KEYS-DB-002 / BUG-015, 2026-10-21
+
+Hume independently accepted the readiness correction and subsequent atomic test
+counter/lesson43 correction, read-only. CI39563561717 exposed temporary-server
+readiness R153 and the ambiguous HTTP test counter race R154. Both fixture
+launchers and central runner now wait for final TCP listener before any SQL;
+no bootstrap retry. Atomic counters preserve the test's existing assertions.
+Runtime SQL/Go adapters remain at REVIEW-016 hashes.
+
+Independent checks: Node syntax, PowerShell parse and three-file diff for
+readiness; corrected RPC test25repeats/vet, lesson43 solution tests,
+ordinary/solution builds/both vets, format/diff and lesson index for race fix.
+No reviewer Docker or Linux race run. Codex's wrapper/direct cold-start runs
+each passed120native checks;10RPC repeats and local checks passed. Hosted
+replacement remains required; ordinary tests do not prove race safety. Lesson
+wording follow-up corrected to shared counter. No edits, live calls, extra
+agents, ownership changes or hooks by reviewer.
+
 ## REVIEW-016: KEYS-DB-001, 2026-10-21
 
 Independent read-only reviewer Hume accepted the corrected unregistered SQL/RPC

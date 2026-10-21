@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -67,11 +68,11 @@ func TestRPCSessionDenialNeverReachesDataAPI(t *testing.T) {
 func TestRPCNoRetryNoErrorPayloadAndNoCredentialRedirect(t *testing.T) {
 	for _, kind := range []string{"denial", "ambiguous", "redirect", "malformed-success"} {
 		t.Run(kind, func(t *testing.T) {
-			calls, redirects := 0, 0
-			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { redirects++; w.WriteHeader(500) }))
+			var calls, redirects atomic.Int64
+			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { redirects.Add(1); w.WriteHeader(500) }))
 			defer target.Close()
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				calls++
+				calls.Add(1)
 				switch kind {
 				case "denial":
 					w.WriteHeader(403)
@@ -89,8 +90,8 @@ func TestRPCNoRetryNoErrorPayloadAndNoCredentialRedirect(t *testing.T) {
 			client, _ := NewRPCClient(server.URL, "public-fixture")
 			manager := ownerRPC{client, "11111111-1111-4111-8111-111111111111", "sensitive-session"}
 			_, secret, err := manager.Issue(context.Background(), manager.owner, "Test", []string{"repo:read:public"})
-			if err != ErrUnavailable || secret != nil || calls != 1 || redirects != 0 {
-				t.Fatal("ambiguous/failing issuance retried or exposed", err, calls, redirects)
+			if err != ErrUnavailable || secret != nil || calls.Load() != 1 || redirects.Load() != 0 {
+				t.Fatal("ambiguous/failing issuance retried or exposed", err, calls.Load(), redirects.Load())
 			}
 			for _, value := range []any{manager, &manager} {
 				if strings.Contains(fmt.Sprintf("%v %#v", value, value), "sensitive-session") {

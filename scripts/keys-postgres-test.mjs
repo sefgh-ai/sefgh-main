@@ -8,6 +8,16 @@ const container = process.argv[2];
 if (!container || !/^[A-Za-z0-9_.-]+$/.test(container)) throw new Error('Pass an owned test-container name/id');
 const inspect = spawnSync('docker', ['inspect', '--format', '{{json .Config.Labels}}', container], { encoding: 'utf8' });
 if (inspect.status !== 0 || JSON.parse(inspect.stdout)?.['com.sefgh.test'] !== 'keys') throw new Error('Refusing an unlabelled database');
+// Docker's entrypoint runs a temporary unix-only server during initdb, then
+// stops it. Only the final daemon listens on TCP. Never retry bootstrap SQL:
+// some CREATEs could already have committed before a connection failure.
+let ready = false;
+for (let i=0;i<60;i++) {
+  const probe=spawnSync('docker',['exec',container,'pg_isready','-h','127.0.0.1','-U','postgres'],{encoding:'utf8',timeout:2000});
+  if(probe.status===0){ready=true;break;}
+  await new Promise(resolve=>setTimeout(resolve,250));
+}
+if(!ready) throw new Error('Final PostgreSQL daemon did not become ready');
 const args = ['exec', '-i', container, 'psql', '-X', '-q', '-A', '-t', '-U', 'postgres', '-v', 'ON_ERROR_STOP=1'];
 function sql(source, expected = true) {
   const r = spawnSync('docker', args, { input: source, encoding: 'utf8', timeout: 15000, maxBuffer: 4 << 20 });

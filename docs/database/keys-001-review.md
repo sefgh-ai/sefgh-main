@@ -1,6 +1,6 @@
 # KEYS-DB-001: database proposal for owner review
 
-Status: implementation under independent review; **not applied, enabled or
+Status: local foundation independently reviewed; **not applied, enabled or
 deployed**. This document separates the concrete proposal from live rollout.
 
 The named SEFGH MCP account now exposes the expected User-DB project

@@ -1,5 +1,24 @@
 # KEYS-DB-001 verification
 
+Post-commit update (KEYS-DB-002 / BUG-015): original36files committed732d0dc
+and synchronized on both remotes; main also timestamp-onlyd538936. Normal
+handoff98161 passed contracts/backend/lessons and emitted its signal. Hosted
+39563561717 exposed two verification-harness gaps: native job observed the
+Docker temporary unix-only server, and Linux race detected the ambiguous
+connection test's plain counter. R153/R154 corrections gate final hosted
+acceptance; the original run failed, and is not reported as a green release.
+
+Both launchers and central runner now require final TCP127.0.0.1 readiness
+before any bootstrap SQL, without retrying partially committed setup. The
+pinned image's own entrypoint confirms its temporary server has empty
+listen_addresses. Wrapper and direct immediate cold-start runs each passed120
+native assertions, with owned containers removed. The HTTP test now uses atomic
+Add/Load for calls/redirects;10focused repeats and vet pass. Lesson43 explains
+goroutines/atomics and preserves existing owner exercises. Its solution tests,
+ordinary/solution build and both vets pass. Runtime SQL/Go implementation hashes
+from REVIEW-016 are unchanged. Replacement hosted results belong to the newest
+coordination handoff, not to these local results.
+
 Implementation and independent review complete for the unregistered local
 SQL/RPC foundation. Live SQL, runtime enablement and deployment are separate.
 Base/current at verification: main660a508ca85cea5c09c9ff440c622848c0ff5745,
