@@ -1,5 +1,29 @@
 # Show-once playground verification
 
+## CI-KEYS-002 / R171: destination zoom readiness (2026-10-21)
+
+The newer documentation-only source6dadafc hostedrun39613327377 failed in the
+zoom fixture after desktop/phone passed. Page.navigate acknowledged navigation
+before document.documentElement existed; the immediate .style dereference
+threw. Default-off browser step consequently skipped. Earlier green622f7c3
+remains historical evidence, not proof every later fixture run passed.
+
+The probe now calls prepareKeyProbeZoom before form interactions. One evaluated
+predicate requires the exact destination URL, installed fixture, body and root,
+then sets zoom atomically. The initial about:blank document cannot satisfy it.
+Monotonic bounded polling rejects a never-ready page; evaluator errors remain
+failures. The rendered probe additionally asserts computed root zoom equals2.
+Actual-expression VM regressions failed2cases with the old setter; all3 pass
+with the correction, independently under Hume. No application, Chrome startup
+flag/deadline, Go, SQL, environment or lesson change is involved.
+
+Codex's actual protected-page production probe30377 --reuse passed desktop1280,
+phone390 and zoom200 at640, with all existing product assertions and the new
+computedzoom check. Reused only the existing synthetic build/auth-port manifest;
+no live project, user, key or provider was used. Focused strictlint0 and
+syntax/diff pass. Hume source/focused acceptance REVIEW022; full handoff and
+replacement hosted results are recorded in coordination.md.
+
 Final receipt: source UI6a1ee1a plus fixture622f7c3 are committed/synchronized.
 Hosted39609303873 on622f7c3 overallSUCCESS: verify119253652382 and native
 keys-postgres119253652570 success.1505contracts, Linux race/vet,44lessons,

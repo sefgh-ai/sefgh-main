@@ -1,5 +1,18 @@
 # Claude Code review and reconciliation
 
+## REVIEW-022: CI-KEYS-002 / BUG-020 (R171), 2026-10-21
+
+Hume read-only accepted destination zoom helper/probe integration/regressions,
+no blocking findings. ExactURL+fixture+body/root and atomic assignment prevent
+null-root and old about:blank mutation. Computedzoom2assertion follows page
+readiness before forms. Three actual-expression VM tests independently pass;
+Nodesyntax/diff pass. No reviewer browser/broadsuite/lesson/live/handoff action.
+Writer actual3view production probe30377 passes with existing assertions and
+new effectivezoom. Strictfocusedlint0 (existing mapping-age notice). Hosted
+39613327377 on prior6dadafc failedzoom/defaultoffskipped; replacement required.
+No application/Go/SQL/Chrome startup setting changed. Finalhandoff/CIreceipts
+belong to coordination.md, without conflating source and hosted acceptance.
+
 ## REVIEW-021: LESSON-POLICY-001 / KEYS-RECOVERY-001 / KEYS-STAGE-001, 2026-10-21
 
 Hume read-only accepted the unwired recovery helper, truthful optional lesson

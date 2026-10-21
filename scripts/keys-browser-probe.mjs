@@ -10,6 +10,7 @@ import http from 'node:http';
 import net from 'node:net';
 import { createServerClient } from '@supabase/ssr';
 import { observeBrowser, devtoolsEndpoint } from './browser-startup.mjs';
+import { prepareKeyProbeZoom } from './key-probe-zoom.mjs';
 const sleep=ms=>new Promise(done=>setTimeout(done,ms));
 const enabled=!process.argv.includes('--off');
 async function port(){const server=net.createServer();server.listen(0,'127.0.0.1');await once(server,'listening');const p=server.address().port;await new Promise(done=>server.close(done));return p;}
@@ -93,7 +94,7 @@ async function browserSession(view){
  const setOwner=async index=>{const stored=await send('Network.getCookies',{urls:[base]});for(const cookie of stored.cookies.filter(c=>/^sb-.*-auth-token(?:\.\d+)?$/.test(c.name)))await send('Network.deleteCookies',{name:cookie.name,domain:cookie.domain,path:cookie.path});await send('Network.setCookies',{cookies:cookies[index].map(c=>({...c,url:base,path:'/'}))});};
  await setOwner(0);
  await send('Page.navigate',{url:base+'/playground'});
- if(view.name==='zoom200')await evaluate(`document.documentElement.style.zoom='2'`);
+ if(view.name==='zoom200')await prepareKeyProbeZoom(evaluate,base+'/playground');
  return {send,evaluate,wait,click,clickSelector,input,key,setOwner,exceptions,close:async()=>{rejectAll();ws.close();await fetch(`http://127.0.0.1:${debugPort}/json/close/${target.id}`).catch(()=>{});}};
 }
 try {
@@ -113,6 +114,7 @@ try {
   try {
    if(!enabled){await s.wait(`document.body.textContent.includes('API Playground')&&!!document.querySelector('[role="tablist"]')`);assert.equal(await s.evaluate(`!!document.querySelector('[data-key-mode="v1"]')`),false);assert.equal(await s.evaluate(`window.__keysProbe.calls.some(c=>c.path.startsWith('/api/v1/'))`),false);results.push({view:view.name,checks:['legacy retained','no v1 request']});continue;}
    await s.wait(`document.body.textContent.includes('No keys yet.')`);
+   if(view.name==='zoom200')assert.equal(await s.evaluate(`Number(getComputedStyle(document.documentElement).zoom)`),2,'destination page remains at 200% zoom');
    await s.wait(`!!document.querySelector('[aria-label="Cookie choices"]')`);
    assert.equal(await s.evaluate(`(()=>{const r=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Got it').getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=0&&r.bottom<=innerHeight&&e?.closest('button')?.textContent.trim()==='Got it';})()`),true,'cookie choice reachable above navigation');
    await s.click('Got it');
