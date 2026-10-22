@@ -1,5 +1,16 @@
 # KEYS-RECOVERY-002 / KEYS-ACCEPT-001 verification
 
+Final source commit `03dfc5a54dd75320d6e954b799cadb37758f5265` is committed and
+present on both remote branches. [Hosted CI39791285330](https://github.com/sefgh-ai/sefgh-main/actions/runs/39791285330)
+is overallSUCCESS: verify119867686731 and keys-postgres119867686407 bothSUCCESS.
+[Metadata and selected-log receipt](keys-acceptance-ci-2026-10-22.json) confirms
+1533contracts/0failures,128nativeSQL checks, backendrace/vet/format,152forwarding
+requests, Phase2 69statefulrequests/6gates, trending desktop/phone, show-once
+desktop/phone/zoom200 and separate default-off production gate. Lessons were
+explicitly SKIPPED, not passed. Handoff73293 exit0/tree1d3c02aa39ea preceded Git
+Agent synchronization. These are synthetic runtime proofs, not live gateway
+lifecycle/provisioning/production acceptance.
+
 Base main `a60e3b9`, writer Codex, reviewer Arendt read-only. Owner-approved dev
 test policy was applied and readback verified; no hosted lifecycle, identity or
 signer change was executed. Commit and final check results

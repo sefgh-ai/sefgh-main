@@ -1,0 +1,98 @@
+{
+  "task": "KEYS-RECOVERY-002 / KEYS-ACCEPT-001 / BUG-021",
+  "date": "2026-10-22",
+  "run_id": 39791285330,
+  "source_commit": "03dfc5a54dd75320d6e954b799cadb37758f5265",
+  "url": "https://github.com/sefgh-ai/sefgh-main/actions/runs/39791285330",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 119867686407,
+      "name": "keys-postgres",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Native PostgreSQL key roles, quotas and recovery (synthetic only)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 119867686731,
+      "name": "verify",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Backend race detector and vet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lesson solutions (exercises intentionally remain unfinished)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Build Go for the local forwarding probe",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Production Next.js forwarding (local fake GitHub)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Trending browser flows (local API fixtures)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Show-once playground (synthetic sessions, no live keys)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playground default-off gate (separate production build)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "selected_log_evidence": [
+    "2026-10-22T13:56:46.1558166Z Native PostgreSQL checks passed: 128; owner/key concurrency, role denial, completion/recovery, legacy preservation.",
+    "2026-10-22T13:58:47.6263445Z ℹ tests 1533",
+    "2026-10-22T13:58:47.6264439Z ℹ pass 1533",
+    "2026-10-22T13:58:47.6264827Z ℹ fail 0",
+    "2026-10-22T14:01:01.2112810Z servers ready; probing 152 requests",
+    "2026-10-22T14:01:01.8913517Z Phase 2 acceptance: 69 stateful requests, 6 gate checks passed",
+    "2026-10-22T14:01:37.2098352Z desktop: seven browser checks passed",
+    "2026-10-22T14:01:39.2598800Z phone: seven browser checks passed",
+    "2026-10-22T14:02:18.8040628Z desktop: key UI browser checks passed",
+    "2026-10-22T14:02:22.3281581Z phone: key UI browser checks passed",
+    "2026-10-22T14:02:26.0223440Z zoom200: key UI browser checks passed"
+  ],
+  "limitations": [
+    "Synthetic CI only; no hosted userA/userB/accountant lifecycle acceptance.",
+    "Lessons skipped by owner policy; no lesson pass inferred.",
+    "No runtime activation, deployment, provisioning or legacy/production change."
+  ]
+}

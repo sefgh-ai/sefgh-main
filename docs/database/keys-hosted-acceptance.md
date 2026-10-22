@@ -75,6 +75,12 @@ claiming parity. No automatic deletion/reset or production defaults are provided
 
 ## Credentials and signing gate
 
+The owner requested the exact development setup for review. See
+[KEYS-PROVISION-001a](keys-dev-provisioning-review.md): two confirmed disposable
+users, one externally retained imported ES256 key, fixed five-minute accountant
+token, original-key restoration and audit-preserving cleanup. This proposal
+is not approved or executed; existing policy/run approval does not authorize it.
+
 Two disposable development Auth users and valid sessions need an approved setup.
 Do not ask for passwords or paste tokens into chat. The existing publishable key
 cannot authorize accounting. No identities/accountant credential were created.

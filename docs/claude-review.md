@@ -1,5 +1,25 @@
 # Claude Code review and reconciliation
 
+## REVIEW-024: KEYS-PROVISION-001a, 2026-10-22
+
+Arendt read-only accepted the final concrete development setup for owner review,
+not execution. Proposal hash
+`ef96978f62dc4630d3a8b3e0ad3f681a3eca625a3c6cffebd13623cc51c849d9`.
+Three initial documentation findings were corrected: logout now precedes signing
+trust changes with actual server acknowledgement separate from local disposal;
+five-minute token expiry during state cooldowns does not prove active-token
+revocation; retained users remain password-login capable. R177 records the
+unexecuted draft-plan correction. Applied FK cascades include saved recovery,
+so user deletion is excluded. Stop conditions include unrelated consumers and
+an occupied foreign standby slot. No helper or credential was generated.
+
+Reviewer verified final text/hash and diff check, no tests/live calls/lessons/
+agents/edits. Parent inspected installed auth-js2.78.0 logout behavior and
+current official signing/Admin-createUser/password-login sources. Current
+Dashboard controls and actual execution conditions still require verification
+after approval. Operator helper source review is required before any live use.
+SourceCI39791285330 green is writer-verified, not a reviewer live observation.
+
 ## REVIEW-023: KEYS-RECOVERY-002 / KEYS-ACCEPT-001 / BUG-021, 2026-10-22
 
 Arendt read-only accepted the final source bundle, with no remaining blocking
