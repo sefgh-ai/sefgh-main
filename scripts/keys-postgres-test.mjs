@@ -3,6 +3,7 @@
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { spawn, spawnSync } from 'node:child_process';
+import { ACCEPTANCE_POLICY } from './keys-hosted-acceptance.mjs';
 
 const container = process.argv[2];
 if (!container || !/^[A-Za-z0-9_.-]+$/.test(container)) throw new Error('Pass an owned test-container name/id');
@@ -62,6 +63,33 @@ sql(proposal);
 check(!sql(proposal,false).ok,'Repeated migration silently replaced existing objects');
 check(sql(`select count(*) from information_schema.tables where table_schema='sefgh_keys'`).text === '6', 'Private schema not created');
 check(!sql(asUser(a, `select public.sefgh_key_issue('Test',array['repo:read:public'])`), false).ok, 'Missing policy admitted issuance');
+
+// Review-only development policy is exercised only in this labelled disposable
+// fixture. Move synthetic legacy tables aside temporarily to model a fresh
+// development project; preserve/restore them before the existing legacy checks.
+const acceptancePolicy = await readFile(new URL('../supabase/proposals/keys_002_dev_acceptance_policy.sql', import.meta.url), 'utf8');
+check(!sql(acceptancePolicy, false).ok, 'Acceptance policy accepted application-bearing database');
+check(sql('select count(*) from sefgh_keys.policy').text === '0', 'Rejected test policy left a row');
+sql(`create schema fixture_legacy;
+  alter table public.api_keys set schema fixture_legacy;
+  alter table public.api_limits set schema fixture_legacy;
+  alter table public.api_logs set schema fixture_legacy;`);
+sql(acceptancePolicy);
+const installedPolicy = JSON.parse(sql(asAccountant('select public.sefgh_key_policy()')).text);
+check(Object.keys(installedPolicy).length === Object.keys(ACCEPTANCE_POLICY).length &&
+  Object.entries(ACCEPTANCE_POLICY).every(([k, v]) => JSON.stringify(installedPolicy[k]) === JSON.stringify(v)), 'Reviewed test policy differs from hosted runner');
+check(!sql(acceptancePolicy, false).ok, 'Acceptance policy silently replaced an installed policy');
+check(sql('select count(*) from sefgh_keys.policy').text === '1', 'Rejected repeat changed policy state');
+sql(`delete from sefgh_keys.policy;
+  insert into sefgh_keys.keys values('AAAAAAAAAAAAAAAA','${a}','Policy guard fixture',array['repo:read:public'],extensions.digest('policy-guard-fixture','sha256'),'2020-01-01Z','2020-01-02Z',null);`);
+check(!sql(acceptancePolicy, false).ok, 'Acceptance policy accepted existing lifecycle data');
+check(sql('select count(*) from sefgh_keys.policy').text === '0' && sql('select count(*) from sefgh_keys.keys').text === '1', 'Rejected dirty apply changed lifecycle state');
+sql(`delete from sefgh_keys.keys;
+  alter table fixture_legacy.api_keys set schema public;
+  alter table fixture_legacy.api_limits set schema public;
+  alter table fixture_legacy.api_logs set schema public;
+  drop schema fixture_legacy;`);
+check(sql('select md5(row_to_json(k)::text) from public.api_keys k').text === legacyBefore, 'Test policy checks changed legacy fixture data');
 sql(`insert into sefgh_keys.policy values(true,'fixture-v1',true,4,40,3,4,3600,86400,1)`);
 
 for (const role of ['anon', 'authenticated', 'service_role', 'sefgh_key_accountant']) {

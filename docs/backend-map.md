@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update2026-10-22 (KEYS-RECOVERY-002 / KEYS-ACCEPT-001): unregistered Go
+`OpenRecovery` opens Pending/Complete capability through a validated gateway
+read without enabled admission policy. Provider-free hosted acceptance runner
+is restricted to the existing dev project and supplied credentials; its exact
+test policy is separately owner-approved/applied with readback and no lifecycle
+data. The approved run awaits credential setup. No identities, signing configuration,
+runtime, provider or production changes. [Acceptance setup](database/keys-hosted-acceptance.md).
+
 Update2026-10-21 (KEYS-STAGE-001 / KEYS-RECOVERY-001): separate
 `sefgh-migration-dev` project created with owner organization/cost approval;
 owner-approved additive SQL applied in development only, with catalog/definition

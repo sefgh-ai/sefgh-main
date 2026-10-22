@@ -1,5 +1,40 @@
 # Claude Code review and reconciliation
 
+## REVIEW-023: KEYS-RECOVERY-002 / KEYS-ACCEPT-001 / BUG-021, 2026-10-22
+
+Arendt read-only accepted the final source bundle, with no remaining blocking
+findings. Exact policy SQL, native fixture extension and unregistered
+`OpenRecovery` were accepted first; the hosted runner required corrections.
+Reviewer reproduced unsafe cleanup skipping other owners/keys, acceptance of
+unexpected void replies and loss of sub-millisecond receipt precision. Parent
+added failing actual-runner regressions before each correction. R172-R176
+record these draft/tooling and cancellation-fixture defects, not hosted findings.
+
+Independent final runner suite:21passed/0failed/0skipped. Three one-microsecond
+pending/saved timestamp changes are rejected; equivalent +05:30 offsets and
+fractional padding pass. Additional28in-memory checks of the actual timestamp
+helpers cover nanoseconds/microseconds, pre-epoch and offset/day crossings,
+calendar/leap-year validity, offsets and invalid-input equality. Final source
+hashes remained stable during review: runner
+`6c883acbcff8f796508bd3854bf9037d3be3416c68884983614a16c2f59c6bdf`,
+tests `9cd7cc6dc36830dedbe831707abb2b90943726c70fa2a96c175baa8fe37f532c`.
+Earlier independent Go result: five recovery-opening groups plus subcases pass
+with25s timeout, target formatting clean; not repeated for the JS-only correction.
+Final diff check passes. No reviewer broad suite, Docker, hosted call, lesson,
+agent, file edit or running process.
+
+Reviewer rehashed and accepted exact policy proposal
+`c433ed1322c919bbbd62a347a6174af92044e11336733d11720741a60e477695`.
+Native extension remains confined to the labelled disposable fixture and
+restores synthetic legacy state. Writer-run128native assertions and cleanup
+are separate evidence. Reviewer inspected the parent-produced hosted policy
+receipt (matching approved hash/readback, five empty lifecycle tables), without
+independent live verification. Owner-approved policy application is limited to
+existing dev `mraglhrenqwadegvwxts`. Hosted lifecycle run awaits separately
+approved supplied credentials; no identity/signer, runtime, production or
+legacy authorization follows from source acceptance. Parent full checks and
+Git/CI/handoff receipts belong to coordination.md.
+
 ## REVIEW-022: CI-KEYS-002 / BUG-020 (R171), 2026-10-21
 
 Receiptaddendum: Hume read-only accepted KEYS-GATEWAY-001a anonymous artifact

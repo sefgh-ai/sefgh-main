@@ -20,6 +20,18 @@ Inside this function, the interface exposes no `Reserve`, key issuance, or
 provider call. In JavaScript you might pass an object containing just two
 functions. Go checks those method signatures when compiling.
 
+`RPCClient.OpenRecovery` in
+[`rpc_recovery.go`](../../backend/internal/apikey/rpc_recovery.go) opens this
+capability using a bounded, validated pending read. It does not ask whether
+admissions are enabled: recovery must still work after new requests stop.
+The gateway verifies the supplied token; this method never mints one.
+
+The returned value has its own private concrete type, `recoveryRPC`. It defines
+only `Pending` and `Complete`. Returning the broader `RPCAccounting` as a small
+interface would still let a caller use a type assertion to recover its extra
+methods. The wrapper prevents that widening in Go; the underlying token retains
+its existing database grants. This is not a new, more restricted database role.
+
 Every call chooses a row limit and a time budget. `context.WithTimeout` derives
 a context from the caller, so either the caller's cancellation or the budget can
 stop I/O. `defer cancel()` releases the timer when the call finishes. This does

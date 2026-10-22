@@ -699,3 +699,22 @@ Owner's tutorial policy (2026-10-21): continue generating/updating lessons, but
 make solution test/vet/build optional. Default handoff/CI explicitly skip
 lessons; `--lessons` and manualCI `verify_lessons` opt in. Contract/backend
 verification remains required, and a skip is never recorded as a pass.
+
+### KEYS-RECOVERY-002 / KEYS-ACCEPT-001 (2026-10-22)
+
+Recovery capability startup is separated from admission policy. `OpenRecovery`
+validates a bounded pending read using the supplied role credential and returns
+a separate concrete Go wrapper with only Pending/Complete methods. This avoids
+widening by type assertion; it does not narrow the underlying JWT's SQL grants.
+No scheduler, minting, runtime registration or policy activation is introduced.
+
+The hosted acceptance tool targets only the already approved isolated project,
+requires explicit mutation flags and supplied sessions/accountant token, calls
+no provider and retains no raw credentials in its reports. It exercises the
+SQL gateway, separately from Go HTTP/UI acceptance. New test keys are revoked
+with independent, confirmed cleanup; audit and unknown accounting state remain.
+The owner separately approved the exact test-policy SQL and one provider-free
+dev run once credentials are available; the policy is applied/readback verified
+only in `mraglhrenqwadegvwxts`, without lifecycle data. Identity/signer provisioning
+still needs separate owner review. Managed signing-key extraction, user Auth-hook changes and service-role
+CRUD are not workarounds. [Setup and review](../database/keys-hosted-acceptance.md).

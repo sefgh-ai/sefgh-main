@@ -3,8 +3,9 @@
 Real code: [rpc.go](../../backend/internal/apikey/rpc.go),
 [rpc_accounting.go](../../backend/internal/apikey/rpc_accounting.go) and
 [rpc_json.go](../../backend/internal/apikey/rpc_json.go).
-These adapters are implemented locally; the proposed SQL has not been applied
-to Supabase, and the new endpoints are not registered in the server.
+These adapters are implemented locally. The owner-approved SQL is applied only
+to the isolated development project; the new endpoints remain unregistered.
+The separate `RPCClient.OpenRecovery` capability is explained in lesson44.
 
 ## A method can retain one verified capability
 

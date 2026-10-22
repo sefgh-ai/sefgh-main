@@ -1,0 +1,97 @@
+{
+  "task": "KEYS-ACCEPT-001",
+  "date": "2026-10-22",
+  "started_utc": "2026-10-22 13:45:32 UTC",
+  "target": {
+    "name": "sefgh-migration-dev",
+    "project_ref": "mraglhrenqwadegvwxts",
+    "organization_id": "hithuduntbsajjhmnntm",
+    "region": "ap-south-1",
+    "postgres_version": "17.11.0.003",
+    "status": "ACTIVE_HEALTHY",
+    "connection_name": "SEFGH"
+  },
+  "approved_source": {
+    "file": "supabase/proposals/keys_002_dev_acceptance_policy.sql",
+    "sha256": "c433ed1322c919bbbd62a347a6174af92044e11336733d11720741a60e477695"
+  },
+  "authorization": "Owner approved exact test-only policy and one provider-free acceptance run once separately approved credentials are supplied. Identity/signer provisioning, legacy keys, providers and production excluded.",
+  "preflight": {
+    "database_name": "postgres",
+    "key_schema_exists": true,
+    "public_application_relations": 0,
+    "policy_rows": 0,
+    "key_rows": 0,
+    "event_rows": 0,
+    "recovery_rows": 0,
+    "key_window_rows": 0,
+    "owner_window_rows": 0,
+    "accountant_role": {
+      "login": false,
+      "inherit": false,
+      "bypassrls": false
+    }
+  },
+  "application": {
+    "tool": "execute_sql",
+    "operation": "guarded transactional policy insertion only",
+    "success": true,
+    "original_additive_migration_reapplied": false
+  },
+  "readback": {
+    "context": "Administrative read-only SQL, not a user/accountant gateway acceptance test",
+    "matches_reviewed_policy": true,
+    "policy_rows": 1,
+    "installed_policy": {
+      "enabled": true,
+      "per_key": 2,
+      "revision": "dev-acceptance-v1",
+      "per_owner": 3,
+      "singleton": true,
+      "max_active": 2,
+      "max_name_runes": 80,
+      "window_seconds": 86400,
+      "lifetime_seconds": 600,
+      "completion_timeout_seconds": 1
+    },
+    "rpc_policy": {
+      "enabled": true,
+      "per_key": 2,
+      "revision": "dev-acceptance-v1",
+      "endpoints": {
+        "public-search": "repo:read:public"
+      },
+      "per_owner": 3,
+      "max_active": 2,
+      "charge_mode": "attempt",
+      "max_name_runes": 80,
+      "window_seconds": 86400,
+      "lifetime_seconds": 600,
+      "completion_timeout_seconds": 1
+    },
+    "key_rows": 0,
+    "event_rows": 0,
+    "recovery_rows": 0,
+    "key_window_rows": 0,
+    "owner_window_rows": 0,
+    "public_application_relations": 0,
+    "accountant_role": {
+      "login": false,
+      "inherit": false,
+      "bypassrls": false
+    }
+  },
+  "remaining": {
+    "credential_environment_names_present": 0,
+    "hosted_lifecycle_run": false,
+    "identities_or_signer_provisioned": false,
+    "runtime_enabled": false,
+    "production_touched": false,
+    "legacy_keys_touched": false
+  },
+  "limitations": [
+    "Policy enabled only in isolated development SQL; Go runtime remains unregistered/default-off.",
+    "No userA/userB/accountant JWT gateway acceptance or provider execution.",
+    "Do not reapply policy proposal or original additive migration."
+  ]
+}

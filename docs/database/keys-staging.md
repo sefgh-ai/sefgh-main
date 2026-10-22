@@ -1,8 +1,9 @@
 # KEYS-STAGE-001: isolated test target and acceptance sequence
 
 Status: project created; owner-approved additive key SQL **applied in development only**;
-post-apply catalog/definition checks pass. No policy, role credential, test users,
-runtime activation or cutover.
+post-apply catalog/definition checks pass. A separately approved test policy was
+applied on 2026-10-22; its readback matches and lifecycle tables are empty. No
+role credential, test users, runtime activation or cutover.
 This is the current staging record. Earlier access-denied records are history.
 
 ## Target and owner decisions
@@ -79,21 +80,33 @@ data privilege among the inspected relations. The accountant-callable function
 query returned only its six public wrappers among the inspected non-system
 schemas; system schemas and procedures were outside that query. Authenticator
 membership permits SET but not inherited privileges; the
-platform also records a postgres membership without INHERIT/SET. Policy has
-zero rows. These are catalog results, not a JWT or effective gateway test.
+platform also records a postgres membership without INHERIT/SET. Policy had
+zero rows at that 2026-10-21 snapshot. These are catalog results, not a JWT or
+effective gateway test.
+
+On 2026-10-22 the owner separately approved exact policy proposal SHA-256
+`c433ed1322c919bbbd62a347a6174af92044e11336733d11720741a60e477695`
+and one provider-free acceptance run when separately approved credentials are
+available. MCP target/status, source hash and all six zero table counts were
+rechecked immediately before the guarded transaction. Only that test policy
+was inserted. [Readback receipt](keys-staging-policy-2026-10-22.json) confirms
+one exact `dev-acceptance-v1` row, no lifecycle data, no public application
+relations and unchanged restricted accountant flags. This is administrative
+configuration evidence, not user/accountant JWT authorization acceptance.
 
 1. **Additive development SQL gate complete.** Exact owner approval, apply and
    catalog/definition receipt are recorded above. This grants no production or
-   legacy privilege approval. Do not seed policy or reapply this migration.
+   legacy privilege approval. Do not reapply this migration or test policy.
 2. **Provision the narrow accountant capability through an approved path.**
    Verify actual signing-key mode, trusted provisioning, rotation/expiry and
    gateway role selection. Do not paste signing secrets into chat/handoffs,
    mint an unreviewed JWT, change user Auth hooks, or use service-role CRUD.
    Audit unrelated effective privileges as well as key-object grants.
-3. **Approve an explicit test policy and two isolated test identities.**
-   Numeric test values must be recorded as test-only, not production defaults.
-   Keep all existing app environment files and production projects untouched.
-   Test provisioning/session credentials belong outside Git and logs.
+3. **Test policy approval/application complete; identities remain gated.**
+   Numeric values and one provider-free run are approved as test-only, not
+   production defaults. Two isolated identities and the trusted signer/token
+   setup still need separate approval. Keep existing app environment files and
+   production projects untouched; credentials belong outside Git and logs.
 4. **Run actual gateway acceptance**, separately as anonymous, userA, userB and
    accountant. Verify owner create/list/revoke and cross-user denial; no secret
    on list; accountant denial of management/unrelated data; user/anon denial of
@@ -128,10 +141,18 @@ payloads are not returned. Cursors belong to one scan; later fresh scans start
 at nil to revisit earlier unknown rows. No scheduler, retention deletion,
 automatic abandonment, quota reservation or provider replay is included.
 
-`OpenAccounting` currently requires an enabled admission policy. Recovery itself
-uses only `Pending` and `Complete`; decide how a verified recovery capability
-will be opened while admissions are disabled before runtime wiring. Do not
-solve this by broadening credentials or quietly enabling admissions.
+`OpenAccounting` still requires an enabled admission policy. KEYS-RECOVERY-002
+adds a separate `OpenRecovery`: a bounded, validated pending read establishes
+the supplied gateway capability without consulting admission policy. Its
+separate concrete Go type exposes only `Pending` and `Complete`; the underlying
+credential retains its existing database grants. Local disabled-policy tests
+pass. Actual provisioned-token/disabled-policy hosted acceptance and operational
+scheduling remain gates; no broader credential or enabled policy is substituted.
+
+KEYS-ACCEPT-001 implements the provider-free hosted gateway runner; its exact
+test policy is now approved/applied only here. [Acceptance setup and review](keys-hosted-acceptance.md)
+separates tested orchestration from actual userA/userB/accountant acceptance.
+The latter remains pending supplied, separately approved credentials.
 
 Rotation means users create new v1 credentials and update identified consumers.
 Do not convert old plaintext credentials, dual-write secrets, revoke old keys,

@@ -7,7 +7,9 @@ or deployment. This document separates development acceptance from rollout.
 Owner update2026-10-21: the separate test project `sefgh-migration-dev`
 (`mraglhrenqwadegvwxts`, Mumbai) is now created and catalog preflight verified.
 Owner approved the exact additive SQL for this project, it applied successfully,
-and catalog/definition checks pass; no policy seeded. [Staging record](keys-staging.md) identifies the exact
+and catalog/definition checks pass. On 2026-10-22 a separately approved test
+policy was installed there and readback verified, with lifecycle tables still
+empty. [Staging record](keys-staging.md) identifies the exact
 review files/hashes and hosted acceptance sequence. Owner chose rotation to v1;
 old keys may be revoked only at a separately approved cutover. No conversion,
 policy seed or production change is authorized by project creation.
@@ -129,8 +131,13 @@ two-user sessions, live grants, realtime behavior, or deployment rollback.
    actual consumers and review that concrete transition before executing it;
    no automatic conversion, revocation or dual write is included. The bounded
    `RecoverCompletionPage` helper is implemented locally, with no scheduler or
-   runtime registration. Recovery capability startup with admissions disabled
-   remains a wiring decision.
+   runtime registration. `OpenRecovery` now opens a separate pending/complete-only
+   Go capability without enabled admissions; its provisioned-token hosted proof
+   and operational wiring remain pending. The [hosted acceptance runner and
+   approved test policy](keys-hosted-acceptance.md) are implemented/applied
+   respectively; the approved provider-free run remains pending separately
+   approved identity/signer setup and supplied credentials. No hosted lifecycle
+   operation has executed.
 4. Development catalog/definition verification and anonymous gateway denial of
    all nine RPCs/private-profile exposure are complete (KEYS-GATEWAY-001a).
    Actual userA/userB/accountant denial/admission tests through the gateway

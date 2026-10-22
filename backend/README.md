@@ -16,6 +16,14 @@ partial progress/cursors. Missing outcomes remain pending. No scheduler,
 provider replay, retention or runtime registration. [Staging gates](../docs/database/keys-staging.md)
 include verified recovery startup while admissions are disabled.
 
+KEYS-RECOVERY-002 adds `RPCClient.OpenRecovery`: it validates a pending read
+independently of admission policy and returns a separate Pending/Complete-only
+Go type. It does not mint or restrict the underlying role token, register a
+route, start a worker or change SQL. Hosted credentials and operational proof
+remain gated. The provider-free [hosted acceptance setup](../docs/database/keys-hosted-acceptance.md)
+uses supplied sessions/accountant credentials and an explicitly approved test
+policy; ordinary CI runs only synthetic runner regressions.
+
 API routes that have moved out of Next.js. The plan and its rules are in `../docs/adr/0002-go-backend.md`. This file covers running, testing and switching.
 
 It uses only Go's standard library: there are no third-party dependencies.

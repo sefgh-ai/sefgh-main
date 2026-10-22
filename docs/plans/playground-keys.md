@@ -1,5 +1,15 @@
 # Real playground keys: KEYS-001
 
+Current2026-10-22: KEYS-RECOVERY-002 implements a separate policy-independent
+Go recovery opener. KEYS-ACCEPT-001 prepares the exact-dev-target hosted SQL
+gateway runner and test-only policy. The owner separately approved the exact
+policy and one provider-free run; policy apply/readback is complete only in dev,
+with no lifecycle data. The run awaits separately approved credentials. Its synthetic regressions do not
+establish hosted two-user/accountant acceptance. The owner asked why a separate
+project exists; the earlier explicit isolated-environment/create/dev-SQL choices
+are preserved. No additional project or production migration is being created.
+[Current acceptance gates](../database/keys-hosted-acceptance.md).
+
 Owner direction, 2026-10-18: real API keys, shown once, stored only as hashes,
 checked on explicitly supported endpoints, with usage written by the server.
 Prepare database changes for review before applying them. This is the accepted
