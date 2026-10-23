@@ -91,6 +91,8 @@ Triggers: on `auth.users`, `on_auth_user_created` (`handle_new_user`: creates th
 
 Bucket `avatars`: anyone can read; a signed-in user can upload, update and delete only under a folder named with their own id (`storage.foldername(name)[1] = auth.uid()`). Every policy exists twice under two names.
 
+This summary is not the exact policy text. What the upload route needs from each policy, and the read-only query for the bucket settings and exact definitions, are in [avatar-storage.md](avatar-storage.md) (AVATAR-POLICY-001).
+
 ## Auth
 
 32 users, none anonymous; the code never calls `signInAnonymously`. The security advisor reports leaked-password protection off (R-080); Supabase offers it only on the Pro plan.
