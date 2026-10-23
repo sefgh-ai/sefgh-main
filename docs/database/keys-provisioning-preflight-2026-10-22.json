@@ -1,0 +1,76 @@
+{
+  "task": "KEYS-PROVISION-001b",
+  "recorded_utc": "2026-10-22 15:12:02 UTC",
+  "project_ref": "mraglhrenqwadegvwxts",
+  "name": "sefgh-migration-dev",
+  "region": "ap-south-1",
+  "approval": {
+    "proposal_sha256": "ef96978f62dc4630d3a8b3e0ad3f681a3eca625a3c6cffebd13623cc51c849d9",
+    "approved": true,
+    "email_clarification": "Owner approved generated non-deliverable .invalid test addresses; no real mail."
+  },
+  "catalog": {
+    "source": "MCP administrative read-only start-of-batch snapshot; must recheck before live actions",
+    "auth_user_count": 0,
+    "policy_rows": 1,
+    "rpc_policy": {
+      "enabled": true,
+      "per_key": 2,
+      "revision": "dev-acceptance-v1",
+      "endpoints": {
+        "public-search": "repo:read:public"
+      },
+      "per_owner": 3,
+      "max_active": 2,
+      "charge_mode": "attempt",
+      "max_name_runes": 80,
+      "window_seconds": 86400,
+      "lifetime_seconds": 600,
+      "completion_timeout_seconds": 1
+    },
+    "key_rows": 0,
+    "event_rows": 0,
+    "recovery_rows": 0,
+    "key_window_rows": 0,
+    "owner_window_rows": 0,
+    "public_application_relations": 0
+  },
+  "public_jwks": {
+    "http_status": 200,
+    "public_key_count": 1,
+    "keys": [
+      {
+        "kid": "a0c2cbe5-94b1-4a1f-97c7-c17bc5423f77",
+        "alg": "ES256",
+        "kty": "EC",
+        "crv": "P-256",
+        "public_thumbprint": "Ea_YyPTTJ1EWqQg2QwluiTt7q_ARgVdzaI8GvcRXaBo"
+      }
+    ],
+    "signing_state": "JWKS does not establish current/standby status; Dashboard verification pending"
+  },
+  "local": {
+    "owner_only_directory_verified": true,
+    "test_email_labels_ready": true,
+    "deployment_key_generated": false,
+    "identity_credentials_generated": false,
+    "accountant_token_issued": false
+  },
+  "browser": {
+    "inventory_count": 0,
+    "iab_open": "Browser is not available: iab",
+    "chrome_open": "Browser is not available: chrome",
+    "dashboard_state_verified": false
+  },
+  "hosted": {
+    "users_created": 0,
+    "signing_changes": 0,
+    "lifecycle_run_executed": false,
+    "production_changed": false
+  },
+  "limitations": [
+    "Current/standby state cannot be inferred from public JWKS; requires Dashboard access.",
+    "Operator tests use ephemeral in-memory fixture keys; no deployment/import key generated.",
+    "Same approved provisioning scope needs no repeated owner approval; execution waits for browser access/source review."
+  ]
+}

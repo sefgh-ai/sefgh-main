@@ -26,6 +26,7 @@
 .DS_Store
 *.pem
 .agent-signal.json
+.agent-verification.lock
 
 # debug
 npm-debug.log*

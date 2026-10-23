@@ -10,13 +10,14 @@
  *      with `--lessons`; default skip follows the owner's tutorial policy.
  *   2. Verifies `docs/coordination.md` has `Active writer: none` and that the latest
  *      checkpoint/handoff is NOT marked `paused` or `incomplete`.
- *   3. Computes a SHA-256 working-tree fingerprint (`treeHash`) so the Git Agent can
- *      verify nothing changed after the handoff run and skip redundant test runs.
+ *   3. Holds an exclusive advisory verification lease and compares working-tree
+ *      fingerprints before/after checks. A differing source tree cannot get proof.
  *   4. Emits `.agent-signal.json`.
  *
  * - `--status` (`node scripts/agent-handoff.mjs --status [--ci]`):
  *   Fast read-only status probe for the Git Agent watcher. Prints JSON with:
- *   - `state`: "IDLE_CLEAN" | "WRITER_ACTIVE" | "PAUSED_CHECKPOINT" | "READY_VERIFIED" | "READY_NEEDS_VERIFY"
+ *   - `state`: "STATUS_ERROR" | "VERIFICATION_BUSY" | "IDLE_CLEAN" | "WRITER_ACTIVE" | "PAUSED_CHECKPOINT" | "READY_VERIFIED" | "READY_NEEDS_VERIFY"
+ *   - `verification`, `canSynchronize`: any existing/unknown lease blocks synchronization.
  *   - `activeWriter`, `latestHeading`, `latestStatus`, `treeHash`, `signalMatchesTree`
  *   - `ciRun` (when `--ci` is passed): latest GitHub Actions `Backend verification` run status.
  *
@@ -29,6 +30,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve, delimiter } from 'node:path';
 import { computeTreeHash, stampPendingSync } from './handoff-state.mjs';
+import { acquireVerificationLease, releaseVerificationLease, verificationLeaseState } from './handoff-lease.mjs';
 
 const ROOT = resolve(process.cwd());
 const GO_BIN_PATH = `${process.env.LOCALAPPDATA || ''}\\Programs\\Go\\bin`;
@@ -126,169 +128,179 @@ async function fetchLatestCiRun() {
 const args = new Set(process.argv.slice(2));
 
 if (args.has('--stamp-sync')) {
-  const headSha = run('git rev-parse --short HEAD').out.trim();
-  const content = readFileSync(COORD_PATH, 'utf-8');
-  const updated = stampPendingSync(content, headSha);
-  if (updated !== content) {
-    writeFileSync(COORD_PATH, updated, 'utf-8');
-    console.log(`[handoff] Recorded pending synchronization in docs/coordination.md (base ${headSha}); commit and push still need verification.`);
-  }
-  process.exit(0);
+  let stampLease;
+  try {
+    stampLease = acquireVerificationLease(ROOT);
+    const coord = parseCoordination();
+    if (!coord.writerReleased || coord.isPausedOrIncomplete) throw new Error('Writer not released');
+    const headSha = run('git rev-parse --short HEAD').out.trim();
+    const content = readFileSync(COORD_PATH, 'utf-8');
+    const updated = stampPendingSync(content, headSha);
+    if (updated !== content) {
+      writeFileSync(COORD_PATH, updated, 'utf-8');
+      console.log(`[handoff] Recorded pending synchronization in docs/coordination.md (base ${headSha}); commit and push still need verification.`);
+    }
+  } catch { console.error('Verification lease or writer gate unavailable; synchronization stamp refused.'); process.exitCode = 1; }
+  finally { if (stampLease && !releaseVerificationLease(ROOT, stampLease)) process.exitCode = 1; }
+  process.exit(process.exitCode || 0);
 }
 
 if (args.has('--status')) {
-  const coord = parseCoordination();
-  const porcelain = run('git status --porcelain').out
-    .split(/\r?\n/)
-    .filter((l) => l.trim() && !l.endsWith('.agent-signal.json'));
-  const workingTreeClean = porcelain.length === 0;
-  const treeHash = workingTreeClean ? null : computeTreeHash(ROOT);
-
-  let signal = null;
-  if (existsSync(SIGNAL_PATH)) {
-    try {
-      signal = JSON.parse(readFileSync(SIGNAL_PATH, 'utf-8'));
-    } catch {
-      signal = null;
+  try {
+    const initialVerification = verificationLeaseState(ROOT);
+    const coord = parseCoordination();
+    const gitStatus = run('git status --porcelain');
+    if (!gitStatus.ok) throw new Error('Git status unavailable');
+    const porcelain = gitStatus.out.split(/\r?\n/)
+      .filter((l) => l.trim() && !l.endsWith('.agent-signal.json') && !l.endsWith('.agent-verification.lock'));
+    const workingTreeClean = porcelain.length === 0;
+    const treeHash = workingTreeClean || initialVerification.present ? null : computeTreeHash(ROOT);
+    let signal = null;
+    if (existsSync(SIGNAL_PATH)) {
+      try { signal = JSON.parse(readFileSync(SIGNAL_PATH, 'utf-8')); } catch { signal = null; }
     }
-  }
-
-  const signalMatchesTree = Boolean(
-    signal &&
-      signal.contractsPassed &&
-      signal.goBackendPassed &&
+    // Complete all slow/async reads before the final lease sample and output.
+    const ciRun = args.has('--ci') ? await fetchLatestCiRun() : undefined;
+    const branch = run('git rev-parse --abbrev-ref HEAD'), head = run('git rev-parse --short HEAD');
+    if (!branch.ok || !head.ok) throw new Error('Git reference unavailable');
+    const lastVerification = verificationLeaseState(ROOT);
+    const verification = lastVerification.present ? lastVerification : initialVerification;
+    const signalMatchesTree = Boolean(
+      !verification.present && signal && signal.contractsPassed && signal.goBackendPassed &&
       (signal.learnGoPassed === true ||
         (signal.learnGoPassed === null && signal.learnGoSkipped === true && signal.learnGoCheck === 'skipped-owner-policy')) &&
-      signal.writerReleased &&
-      !signal.isPausedOrIncomplete &&
-      signal.treeHash &&
-      signal.treeHash === treeHash
-  );
-
-  let state = 'IDLE_CLEAN';
-  if (!workingTreeClean) {
-    if (!coord.writerReleased) {
-      state = 'WRITER_ACTIVE';
-    } else if (coord.isPausedOrIncomplete) {
-      state = 'PAUSED_CHECKPOINT';
-    } else if (signalMatchesTree) {
-      state = 'READY_VERIFIED';
-    } else {
-      state = 'READY_NEEDS_VERIFY';
+      signal.writerReleased && !signal.isPausedOrIncomplete && signal.treeHash && signal.treeHash === treeHash
+    );
+    let state = 'IDLE_CLEAN';
+    if (verification.present) state = 'VERIFICATION_BUSY';
+    else if (!workingTreeClean) {
+      if (!coord.writerReleased) state = 'WRITER_ACTIVE';
+      else if (coord.isPausedOrIncomplete) state = 'PAUSED_CHECKPOINT';
+      else state = signalMatchesTree ? 'READY_VERIFIED' : 'READY_NEEDS_VERIFY';
     }
+    console.log(JSON.stringify({ state, verification,
+      canSynchronize: !verification.present && coord.writerReleased && !coord.isPausedOrIncomplete && (workingTreeClean || signalMatchesTree),
+      gitBranch: branch.out.trim(), gitHead: head.out.trim(), workingTreeClean, changedFileCount: porcelain.length,
+      activeWriter: coord.activeWriter, writerReleased: coord.writerReleased, latestHeading: coord.latestHeading,
+      latestStatus: coord.latestStatus, isPausedOrIncomplete: coord.isPausedOrIncomplete, signalMatchesTree,
+      learnGoCheck: signal?.learnGoCheck || (signal?.learnGoPassed === true ? 'passed' : null), ciRun,
+    }, null, 2));
+  } catch {
+    console.log(JSON.stringify({ state: 'STATUS_ERROR', canSynchronize: false, workingTreeClean: null,
+      signalMatchesTree: false, verification: verificationLeaseState(ROOT) }));
+    process.exitCode = 1;
+  }
+  process.exit(process.exitCode || 0);
+}
+
+function verifyHandoff() {
+  console.log('=== SEFGH Multi-Agent Handoff & Verification ===\n');
+
+  // A new verification attempt supersedes its old proof, including when it
+  // fails or is interrupted. Read-only/status and stamp modes above retain it.
+  rmSync(SIGNAL_PATH, { force: true });
+  const initialTreeHash = computeTreeHash(ROOT);
+
+  // 1. Run Contracts
+  console.log('1. Checking contract fixtures (npm run test:contracts)...');
+  const contracts = run('npm run test:contracts');
+  if (!contracts.ok) {
+    console.error('❌ Contract tests failed:\n', [contracts.out, contracts.err].filter(Boolean).join('\n'));
+    return false;
+  }
+  console.log('✅ Contracts passed.');
+
+  // 2. Run Go Backend checks
+  console.log('\n2. Checking Go backend (go test, go vet, gofmt)...');
+  const goTest = run('go test -count=1 ./...', resolve(ROOT, 'backend'));
+  if (!goTest.ok) {
+    console.error('❌ backend/ go test failed:\n', [goTest.out, goTest.err].filter(Boolean).join('\n'));
+    return false;
+  }
+  const goVet = run('go vet ./...', resolve(ROOT, 'backend'));
+  if (!goVet.ok) {
+    console.error('❌ backend/ go vet failed:\n', [goVet.out, goVet.err].filter(Boolean).join('\n'));
+    return false;
+  }
+  const goFmt = run('gofmt -l .', resolve(ROOT, 'backend'));
+  if (!goFmt.ok || goFmt.out.trim().length > 0) {
+    console.error('❌ backend/ gofmt unformatted files:\n', goFmt.out);
+    return false;
+  }
+  console.log('✅ Go backend passed.');
+
+  // 3. Tutorial checks are opt-in; a skipped lesson is never a test pass.
+  const checkLessons = args.has('--lessons');
+  if (checkLessons) {
+    console.log('\n3. Checking learn-go solutions (explicit --lessons)...');
+    const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
+    if (!learnGo.ok) {
+      console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
+      return false;
+    }
+    console.log('✅ learn-go solutions passed.');
+  } else {
+    console.log('\n3. Lesson checks skipped (owner policy; use --lessons to request them).');
   }
 
-  const ciRun = args.has('--ci') ? await fetchLatestCiRun() : undefined;
+  // 4. Inspect docs/coordination.md
+  console.log('\n4. Inspecting docs/coordination.md...');
+  const coord = parseCoordination();
 
-  console.log(
-    JSON.stringify(
-      {
-        state,
-        gitBranch: run('git rev-parse --abbrev-ref HEAD').out.trim(),
-        gitHead: run('git rev-parse --short HEAD').out.trim(),
-        workingTreeClean,
-        changedFileCount: porcelain.length,
-        activeWriter: coord.activeWriter,
-        writerReleased: coord.writerReleased,
-        latestHeading: coord.latestHeading,
-        latestStatus: coord.latestStatus,
-        isPausedOrIncomplete: coord.isPausedOrIncomplete,
-        signalMatchesTree,
-        learnGoCheck: signal?.learnGoCheck || (signal?.learnGoPassed === true ? 'passed' : null),
-        ciRun,
-      },
-      null,
-      2
-    )
-  );
-  process.exit(0);
-}
-
-console.log('=== SEFGH Multi-Agent Handoff & Verification ===\n');
-
-// A new verification attempt supersedes its old proof, including when it
-// fails or is interrupted. Read-only/status and stamp modes above retain it.
-rmSync(SIGNAL_PATH, { force: true });
-
-// 1. Run Contracts
-console.log('1. Checking contract fixtures (npm run test:contracts)...');
-const contracts = run('npm run test:contracts');
-if (!contracts.ok) {
-  console.error('❌ Contract tests failed:\n', [contracts.out, contracts.err].filter(Boolean).join('\n'));
-  process.exit(1);
-}
-console.log('✅ Contracts passed.');
-
-// 2. Run Go Backend checks
-console.log('\n2. Checking Go backend (go test, go vet, gofmt)...');
-const goTest = run('go test -count=1 ./...', resolve(ROOT, 'backend'));
-if (!goTest.ok) {
-  console.error('❌ backend/ go test failed:\n', [goTest.out, goTest.err].filter(Boolean).join('\n'));
-  process.exit(1);
-}
-const goVet = run('go vet ./...', resolve(ROOT, 'backend'));
-if (!goVet.ok) {
-  console.error('❌ backend/ go vet failed:\n', [goVet.out, goVet.err].filter(Boolean).join('\n'));
-  process.exit(1);
-}
-const goFmt = run('gofmt -l .', resolve(ROOT, 'backend'));
-if (!goFmt.ok || goFmt.out.trim().length > 0) {
-  console.error('❌ backend/ gofmt unformatted files:\n', goFmt.out);
-  process.exit(1);
-}
-console.log('✅ Go backend passed.');
-
-// 3. Tutorial checks are opt-in; a skipped lesson is never a test pass.
-const checkLessons = args.has('--lessons');
-if (checkLessons) {
-  console.log('\n3. Checking learn-go solutions (explicit --lessons)...');
-  const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
-  if (!learnGo.ok) {
-    console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
-    process.exit(1);
+  if (coord.isPausedOrIncomplete) {
+    console.error(
+      `❌ Refusing handoff signal: latest section "${coord.latestHeading}" is marked paused/incomplete ("${coord.latestStatus}").`
+    );
+    return false;
   }
-  console.log('✅ learn-go solutions passed.');
-} else {
-  console.log('\n3. Lesson checks skipped (owner policy; use --lessons to request them).');
+
+  if (!coord.writerReleased) {
+    console.error(
+      `❌ Refusing handoff signal: Active writer is "${coord.activeWriter}". Release writer to "none" in docs/coordination.md before running npm run handoff.`
+    );
+    return false;
+  }
+
+  console.log('✅ docs/coordination.md records: Active writer is "none" and task is complete.');
+
+  // 5. Compute working-tree hash and emit .agent-signal.json
+  const treeHash = computeTreeHash(ROOT);
+  if (treeHash !== initialTreeHash) {
+    console.error('Source changed during verification; no success signal was emitted.');
+    return false;
+  }
+  const signal = {
+    timestamp: new Date().toISOString(),
+    contractsPassed: true,
+    goBackendPassed: true,
+    learnGoPassed: checkLessons ? true : null,
+    learnGoSkipped: !checkLessons,
+    learnGoCheck: checkLessons ? 'passed' : 'skipped-owner-policy',
+    writerReleased: coord.writerReleased,
+    isPausedOrIncomplete: coord.isPausedOrIncomplete,
+    latestHeading: coord.latestHeading,
+    treeHash,
+    gitHead: run('git rev-parse HEAD').out.trim(),
+    gitBranch: run('git rev-parse --abbrev-ref HEAD').out.trim(),
+  };
+
+  writeFileSync(SIGNAL_PATH, JSON.stringify(signal, null, 2), 'utf-8');
+  console.log(`\n✅ Verification complete (treeHash: ${treeHash.slice(0, 12)}). Emitted .agent-signal.json`);
+  return true;
+
 }
 
-// 4. Inspect docs/coordination.md
-console.log('\n4. Inspecting docs/coordination.md...');
-const coord = parseCoordination();
-
-if (coord.isPausedOrIncomplete) {
-  console.error(
-    `❌ Refusing handoff signal: latest section "${coord.latestHeading}" is marked paused/incomplete ("${coord.latestStatus}").`
-  );
-  process.exit(1);
+let verificationLease;
+try {
+  verificationLease = acquireVerificationLease(ROOT);
+  if (!verifyHandoff()) process.exitCode = 1;
+} catch (error) {
+  console.error(verificationLease ? 'Handoff verification failed; no success claim.' : error.message);
+  process.exitCode = 1;
+} finally {
+  if (verificationLease && !releaseVerificationLease(ROOT, verificationLease)) {
+    console.error('Verification lease changed; inspect it before synchronization.');
+    process.exitCode = 1;
+  }
 }
-
-if (!coord.writerReleased) {
-  console.error(
-    `❌ Refusing handoff signal: Active writer is "${coord.activeWriter}". Release writer to "none" in docs/coordination.md before running npm run handoff.`
-  );
-  process.exit(1);
-}
-
-console.log('✅ docs/coordination.md records: Active writer is "none" and task is complete.');
-
-// 5. Compute working-tree hash and emit .agent-signal.json
-const treeHash = computeTreeHash(ROOT);
-const signal = {
-  timestamp: new Date().toISOString(),
-  contractsPassed: true,
-  goBackendPassed: true,
-  learnGoPassed: checkLessons ? true : null,
-  learnGoSkipped: !checkLessons,
-  learnGoCheck: checkLessons ? 'passed' : 'skipped-owner-policy',
-  writerReleased: coord.writerReleased,
-  isPausedOrIncomplete: coord.isPausedOrIncomplete,
-  latestHeading: coord.latestHeading,
-  treeHash,
-  gitHead: run('git rev-parse HEAD').out.trim(),
-  gitBranch: run('git rev-parse --abbrev-ref HEAD').out.trim(),
-};
-
-writeFileSync(SIGNAL_PATH, JSON.stringify(signal, null, 2), 'utf-8');
-console.log(`\n✅ Verification complete (treeHash: ${treeHash.slice(0, 12)}). Emitted .agent-signal.json`);
-console.log('Ready for Git Agent commit, synchronization, and merge.');
+if (!process.exitCode) console.log('Ready for Git Agent commit, synchronization, and merge.');

@@ -1,5 +1,96 @@
 # Claude Code review and reconciliation
 
+## REVIEW-027: HANDOFF-002 / BUG-023, 2026-10-23
+
+Replacement Boyle01a169a8-551d-73c0-8ec6-1515f7eaeddb independently accepted
+the final bounded handoff source, with no remaining blocking finding. Accepted
+SHA-256: `agent-handoff.mjs`
+`39b495e65630c00ae3bac74ee11a9e7305546ac21bb7f27283f0e1c6e9af71b0`;
+`handoff-lease.mjs`
+`3549d4342573082f17e2c7f1d7b53f4cfbbc7388b0686e9d297bbb8e75ba6980`;
+`handoff-state.mjs`
+`93addf04f58d61386493ccc7a3c4d414882981937146945d99b5b39a425efd01`;
+`handoff-concurrency.test.mjs`
+`aa4ec2393504a2d2110c46a285ba24f159736ee91d3d2e03c7af1a863e9d0763`.
+
+Initial independent18test pass still exposed two additional actual-CLI
+failures: status could start before lease acquisition and later emit false
+readiness; failed Git status could become a clean-tree result. Parent reproduced
+both with failing-before regressions, then corrected R184/R185. All slow Git/CI
+reads now precede the final lease sample and plain synchronous output. Git
+status/reference/fingerprint failures return nonzero fixed STATUS_ERROR,
+unknown cleanliness and canSynchronize false without raw errors.
+
+Final independent20/20focused tests pass, including seven concurrency cases.
+Reviewer repeated delayed-status and corrupt-index probes, injected status/
+branch/head failures, and a real fingerprint-read failure after successful
+porcelain. All refuse readiness as intended. The first supplemental wrapper
+probe did not intercept direct Git; reviewer corrected the probe and passed it.
+All three production modules/four test files pass syntax checks; scoped diff
+passes with only existing line-ending notices. Lease acquisition, competitor
+refusal, preserved proof on refused runs, owner/paused stamping, unknown leases,
+process/nonce cleanup and lasting-source-change denial remain accepted.
+
+Reviewer made no edits; temporary probes/processes were removed/stopped. No
+actual tutorial, broad app/Go, live-service/browser or checkout handoff/publish
+operation was run. Parent lint, final normal handoff, actual Git synchronization
+and hosted CI remain separately attributable evidence. The protocol remains
+advisory, with its documented transient-edit/direct-command limits.
+
+## REVIEW-026: private-form observation and containment, 2026-10-23
+
+Boyle read-only accepted the new CUA-only observation helper/tests, exact
+one-replacement proposal and secret-free incident receipt. Helper SHA-256
+`41509504a38c8cd81d2b4e0964b7cca725b22809a290c10f3a3a5a2688bf7c3e`;
+tests `b1de895dbfea123bb1dbf56d144f98b35990c8c8bf24d5af5dfbabf009e67b64`.
+Proposal `f212c12e9a17f88bec2137d3fd7da636e5a3e0d6d1d970237785d5092d10dde3`;
+receipt `eb419ba4337e8088392dc624cdf3a24d58073df603e73cc8f05f01cb6cfcd45a`.
+
+Independent5/5tests and both syntax checks passed. Seven awaited-browser-stage
+failure probes returned fixed unavailable states without inspecting hostile
+error message/stack/toString/toJSON getters. Instrumented private value/text/
+evaluation/snapshot accessors saw zero reads. A delayed control count did not
+return readiness while pending and resolved sensitive-form afterward. Proposal/
+receipt references resolved. Reviewer inspected the public PNG, which supports
+original Current, legacy Previous and imported Revoked states. JWKS/catalog/
+local cleanup remain parent observations, not reviewer live verification.
+
+The reviewer made no edits, used no real private files/transcripts/live UI or
+calls, broad checks, lessons, agents or handoff hook. No transcript-erasure,
+universal cache purge or active-token rejection is claimed. Original operator/
+test/proposal hashes remain unchanged. The owner then selected keep signing
+changes stopped and continue other migration work; source review does not
+authorize the replacement or a new hosted run.
+
+## REVIEW-025: KEYS-PROVISION-001b / BUG-022, 2026-10-23
+
+Boyle independently accepted the separate development operator and its focused
+tests, with no remaining blocking findings. Acceptance is tied to SHA-256
+`1efa9362eeec4c957b269b0f8380e742b81ebc93195a7428b534f1aea21c66cd`
+for `scripts/keys-dev-operator.mjs` and
+`d78ca6cc597be71f17e0d46ea88d821a62dee8f14da18b06d52351939246f5d7`
+for `scripts/contracts/keys-dev-operator.test.mjs`.
+
+Initial requested corrections are recorded as R179-R181: actual CLI signal
+handlers now survive independent logout/report publication; both verified owner
+sessions are checked immediately before issuance and child launch; all19
+acceptance checks are required and the allowlisted complete receipt is retained.
+R178 records earlier evidence/unknown-session draft corrections.
+
+Reviewer ran27focused tests, both syntax checks and scoped diff verification.
+Synthetic evaluation of actual CLI wiring exercised SIGINT/SIGTERM, repeated
+signals during cleanup/publication, acknowledged logout and handler removal.
+This is not a physical Windows console Ctrl+C test. Twenty-one malformed child
+receipts were refused, core revalidation rejected incomplete success, and a
+synthetic private field was excluded. No actual private operator files, hosted
+calls, UI actions, broad app checks, lessons or handoff hook were used by reviewer.
+
+The fixed dev/project/accountant role, one300second token without owner subject,
+public/private binding, online identity check, exclusive journal, isolated child
+environment and server-acknowledged logout boundaries remain accepted. Parent
+then passed all1560contracts and strict lint. Source acceptance is distinct from
+Dashboard provisioning, hosted lifecycle acceptance and key restoration.
+
 ## REVIEW-024: KEYS-PROVISION-001a, 2026-10-22
 
 Arendt read-only accepted the final concrete development setup for owner review,

@@ -4,7 +4,13 @@ Status: runner implemented and tested against synthetic gateways; **not run
 against hosted lifecycle state**. On 2026-10-22 the owner approved the exact
 test policy and one provider-free run once separately approved credentials are
 available. The policy is now applied in development only and readback matches.
-All key/event/recovery/window tables remain empty. Existing dev catalog and
+The owner later approved the exact identity/signing setup. On2026-10-23 its
+first import key was revoked before activation after a private-form snapshot
+incident; no users/sessions/JWT/acceptance run were created. A separately
+reviewed [one-key replacement](keys-dev-replacement-review.md) is not authorized:
+the owner selected keep signing changes stopped and continue other migration
+work. [Containment receipt](keys-provisioning-incident-2026-10-23.json).
+All key/event/recovery/window tables remain empty after actual readback. Existing dev catalog and
 anonymous receipts remain historical evidence.
 
 [Policy apply receipt](keys-staging-policy-2026-10-22.json) records exact source
@@ -75,11 +81,15 @@ claiming parity. No automatic deletion/reset or production defaults are provided
 
 ## Credentials and signing gate
 
-The owner requested the exact development setup for review. See
+The owner approved the exact development setup. See
 [KEYS-PROVISION-001a](keys-dev-provisioning-review.md): two confirmed disposable
 users, one externally retained imported ES256 key, fixed five-minute accountant
-token, original-key restoration and audit-preserving cleanup. This proposal
-is not approved or executed; existing policy/run approval does not authorize it.
+token, original-key restoration and audit-preserving cleanup. Approval was
+explicit for that exact proposal hash; subsequent owner clarification permits
+generated non-deliverable `.invalid` test labels. The snapshot proposal bytes
+remain unchanged as the reviewed record. Execution is pending real Dashboard
+browser access and source-reviewed [local operator](keys-dev-operator.md).
+No further approval for the same scope should be requested.
 
 Two disposable development Auth users and valid sessions need an approved setup.
 Do not ask for passwords or paste tokens into chat. The existing publishable key

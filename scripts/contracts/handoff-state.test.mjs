@@ -60,6 +60,7 @@ test('fingerprint ignores the signal and ignored local files', (t) => {
   const { root } = repository(t);
   const before = computeTreeHash(root);
   writeFileSync(join(root, '.agent-signal.json'), '{"timestamp":1}');
+  writeFileSync(join(root, '.agent-verification.lock'), '{"synthetic":"advisory lease"}');
   mkdirSync(join(root, 'ignored'));
   writeFileSync(join(root, 'ignored', 'local.txt'), 'local-only');
   assert.equal(computeTreeHash(root), before);

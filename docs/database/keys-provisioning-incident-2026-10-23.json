@@ -1,0 +1,65 @@
+{
+  "task": "KEYS-PROVISION-001b / BUG-022",
+  "bug": "R-182",
+  "date": "2026-10-23",
+  "project_ref": "mraglhrenqwadegvwxts",
+  "event": "A full accessibility snapshot after import submission included the still-open private input value.",
+  "private_value_in_repository": false,
+  "treated_as_compromised": true,
+  "imported_kid": "2bb388b5-9ca3-4757-98fc-777f2753cd45",
+  "public_thumbprint": "wuZy28MaOdIaBsRQpJRnbo0IVqq2j3FoNWDagnu4QHc",
+  "dashboard": {
+    "imported_as": "standby",
+    "activated": false,
+    "cleanup_sequence": ["standby to previously used", "revoke this imported key"],
+    "final_imported_state": "Revoked",
+    "original_current_kid": "a0c2cbe5-94b1-4a1f-97c7-c17bc5423f77",
+    "original_remained_current": true,
+    "standby_empty": true,
+    "legacy_previous_kid_untouched": "cea7391e-7ecd-40a3-bde9-edd49a71ab8f",
+    "permanent_key_deletion": false,
+    "exact_action_timestamps_recorded": false,
+    "proof": "../verification/keys-import-revoked-2026-10-23.png"
+  },
+  "public_jwks": {
+    "observed_utc": "2026-10-23T04:38:56.238Z",
+    "http_status": 200,
+    "compromised_kid_present": false,
+    "public_key_count": 1,
+    "retained_original_thumbprint": "Ea_YyPTTJ1EWqQg2QwluiTt7q_ARgVdzaI8GvcRXaBo"
+  },
+  "post_containment_catalog": {
+    "source": "MCP administrative read-only query after revocation",
+    "auth_user_count": 0,
+    "policy_rows": 1,
+    "policy_matches_approved_dev_acceptance_v1": true,
+    "key_rows": 0,
+    "event_rows": 0,
+    "recovery_rows": 0,
+    "key_window_rows": 0,
+    "owner_window_rows": 0,
+    "public_application_relations": 0
+  },
+  "operator_attempt": {
+    "users_created": 0,
+    "sessions_obtained": 0,
+    "accountant_tokens_issued": 0,
+    "acceptance_runs": 0,
+    "exclusive_run_journal_created": false,
+    "production_changed": false,
+    "second_key_generated": false
+  },
+  "local_cleanup": {
+    "known_files_removed": ["signing-private.jwk", "identities.json"],
+    "timing": "after Dashboard revocation and public JWKS absence",
+    "absolute_directory_and_leaf_paths_verified": true,
+    "recursive_delete_used": false,
+    "presence_only_cli_recheck": "all key, identity, JWT/config and run files absent; generated email labels retained"
+  },
+  "limitations": [
+    "No token was issued by this attempt; no active-token rejection was tested.",
+    "Dashboard revocation and this public JWKS observation do not prove every off-platform cache was purged.",
+    "The exposed transcript is not erased by local file removal.",
+    "A replacement exceeds the exact one-key setup cap and needs the separate reviewed addendum."
+  ]
+}

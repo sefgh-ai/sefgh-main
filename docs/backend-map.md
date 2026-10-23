@@ -1,5 +1,17 @@
 # SEFGH backend map
 
+Update2026-10-23 (KEYS-PROVISION-001b / BUG-022): reviewed trusted Node operator
+is isolated from app/Go runtime, with one fixed-role token, verified owner
+sessions, exclusive journal, isolated child and acknowledged logout. Chrome
+Dashboard access is restored. The first approved standby import was revoked
+before activation after an agent snapshot included private form contents;
+original managed key stayed current, no users/sessions/JWT/run were created.
+Exact dev policy/empty lifecycle state were reverified. A control-presence-only
+CUA observer replaces private-form snapshots. The owner selected keep signing
+changes stopped and continue other migration work; no replacement is authorized.
+[Current evidence](verification/keys-dev-operator.md).
+No route-count progress, runtime enablement or production deployment is implied.
+
 Update2026-10-22 (KEYS-RECOVERY-002 / KEYS-ACCEPT-001): unregistered Go
 `OpenRecovery` opens Pending/Complete capability through a validated gateway
 read without enabled admission policy. Provider-free hosted acceptance runner

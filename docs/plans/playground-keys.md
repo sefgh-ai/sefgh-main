@@ -1,5 +1,17 @@
 # Real playground keys: KEYS-001
 
+Current2026-10-23: accepted trusted local operator remains separate from app/Go
+runtime; actual Chrome Dashboard access works. The first approved standby
+import was revoked before activation after an agent snapshot exposed private
+form contents (R182). Original managed key remained current; no users, sessions,
+JWT or acceptance run was created, and local secret files were removed. Exact
+dev policy and empty lifecycle state were reverified. Corrected observation
+workflow and [one replacement proposal](../database/keys-dev-replacement-review.md)
+preserve the original limits; the owner selected keep signing changes stopped
+and continue other migration work. No replacement is authorized. Source
+checks/review do not close hosted authorization/runtime/cutover gates. See
+[operator and incident evidence](../verification/keys-dev-operator.md).
+
 Current2026-10-22: KEYS-RECOVERY-002 implements a separate policy-independent
 Go recovery opener. KEYS-ACCEPT-001 prepares the exact-dev-target hosted SQL
 gateway runner and test-only policy. The owner separately approved the exact

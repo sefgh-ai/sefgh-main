@@ -718,3 +718,27 @@ dev run once credentials are available; the policy is applied/readback verified
 only in `mraglhrenqwadegvwxts`, without lifecycle data. Identity/signer provisioning
 still needs separate owner review. Managed signing-key extraction, user Auth-hook changes and service-role
 CRUD are not workarounds. [Setup and review](../database/keys-hosted-acceptance.md).
+
+### KEYS-PROVISION-001b / BUG-022 (2026-10-23)
+
+The owner approved the exact development identity/signing proposal and later
+generated non-deliverable test labels. The trusted local Node operator is
+reviewed and remains outside app/Go runtime. It confines issuance to one fixed
+300second accountant token without owner subject, verifies online owner
+sessions/freshness and exact gateway readiness, makes one exclusive run claim,
+isolates the child environment and retains only allowlisted acceptance evidence.
+Supported interruption preserves independently acknowledged session cleanup.
+
+The first approved key was imported standby, exposed by an agent snapshot of
+an asynchronous private form, and revoked before activation. Original managed
+key stayed current; no users, sessions, JWT or acceptance run were created.
+Private form observation now uses control presence/state without full trees,
+values, screenshots or raw errors. Exact SQL/policy is unchanged, no runtime
+credential or extra import is inferred from the original approval. The
+[one replacement addendum](../database/keys-dev-replacement-review.md) requires
+an owner decision; [containment](../database/keys-provisioning-incident-2026-10-23.json)
+does not assert transcript erasure, cache purge or active-token rejection.
+
+Owner decision2026-10-23: **keep signing changes stopped; continue other
+migration work**. The replacement is not authorized. Continue independent
+source/verification work without new signing changes, credentials or live runs.

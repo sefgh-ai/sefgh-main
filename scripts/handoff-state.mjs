@@ -15,10 +15,10 @@ export function computeTreeHash(root) {
     hash.update(bytes);
   };
   add(git('rev-parse', 'HEAD'));
-  add(git('diff', '--binary', 'HEAD', '--', '.', ':(exclude).agent-signal.json'));
-  add(git('status', '--porcelain=v1', '-z', '--untracked-files=all', '--', '.', ':(exclude).agent-signal.json'));
+  add(git('diff', '--binary', 'HEAD', '--', '.', ':(exclude).agent-signal.json', ':(exclude).agent-verification.lock'));
+  add(git('status', '--porcelain=v1', '-z', '--untracked-files=all', '--', '.', ':(exclude).agent-signal.json', ':(exclude).agent-verification.lock'));
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z')
-    .toString('utf8').split('\0').filter((name) => name && name !== '.agent-signal.json').sort();
+    .toString('utf8').split('\0').filter((name) => name && name !== '.agent-signal.json' && name !== '.agent-verification.lock').sort();
   for (const name of untracked) {
     add(name);
     const path = resolve(root, name);
