@@ -1,0 +1,77 @@
+{
+  "task": "CI-TOOLS-001",
+  "recorded_utc": "2026-10-23T17:13:43Z",
+  "repository": "sefgh-ai/sefgh-main",
+  "source_commit": "c960e7c0395f54a0e350052ac5fd32db1588a101",
+  "source_tasks": ["KEYS-PROVISION-001b", "HANDOFF-002", "BUG-022", "BUG-023"],
+  "source_files_committed": 26,
+  "independent_reviews": ["REVIEW-025", "REVIEW-026", "REVIEW-027"],
+  "git_receipt": {
+    "source_committed_by_git_agent": true,
+    "source_present_on_both_remote_branches": true,
+    "remote_go_backend": "c960e7c0395f54a0e350052ac5fd32db1588a101",
+    "remote_main_at_observation": "5abc81a31137c7517dd87813c7471fd91f9c61d9",
+    "remote_main_extra_change": "LAST_UPDATED.txt only",
+    "working_tree_before_receipt": "clean"
+  },
+  "local_source_verification": {
+    "normal_handoff_session": 88811,
+    "exit_code": 0,
+    "tree_hash_prefix": "454967080d30",
+    "contracts": "passed",
+    "backend_uncached_tests": "passed",
+    "backend_vet": "passed",
+    "backend_format": "passed; no unformatted files",
+    "strict_lint": "full run then final changed-file scoped run passed",
+    "during_verification_status": "VERIFICATION_BUSY",
+    "during_verification_can_synchronize": false,
+    "after_verification_status": "READY_VERIFIED",
+    "after_commit_status": "IDLE_CLEAN",
+    "lessons": "skipped-owner-policy",
+    "actual_tutorial_execution": false
+  },
+  "hosted_source_ci": {
+    "id": 39992178601,
+    "url": "https://github.com/sefgh-ai/sefgh-main/actions/runs/39992178601",
+    "head_sha": "c960e7c0395f54a0e350052ac5fd32db1588a101",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {"id": 120546430029, "name": "keys-postgres", "conclusion": "success", "native_checks": 128},
+      {"id": 120546430614, "name": "verify", "conclusion": "success"}
+    ],
+    "contracts": {
+      "total": 1572,
+      "passed": 1571,
+      "failed": 0,
+      "skipped": 1,
+      "skip": "Windows CLI refuses a shared local input file before reading operator configuration",
+      "skip_reason": "Windows-only ACL regression; Linux CI skips it. It passed in local and independent Windows verification."
+    },
+    "successful_steps": [
+      "Lint",
+      "Run npm run test:contracts",
+      "Backend race detector and vet",
+      "Build Go for the local forwarding probe",
+      "Production Next.js forwarding (local fake GitHub)",
+      "Trending browser flows (local API fixtures)",
+      "Show-once playground (synthetic sessions, no live keys)",
+      "Playground default-off gate (separate production build)",
+      "Native PostgreSQL key roles, quotas and recovery (synthetic only)"
+    ],
+    "lesson_step": "skipped-owner-policy",
+    "evidence": "Run/jobs API metadata and bounded completed-job log summaries; no raw credentials or full logs retained"
+  },
+  "remaining_boundaries": {
+    "owner_signing_stop": true,
+    "replacement_key_authorized": false,
+    "hosted_two_user_accountant_acceptance_executed": false,
+    "keys_runtime_enabled": false,
+    "production_or_legacy_changed": false,
+    "workers_enabled": false,
+    "original_api_routes_implemented": 23,
+    "original_api_routes_total": 25,
+    "whole_migration_complete": false
+  },
+  "receipt_scope": "Documentation only; this source CI result does not assert a separate receipt-commit CI result."
+}
