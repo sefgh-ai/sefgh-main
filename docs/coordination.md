@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-23 (Asia/Calcutta), by Claude Code: AVATAR-POLICY-001b (avatar Storage live read) complete on base `f08679b`, uncommitted; R-041 confirmed, R-186 new; fixes wait for the owner's choice.
+Last updated: 2026-10-23 (Asia/Calcutta), by Claude Code: AVATAR-POLICY-002 complete as prepared on base `76859e2`, uncommitted. R-186 migration written and dry-run, NOT applied (waits for owner approval of the file); R-041 decided for Go after cutover.
 
 ## Start here
 
@@ -11,9 +11,33 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released AVATAR-POLICY-001b (live read done; R-041 and R-186 fixes wait for the owner's choice). Owner signing stop and rollout gates remain.
+- **Active writer:** none. Claude Code released AVATAR-POLICY-002: the R-186 migration is prepared and tested locally, not applied, and waits for the owner's approval of the file. R-041 is decided (Go after cutover). Owner signing stop and rollout gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; provisioning/runtime/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 186 entries (R-001 through R-186; R-186 from AVATAR-POLICY-001b); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: AVATAR-POLICY-002, R-186 migration prepared; R-041 decision recorded (Claude Code, 2026-10-23)
+
+Status: **complete as prepared; unreviewed; NOT applied to any database; nothing deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `76859e2` (001b committed by the Git Agent as `610cfbf`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `76859e2`).
+
+The owner chose option A for both ("yeah go for your recommendation for both 41 and 186"):
+
+- **R-041:** recorded only. Under the fix-once rule it is fixed in Go after the avatar cutover, with `contracts/upload-avatar` version 2. Nothing changes in Next.js, the fixtures or Go now. ADR decisions log, register (Needs `contract`) and the contract README record it.
+- **R-186:** new `supabase/migrations/20261023120000_avatar_002_own_folder_reads.sql` (drop both public SELECT policies, add an own-folder SELECT for `authenticated`, drop the three duplicate write policies), `supabase/checks/avatar_002_verify.sql` (five read-only rows), `supabase/checks/avatar_002_rollback.sql` (the eight live policies as read today), and `scripts/contracts/avatar-storage-policy.test.mjs`. Under the 2026-10-15 rule, the migration runs only after the owner approves this file.
+
+Live preconditions (read-only MCP, User-DB): SQL runs as `postgres`, which is not the owner of `storage.objects` and not a superuser; `supautils.policy_grants` includes `storage.objects`. The listing functions run with the caller's rights. There is no `storage.prefixes` table.
+
+Checks (Claude Code):
+
+- Two-user dry run on PGlite 0.2.17 with Storage's tenant migrations and the eight live policies (text identical to the live read): 26/26. R-186 reproduced before; after: verify 5/5 `ok`, signed out reads and lists nothing, A only A's folder, upload/upsert/cleanup in own folder work, every cross-folder write refused, rollback restores the live text exactly, reapply works. Two broken migration variants were caught.
+- A first dry run used the `version` column, which the stand-in lacks (Storage adds it in tenant migration 0016). That failed two checks and made "A cannot upsert over B's file" pass for the wrong reason. Corrected to `metadata`; each refusal was then printed and is a row-level-security violation.
+- New policy test 3/3; four deliberate breaks (public read, `if exists`, no folder limit, short rollback) each fail it, files restored with identical hashes. Doc-reading and avatar contract tests 10/10. ESLint `--max-warnings 0` on the new test: exit 0. 28 links and anchors resolve; `git diff --check` clean. Full contracts and the Go backend in `npm run handoff` after this record.
+- Not run: the Storage server itself (stand-in is Postgres only), the public-link path, the two-user tests against a real project.
+
+Changed files: the four new files above; `docs/database/avatar-storage.md` ("The fix" section), `docs/bug-register.md` (R-041, R-186), `docs/adr/0002-go-backend.md` (decisions log, Phase 4), `contracts/upload-avatar/README.md` (R-041 note; fixtures unchanged), this file.
+
+Next: the owner approves (or not) the migration file. Then run it (SQL editor, or an agent through MCP if the owner says so), run the verify query (5 `ok`), repeat the anonymous probe (listing empty, a current avatar link still loads), upload once on the site, and record the result here. Rollback: `supabase/checks/avatar_002_rollback.sql`.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: AVATAR-POLICY-001b, avatar Storage live read (Claude Code, 2026-10-23)
 

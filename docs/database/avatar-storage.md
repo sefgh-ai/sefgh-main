@@ -2,7 +2,7 @@
 
 AVATAR-POLICY-001, started 2026-10-23 by Claude Code. Covers R-041 and the Phase 4 gate "storage authorization tests" for `POST /api/upload-avatar`.
 
-**State: live read done 2026-10-23 (AVATAR-POLICY-001b); answers under [Results](#results).** The questions below were written before the read (AVATAR-POLICY-001a). The read that answers them is [`supabase/checks/avatar_storage_catalog.sql`](../../supabase/checks/avatar_storage_catalog.sql). It runs in a read-only transaction and returns definitions and counts, never object names, user ids or URLs.
+**State: live read done 2026-10-23 (AVATAR-POLICY-001b), answers under [Results](#results). R-186 fix prepared and tested locally, not applied: [The fix](#the-fix-avatar-policy-002).** The questions below were written before the read (AVATAR-POLICY-001a). The read that answers them is [`supabase/checks/avatar_storage_catalog.sql`](../../supabase/checks/avatar_storage_catalog.sql). It runs in a read-only transaction and returns definitions and counts, never object names, user ids or URLs.
 
 ## What the route calls
 
@@ -131,3 +131,32 @@ Two anonymous calls to the Storage API then checked the two findings as a visito
 - **C.** Leave it. Today it reveals nothing that is not already public.
 
 Either migration is checked with the two-user tests above before it runs, and the anonymous probe is repeated after it.
+
+## The fix (AVATAR-POLICY-002)
+
+The owner chose option A for both on 2026-10-23. R-041 waits for the cutover and is fixed in Go then; nothing changes now. R-186 is fixed by:
+
+- [`supabase/migrations/20261023120000_avatar_002_own_folder_reads.sql`](../../supabase/migrations/20261023120000_avatar_002_own_folder_reads.sql): drops both public SELECT policies, creates "Users can read their own avatars" (`for select to authenticated`, own folder, `auth.uid()` wrapped in `select` so it is evaluated once per statement), and drops the three duplicate write policies. One transaction; no `if exists`, so it stops if the live definitions have changed.
+- [`supabase/checks/avatar_002_verify.sql`](../../supabase/checks/avatar_002_verify.sql): read-only, five rows that must all say `ok`.
+- [`supabase/checks/avatar_002_rollback.sql`](../../supabase/checks/avatar_002_rollback.sql): restores the eight policies as read today, exposure included.
+- [`scripts/contracts/avatar-storage-policy.test.mjs`](../../scripts/contracts/avatar-storage-policy.test.mjs): fails if the migration brings back a read for every role or without the folder limit, uses `if exists`, or if the rollback no longer restores exactly what the migration removed.
+
+**Live preconditions, read 2026-10-23 (read-only):** the SQL editor and MCP run as `postgres`, which neither owns `storage.objects` nor is a superuser, but `supautils.policy_grants` lets it manage policies on that table. The Storage functions behind listing (`search`, `search_v2`, `search_by_timestamp`, `list_objects_with_delimiter`) run with the caller's rights, so the new SELECT policy governs listing. This project has no `storage.prefixes` table, so folder listings come from `storage.objects` alone.
+
+**Dry run, 2026-10-23, PGlite 0.2.17** (scratch, not committed). The schema was built from Storage's tenant migrations as before, with the eight live policies created so that `pg_policies` showed the same text as the live read. 26 checks passed:
+
+- Before: a signed-out caller read and listed every object, and the verify query reported a problem (R-186 reproduced).
+- After: verify all `ok`; signed out, nothing to read or list; user A reads and lists only A's folder.
+- A uploads, upserts and deletes in A's own folder. A cannot upload into B's folder, upsert over B's file, update or delete B's file, or move a file into B's folder. Each refusal is a row-level-security violation; the update and delete match no rows.
+- Signed out, uploads are refused. A second run of the migration stops; the rollback restores the live text exactly; the migration then applies again.
+
+Two broken variants were caught: keeping the public reads (verify: three rows not `ok`; five behaviour checks fail), and reads for signed-in users without the folder limit (one verify row, three behaviour checks). The stand-in is Postgres with Storage's schema, not the Storage server. Storage's own checks and the public-link path are confirmed only by the probe after applying.
+
+**Applying it**, once the owner approves this file:
+
+1. Run the migration in the Supabase SQL editor for User-DB, or have an agent run it through the MCP connection if the owner says so.
+2. Run `avatar_002_verify.sql`: five rows, all `ok`.
+3. Repeat the anonymous probe: listing the bucket returns no entries, and a current avatar link from `profiles` still loads.
+4. Upload an avatar on the site while signed in, then run query 7 of the catalog file: still one file per folder.
+
+If anything fails, run `avatar_002_rollback.sql` and record what happened.
