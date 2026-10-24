@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BATCH-CC-002, cutover gates, two reviews and the Phase 6 decision pack (Claude Code, 2026-10-24)
 
-Status: **complete; unreviewed as a batch; nothing switched, deployed or changed in any database.** Writer Claude Code; reviewer unassigned. Branch `main`, base `0abbe31`, clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `0abbe31`).
+Status: **complete; unreviewed as a batch; nothing switched, deployed or changed in any database.** Writer Claude Code; reviewer unassigned. Branch `main`, base `0abbe31`, clean before claim. Resulting commit: `cfd0003` (synchronized by Git Agent on `main` and `go-backend`).
 
 1. **VERIFY-005, forwarding on Vercel.** 14 awkward trending queries through the website's switched route matched Go direct exactly (status, cache, results). Closes the query-string part of "Rewrite forwards requests unchanged: not checked on Vercel".
 2. **MEASURE-001, response times from outside.** Equal regions (`bom1::iad1`), routes without GitHub, 220 requests, no errors. Medians equal within the network round trip (~300 ms from India); Go's tail shorter in three of four series. CPU, memory, outbound counts and GitHub-backed time not measured (Vercel connector unavailable). Both Supabase projects are in Mumbai while both functions run in Washington: measure before step 2.
