@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: REPOSYNC-001, RepoSync recorded and ported to a gated Go worker (Claude Code, 2026-10-24)
 
-Status: **implementation complete; unreviewed; not run against GitHub or any database; not deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `9b7d7a6`, clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `9b7d7a6`).
+Status: **implementation complete; unreviewed; not run against GitHub or any database; not deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `9b7d7a6`, clean before claim. Resulting commit: `6df8f06` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner asked to "continue the migration to go of other micro services". The sibling services are RepoSync (Phase 4) and the analysis/search candidates (Phase 5). The latter stay gated: the owner's 2026-10-20 decision selects no candidate and keeps worker execution off, and R-116 shows the candidates' embeddings disagree. `apiserver` is empty and `webapp` is an old copy of this site. RepoSync has a single implementation, so it was ported.
 
