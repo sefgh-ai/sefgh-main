@@ -107,7 +107,7 @@ verified. Do not invent a direct ingestion chain between them.
 RepoSync has token rotation, backoff, topic status and asynchronous monitoring
 writes. Its `False` return conflates existing rows and exhausted insert failures;
 the caller counts both as duplicates, and the topic loop marks completion
-(R-118). This matters to Phase 4 recovery acceptance. It has not been ported.
+(R-118). This matters to Phase 4 recovery acceptance. REPOSYNC-001 (2026-10-24) recorded its behaviour against local fakes ([contract](../../contracts/reposync/README.md)) and ported it to a gated Go worker; recording also found that it crashes when every key is exhausted (R-190). Its target database, deployment and the transfer to `ReposMeta` remain unverified, and the worker does not run until the owner approves.
 
 ## The offline Go foundation
 

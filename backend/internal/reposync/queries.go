@@ -1,0 +1,9 @@
+// Code generated from contracts/reposync/queries.json; the contract test
+// checks it still matches. The text is the original's, byte for byte.
+
+package reposync
+
+const (
+	topicCountQuery = "\n    query($topicName: String!) {\n      topic(name: $topicName) {\n        name\n        stargazerCount\n        repositories {\n          totalCount\n        }\n      }\n      rateLimit {\n        limit\n        remaining\n        resetAt\n      }\n    }\n    "
+	searchPageQuery = "\n    query($searchQuery: String!, $cursor: String) {\n      search(query: $searchQuery, type: REPOSITORY, first: 100, after: $cursor) {\n        repositoryCount\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n        nodes {\n          ... on Repository {\n            id\n            databaseId\n            name\n            nameWithOwner\n            description\n            stargazerCount\n            forkCount\n            url\n            primaryLanguage {\n              name\n            }\n            owner {\n              login\n              __typename\n            }\n            createdAt\n            updatedAt\n            repositoryTopics(first: 10) {\n              nodes {\n                topic {\n                  name\n                }\n              }\n            }\n          }\n        }\n      }\n      rateLimit {\n        limit\n        remaining\n        resetAt\n      }\n    }\n    "
+)

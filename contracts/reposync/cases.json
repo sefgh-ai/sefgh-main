@@ -1,0 +1,5934 @@
+{
+  "version": 1,
+  "source": {
+    "repository": "D:/SEFGH/RepoSync",
+    "commit": "056d339",
+    "sha256": {
+      "main.py": "18e2a9f63c43a0794ee22cb79ea698aa95a875096d3fa9bb201e5567c0e07e3e",
+      "db_writers.py": "0b0be1a534173cc8ef59a67610d3cbe98237957b9ed6c95610bbb3140a2b0ade",
+      "shared_logger.py": "c0c48acdd3daf3039f5356f618baa6f204c790a6acb37fafe76e3c910531071c"
+    },
+    "packages": {
+      "supabase": "2.24.0",
+      "postgrest": "2.24.0",
+      "httpx": "0.28.1",
+      "requests": "2.31.0",
+      "python-dotenv": "1.0.1",
+      "python": "3.12.1"
+    }
+  },
+  "cases": [
+    {
+      "id": "no-pending-topics",
+      "disposition": "preserve",
+      "reason": "Only completed and in-progress topics: nothing is fetched",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "done",
+            "status": "completed",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          },
+          {
+            "id": 2,
+            "topic": "busy",
+            "status": "in_progress",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": []
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 0,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 0
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "one-topic-two-pages",
+      "disposition": "preserve",
+      "reason": "Count query, two search pages, one repository already saved",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "smart-search",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "database": {
+          "existing_repo_ids": [
+            102
+          ],
+          "repository_count": 7
+        },
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 4
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 4,
+                  "pageInfo": {
+                    "hasNextPage": true,
+                    "endCursor": "c1"
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_101",
+                      "databaseId": 101,
+                      "name": "repo101",
+                      "nameWithOwner": "octo/repo101",
+                      "description": "Repository 101",
+                      "stargazerCount": 899,
+                      "forkCount": 101,
+                      "url": "https://github.com/octo/repo101",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_102",
+                      "databaseId": 102,
+                      "name": "repo102",
+                      "nameWithOwner": "octo/repo102",
+                      "description": "Repository 102",
+                      "stargazerCount": 898,
+                      "forkCount": 102,
+                      "url": "https://github.com/octo/repo102",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 4,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_103",
+                      "databaseId": 103,
+                      "name": "repo103",
+                      "nameWithOwner": "octo/repo103",
+                      "description": "Repository 103",
+                      "stargazerCount": 897,
+                      "forkCount": 103,
+                      "url": "https://github.com/octo/repo103",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_104",
+                      "databaseId": 104,
+                      "name": "repo104",
+                      "nameWithOwner": "octo/repo104",
+                      "description": "Repository 104",
+                      "stargazerCount": 896,
+                      "forkCount": 104,
+                      "url": "https://github.com/octo/repo104",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 3
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.smart-search",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "smart-search"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.smart-search",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 4,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:smart-search sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.101",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 101,
+              "name": "repo101",
+              "full_name": "octo/repo101",
+              "description": "Repository 101",
+              "stars": 899,
+              "forks": 101,
+              "url": "https://github.com/octo/repo101",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.102",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:smart-search sort:stars-desc",
+              "cursor": "c1"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.103",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 103,
+              "name": "repo103",
+              "full_name": "octo/repo103",
+              "description": "Repository 103",
+              "stars": 897,
+              "forks": 103,
+              "url": "https://github.com/octo/repo103",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.104",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 104,
+              "name": "repo104",
+              "full_name": "octo/repo104",
+              "description": "Repository 104",
+              "stars": 896,
+              "forks": 104,
+              "url": "https://github.com/octo/repo104",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.smart-search&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "smart-search",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 4,
+              "repos_saved": 3,
+              "duplicates_count": 1,
+              "github_total": 4,
+              "requests_made": 3,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "smart-search",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 7,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 3,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 3,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 3,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 4,
+                "total": 4,
+                "percentage": 100.0,
+                "saved": 3,
+                "duplicates": 1,
+                "requests": 3,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.smart-search",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 3,
+              "updated_at": "<time:naive>",
+              "github_total": 4,
+              "duplicates_count": 1
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "smart-search",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "smart-search",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "smart-search",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 1,
+            "times": 1
+          }
+        ],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing-fields-and-null-node",
+      "disposition": "preserve",
+      "reason": "A null node is skipped; null language, description and no topics are stored as such",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "edge",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 2
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    null,
+                    {
+                      "id": "R_201",
+                      "databaseId": 201,
+                      "name": "repo201",
+                      "nameWithOwner": "octo/repo201",
+                      "description": null,
+                      "stargazerCount": 799,
+                      "forkCount": 201,
+                      "url": "https://github.com/octo/repo201",
+                      "primaryLanguage": null,
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": []
+                      }
+                    },
+                    {
+                      "id": "R_202",
+                      "databaseId": 202,
+                      "name": "repo202",
+                      "nameWithOwner": "octo/repo202",
+                      "description": "Repository 202",
+                      "stargazerCount": 798,
+                      "forkCount": 202,
+                      "url": "https://github.com/octo/repo202",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 2
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.edge",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "edge"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.edge",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 2,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:edge sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.201",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 201,
+              "name": "repo201",
+              "full_name": "octo/repo201",
+              "description": null,
+              "stars": 799,
+              "forks": 201,
+              "url": "https://github.com/octo/repo201",
+              "language": null,
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": []
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.202",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 202,
+              "name": "repo202",
+              "full_name": "octo/repo202",
+              "description": "Repository 202",
+              "stars": 798,
+              "forks": 202,
+              "url": "https://github.com/octo/repo202",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.edge&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "edge",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 2,
+              "repos_saved": 2,
+              "duplicates_count": 0,
+              "github_total": 2,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "edge",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 2,
+                "total": 2,
+                "percentage": 100.0,
+                "saved": 2,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.edge",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 2,
+              "updated_at": "<time:naive>",
+              "github_total": 2,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "edge",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "edge",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "topic-count-unavailable",
+      "disposition": "preserve",
+      "reason": "The topic query finds no topic: the search's repositoryCount is used instead",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "unknown-topic",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": null,
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 9,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_301",
+                      "databaseId": 301,
+                      "name": "repo301",
+                      "nameWithOwner": "octo/repo301",
+                      "description": "Repository 301",
+                      "stargazerCount": 699,
+                      "forkCount": 301,
+                      "url": "https://github.com/octo/repo301",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 1
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.unknown-topic",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "unknown-topic"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:unknown-topic sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.301",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 301,
+              "name": "repo301",
+              "full_name": "octo/repo301",
+              "description": "Repository 301",
+              "stars": 699,
+              "forks": 301,
+              "url": "https://github.com/octo/repo301",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.unknown-topic&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "unknown-topic",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 1,
+              "repos_saved": 1,
+              "duplicates_count": 0,
+              "github_total": 9,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "unknown-topic",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 1,
+                "total": 9,
+                "percentage": 11.11111111111111,
+                "saved": 1,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": "<measured>",
+                "eta_base_seconds": "<measured>",
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.unknown-topic",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 9,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "unknown-topic",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "unknown-topic",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-ceiling-marked-complete",
+      "disposition": "defect",
+      "reason": "R-193: GitHub search returns at most 1,000 results; the topic is marked completed although GitHub reports 5,000",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "big",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 5000
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 5000,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_401",
+                      "databaseId": 401,
+                      "name": "repo401",
+                      "nameWithOwner": "octo/repo401",
+                      "description": "Repository 401",
+                      "stargazerCount": 599,
+                      "forkCount": 401,
+                      "url": "https://github.com/octo/repo401",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_402",
+                      "databaseId": 402,
+                      "name": "repo402",
+                      "nameWithOwner": "octo/repo402",
+                      "description": "Repository 402",
+                      "stargazerCount": 598,
+                      "forkCount": 402,
+                      "url": "https://github.com/octo/repo402",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 2
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.big",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "big"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.big",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 5000,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:big sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.401",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 401,
+              "name": "repo401",
+              "full_name": "octo/repo401",
+              "description": "Repository 401",
+              "stars": 599,
+              "forks": 401,
+              "url": "https://github.com/octo/repo401",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.402",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 402,
+              "name": "repo402",
+              "full_name": "octo/repo402",
+              "description": "Repository 402",
+              "stars": 598,
+              "forks": 402,
+              "url": "https://github.com/octo/repo402",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.big&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "big",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 2,
+              "repos_saved": 2,
+              "duplicates_count": 0,
+              "github_total": 5000,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "big",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 2,
+                "total": 5000,
+                "percentage": 0.04,
+                "saved": 2,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": "<measured>",
+                "eta_base_seconds": "<measured>",
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.big",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 2,
+              "updated_at": "<time:naive>",
+              "github_total": 5000,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "big",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "big",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "page-failure-marked-complete",
+      "disposition": "defect",
+      "reason": "R-194: a page that fails three times stops the topic, which is still marked completed",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "flaky",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 5
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 5,
+                  "pageInfo": {
+                    "hasNextPage": true,
+                    "endCursor": "c1"
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_501",
+                      "databaseId": 501,
+                      "name": "repo501",
+                      "nameWithOwner": "octo/repo501",
+                      "description": "Repository 501",
+                      "stargazerCount": 499,
+                      "forkCount": 501,
+                      "url": "https://github.com/octo/repo501",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_502",
+                      "databaseId": 502,
+                      "name": "repo502",
+                      "nameWithOwner": "octo/repo502",
+                      "description": "Repository 502",
+                      "stargazerCount": 498,
+                      "forkCount": 502,
+                      "url": "https://github.com/octo/repo502",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "status": 502,
+            "body": {
+              "message": "Bad gateway"
+            }
+          },
+          {
+            "status": 502,
+            "body": {
+              "message": "Bad gateway"
+            }
+          },
+          {
+            "status": 502,
+            "body": {
+              "message": "Bad gateway"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 2
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.flaky",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "flaky"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.flaky",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 5,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:flaky sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.501",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 501,
+              "name": "repo501",
+              "full_name": "octo/repo501",
+              "description": "Repository 501",
+              "stars": 499,
+              "forks": 501,
+              "url": "https://github.com/octo/repo501",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.502",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 502,
+              "name": "repo502",
+              "full_name": "octo/repo502",
+              "description": "Repository 502",
+              "stars": 498,
+              "forks": 502,
+              "url": "https://github.com/octo/repo502",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:flaky sort:stars-desc",
+              "cursor": "c1"
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "http_error",
+              "topic": "flaky",
+              "key_name": "fix...y-a",
+              "error_message": "HTTP 502",
+              "retry_count": 0,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:flaky sort:stars-desc",
+              "cursor": "c1"
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "http_error",
+              "topic": "flaky",
+              "key_name": "fix...y-a",
+              "error_message": "HTTP 502",
+              "retry_count": 1,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:flaky sort:stars-desc",
+              "cursor": "c1"
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "http_error",
+              "topic": "flaky",
+              "key_name": "fix...y-a",
+              "error_message": "HTTP 502",
+              "retry_count": 2,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.flaky&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "flaky",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 2,
+              "repos_saved": 2,
+              "duplicates_count": 0,
+              "github_total": 5,
+              "requests_made": 3,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 3,
+              "retry_count": 3,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "flaky",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 2,
+                "total": 5,
+                "percentage": 40.0,
+                "saved": 2,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": "<measured>",
+                "eta_base_seconds": "<measured>",
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.flaky",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 2,
+              "updated_at": "<time:naive>",
+              "github_total": 5,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "flaky",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "flaky",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 1,
+            "times": 1
+          },
+          {
+            "seconds": 5,
+            "times": 3
+          }
+        ],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "graphql-errors-with-data",
+      "disposition": "defect",
+      "reason": "R-195: a reply with both data and errors is retried as a failure, and after three the topic is marked completed with nothing saved",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "partial",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 2
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_601",
+                      "databaseId": 601,
+                      "name": "repo601",
+                      "nameWithOwner": "octo/repo601",
+                      "description": "Repository 601",
+                      "stargazerCount": 399,
+                      "forkCount": 601,
+                      "url": "https://github.com/octo/repo601",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_602",
+                      "databaseId": 602,
+                      "name": "repo602",
+                      "nameWithOwner": "octo/repo602",
+                      "description": "Repository 602",
+                      "stargazerCount": 398,
+                      "forkCount": 602,
+                      "url": "https://github.com/octo/repo602",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              },
+              "errors": [
+                {
+                  "type": "NOT_FOUND",
+                  "message": "Could not resolve to a node"
+                }
+              ]
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_601",
+                      "databaseId": 601,
+                      "name": "repo601",
+                      "nameWithOwner": "octo/repo601",
+                      "description": "Repository 601",
+                      "stargazerCount": 399,
+                      "forkCount": 601,
+                      "url": "https://github.com/octo/repo601",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_602",
+                      "databaseId": 602,
+                      "name": "repo602",
+                      "nameWithOwner": "octo/repo602",
+                      "description": "Repository 602",
+                      "stargazerCount": 398,
+                      "forkCount": 602,
+                      "url": "https://github.com/octo/repo602",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              },
+              "errors": [
+                {
+                  "type": "NOT_FOUND",
+                  "message": "Could not resolve to a node"
+                }
+              ]
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_601",
+                      "databaseId": 601,
+                      "name": "repo601",
+                      "nameWithOwner": "octo/repo601",
+                      "description": "Repository 601",
+                      "stargazerCount": 399,
+                      "forkCount": 601,
+                      "url": "https://github.com/octo/repo601",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_602",
+                      "databaseId": 602,
+                      "name": "repo602",
+                      "nameWithOwner": "octo/repo602",
+                      "description": "Repository 602",
+                      "stargazerCount": 398,
+                      "forkCount": 602,
+                      "url": "https://github.com/octo/repo602",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              },
+              "errors": [
+                {
+                  "type": "NOT_FOUND",
+                  "message": "Could not resolve to a node"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 0
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.partial",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "partial"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.partial",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 2,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:partial sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "graphql_error",
+              "topic": "partial",
+              "key_name": "fix...y-a",
+              "error_message": "[{'type': 'NOT_FOUND', 'message': 'Could not resolve to a node'}]",
+              "retry_count": 0,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:partial sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "graphql_error",
+              "topic": "partial",
+              "key_name": "fix...y-a",
+              "error_message": "[{'type': 'NOT_FOUND', 'message': 'Could not resolve to a node'}]",
+              "retry_count": 1,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:partial sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "graphql_error",
+              "topic": "partial",
+              "key_name": "fix...y-a",
+              "error_message": "[{'type': 'NOT_FOUND', 'message': 'Could not resolve to a node'}]",
+              "retry_count": 2,
+              "backoff_seconds": 0,
+              "details": {}
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.partial&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "partial",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 0,
+              "repos_saved": 0,
+              "duplicates_count": 0,
+              "github_total": 2,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 3,
+              "retry_count": 3,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "partial",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 4,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 4,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 4,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 0,
+                "total": 0,
+                "percentage": 0,
+                "saved": 0,
+                "duplicates": 0,
+                "requests": 0,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": null
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.partial",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>",
+              "github_total": 2,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "partial",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "partial",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "partial",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "partial",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 5,
+            "times": 3
+          }
+        ],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "insert-conflict-counted-duplicate",
+      "disposition": "defect",
+      "reason": "R-118: an insert refused on full_name is tried three times, then counted as a duplicate",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "renamed",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "database": {
+          "insert_conflicts": [
+            "octo/repo702"
+          ]
+        },
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 2
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_701",
+                      "databaseId": 701,
+                      "name": "repo701",
+                      "nameWithOwner": "octo/repo701",
+                      "description": "Repository 701",
+                      "stargazerCount": 299,
+                      "forkCount": 701,
+                      "url": "https://github.com/octo/repo701",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_702",
+                      "databaseId": 702,
+                      "name": "repo702",
+                      "nameWithOwner": "octo/repo702",
+                      "description": "Repository 702",
+                      "stargazerCount": 298,
+                      "forkCount": 702,
+                      "url": "https://github.com/octo/repo702",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 1
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.renamed",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "renamed"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.renamed",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 2,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:renamed sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.701",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 701,
+              "name": "repo701",
+              "full_name": "octo/repo701",
+              "description": "Repository 701",
+              "stars": 299,
+              "forks": 701,
+              "url": "https://github.com/octo/repo701",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.702",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 702,
+              "name": "repo702",
+              "full_name": "octo/repo702",
+              "description": "Repository 702",
+              "stars": 298,
+              "forks": 702,
+              "url": "https://github.com/octo/repo702",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.702",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 702,
+              "name": "repo702",
+              "full_name": "octo/repo702",
+              "description": "Repository 702",
+              "stars": 298,
+              "forks": 702,
+              "url": "https://github.com/octo/repo702",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.702",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 702,
+              "name": "repo702",
+              "full_name": "octo/repo702",
+              "description": "Repository 702",
+              "stars": 298,
+              "forks": 702,
+              "url": "https://github.com/octo/repo702",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.renamed&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "renamed",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 2,
+              "repos_saved": 1,
+              "duplicates_count": 1,
+              "github_total": 2,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "renamed",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 2,
+                "total": 2,
+                "percentage": 100.0,
+                "saved": 1,
+                "duplicates": 1,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.renamed",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 2,
+              "duplicates_count": 1
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "renamed",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "renamed",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 2,
+            "times": 2
+          }
+        ],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "rate-limit-rotates-key",
+      "disposition": "defect",
+      "reason": "R-189: after a 403 the key is marked exhausted, 60 s backoff, then rotation to the second key; the doubled backoff is reset to 60 by the rotation",
+      "setup": {
+        "keys": [
+          "fixture-key-a",
+          "fixture-key-b"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "limited",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 1
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "status": 403,
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "0",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "message": "API rate limit exceeded"
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 1,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_801",
+                      "databaseId": 801,
+                      "name": "repo801",
+                      "nameWithOwner": "octo/repo801",
+                      "description": "Repository 801",
+                      "stargazerCount": 199,
+                      "forkCount": 801,
+                      "url": "https://github.com/octo/repo801",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 1
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.limited",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "limited"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.limited",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 1,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:limited sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "rate_limit_backoff",
+              "topic": "limited",
+              "key_name": "fix...y-a",
+              "error_message": "Rate limit hit on Key 1",
+              "retry_count": 0,
+              "backoff_seconds": 60,
+              "details": {}
+            }
+          },
+          {
+            "to": "github",
+            "key": 2,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:limited sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.801",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 801,
+              "name": "repo801",
+              "full_name": "octo/repo801",
+              "description": "Repository 801",
+              "stars": 199,
+              "forks": 801,
+              "url": "https://github.com/octo/repo801",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.limited&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "limited",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 1,
+              "repos_saved": 1,
+              "duplicates_count": 0,
+              "github_total": 1,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 1,
+              "retry_count": 1,
+              "backoff_events": 1,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "rate_limited",
+              "current_topic": "limited",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 2,
+                "current_key_index": 1,
+                "exhausted_keys": 1,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 0,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": 3600,
+                    "is_exhausted": true,
+                    "total_requests": 1,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  },
+                  {
+                    "index": 1,
+                    "name": "fix...y-b",
+                    "masked_key": "fix...y-b",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 1,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 1,
+                    "cost_points": 0
+                  },
+                  "fix...y-b": {
+                    "requests": 1,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 1,
+                "total": 1,
+                "percentage": 100.0,
+                "saved": 1,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.limited",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 1,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "limited",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-b",
+                "key_index": 1,
+                "topic": "limited",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 1,
+            "times": 60
+          }
+        ],
+        "keys": {
+          "current_key": 2,
+          "backoff_seconds": 60,
+          "exhausted": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "all-keys-exhausted-crashes",
+      "disposition": "defect",
+      "reason": "R-190: with every key exhausted, handle_rate_limit subtracts a naive UTC time from an aware reset time and raises TypeError; the worker stops and the topic stays in_progress",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "waiting",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "status": 403,
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "0",
+              "X-RateLimit-Reset": "1792845000"
+            },
+            "body": {
+              "message": "API rate limit exceeded"
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 1
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 1,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_901",
+                      "databaseId": 901,
+                      "name": "repo901",
+                      "nameWithOwner": "octo/repo901",
+                      "description": "Repository 901",
+                      "stargazerCount": 99,
+                      "forkCount": 901,
+                      "url": "https://github.com/octo/repo901",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": null,
+        "raised": "TypeError: can't subtract offset-naive and offset-aware datetimes",
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.waiting",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "waiting"
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/error_events",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "timestamp": "<time:Z>",
+              "event_type": "rate_limit_backoff",
+              "topic": "waiting",
+              "key_name": "fix...y-a",
+              "error_message": "Rate limit hit on Key 1",
+              "retry_count": 0,
+              "backoff_seconds": 60,
+              "details": {}
+            }
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "low-remaining-switches-key",
+      "disposition": "preserve",
+      "reason": "A reply reporting fewer than 5 points left marks the key exhausted; the next request uses the second key",
+      "setup": {
+        "keys": [
+          "fixture-key-a",
+          "fixture-key-b"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "nearly-out",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "3",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 2
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 3,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 2,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_1001",
+                      "databaseId": 1001,
+                      "name": "repo1001",
+                      "nameWithOwner": "octo/repo1001",
+                      "description": "Repository 1001",
+                      "stargazerCount": -1,
+                      "forkCount": 1001,
+                      "url": "https://github.com/octo/repo1001",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "R_1002",
+                      "databaseId": 1002,
+                      "name": "repo1002",
+                      "nameWithOwner": "octo/repo1002",
+                      "description": "Repository 1002",
+                      "stargazerCount": -2,
+                      "forkCount": 1002,
+                      "url": "https://github.com/octo/repo1002",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 2
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.nearly-out",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "nearly-out"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.nearly-out",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 2,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 2,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:nearly-out sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.1001",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 1001,
+              "name": "repo1001",
+              "full_name": "octo/repo1001",
+              "description": "Repository 1001",
+              "stars": -1,
+              "forks": 1001,
+              "url": "https://github.com/octo/repo1001",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.1002",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 1002,
+              "name": "repo1002",
+              "full_name": "octo/repo1002",
+              "description": "Repository 1002",
+              "stars": -2,
+              "forks": 1002,
+              "url": "https://github.com/octo/repo1002",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.nearly-out&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "nearly-out",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 2,
+              "repos_saved": 2,
+              "duplicates_count": 0,
+              "github_total": 2,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "nearly-out",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 2,
+                "current_key_index": 1,
+                "exhausted_keys": 1,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 3,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": true,
+                    "total_requests": 1,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  },
+                  {
+                    "index": 1,
+                    "name": "fix...y-b",
+                    "masked_key": "fix...y-b",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 1,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 1,
+                    "cost_points": 0
+                  },
+                  "fix...y-b": {
+                    "requests": 1,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 2,
+                "total": 2,
+                "percentage": 100.0,
+                "saved": 2,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.nearly-out",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 2,
+              "updated_at": "<time:naive>",
+              "github_total": 2,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "nearly-out",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 3,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-b",
+                "key_index": 1,
+                "topic": "nearly-out",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 2,
+          "backoff_seconds": 60,
+          "exhausted": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "in-progress-topic-stranded",
+      "disposition": "defect",
+      "reason": "R-191: a topic left in_progress (a crash mid-topic) is never picked up again; only pending topics run",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "crashed",
+            "status": "in_progress",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          },
+          {
+            "id": 2,
+            "topic": "fresh",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 1
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 1,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_1101",
+                      "databaseId": 1101,
+                      "name": "repo1101",
+                      "nameWithOwner": "octo/repo1101",
+                      "description": "Repository 1101",
+                      "stargazerCount": -101,
+                      "forkCount": 1101,
+                      "url": "https://github.com/octo/repo1101",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 1,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 1
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.fresh",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "fresh"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.fresh",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 1,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:fresh sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.1101",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 1101,
+              "name": "repo1101",
+              "full_name": "octo/repo1101",
+              "description": "Repository 1101",
+              "stars": -101,
+              "forks": 1101,
+              "url": "https://github.com/octo/repo1101",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.fresh&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "fresh",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 1,
+              "repos_saved": 1,
+              "duplicates_count": 0,
+              "github_total": 1,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "fresh",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "fix...y-a",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "fix...y-a": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 1,
+                "total": 1,
+                "percentage": 100.0,
+                "saved": 1,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.fresh",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 1,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "fresh",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "fix...y-a",
+                "key_index": 0,
+                "topic": "fresh",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "two-topics-in-id-order",
+      "disposition": "preserve",
+      "reason": "Pending topics run in id order with a 5-second pause between them; named keys appear in the logs",
+      "setup": {
+        "keys": [
+          "fixture-key-a"
+        ],
+        "key_names": [
+          "primary"
+        ],
+        "topics": [
+          {
+            "id": 1,
+            "topic": "first",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          },
+          {
+            "id": 2,
+            "topic": "second",
+            "status": "pending",
+            "repos_fetched": 0,
+            "github_total": 0,
+            "duplicates_count": 0
+          }
+        ],
+        "github": [
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 1
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 1,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_1201",
+                      "databaseId": 1201,
+                      "name": "repo1201",
+                      "nameWithOwner": "octo/repo1201",
+                      "description": "Repository 1201",
+                      "stargazerCount": -201,
+                      "forkCount": 1201,
+                      "url": "https://github.com/octo/repo1201",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4990",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "topic": {
+                  "name": "t",
+                  "stargazerCount": 3,
+                  "repositories": {
+                    "totalCount": 1
+                  }
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4990,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "headers": {
+              "X-RateLimit-Limit": "5000",
+              "X-RateLimit-Remaining": "4980",
+              "X-RateLimit-Reset": "1792846800"
+            },
+            "body": {
+              "data": {
+                "search": {
+                  "repositoryCount": 1,
+                  "pageInfo": {
+                    "hasNextPage": false,
+                    "endCursor": null
+                  },
+                  "nodes": [
+                    {
+                      "id": "R_1202",
+                      "databaseId": 1202,
+                      "name": "repo1202",
+                      "nameWithOwner": "octo/repo1202",
+                      "description": "Repository 1202",
+                      "stargazerCount": -202,
+                      "forkCount": 1202,
+                      "url": "https://github.com/octo/repo1202",
+                      "primaryLanguage": {
+                        "name": "Go"
+                      },
+                      "owner": {
+                        "login": "octo",
+                        "__typename": "Organization"
+                      },
+                      "createdAt": "2020-01-01T00:00:00Z",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repositoryTopics": {
+                        "nodes": [
+                          {
+                            "topic": {
+                              "name": "smart-search"
+                            }
+                          },
+                          {
+                            "topic": {
+                              "name": "go"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "rateLimit": {
+                  "limit": 5000,
+                  "remaining": 4980,
+                  "resetAt": "2026-10-24T13:00:00Z"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": {
+        "result": {
+          "topics_processed": 2,
+          "total_repos_fetched": 0,
+          "total_repos_saved": 2
+        },
+        "raised": null,
+        "calls": [
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_list",
+            "query": "select=*&order=id.asc",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.first",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "first"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.first",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 1,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:first sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.1201",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 1201,
+              "name": "repo1201",
+              "full_name": "octo/repo1201",
+              "description": "Repository 1201",
+              "stars": -201,
+              "forks": 1201,
+              "url": "https://github.com/octo/repo1201",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.first&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "first",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 1,
+              "repos_saved": 1,
+              "duplicates_count": 0,
+              "github_total": 1,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "first",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "primary",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 2,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 2,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "primary": {
+                    "requests": 2,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 1,
+                "total": 1,
+                "percentage": 100.0,
+                "saved": 1,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.first",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 1,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.second",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "in_progress",
+              "repos_fetched": 0,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "topic_count",
+            "variables": {
+              "topicName": "second"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.second",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "github_total": 1,
+              "updated_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "github",
+            "key": 1,
+            "query": "search_page",
+            "variables": {
+              "searchQuery": "topic:second sort:stars-desc",
+              "cursor": null
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id&repo_id=eq.1202",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/repositories",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "repo_id": 1202,
+              "name": "repo1202",
+              "full_name": "octo/repo1202",
+              "description": "Repository 1202",
+              "stars": -202,
+              "forks": 1202,
+              "url": "https://github.com/octo/repo1202",
+              "language": "Go",
+              "owner": "octo",
+              "owner_type": "Organization",
+              "created_at": "<time:Z>",
+              "updated_at": "<time:Z>",
+              "topics": [
+                "smart-search",
+                "go"
+              ]
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "select=id&topic_name=eq.second&cycle_number=eq.0",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": null
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/topic_processing_history",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "topic_name": "second",
+              "status": "completed",
+              "cycle_number": 0,
+              "repos_fetched": 1,
+              "repos_saved": 1,
+              "duplicates_count": 0,
+              "github_total": 1,
+              "requests_made": 2,
+              "total_cost_points": 0,
+              "avg_page_time_sec": "<measured>",
+              "total_duration_sec": "<measured>",
+              "error_count": 0,
+              "retry_count": 0,
+              "backoff_events": 0,
+              "final_error": null,
+              "updated_at": "<time:naive>",
+              "started_at": "<time:naive>",
+              "completed_at": "<time:naive>",
+              "created_at": "<time:naive>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "GET",
+            "path": "/rest/v1/repositories",
+            "query": "select=id",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "count=exact"
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/session_snapshots",
+            "query": "",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "session_start": "<time:naive>",
+              "status": "running",
+              "current_topic": "second",
+              "current_cycle": 0,
+              "topics_processed": 0,
+              "repos_saved": 0,
+              "total_repos_in_db": 0,
+              "rate_limit": {
+                "remaining": 4980,
+                "limit": 5000,
+                "reset_at": "<time:Z>",
+                "reset_in_seconds": null
+              },
+              "api_keys": {
+                "total_keys": 1,
+                "current_key_index": 0,
+                "exhausted_keys": 0,
+                "keys_info": [
+                  {
+                    "index": 0,
+                    "name": "primary",
+                    "masked_key": "fix...y-a",
+                    "remaining": 4980,
+                    "limit": 5000,
+                    "reset_at": "<time:Z>",
+                    "reset_in_seconds": null,
+                    "is_exhausted": false,
+                    "total_requests": 4,
+                    "total_cost_points": 0,
+                    "last_used_at": "<time:Z>"
+                  }
+                ]
+              },
+              "api_stats": {
+                "total_requests": 4,
+                "total_cost_points": 0,
+                "estimated_cost_usd": 0.0,
+                "per_key": {
+                  "primary": {
+                    "requests": 4,
+                    "cost_points": 0
+                  }
+                }
+              },
+              "current_progress": {
+                "current": 1,
+                "total": 1,
+                "percentage": 100.0,
+                "saved": 1,
+                "duplicates": 0,
+                "requests": 2,
+                "avg_page_time_sec": "<measured>",
+                "avg_cost_per_page": 0,
+                "eta_seconds": null,
+                "eta_base_seconds": null,
+                "eta_wait_seconds": 0
+              },
+              "uptime_seconds": "<measured>"
+            }
+          },
+          {
+            "to": "database",
+            "method": "PATCH",
+            "path": "/rest/v1/topic_list",
+            "query": "topic=eq.second",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": {
+              "status": "completed",
+              "repos_fetched": 1,
+              "updated_at": "<time:naive>",
+              "github_total": 1,
+              "duplicates_count": 0
+            }
+          },
+          {
+            "to": "database",
+            "method": "POST",
+            "path": "/rest/v1/api_key_usage_log",
+            "query": "columns=\"cost_points\",\"error_message\",\"key_index\",\"key_name\",\"limit_value\",\"remaining_after\",\"request_type\",\"reset_at\",\"response_time_ms\",\"success\",\"timestamp\",\"topic\"",
+            "authorization": "Bearer <service-key>",
+            "apikey": "<service-key>",
+            "prefer": "return=representation",
+            "body": [
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "primary",
+                "key_index": 0,
+                "topic": "first",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "primary",
+                "key_index": 0,
+                "topic": "first",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "primary",
+                "key_index": 0,
+                "topic": "second",
+                "request_type": "query",
+                "cost_points": 0,
+                "remaining_after": 4990,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              },
+              {
+                "timestamp": "<time:Z>",
+                "key_name": "primary",
+                "key_index": 0,
+                "topic": "second",
+                "request_type": "search_page",
+                "cost_points": 0,
+                "remaining_after": 4980,
+                "limit_value": 5000,
+                "reset_at": "<time:Z>",
+                "response_time_ms": "<measured>",
+                "success": true,
+                "error_message": null
+              }
+            ]
+          }
+        ],
+        "sleeps": [
+          {
+            "seconds": 5,
+            "times": 1
+          }
+        ],
+        "keys": {
+          "current_key": 1,
+          "backoff_seconds": 60,
+          "exhausted": [
+            false
+          ]
+        }
+      }
+    }
+  ]
+}

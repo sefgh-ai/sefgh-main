@@ -353,6 +353,21 @@ The first area of the browser's own database calls served by Go (`../docs/plans/
 - **Copied as it is:** the search counter is never increased (R-102); fixed once here after the area is switched on.
 - **Differs from the browser:** a null count reply gives zeros where the browser threw; a signed-out item delete gives `false` where the browser said `true` and deleted nothing; replies are `private, no-store`; saved searches are limited to 64 KiB.
 
+## RepoSync worker (REPOSYNC-001)
+
+`internal/reposync` and `cmd/reposync` port RepoSync, the Python GitHub ingester in `D:/SEFGH/RepoSync` (commit `056d339`): pending topics from `topic_list`, GitHub GraphQL search by stars, new rows in `repositories`, and the monitoring tables. It is a worker, not an API route, and is not registered in `cmd/api`. Its behaviour, defects included (R-118, R-189 to R-198), is pinned by [`../contracts/reposync`](../contracts/reposync/README.md), recorded from the Python original against local fakes.
+
+**Gated.** `cmd/reposync` refuses to start unless `REPOSYNC_ENABLED=1`. Running it writes with a privileged database key and spends GitHub allowance, and worker execution waits for the owner's approval of a deployment (ADR, 2026-10-20). Its settings are its own, separate from the website's:
+
+| Setting | Meaning |
+|---|---|
+| `REPOSYNC_ENABLED` | `1` only after the owner approves a deployment |
+| `REPOSYNC_SUPABASE_URL`, `REPOSYNC_SUPABASE_SERVICE_KEY` | The ingestion database and its worker key; never the website's |
+| `REPOSYNC_GITHUB_KEYS`, `REPOSYNC_GITHUB_KEY_NAMES` | Comma-separated GitHub tokens used in turn, and optional names for logs |
+| `REPOSYNC_COST_PER_POINT_USD` | Optional; unused in practice, as the queries never ask for cost (R-192) |
+
+`-once` runs one cycle; otherwise it polls every five minutes like the original. Ctrl+C or SIGTERM finishes the current topic, then stops.
+
 ## Trending topics (TREND-001a)
 
 Opt-in name: `trending-topics`, off by default. `GET /api/trending/topics` is new: it has no Next.js handler, so with the switch off the path is a 404. It replaces the stored `trending_repos` table and its refresh route, which could not write the table (R-077); the owner chose this design on 2026-10-19 (`../docs/plans/trending-refresh.md`, option A). It passes the 11 hand-written cases of `contracts/trending-topics`.
