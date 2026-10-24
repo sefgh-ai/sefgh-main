@@ -15,8 +15,8 @@ To answer, reply with the entry and a letter, for example "R-002 A, R-005 A, R-0
 
 | Entry | Problem | Options | Recommendation |
 |---|---|---|---|
-| R-065 High | `sefgh.org` expired at Hostinger on 2026-10-06 and does not resolve | **A** renew it and restore the DNS records Vercel asks for; **B** let it go and use another domain | **A**. Owner action |
-| R-066 High | The live site runs the old May 2026 code (`sefgh-ui`, from `sefgh-ai/sefgh-nextjs`); nothing from this repository, including every fix, is live there | **A** point the domain at `sefgh-main` (this repository) once renewed (OPS-004); **B** keep `sefgh-ui` | **A**. Owner action, after R-065 |
+| R-065 High | `sefgh.org` expired at Hostinger on 2026-10-06 and does not resolve | **A** renew it and restore the DNS records Vercel asks for; **B** let it go and use another domain | **Answered 2026-10-24: renew later.** Owner action |
+| R-066 High | The live site runs the old May 2026 code (`sefgh-ui`, from `sefgh-ai/sefgh-nextjs`); nothing from this repository, including every fix, is live there | **A** point the domain at `sefgh-main` (this repository) once renewed (OPS-004); **B** keep `sefgh-ui` | **Answered 2026-10-24: A** ("all deployments will be done in this repo"). Owner action, after R-065 |
 
 ## 2. Database rules
 

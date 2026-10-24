@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-24 (Asia/Calcutta), by Claude Code: BATCH-CC-002 complete on base `0abbe31`, uncommitted (VERIFY-005, MEASURE-001, REVIEW-007, REVIEW-028 with R-187 fixed, Phase 6 decision pack).
+Last updated: 2026-10-24 (Asia/Calcutta), by Claude Code: OWNER-ANSWERS-001 complete on base `553ded2`, uncommitted. Token verified on both projects; all deployments come from this repository; Supabase settings on `sefgh-api`, the avatar test and test accounts still pending.
 
 ## Start here
 
@@ -11,9 +11,30 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released BATCH-CC-002. Waiting on the owner: decision pack, GitHub public read token, step 1 preview switch. Owner signing stop and rollout gates remain.
+- **Active writer:** none. Claude Code released OWNER-ANSWERS-001. Waiting on the owner: Supabase settings on `sefgh-api` (as Config), step 1 preview check, avatar upload on `sefgh-main`, two test accounts, the rest of the decision pack. Owner signing stop and rollout gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; provisioning/runtime/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 186 entries (R-001 through R-186; R-186 from AVATAR-POLICY-001b); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: OWNER-ANSWERS-001, the owner's answers and the verified token (Claude Code, 2026-10-24)
+
+Status: **complete, documentation only.** Writer Claude Code. Base `553ded2` (BATCH-CC-002 committed as `cfd0003`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `553ded2`).
+
+Owner's answers to the six requests:
+
+1. **GitHub token: set** on `sefgh-main` and `sefgh-api`, both redeployed. Verified from outside: both deployments report 4,992–4,993 of 5,000 left, with one shared reset time. R-031 is now in effect.
+2. **Domain:** the owner will renew `sefgh.org` later. "From now all deployments will be done in this repo" (R-066 A). Recorded in the ADR log, the register and the decision pack. The other 21 decision-pack entries are still unanswered.
+3. **Step 1 preview: done** (owner's report). Not verified by an agent: the `go-backend` preview redirects to Vercel's sign-in (302).
+4. **Supabase settings on `sefgh-api`: not done.** The owner's screenshot shows Vercel refusing a `NEXT_PUBLIC_` variable typed "Secret" ("Remove the public framework prefix… change the variable to Config"); a saved Secret cannot be changed to Config. Fix: delete it and add it again as type Config. Checked: `/api/activity` still answers 500.
+5. **Avatar test: not done.** The owner opened `sefgh.vercel.app`, which answers 402 `DEPLOYMENT_DISABLED` ("temporarily paused"). That address is not the default address of any project in the team, and the connector cannot see it. The site to use is `sefgh-main.vercel.app` (200).
+6. **Test accounts: A**, two accounts the owner signs up on the site, with passwords kept in a local file outside the repository.
+
+The Vercel connector reconnected but can only list projects. Reading a project, its deployments or its variables answered 404/403, so agents still cannot switch or inspect settings.
+
+Changed files: `docs/bug-register.md` (R-031, R-065, R-066), `docs/adr/0002-go-backend.md` (decisions log), `docs/plans/phase6-owner-decisions.md` (two answered rows), `docs/cutover.md` (step 1 note), this file. Checks: links and `git diff --check`, then `npm run handoff`.
+
+Next: the owner fixes the two Supabase variables as Config and redeploys `sefgh-api`; checks the step 1 preview in the browser (`x-sefgh-backend: go`); uploads an avatar on `sefgh-main.vercel.app/profile`; creates the two test accounts. Agents then verify each one.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: BATCH-CC-002, cutover gates, two reviews and the Phase 6 decision pack (Claude Code, 2026-10-24)
 
