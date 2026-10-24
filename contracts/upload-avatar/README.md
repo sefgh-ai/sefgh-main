@@ -1,6 +1,6 @@
 # Avatar upload contract
 
-Version 1, AVATAR-001a/b (2026-10-18): **45 cases, 23 marked defect**,
+Version 1, AVATAR-001a/b (2026-10-18), extended in REVIEW-028 (2026-10-24): **47 cases, 25 marked defect**,
 recorded from `POST /api/upload-avatar` at base `4f8c815`. The Next.js handler
 is unchanged; `AvatarUpload.jsx` now sends its session bearer for either backend.
 
@@ -35,14 +35,23 @@ Preserved defects are R-041 (missing setup-file error), R-094 (MIME-only
 validation, empty files and arbitrary extensions), R-095 (cleanup selection,
 concurrency and ignored failures), and R-096 (partial writes without rollback).
 Internal/provider errors also reach the browser (R-097); the fixtures mark those cases.
+The upload or metadata returning null throws an internal error in the SDK,
+whereas other malformed replies may be wrapped as an upload/profile failure.
+
+REVIEW-028 (2026-10-24) added `filename-with-trailing-slashes` and
+`filename-with-slash-run`, recorded from the unchanged Next.js handler: the
+extension is everything after the last dot, slashes included, and storage-js
+cleans the upload path (one leading and one trailing slash removed, then runs
+collapsed) while the public URL keeps the raw name. The Go port differed there
+(R-187) and now matches. Re-recording on Node 24 also rewrote the `details`
+text of the two `engine_message` cases; that wording is Node's own and not
+pinned, so the committed text was kept.
 
 R-041 is decided (owner, 2026-10-23). The live `storage.buckets` has no policy,
 so in production `upload-refused-bucket-missing` describes every failed upload.
 Version 2, written in Go after the cutover, drops the bucket check and answers
 "Failed to upload avatar". Version 1 stays as it is until then. Evidence:
 `docs/database/avatar-storage.md`.
-The upload or metadata returning null throws an internal error in the SDK,
-whereas other malformed replies may be wrapped as an upload/profile failure.
 
 Go differs outside the fixtures: a six-MiB whole-request bound; a 24-second
 budget including verification and reading, with a connection read deadline,

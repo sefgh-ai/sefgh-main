@@ -1,5 +1,37 @@
 # Claude Code review and reconciliation
 
+## REVIEW-028: AVATAR-001a/b (Codex), 2026-10-24
+
+Reviewer: Claude Code, independent of the author (Codex). Base `0abbe31`. Scope: the avatar port `backend/internal/avatar`, its contract `contracts/upload-avatar` and its tests, with the AVATAR-001 handoff's named risks: cleanup timing, multipart parsing and account isolation. Part of BATCH-CC-002.
+
+**Finding 1 (R-187, Low, fixed):** the port did not copy Next.js for crafted filenames. `part.FileName()` passes the name through `filepath.Base`, which drops path segments and, on Windows only, also splits on backslashes. The upload path then used `strings.Trim(strings.ReplaceAll(p, "//", "/"), "/")`. storage-js does `path.replace(/^\/|\/$/g, '').replace(/\/+/g, '/')`: one leading and one trailing slash, then whole runs. Comparing the real JavaScript expression with the real Go expression gave different paths for `png//`, `png///x` and `png////`. Two cases were recorded from the unchanged Next.js handler (the existing cases re-recorded identically, apart from Node's own wording in two `engine_message` cases, kept as committed). Both new cases failed in Go before the fix and passed after. The fix reads the `filename` parameter as sent and adds `cleanPath`. Lesson 45 explains it; lesson 31 points to it.
+
+**Checked, no finding:**
+
+- Account isolation does not depend on the handler. Every write goes with the caller's token, and the own-folder policies hold on any name the extension can produce, because the first folder is always the verified user id (policies read live in AVATAR-POLICY-001b and tightened in 002).
+- Cleanup timing, the slow-body interrupt, redirect refusal, cancellation and log hygiene are covered by unit tests that fail on the obvious regressions.
+- The public URL is built from the uncleaned name with `encodeURI`, as storage-js's `getPublicUrl` does.
+
+**Residual, not changed:** `mime.ParseMediaType` reads `filename*` (RFC 2231) and backslash escapes in quoted names, which Node's form parser may treat differently. That only matters when the extension contains such characters, which no browser sends. Not tested.
+
+Checks: avatar package and `cmd/api` tests pass; full backend `go test -count=1 ./...`, `go vet ./...` and `gofmt -l .` (empty) pass; Node contract 48/48; forwarding probe 152/152 with the rebuilt server; lesson 45 solution passes and its unfinished exercise fails as intended.
+
+## REVIEW-007: CI-001, VERIFY-002 and VERIFY-003 (Codex), 2026-10-24
+
+Reviewer: Claude Code, independent of the author (Codex). Base `0abbe31`. Reviewed the current versions, which have grown since 2026-10-13: `.github/workflows/backend-verification.yml` and `scripts/contracts/go-forwarding-probe.mjs` (152 requests in dev mode). Part of BATCH-CC-002.
+
+**CI-001, read:** permissions are read-only, credentials are not kept after checkout, and every action is pinned to a commit. `run:` blocks use GitHub's default `bash -eo pipefail`, so a failing line fails the step. `CGO_ENABLED=1` makes `-race` real. `gofmt -l` output fails the job. Lessons run only on a manual run with `verify_lessons`, as the owner set. The keys database job uses a pinned image digest, no network and a label check. **Observation:** `cancel-in-progress` cancels a commit's run when another push follows quickly, so that commit's receipt must cite the later run, which covers the same source. Not a defect.
+
+**VERIFY-002/003, deliberate breaks** (each applied by a scratch script and restored; file hashes compared afterwards):
+
+| Break | Expected | Result |
+|---|---|---|
+| B1: the session proxy, widened to `/api`, deletes `Authorization` | credential cases differ | caught, exit 1: private repository, private search and onboarding answered 401 through Next.js |
+| B2: the proxy re-serializes the search query through `URLSearchParams` | awkward queries differ | caught, exit 1, but slowly (520 s): Next.js answered 500 to every search |
+| B3: the rewrite points `github-languages` at a wrong path | that route differs | caught, exit 1: 151 of 152 |
+
+The proxy's matcher deliberately excludes `/api`, so B1 and B2 needed it widened. They stand in for "something between the browser and Go changes the request". Baseline 152/152 before and after. **No defect found.** What the probe cannot see, Vercel's own rewrite layer, was checked separately for query strings in VERIFY-005 (`verification/cutover-step1.md`).
+
 ## REVIEW-027: HANDOFF-002 / BUG-023, 2026-10-23
 
 Replacement Boyle01a169a8-551d-73c0-8ec6-1515f7eaeddb independently accepted

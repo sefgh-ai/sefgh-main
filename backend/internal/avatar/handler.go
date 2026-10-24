@@ -82,7 +82,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	parts := strings.Split(name, ".")
 	fileName := id + "/avatar-" + stamp() + "." + parts[len(parts)-1]
-	uploadPath := strings.Trim(strings.ReplaceAll(fileName, "//", "/"), "/")
+	uploadPath := cleanPath(fileName)
 	_, raw, upstreamErr := h.call(ctx, session, "POST", "/storage/v1/object/avatars/"+uploadPath, kind, body, true)
 	if upstreamErr == nil && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
 		h.fail(w, "upload_shape", "Internal server error", "Cannot read properties of null (reading 'Id')")
@@ -173,8 +173,20 @@ func readAvatar(w http.ResponseWriter, r *http.Request) (name, kind string, body
 		if !isFile {
 			return "", "", nil, len(data) > 0, nil
 		}
-		return part.FileName(), strings.ToLower(part.Header.Get("Content-Type")), data, true, nil
+		// The name as sent: part.FileName() applies filepath.Base, which
+		// drops path segments (and on Windows also splits on backslashes).
+		return params["filename"], strings.ToLower(part.Header.Get("Content-Type")), data, true, nil
 	}
+}
+
+// cleanPath copies how storage-js cleans an upload path: it removes one
+// leading and one trailing slash, then turns each run of slashes into one.
+func cleanPath(p string) string {
+	p = strings.TrimSuffix(strings.TrimPrefix(p, "/"), "/")
+	for strings.Contains(p, "//") {
+		p = strings.ReplaceAll(p, "//", "/")
+	}
+	return p
 }
 
 func (h *Handler) cleanup(ctx context.Context, session, id, current string) {

@@ -1419,6 +1419,208 @@
       }
     },
     {
+      "id": "filename-with-trailing-slashes",
+      "disposition": "defect",
+      "reason": "R-094/R-187: the extension is everything after the last dot, slashes included; storage-js removes one trailing slash from the upload path, but the public URL keeps the raw name",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      },
+      "file": {
+        "name": "photo.png//",
+        "type": "image/png"
+      },
+      "database": [
+        {
+          "body": {
+            "Key": "avatars/photo.png"
+          }
+        },
+        {
+          "body": {
+            "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+          }
+        },
+        {
+          "status": 204
+        },
+        {
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png/",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          },
+          {
+            "method": "PUT",
+            "path": "/auth/v1/user",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json;charset=UTF-8",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "data": {
+                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
+              },
+              "code_challenge": null,
+              "code_challenge_method": null
+            }
+          },
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/list/avatars",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "limit": 100,
+              "offset": 0,
+              "sortBy": {
+                "column": "name",
+                "order": "asc"
+              },
+              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "filename-with-slash-run",
+      "disposition": "defect",
+      "reason": "R-094/R-187: storage-js collapses a run of slashes in the upload path; the public URL keeps the raw name",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+      },
+      "file": {
+        "name": "photo.png///x",
+        "type": "image/png"
+      },
+      "database": [
+        {
+          "body": {
+            "Key": "avatars/photo.png"
+          }
+        },
+        {
+          "body": {
+            "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+          }
+        },
+        {
+          "status": 204
+        },
+        {
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png/x",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          },
+          {
+            "method": "PUT",
+            "path": "/auth/v1/user",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json;charset=UTF-8",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "data": {
+                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
+              },
+              "code_challenge": null,
+              "code_challenge_method": null
+            }
+          },
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
+            }
+          },
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/list/avatars",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "application/json",
+            "cache_control": null,
+            "x_upsert": null,
+            "body": {
+              "limit": 100,
+              "offset": 0,
+              "sortBy": {
+                "column": "name",
+                "order": "asc"
+              },
+              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "uppercase-extension",
       "disposition": "preserve",
       "reason": "uppercase extension",

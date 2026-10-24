@@ -94,6 +94,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [42 RPC capabilities and database authority](42-rpc-capabilities-and-database-authority/README.md) | Bound user tokens, separate accounting capabilities, strict replies and database-owned admission | `backend/internal/apikey/rpc.go`, `rpc_accounting.go`, `rpc_json.go` |
 | [43 Atomic test counters](43-atomic-test-counters/README.md) | Goroutines in HTTP tests, atomic Add/Load and waiting for workers | `TestRPCNoRetryNoErrorPayloadAndNoCredentialRedirect` in `backend/internal/apikey/rpc_edges_test.go` |
 | [44 Bounded receipt recovery](44-bounded-receipt-recovery/README.md) | Narrow concrete capabilities, opening recovery with admissions disabled, context budgets, partial progress and retry cursors | `RecoverCompletionPage` and `RPCClient.OpenRecovery` in `backend/internal/apikey` |
+| [45 Copying JavaScript's string rules](45-copying-javascript-string-rules/README.md) | One-pass `ReplaceAll` against a regular expression's runs, `TrimPrefix` against `Trim`, and why `Part.FileName()` is not the name that was sent | `readAvatar` and `cleanPath` in `backend/internal/avatar/handler.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

@@ -42,6 +42,12 @@ connection, so a client cannot keep an upload open forever by sending no bytes.
 For upstream replies, `defer resp.Body.Close()` releases the connection even
 when parsing fails. It is a separate job from cancelling a context.
 
+## Later change
+
+`readAvatar` now returns the `filename` parameter as sent rather than
+`part.FileName()`, and the upload path is cleaned exactly as storage-js does it
+(REVIEW-028, 2026-10-24). Lesson 45 explains both.
+
 ## Your exercise
 
 Implement `readBounded` in `exercise.go`. Read at most `maximum+1` bytes.
