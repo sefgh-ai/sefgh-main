@@ -91,6 +91,8 @@ Triggers: on `auth.users`, `on_auth_user_created` (`handle_new_user`: creates th
 
 Bucket `avatars`: anyone can read; a signed-in user can upload, update and delete only under a folder named with their own id (`storage.foldername(name)[1] = auth.uid()`). Every policy exists twice under two names.
 
+**Changed 2026-10-24 (AVATAR-POLICY-002b, R-186):** signed-out callers can no longer read or list the bucket. A signed-in user reads only their own folder; avatar links still work because the bucket is public. The duplicate policies are gone. The summary above describes the database before that change.
+
 This summary is not the exact policy text. The exact definitions, the bucket's settings (public, 5 MiB, four image types), what the upload route needs from each policy, and two findings (R-041 confirmed, R-186) are in [avatar-storage.md](avatar-storage.md), read 2026-10-23 (AVATAR-POLICY-001).
 
 ## Auth

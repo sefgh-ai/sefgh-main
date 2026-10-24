@@ -2,7 +2,7 @@
 
 AVATAR-POLICY-001, started 2026-10-23 by Claude Code. Covers R-041 and the Phase 4 gate "storage authorization tests" for `POST /api/upload-avatar`.
 
-**State: live read done 2026-10-23 (AVATAR-POLICY-001b), answers under [Results](#results). R-186 fix prepared and tested locally, not applied: [The fix](#the-fix-avatar-policy-002).** The questions below were written before the read (AVATAR-POLICY-001a). The read that answers them is [`supabase/checks/avatar_storage_catalog.sql`](../../supabase/checks/avatar_storage_catalog.sql). It runs in a read-only transaction and returns definitions and counts, never object names, user ids or URLs.
+**State: live read done 2026-10-23 (AVATAR-POLICY-001b), answers under [Results](#results). R-186 fixed in production on 2026-10-24: [The fix](#the-fix-avatar-policy-002), [Applied](#applied-2026-10-24-avatar-policy-002b).** The questions below were written before the read (AVATAR-POLICY-001a). The read that answers them is [`supabase/checks/avatar_storage_catalog.sql`](../../supabase/checks/avatar_storage_catalog.sql). It runs in a read-only transaction and returns definitions and counts, never object names, user ids or URLs.
 
 ## What the route calls
 
@@ -160,3 +160,22 @@ Two broken variants were caught: keeping the public reads (verify: three rows no
 4. Upload an avatar on the site while signed in, then run query 7 of the catalog file: still one file per folder.
 
 If anything fails, run `avatar_002_rollback.sql` and record what happened.
+
+### Applied 2026-10-24 (AVATAR-POLICY-002b)
+
+The owner approved it ("yeah you can go ahead") and asked for a test on the other project first.
+
+**Dev `mraglhrenqwadegvwxts`, against the real Storage server.** Dev was set up as a copy of production: the bucket with the same settings, and the eight policies with identical text. One fixture image was uploaded as a signed-out caller through a temporary policy limited to that one path; the policy was dropped straight after. Results, all as a signed-out caller:
+
+| Step | Bucket list | List root / fixture folder | Public link | Upload elsewhere | Verify |
+|---|---|---|---|---|---|
+| Before | 0 | 1 / 1 | 200, same bytes | 400 | 4 rows not `ok` |
+| Migration applied | 0 | 0 / 0 | 200, same bytes | 400 | 5/5 `ok` |
+| Rollback applied | 0 | 1 / 1 | 200, same bytes | 400 | — |
+| Migration applied again | 0 | 0 / 0 | 200, same bytes | 400 | — |
+
+After the rollback, an MD5 over the policies' names, roles, commands and conditions was `3b710771…`, identical to production's before the change. So the rollback restores production exactly, and production had not changed since the read. Dev keeps the bucket, the four new policies and the fixture image, as a copy of production for later tests.
+
+**Production User-DB.** Applied with the MCP `apply_migration` tool; history `20261024093212 avatar_002_own_folder_reads` (the file keeps its repository timestamp). Verify 5/5 `ok`; four policies, fingerprint `a000479a…`, the same as dev after the migration. Signed out: listing the bucket answered 200 with no entries (3 the day before), and all 3 uploaded avatar links that `profiles` holds still load (200, `image/png`, `image/gif`, `image/jpeg`).
+
+**Not yet confirmed:** an upload while signed in on the real Storage server, that is upsert and cleanup under the new SELECT policy. The local dry run covers it; one real upload on the site (the live site's route is identical) closes it.

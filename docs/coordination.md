@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-23 (Asia/Calcutta), by Claude Code: AVATAR-POLICY-002 complete as prepared on base `76859e2`, uncommitted. R-186 migration written and dry-run, NOT applied (waits for owner approval of the file); R-041 decided for Go after cutover.
+Last updated: 2026-10-24 (Asia/Calcutta), by Claude Code: AVATAR-POLICY-002b complete. R-186 tested on dev and applied to production User-DB (migration `20261024093212`, verify 5/5); a signed-in upload awaits the owner. Uncommitted.
 
 ## Start here
 
@@ -11,9 +11,36 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released AVATAR-POLICY-002: the R-186 migration is prepared and tested locally, not applied, and waits for the owner's approval of the file. R-041 is decided (Go after cutover). Owner signing stop and rollout gates remain.
+- **Active writer:** none. Claude Code released AVATAR-POLICY-002b (R-186 applied to production; one signed-in upload to be confirmed by the owner). Owner signing stop and rollout gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; provisioning/runtime/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 186 entries (R-001 through R-186; R-186 from AVATAR-POLICY-001b); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: AVATAR-POLICY-002b, R-186 tested on dev and applied to production (Claude Code, 2026-10-24)
+
+Status: **complete; R-186 fixed in production; unreviewed.** One signed-in upload on the site is still to be confirmed by the owner. Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `127a49c` (002 committed as `537faec`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `127a49c`).
+
+The owner approved applying the migration ("yeah you can go ahead"), asked for a test on the other project first, then said "continue the migration".
+
+Dev `mraglhrenqwadegvwxts` (Storage version and settings as production; no signing, user or token change):
+
+- Preflight (read): 0 buckets, objects, Storage policies and Auth users; no `storage.prefixes`.
+- Set up as a copy of production: bucket `avatars` (public, 5 MiB, four types) and the eight policies with text identical to production. A temporary anon INSERT policy, limited to `avatar-002-fixture/pixel.png`, let one 1×1 PNG be uploaded (200); it was then dropped, leaving 8 policies and 0 temporary.
+- Mid-task, Claude Code's auto-mode classifier denied a read-only `pg_policies` select ("Modify Shared Resources"). Claude Code stopped and asked the owner; after "continue the migration" the same read was allowed. Nothing was routed around the denial.
+- Signed-out results, before → migration → rollback → migration: bucket list 0 throughout (R-041, left for Go); root/folder listing 1/1 → 0/0 → 1/1 → 0/0; public link 200 with identical bytes throughout; upload elsewhere 400 throughout; verify 4 rows not `ok` → 5/5 `ok`.
+- The rollback's policy fingerprint (MD5 over name, roles, command and conditions) was `3b710771…`, identical to production's before the change. Dev ends migrated (`a000479a…`) with the fixture image kept as a production copy for later tests.
+
+Production User-DB `kohwfuxqbllsmvmsfqci`:
+
+- Preflight: fingerprint `3b710771…`, so unchanged since the 2026-10-23 read.
+- `apply_migration` with the committed file (`537faec`, unchanged): success, history `20261024093212 avatar_002_own_folder_reads`.
+- Verify 5/5 `ok`; four policies, fingerprint `a000479a…` (same as tested dev).
+- Signed-out probe (public key read from `.env.local` by a scratch script, statuses and counts only): listing the bucket 200 with 0 entries (3 before); all 3 uploaded avatar links in `profiles` load (200, PNG/GIF/JPEG).
+
+Changed files: `docs/database/avatar-storage.md` ("Applied" section, state line), `docs/bug-register.md` (R-186 fixed), `docs/adr/0002-go-backend.md` (decisions log, Phase 4), `docs/database/user-db.md` (change note), this file. Checks: link/anchor and `git diff --check` below, then full contracts and the Go backend in `npm run handoff`.
+
+Not confirmed: a signed-in upload against the real Storage server (upsert and cleanup under the new SELECT). Owner: upload an avatar once on the site; if it fails, run `supabase/checks/avatar_002_rollback.sql` and record it. R-041 stays open for Go after cutover.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: AVATAR-POLICY-002, R-186 migration prepared; R-041 decision recorded (Claude Code, 2026-10-23)
 
