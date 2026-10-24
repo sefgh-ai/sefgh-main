@@ -125,6 +125,8 @@ runtime/cost, or approve a relevance threshold. It adds no production route.
 
 ## Next implementation sequence
 
+ARCH-001 (2026-10-24) proposes the target this sequence should build: a single Go pipeline with a database job table, sliced discovery, enrichment through GitHub's API instead of cloning, one embedding space and a hybrid search function. See [`../architecture/hld.md`](../architecture/hld.md) (decisions D1 to D8) and [`../architecture/lld.md`](../architecture/lld.md). The steps below still apply; the design fixes how each is done.
+
 1. Owner decision (2026-10-20): **deployment is not confirmed; keep worker execution gated**. No candidate is selected by default. Identify the authoritative worker/search deployment and operator, actual entrypoint/configuration, model revision/digest and corpus lineage from deployment records before worker execution or replacement.
 2. Obtain read-only catalog definitions for the selected database: actual table,
    key types, vector dimensions/index/opclass, RPC signatures/bodies/permissions,

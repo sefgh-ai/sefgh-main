@@ -199,6 +199,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 
 Open, for the owner:
 
+- **Target architecture (ARCH-001, 2026-10-24, proposal):** [`../architecture/hld.md`](../architecture/hld.md) and [`../architecture/lld.md`](../architecture/lld.md) describe the whole backend behind the UI, including the Phase 4 and 5 pipeline (one Go worker, a job table in a separate Corpus DB, one embedding space). Eight decisions, D1 to D8, need the owner's answer before any of it is built.
 - The search navbar sends `sort=stars` and `sort=updated`, which the API ignores. Recorded as `defect` cases. Either teach the API those names or change the navbar to send the names the API knows.
 - **Private implementation and verification (agents).** Policy is decided. AUTH-001 removes server-token fallback from the five migrated dynamic GitHub handlers. Private UI integration, other server-token call sites, independent review and live OAuth verification remain. No production token permissions were inspected.
 - How the Go service will be hosted within Vercel's free tier, and how production routing and rollback will work. The owner has stated the app runs on Vercel; the deployment itself has not been inspected. See the hosting proposal below.
