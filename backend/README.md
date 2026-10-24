@@ -183,6 +183,8 @@ The hosted setup is a second Vercel project whose Root Directory is `backend/`, 
 node scripts/check-go-deployment.mjs https://<go project>.vercel.app
 ```
 
+To compare it with the website on the public GitHub routes of cutover step 1, before or after a switch: `node scripts/compare-deployments.mjs https://<website> https://<go project> [--switched=name,name]` ([results of 2026-10-24](../docs/verification/cutover-step1.md)).
+
 The in-memory parts of the server (the summary cache and the AI allowances) belong to one running copy, and Vercel may run several copies at once. Each copy counts and caches on its own.
 
 ## Where it differs from the Next.js handler on purpose
