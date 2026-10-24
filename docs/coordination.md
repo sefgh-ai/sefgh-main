@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: AUTH-URL-001, sign-in lands on localhost (Claude Code, 2026-10-24)
 
-Status: **complete, documentation only; the fix is the owner's.** Writer Claude Code. Base `1595cd5` (OWNER-ANSWERS-001 committed as `d6b4af3`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `1595cd5`).
+Status: **complete, documentation only; the fix is the owner's.** Writer Claude Code. Base `1595cd5` (OWNER-ANSWERS-001 committed as `d6b4af3`), clean before claim. Resulting commit: `d55b02a` (synchronized by Git Agent on `main` and `go-backend`).
 
 - **`sefgh-api` Supabase settings: verified.** The owner re-added both as Config. `check-go-deployment.mjs` 7/7; `/api/activity` now answers 401 instead of 500. Step 2's `share-token` and later steps can now reach the database.
 - **R-188 (High, new):** the owner's screenshot shows sign-in ending at `localhost:3000/?code=…`. The login and signup pages ask Supabase to return to `${window.location.origin}/auth/callback`; Supabase uses its Site URL when that address is not on its Redirect URLs list, and the code arrived at the root, which matches that fallback. The site's own redirect is right: `GET /auth/callback` without a code answers 307 to `https://sefgh-main.vercel.app/login?error=invalid_link`. The fix is in User-DB's Auth URL Configuration, which neither the database nor the connectors reach. Steps were given to the owner.
