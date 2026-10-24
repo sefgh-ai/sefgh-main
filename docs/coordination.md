@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: ARCH-001, backend architecture HLD and LLD (Claude Code, 2026-10-24)
 
-Status: **complete, documentation only; a proposal, not a decision; unreviewed.** Writer Claude Code. Branch `main`, base/current `2c25b78` (REPOSYNC-001 committed as `6df8f06`). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `2c25b78`).
+Status: **complete, documentation only; a proposal, not a decision; unreviewed.** Writer Claude Code. Branch `main`, base/current `2c25b78` (REPOSYNC-001 committed as `6df8f06`). Resulting commit: `e3e7220` (synchronized by Git Agent on `main` and `go-backend`).
 
 History: the owner asked to stop mid-task ("save a checkpoint and stop here"); work resumed on the same tree, and that checkpoint is replaced by this record.
 
