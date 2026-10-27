@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: DATA-010, server-rendered data calls through the Go data proxy (Claude Code, 2026-10-27)
 
-Status: **implementation complete; unreviewed; nothing switched or deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `f16b409` (OPS-005 committed as `d498cf3`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `f16b409`).
+Status: **implementation complete; unreviewed; nothing switched or deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `f16b409` (OPS-005 committed as `d498cf3`), clean before claim. Resulting commit: `2275a41` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner said "migrate other things" while the owner-side steps wait. Looking for business logic Next.js still runs on the server found that the `repo-page` data switch did nothing (R-204): the only reader of its four tables outside the API routes, `src/lib/repo/sefghData.js` (with `commentHelpers.js`, which also reads `profiles`), runs in the repository page's Server Component, and DATA-PROXY-001's routing fetch was fitted to the browser client only. The sign-in callback's welcome notification bypassed the `notifications` switch the same way.
 
