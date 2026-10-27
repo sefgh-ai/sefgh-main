@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: REPO-PAGE-001, the repository page's GitHub read served by Go (Claude Code, 2026-10-27)
 
-Status: **implementation complete; unreviewed; nothing switched or deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `f3e745c` (DATA-010 committed as `2275a41`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `f3e745c`).
+Status: **implementation complete; unreviewed; nothing switched or deployed.** Writer Claude Code; reviewer unassigned, no peer review claimed. Branch `main`, base `f3e745c` (DATA-010 committed as `2275a41`), clean before claim. Resulting commit: `3989a55` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner asked to finish the remaining migration, this item last. A sweep of `src/app` and `src/lib` for server-side code outside the API routes found only this read still in Next.js with no Go path (the sign-in callback and the page's database reads were routed in DATA-010; `api-reference` only reads a flag). The submit-project dialog's GitHub read (`src/lib/github-api.js`) runs in the visitor's browser on the visitor's own allowance, so it stays there (recorded in the backend map).
 
