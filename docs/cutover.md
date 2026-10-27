@@ -40,11 +40,11 @@ From least risk to most. Within a step, the names can go together.
 7. **The browser's database calls**, one area at a time in `NEXT_PUBLIC_SEFGH_GO_DATA`. Each needs a new build:
    - `search-history`: search signed in, open the history list, delete one, clear all.
    - `onboarding`: a new account's onboarding, every step to the end.
-   - `notifications`: open the bell, mark one and all as read, delete one.
+   - `notifications`: open the bell, mark one and all as read, delete one. A new account's welcome notification is written through Go too, by the sign-in callback on the server (DATA-010).
    - `profile`: edit the bio and website.
    - `user-stats`, `search-stats`: the profile's stats and the search page's figures show.
    - `home`, `submissions`: the home page's projects and categories; submit a project and delete the submission.
-   - `repo-page`: a repository page's counts and comments.
+   - `repo-page`: a repository page's counts and comments. Switch `profile` with it, or the comment authors' names still come straight from Supabase. These reads are made on the server (DATA-010), so the browser's Network tab does not show them: while a repository page loads, the Go project's logs on Vercel should show `/api/data/repo-page/` and `/api/data/profile/` requests.
    - `activity`: do something that is logged, then check the activity grid.
    - `conversations` last, as it is used most: start a chat, send messages, rename, pin, archive and delete a conversation, and check the list updates by itself (Realtime).
 8. **AI routes last:** `ai-suggestions`, `ai-enhance-query`, `ai-chat`, with the AI keys on the Go project. Their per-user limits are counted in memory, by each copy of the Go server separately: on Vercel several copies may run, so the limits are looser than they read. Decide whether that is acceptable before switching them on.

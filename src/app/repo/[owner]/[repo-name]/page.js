@@ -19,8 +19,9 @@ export default async function RepoDetailsPage({ params }) {
     notFound();
   }
 
-  // Fetch SEFGH-specific data
-  const supabase = await createClient();
+  // Fetch SEFGH-specific data, through Go when its areas are switched on
+  // (repo-page, profile; DATA-010)
+  const supabase = await createClient({ goData: true });
   const sefghData = await fetchSefghData(supabase, `${owner}/${repoName}`);
 
   return (

@@ -9,7 +9,7 @@ import { register } from 'node:module';
 import { test } from 'node:test';
 register('./route-loader.mjs', import.meta.url);
 const { PROXY_AREAS, proxyArea } = await import('../../src/lib/go-areas.mjs');
-const { routedFetch } = await import('../../src/lib/supabase/data-routing.js');
+const { routedFetch, serverRoutedFetch } = await import('../../src/lib/supabase/data-routing.js');
 
 const root = new URL('../../', import.meta.url);
 const policy = JSON.parse(await readFile(new URL('backend/internal/dataproxy/policy.json', root), 'utf8'));
@@ -89,9 +89,99 @@ test('supabase-js sends its requests through the routing fetch unchanged', async
   }
 });
 
-// Every database write the browser code makes on a proxied table, by file.
-// When code adds one, this list and, after review, policy.json change with it.
+// On the server there is no same-origin rewrite: a switched area goes to the
+// Go server named by SEFGH_GO_API_URL, and without it nothing is routed.
+test('a server client sends switched areas to the Go server itself (DATA-010)', async () => {
+  const GO = 'https://go.example';
+  const sent = [];
+  const fetchImpl = async (input, init) => { sent.push([String(input), init]); return new Response('[]', { status: 200, headers: { 'x-sefgh-backend': 'go' } }); };
+  assert.equal(serverRoutedFetch(SUPABASE, '', fetchImpl, 'repo-page'), undefined);
+  assert.equal(serverRoutedFetch(SUPABASE, null, fetchImpl, 'repo-page'), undefined);
+  const route = serverRoutedFetch(SUPABASE, `${GO}/`, fetchImpl, 'repo-page');
+  const init = { method: 'GET', headers: { Authorization: 'Bearer t' } };
+  await route(`${SUPABASE}/rest/v1/repo_votes?select=vote_type`, init);
+  await route(`${SUPABASE}/rest/v1/notifications?select=*`, init); // area off
+  await route(`${SUPABASE}/auth/v1/user`, init);
+  assert.deepEqual(sent.map(([url]) => url), [
+    `${GO}/api/data/repo-page/rest/v1/repo_votes?select=vote_type`,
+    `${SUPABASE}/rest/v1/notifications?select=*`,
+    `${SUPABASE}/auth/v1/user`,
+  ]);
+  assert.ok(sent.every(([, given]) => given === init));
+});
+
+// The repository page's real data module (src/lib/repo/sefghData.js) on a
+// supabase-js client with the server's routing fetch. It runs only on the
+// server, so before DATA-010 the repo-page switch reached none of its reads.
+test('the repository page reads through Go when repo-page and profile are on', async () => {
+  const { createClient } = await import('@supabase/supabase-js');
+  const { fetchSefghData } = await import('../../src/lib/repo/sefghData.js');
+  const GO = 'https://go.example';
+  for (const setting of ['', 'repo-page,profile']) {
+    const sent = [];
+    const fetchImpl = async (input, init) => {
+      const url = String(input);
+      sent.push({ url, headers: new Headers(init?.headers) });
+      const table = url.match(/\/rest\/v1\/([a-z_]+)/)?.[1];
+      // One top-level comment, so its author's profile and its replies are read too.
+      const rows = table === 'profiles' ? [{ full_name: 'Ada', avatar_url: null }]
+        : table === 'repo_comments' && url.includes('parent_id=is.null') ? [{ id: 'c1', user_id: 'u2', parent_id: null }]
+          : [];
+      return new Response(JSON.stringify(rows), { status: 200, headers: { 'content-type': 'application/json', 'x-sefgh-backend': 'go' } });
+    };
+    const client = createClient(SUPABASE, 'public-key', { global: { fetch: serverRoutedFetch(SUPABASE, GO, fetchImpl, setting) }, auth: { persistSession: false } });
+    client.auth.getSession = async () => ({ data: { session: { access_token: 'user-token' } }, error: null });
+    client.auth.getUser = async () => ({ data: { user: { id: 'u1' } }, error: null });
+
+    const data = await fetchSefghData(client, 'octo/demo');
+    assert.equal(data.comments[0]?.user_name, 'Ada');
+    const reads = sent.filter(({ url }) => url.includes('/rest/v1/'));
+    assert.deepEqual([...new Set(reads.map(({ url }) => url.match(/\/rest\/v1\/([a-z_]+)/)[1]))].sort(),
+      ['profiles', 'repo_collections', 'repo_comments', 'repo_ratings', 'repo_votes']);
+    for (const { url, headers } of reads) {
+      const table = url.match(/\/rest\/v1\/([a-z_]+)/)[1];
+      const prefix = setting ? `${GO}/api/data/${proxyArea(table)}/rest/v1/` : `${SUPABASE}/rest/v1/`;
+      assert.ok(url.startsWith(prefix), `${url} should start with ${prefix}`);
+      assert.equal(headers.get('authorization'), 'Bearer user-token');
+    }
+  }
+});
+
+// Server code outside src/app/api that makes a server Supabase client. Each
+// one either routes its data calls ({ goData: true }) or uses Auth only, so
+// no area's data is read or written on the server past its switch. A new
+// one must be added here.
+const SERVER_CLIENTS = {
+  'src/app/repo/[owner]/[repo-name]/page.js': 'routed',
+  'src/app/auth/callback/route.js': 'routed',
+  'src/lib/ai/session.js': 'auth only',
+};
+
+test('server code outside the API routes sends switched areas through Go', async () => {
+  const users = [];
+  const walk = async (dir) => {
+    for (const entry of await readdir(new URL(dir, root), { withFileTypes: true })) {
+      const path = `${dir}${entry.name}`;
+      if (entry.isDirectory()) { if (path !== 'src/app/api') await walk(`${path}/`); }
+      else if (/\.(js|jsx|mjs)$/.test(entry.name) && (await readFile(new URL(path, root), 'utf8')).includes('@/lib/supabase/server')) users.push(path);
+    }
+  };
+  await walk('src/');
+  assert.deepEqual(users.sort(), Object.keys(SERVER_CLIENTS).sort());
+  for (const [file, kind] of Object.entries(SERVER_CLIENTS)) {
+    const text = await readFile(new URL(file, root), 'utf8');
+    const made = [...text.matchAll(/\bcreateClient\(([^)]*)\)/g)].map((m) => m[1].replace(/\s+/g, ''));
+    assert.ok(made.length > 0, `${file} makes a client`);
+    if (kind === 'routed') assert.deepEqual(made.filter((args) => args !== '{goData:true}'), [], `${file} routes every client it makes`);
+    else assert.doesNotMatch(text, /\.(from|rpc)\(/, `${file} uses Auth only`);
+  }
+});
+
+// Every database write the browser code makes on a proxied table, by file,
+// and those of the routed server code above. When code adds one, this list
+// and, after review, policy.json change with it.
 const WRITES = [
+  ['src/app/auth/callback/route.js', 'notifications', 'insert', ['user_id', 'title', 'message', 'type', 'link']],
   ['src/lib/notifications.js', 'notifications', 'insert', ['user_id', 'title', 'message', 'type', 'link']],
   ['src/lib/notifications.js', 'notifications', 'update', ['is_read']],
   ['src/lib/notifications.js', 'notifications', 'update', ['is_read']],
@@ -129,8 +219,9 @@ async function sourceFiles(dir) {
   for (const entry of await readdir(new URL(dir, root), { withFileTypes: true })) {
     const path = `${dir}${entry.name}`;
     if (entry.isDirectory()) { if (path !== 'src/app/api') out.push(...(await sourceFiles(`${path}/`))); }
-    // Route handlers run on the server with the server client, which is not routed.
-    else if (/\.(js|jsx|mjs)$/.test(entry.name) && entry.name !== 'route.js') out.push(path);
+    // Route handlers run on the server with the server client, which is not
+    // routed unless asked; the routed ones are listed in SERVER_CLIENTS.
+    else if (/\.(js|jsx|mjs)$/.test(entry.name) && (entry.name !== 'route.js' || SERVER_CLIENTS[path] === 'routed')) out.push(path);
   }
   return out;
 }

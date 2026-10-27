@@ -575,3 +575,16 @@ go to the Go data proxy (`backend/internal/dataproxy`), which checks them agains
 its policy and forwards them with the caller's token. All other requests, Auth,
 Storage and Realtime included, are unchanged. Off by default. Only the playground
 (`api_keys`, `api_limits`, `api_logs`) and dead code still have no Go route.
+
+## DATA-010 update (2026-10-27)
+
+The data proxy's routing now also reaches server-side code. The repository
+page (`src/app/repo/[owner]/[repo-name]/page.js`) reads votes, ratings,
+comments, saves and comment authors' profiles in its Server Component, and the
+sign-in callback writes a welcome notification; both make their client with
+`createClient({ goData: true })` (`src/lib/supabase/server.js`), whose fetch
+(`serverRoutedFetch` in `src/lib/supabase/data-routing.js`) sends switched
+areas to `SEFGH_GO_API_URL` directly. Without that setting nothing is routed.
+Route handlers keep the unrouted server client. Still made by Next.js on the
+server: the repository page's public GitHub read (`src/lib/repo/repoData.js`,
+for the page and its metadata), which no switch covers yet.
