@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: OPS-005, production trending no longer forwarded to Go (Claude Code, 2026-10-27)
 
-Status: **complete, documentation only; the fix is the owner's.** Writer Claude Code; no reviewer. Branch `main`, base/current `942c30b` (ARCH-001 committed as `e3e7220`), clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `942c30b`).
+Status: **complete, documentation only; the fix is the owner's.** Writer Claude Code; no reviewer. Branch `main`, base/current `942c30b` (ARCH-001 committed as `e3e7220`), clean before claim. Resulting commit: `d498cf3` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner said "continue the migration". Every open task waits on the owner, so this began by checking the live switches from outside, and found a regression.
 
