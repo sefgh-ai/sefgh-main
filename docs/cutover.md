@@ -14,6 +14,8 @@ Written by Claude Code on 2026-10-19 for the owner. Everything below is **off** 
 
 **Always on a preview first.** Set the names for **Preview** only, deploy a preview, check it, then set the same names for **Production**. Switch one or a few related names at a time, so a problem has one cause.
 
+**Keep Production's own values while a preview is tested.** Give Preview its own entries of `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES`; do not untick Production on the existing ones. Production must keep `SEFGH_GO_API_URL` and every name already live (today `github-trending`). On 2026-10-27 the production website was found no longer forwarding trending, so `/trending` was empty again (R-202). After any change to these settings and a production redeploy, run `node scripts/compare-deployments.mjs https://sefgh-main.vercel.app https://sefgh-api.vercel.app --switched=` with the names that should be live; it fails on any route that is not forwarded as expected.
+
 ## Settings the Go project needs
 
 These go on the Go project (`sefgh-api`), not the website. All are public values except the tokens; no service-role key or database password is ever needed.
