@@ -34,6 +34,7 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubsearch"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubtrending"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/onboarding"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publicrepo"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publictoken"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/rating"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/searchhistory"
@@ -120,6 +121,7 @@ func newHandler(logger *slog.Logger) http.Handler {
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
 	top.Handle("/api/trending/topics", topicsMux(logger, public))
+	top.Handle("/api/github/public-repo/", publicRepoMux(public))
 	history := historyMux(logger, verifier)
 	top.Handle("/api/search-history", history)
 	top.Handle("/api/search-history/", history)
@@ -260,6 +262,19 @@ func topicsMux(logger *slog.Logger, public http.RoundTripper) *http.ServeMux {
 		BaseURL: envOr("GITHUB_API_URL", trendingtopics.DefaultBaseURL),
 		Logger:  logger,
 	})
+	return mux
+}
+
+// publicRepoMux serves the repository page's read of the repository it shows
+// (REPO-PAGE-001). It is public data only: no caller's credential is read or
+// sent, so it sits beside the GitHub access check, and GitHub is asked through
+// the transport of signed-out reads, as for the starred route.
+func publicRepoMux(public http.RoundTripper) *http.ServeMux {
+	mux := http.NewServeMux()
+	(&publicrepo.Handler{
+		Client:  &http.Client{Timeout: publicrepo.Timeout, Transport: public},
+		BaseURL: envOr("GITHUB_API_URL", publicrepo.DefaultBaseURL),
+	}).Register(mux)
 	return mux
 }
 

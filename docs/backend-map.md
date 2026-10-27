@@ -585,6 +585,22 @@ sign-in callback writes a welcome notification; both make their client with
 `createClient({ goData: true })` (`src/lib/supabase/server.js`), whose fetch
 (`serverRoutedFetch` in `src/lib/supabase/data-routing.js`) sends switched
 areas to `SEFGH_GO_API_URL` directly. Without that setting nothing is routed.
-Route handlers keep the unrouted server client. Still made by Next.js on the
-server: the repository page's public GitHub read (`src/lib/repo/repoData.js`,
-for the page and its metadata), which no switch covers yet.
+Route handlers keep the unrouted server client. The repository page's public
+GitHub read got its own switch in REPO-PAGE-001, below.
+
+## REPO-PAGE-001 update (2026-10-27)
+
+The repository page's GitHub read (`fetchRepoForPage` in
+`src/lib/repo/repoData.js`, for the page and its metadata) asks
+`GET /api/github/public-repo/{owner}/{repo}` on the Go server when
+`github-public-repo` is in `SEFGH_GO_ROUTES` and `SEFGH_GO_API_URL` is set;
+otherwise it reads GitHub itself as before. The route is
+`backend/internal/publicrepo`, whose `Read` moved there from the starred port,
+which now calls it. With every switch on, what Next.js still does on the
+server is Supabase Auth (session refresh in `src/proxy.js`, the sign-in
+callback's code exchange), which ADR-0002 keeps there, and the two routes with
+no Go switch: `playground/keys` (KEYS-001, gated) and `trending/refresh`
+(replaced by `trending-topics`, removed in Phase 7). The submit-project
+dialog's GitHub read (`src/lib/github-api.js`) is made by the visitor's
+browser against the visitor's own GitHub allowance; it is not server logic and
+stays in the browser.

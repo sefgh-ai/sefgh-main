@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/publicrepo"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
 
@@ -219,7 +220,7 @@ func (h *Handler) refresh(ctx context.Context, entries []entry) {
 		go func(e *entry, owner, repo string) {
 			defer wg.Done()
 			defer func() { <-slots }()
-			if fields, ok := publicRepo(ctx, h.GitHub, base, owner, repo); ok {
+			if fields, ok := publicrepo.Read(ctx, h.GitHub, base, owner, repo); ok {
 				e.repoData, e.public = summary(fields), true
 			}
 		}(&entries[i], parts[0], parts[1])

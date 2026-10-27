@@ -84,6 +84,7 @@ The current Next playground key route has its own [version2 contract](../contrac
 | `POST`, `DELETE /api/conversations/{id}/share` | `internal/shares` | `../contracts/conversation-share/` |
 | `POST /api/share/{token}/fork` | `internal/shares` | `../contracts/share-fork/` |
 | `GET /api/trending/topics` | `internal/trendingtopics` | `../contracts/trending-topics/` (Go only) |
+| `GET /api/github/public-repo/{owner}/{repo}` | `internal/publicrepo` | `../contracts/public-repository-reads/` (asked by the repository page's server render) |
 | `POST`, `GET`, `DELETE /api/search-history`, `DELETE /api/search-history/{id}`, `GET /api/search-history/count` | `internal/searchhistory` | `../contracts/search-history/` (browser module) |
 | `GET`, `POST`, `PATCH /api/onboarding` | `internal/onboarding` | `../contracts/onboarding/` (browser module) |
 | any method on `/api/data/{area}/rest/v1/{table or rpc/name}` | `internal/dataproxy` | `policy.json` and its tests |
@@ -367,6 +368,10 @@ The first area of the browser's own database calls served by Go (`../docs/plans/
 | `REPOSYNC_COST_PER_POINT_USD` | Optional; unused in practice, as the queries never ask for cost (R-192) |
 
 `-once` runs one cycle; otherwise it polls every five minutes like the original. Ctrl+C or SIGTERM finishes the current topic, then stops.
+
+## Repository page read (REPO-PAGE-001)
+
+Opt-in name: `github-public-repo` in `SEFGH_GO_ROUTES`, off by default. The repository page (`src/app/repo/[owner]/[repo-name]/page.js`) reads the repository it shows on the server, through `fetchRepoForPage` in `src/lib/repo/repoData.js`. With the name listed and `SEFGH_GO_API_URL` set, it asks `GET /api/github/public-repo/{owner}/{repo}` instead of GitHub; there is no website rewrite, since no browser calls it. The route answers 200 with GitHub's fields as sent, or 404 `null` wherever `fetchRepoFromGitHub` returns null, with `Cache-Control: private, no-store`. It reads no caller credential and uses the transport of signed-out reads, so it sits beside the GitHub access check. `Read` moved here from `internal/starred`, which now calls it; both pass the 15 cases of `contracts/public-repository-reads`, and `TestRouteAnswersTheContract` runs them through the route. Lesson 47.
 
 ## Trending topics (TREND-001a)
 

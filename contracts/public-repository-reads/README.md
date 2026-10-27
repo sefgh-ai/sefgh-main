@@ -36,6 +36,14 @@ migration is authorized by these tests. STAR-001 (2026-10-15) added a Go port of
 route, `backend/internal/starred`. Its GitHub read, `publicRepo`, passes these 15 cases
 (`TestPublicRepositoryReads`). The route itself is pinned by `contracts/repo-starred`.
 
+REPO-PAGE-001 (2026-10-27) moved that read to `backend/internal/publicrepo` as `Read`,
+which the starred port now calls, and serves it as `GET /api/github/public-repo/{owner}/{repo}`
+for the repository page: 200 with the repository where these cases expect one, otherwise no
+200 (404 `null` when GitHub was asked). `TestRouteAnswersTheContract` runs the 15 cases
+through the route. On the Node side, `fetchRepoForPage` (the page's read, switched by
+`github-public-repo`) passes them against a stand-in that answers as the route does, and
+reads GitHub itself while the switch is off. The cases are unchanged; version 1.
+
 REVIEW-006 (Claude Code, 2026-10-13) added `error-status-with-public-body`: an
 error status is not a public repository even when its body says
 `private: false`. The starred test gained a stored name with three parts,

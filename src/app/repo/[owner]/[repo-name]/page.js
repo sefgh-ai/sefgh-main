@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import RepoDetailsLayout from "@/components/repo-details/RepoDetailsLayout";
-import { fetchRepoFromGitHub } from "@/lib/repo/repoData";
+import { fetchRepoForPage } from "@/lib/repo/repoData";
 import { fetchSefghData } from "@/lib/repo/sefghData";
 
 export default async function RepoDetailsPage({ params }) {
@@ -11,8 +11,8 @@ export default async function RepoDetailsPage({ params }) {
 
   console.log("Loading repo page:", { owner, repoName });
 
-  // Fetch GitHub repository data
-  const repoData = await fetchRepoFromGitHub(owner, repoName);
+  // Fetch GitHub repository data, from Go when github-public-repo is switched on
+  const repoData = await fetchRepoForPage(owner, repoName);
 
   if (!repoData) {
     console.log("Repository not found:", `${owner}/${repoName}`);
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const { owner } = resolvedParams;
   const repoName = resolvedParams["repo-name"];
-  const repoData = await fetchRepoFromGitHub(owner, repoName);
+  const repoData = await fetchRepoForPage(owner, repoName);
 
   if (!repoData) {
     return {
