@@ -49,7 +49,7 @@ pinned, so the committed text was kept.
 
 R-041 is decided (owner, 2026-10-23). The live `storage.buckets` has no policy,
 so in production `upload-refused-bucket-missing` describes every failed upload.
-Version 2, written in Go after the cutover, drops the bucket check and answers
+Version 2 (BUG-033, 2026-10-28; 7 cases changed, each keeping the Next.js handler's answer as `next_expect`), written in Go after the cutover, drops the bucket check and answers
 "Failed to upload avatar". Version 1 stays as it is until then. Evidence:
 `docs/database/avatar-storage.md`.
 

@@ -13,7 +13,7 @@ The permissions column is Supabase's own statement for each storage-js method (T
 | Step | storage-js call | HTTP request (as Go sends it) | Needs on `storage.objects` | Needs on `storage.buckets` |
 |---|---|---|---|---|
 | Upload | `upload(path, buffer, { upsert: true })` | `POST /storage/v1/object/avatars/{id}/avatar-{ms}.{ext}`, `X-Upsert: true` | INSERT, SELECT and UPDATE (upsert) | none |
-| After a failed upload | `listBuckets()` | `GET /storage/v1/bucket` | none | SELECT |
+| After a failed upload (Next.js only; Go since R-041, BUG-033, asks nothing) | `listBuckets()` | `GET /storage/v1/bucket` | none | SELECT |
 | Public link | `getPublicUrl(path)` | none: the URL is built locally | none, but the link works only if the bucket is public | none |
 | Cleanup, list | `list(id)` | `POST /storage/v1/object/list/avatars`, prefix `{id}` | SELECT | none |
 | Cleanup, remove | `remove(paths)` | `DELETE /storage/v1/object/avatars`, `prefixes` | DELETE and SELECT | none |

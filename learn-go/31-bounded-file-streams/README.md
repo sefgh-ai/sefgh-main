@@ -48,6 +48,13 @@ when parsing fails. It is a separate job from cancelling a context.
 `part.FileName()`, and the upload path is cleaned exactly as storage-js does it
 (REVIEW-028, 2026-10-24). Lesson 45 explains both.
 
+On 2026-10-28 (R-041, contract version 2) a failed upload stopped asking
+Storage for the list of buckets. Signed-in users cannot list them (no policy
+allows it), so that request always came back empty and the answer named a
+setup file that is not in the repository. The failure path is now one request
+shorter and answers "Failed to upload avatar"; the whole check, a JSON decode
+into `[]map[string]any` and a loop, was deleted rather than kept for nothing.
+
 ## Your exercise
 
 Implement `readBounded` in `exercise.go`. Read at most `maximum+1` bytes.

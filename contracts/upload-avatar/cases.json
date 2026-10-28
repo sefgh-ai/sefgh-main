@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "source_commit": "4f8c815",
   "cases": [
     {
@@ -2123,7 +2123,7 @@
     {
       "id": "upload-refused-bucket-missing",
       "disposition": "defect",
-      "reason": "upload refused bucket missing",
+      "reason": "upload refused bucket missing Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2144,6 +2144,30 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "permission denied"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket.",
@@ -2181,7 +2205,7 @@
     {
       "id": "upload-refused-bucket-exists",
       "disposition": "defect",
-      "reason": "upload refused bucket exists",
+      "reason": "upload refused bucket exists Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2226,6 +2250,30 @@
               "bytes": 3,
               "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
             }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "permission denied"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
           },
           {
             "method": "GET",
@@ -2243,7 +2291,7 @@
     {
       "id": "upload-network-failure",
       "disposition": "defect",
-      "reason": "upload network failure",
+      "reason": "upload network failure Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2285,6 +2333,30 @@
               "bytes": 3,
               "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
             }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "fetch failed"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
           },
           {
             "method": "GET",
@@ -2302,7 +2374,7 @@
     {
       "id": "bucket-list-refused",
       "disposition": "defect",
-      "reason": "bucket list refused",
+      "reason": "bucket list refused Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2326,6 +2398,30 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "bad object"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket.",
@@ -2363,7 +2459,7 @@
     {
       "id": "storage-error-msg-precedence",
       "disposition": "defect",
-      "reason": "storage error msg precedence",
+      "reason": "storage error msg precedence Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2410,6 +2506,30 @@
               "bytes": 3,
               "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
             }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "first"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
           },
           {
             "method": "GET",
@@ -2427,7 +2547,7 @@
     {
       "id": "storage-error-nested",
       "disposition": "defect",
-      "reason": "storage error nested",
+      "reason": "storage error nested Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -2454,6 +2574,30 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "nested"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to upload avatar",
@@ -3452,7 +3596,7 @@
     {
       "id": "upload-invalid-json",
       "disposition": "defect",
-      "reason": "SDK response shape: upload-invalid-json",
+      "reason": "SDK response shape: upload-invalid-json Version 2 (R-041): after a failed upload Go lists no buckets and answers \"Failed to upload avatar\"; next_expect keeps the Next.js handler's answer.",
       "session": "session-a",
       "user": {
         "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
@@ -3475,6 +3619,30 @@
       ],
       "engine_message": true,
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to upload avatar",
+          "details": "Unexpected token 'o', \"not-json\" is not valid JSON"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "content_type": "image/png",
+            "cache_control": "max-age=3600",
+            "x_upsert": "true",
+            "body": {
+              "bytes": 3,
+              "sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to upload avatar",

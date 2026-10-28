@@ -89,24 +89,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if upstreamErr != nil {
-		details := errorText(raw, upstreamErr, false)
-		code, buckets, listErr := h.call(ctx, session, "GET", "/storage/v1/bucket", "", nil, false)
-		exists := false
-		if listErr == nil && code < 300 {
-			var list []map[string]any
-			if json.Unmarshal(buckets, &list) == nil {
-				for _, bucket := range list {
-					if bucket["name"] == "avatars" {
-						exists = true
-					}
-				}
-			}
-		}
-		message := "Failed to upload avatar"
-		if !exists {
-			message = "Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket."
-		}
-		h.fail(w, "upload", message, details)
+		// R-041 (contract version 2): no bucket listing after a failed upload.
+		// Signed-in users cannot list buckets (no storage.buckets policy), so
+		// the old check always failed and named a setup file that does not
+		// exist. The bucket exists; the answer is the plain failure.
+		h.fail(w, "upload", "Failed to upload avatar", errorText(raw, upstreamErr, false))
 		return
 	}
 	publicURL := encodeURI(strings.TrimRight(h.SupabaseURL, "/")+"/storage/v1/object/public/avatars/"+fileName) + "?t=" + stamp()
