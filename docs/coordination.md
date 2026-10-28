@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-29 (Asia/Calcutta), by Claude Code: BUG-036 (R-063) complete on base `4626fa1`, uncommitted.
+Last updated: 2026-10-29 (Asia/Calcutta), by Git Agent: synchronized BUG-036 (commit `cdd3bc8`) on main and go-backend.
 
 ## Start here
 
@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-036, R-063 an Auth outage is not a sign-out (Claude Code, 2026-10-29)
 
-Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `4626fa1`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `4626fa1`).
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `4626fa1`. Resulting commit: `cdd3bc8` (synchronized by Git Agent on `main` and `go-backend`).
 
 - **Go** `internal/activity/handler.go`: a 503 from `User` (the verifier's answer when Supabase Auth is unreachable or answers wrongly) is 503 `{"error":"Sign-in could not be verified"}`, chat's wording; other failures stay 401. The database is not asked either way.
 - **Contract `activity` version 2** (13 cases): new `auth-unreachable` inserted as text after `session-error` (hand-formatted file; the other cases asserted unchanged), with `next_expect` 401 for the Next.js handler. Go fixture: a user marked `"unreachable"` makes the stand-in Supabase answer 503. Node test: version 2 and `next_expect ?? expect`.
