@@ -51,8 +51,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// supabase.auth.getUser() reports a refused session and an unreachable
-	// Supabase alike, and the handler answers 401 to both. So does Go.
+	// Supabase alike, and the Next.js handler answers 401 to both. Go tells
+	// them apart (R-063, contract version 2): an outage is 503, as chat
+	// answers, so the profile card does not say the visitor signed out.
 	userID, session, status := h.User(r)
+	if status == 503 {
+		write(w, 503, map[string]string{"error": "Sign-in could not be verified"})
+		return
+	}
 	if status != 200 {
 		write(w, 401, map[string]string{"error": "Unauthorized"})
 		return

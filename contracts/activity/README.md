@@ -1,5 +1,7 @@
 # Activity contract
 
+**Version 2** (BUG-036, 2026-10-29): 13 cases. New `auth-unreachable`: when Supabase Auth cannot be reached, Go answers 503 `{"error":"Sign-in could not be verified"}` (as chat does), not 401, so the profile card does not say the visitor signed out (R-063). A refused session is still 401. The Next.js handler cannot tell the two apart and answers 401 until it is retired (`next_expect`). The Go fixture marks the outage with `"unreachable": true` on the user, and its stand-in Supabase then answers 503.
+
 **Version 1** (ACT-001, 2026-10-14): 12 cases, 2 marked `defect`, plus an integrity check and a time-zone check. `GET /api/activity` answers the signed-in user's activity over the last year, as a grid of weeks and some statistics. The profile page's usage card reads it (BUG-003).
 
 ```text

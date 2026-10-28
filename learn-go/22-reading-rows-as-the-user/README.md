@@ -93,6 +93,24 @@ output, err := cmd.Output()
 
 With `FormatFloat` in place of `ToFixed`, 24 of the 400 failed. With `ToFixed`, all pass. Without Node installed, the test says so and skips with `t.Skip` instead of failing.
 
+## A refusal is not an outage (R-063)
+
+`supabase.auth.getUser()` answers with an error both when the session is refused and when Supabase Auth cannot be reached, and the Next.js handler turned both into 401. The profile card then said you were signed out during an outage. The Go verifier already keeps the two apart: it answers 401 for a refused session and 503 when Supabase does not answer properly. Since 2026-10-28 the handler passes that on:
+
+```go
+userID, session, status := h.User(r)
+if status == 503 {
+	write(w, 503, map[string]string{"error": "Sign-in could not be verified"})
+	return
+}
+if status != 200 {
+	write(w, 401, map[string]string{"error": "Unauthorized"})
+	return
+}
+```
+
+The order matters: check the specific case first, then the general one. The unit test now uses a map from the status the verifier gives to the answer expected, `map[int]string{401: ..., 403: ..., 503: ...}`, which is Go's table-driven style: one loop, one row per case.
+
 ## Your turn
 
 Open `exercise.go` and write `tenths`: how many tenths `x` is, rounded the way `toFixed(1)` rounds. For example `tenths(0.25)` is 3, `tenths(1.45)` is 14, and `tenths(999.95)` is 10000. `x` is never negative.

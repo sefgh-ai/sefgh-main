@@ -12,7 +12,7 @@ const { GET } = await import('../../src/app/api/activity/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/activity/cases.json', import.meta.url), 'utf8'));
 
 test('activity fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -44,6 +44,8 @@ test('the same instant gives the same reply whatever the server time zone', () =
 
 for (const c of contract.cases) {
   test(`activity: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runActivityFixture(GET, c), c.expect);
+    // Version 2 (R-063) is Go's; this Next.js handler answers next_expect
+    // until it is retired.
+    assert.deepEqual(await runActivityFixture(GET, c), c.next_expect ?? c.expect);
   });
 }

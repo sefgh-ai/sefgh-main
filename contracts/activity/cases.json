@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET /api/activity",
   "recorded_from": "500dbb7 plus the uncommitted ACT-001 fixes for R-056 and R-057",
   "boundary": "The Supabase cookie-session client is replaced (auth.getUser and the activity_logs query), the clock and the server time zone are fixed. The real handler runs. The reply grid is compacted losslessly: each day is [date, count, color, weekIndex, dayOfWeekIndex].",
@@ -31,6 +31,35 @@
         "error": "Auth session missing!"
       },
       "expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": []
+      }
+    },
+    {
+      "id": "auth-unreachable",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-063): Supabase Auth cannot be reached (it answers 503). That is not a refused session, so Go answers 503 \"Sign-in could not be verified\", as chat does, and the database is not asked. The Next.js handler cannot tell the two apart and answers 401 until it is retired (next_expect).",
+      "now": "2026-10-14T12:00:00.000Z",
+      "timezone": "UTC",
+      "user": {
+        "error": "fetch failed",
+        "unreachable": true
+      },
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "query": []
+      },
+      "next_expect": {
         "status": 401,
         "body": {
           "error": "Unauthorized"

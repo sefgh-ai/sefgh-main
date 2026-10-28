@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"math"
@@ -126,16 +127,22 @@ func TestNumbersAreWrittenAsJSONStringifyWritesThem(t *testing.T) {
 	}
 }
 
-func TestSignInFailuresAreAll401(t *testing.T) {
-	for _, status := range []int{401, 403, 503} {
+// A refused session is 401; Supabase Auth failing is 503, not a sign-out
+// (R-063). Either way the database is not asked.
+func TestSignInFailures(t *testing.T) {
+	for status, want := range map[int]string{
+		401: `401 {"error":"Unauthorized"}`,
+		403: `401 {"error":"Unauthorized"}`,
+		503: `503 {"error":"Sign-in could not be verified"}`,
+	} {
 		h := handlerWith(func(*http.Request) (*http.Response, error) {
 			t.Error("the database was asked without a user")
 			return nil, errors.New("unreachable")
 		})
 		h.User = func(*http.Request) (string, string, int) { return "", "", status }
 		w := get(h)
-		if w.Code != 401 || strings.TrimSpace(w.Body.String()) != `{"error":"Unauthorized"}` {
-			t.Errorf("sign-in status %d: answered %d %s", status, w.Code, w.Body)
+		if got := fmt.Sprintf("%d %s", w.Code, strings.TrimSpace(w.Body.String())); got != want {
+			t.Errorf("sign-in status %d: answered %s, want %s", status, got, want)
 		}
 	}
 }

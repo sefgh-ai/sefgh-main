@@ -57,7 +57,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 1 || len(contract.Cases) == 0 {
+	if contract.Version != 2 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -84,6 +84,10 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 	}
 	switch r.URL.Path {
 	case "/auth/v1/user":
+		// A fixture user marked "unreachable" is Supabase Auth failing (R-063).
+		if strings.Contains(string(s.f.User), `"unreachable"`) {
+			return answer(503, `{"message":"upstream unavailable"}`)
+		}
 		if r.Header.Get("Authorization") != "Bearer "+acceptedSession {
 			return answer(401, `{"msg":"invalid JWT"}`)
 		}
@@ -138,6 +142,8 @@ func serve(t *testing.T, f fixture) (*httptest.ResponseRecorder, *standIn) {
 	switch {
 	case string(f.User) == "null" || len(f.User) == 0:
 		// Signed out: no bearer at all.
+	case strings.Contains(string(f.User), `"unreachable"`):
+		r.Header.Set("Authorization", "Bearer "+acceptedSession)
 	case strings.Contains(string(f.User), `"error"`):
 		r.Header.Set("Authorization", "Bearer "+refusedSession)
 	default:
