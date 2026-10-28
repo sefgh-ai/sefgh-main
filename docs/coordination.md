@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BRIEFING-001, a briefing for an agent without context (Claude Code, 2026-10-29)
 
-Status: **complete (documentation only).** Writer Claude Code. Branch `main`, base `ae56fe7`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `ae56fe7`).
+Status: **complete (documentation only).** Writer Claude Code. Branch `main`, base `ae56fe7`. Resulting commit: `8c6c8eb` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner asked for a detailed prompt so another agent with no context can continue. New `docs/next-agent-briefing.md`: what the project is; files to read, in order; the state on 2026-10-29 (what is live, what the owner still has to do, what was fixed, next free IDs BUG-037 and R-205); the work queue (decision pack 2 answers, R-064 and R-076 with their harness changes, R-038, BUG-002, Phase 7, parked items); the fix recipe used for BUG-024 to BUG-036; the rules; and the traps. "Start here" in this file now points to it.
 
