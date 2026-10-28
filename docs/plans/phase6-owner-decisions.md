@@ -17,7 +17,7 @@ The owner: "take all recommendations except 4. Controls that do nothing the 6 en
 
 - **Recommendation taken:** R-103 A and R-078 A (migrations, prepared once the current definitions are read), R-079 A (accepted risk), R-080 A (deferred), R-038 B, R-042 A, R-086 A, R-088 A (Go, after cutover), R-014 A (done in BUG-025), R-034 A, R-026 A, R-040 A (Go, after cutover), R-032 A (Phase 7), R-054 A (left as is).
 - **Kept visible, features later (deferred by the owner):** R-002, R-004, R-005, R-007, R-008, R-051.
-- **Asked again:** R-017. It is in the same section but was not named; its recommendation hides the unsupported filters now. Keep them visible like the others, or hide them?
+- **Asked again:** R-017. It is in the same section but was not named; its recommendation hides the unsupported filters now. Keep them visible like the others, or hide them? **Answer (same day): visible.** Deferred like the rest of section 4; sending the supported filters is still decided (Go, now that `github-search` is on Go).
 - R-065: renewal in November. R-066: A (answered 2026-10-24).
 
 ## 1. The live site (do these first)
