@@ -219,6 +219,8 @@ Supply chain: standard library only in Go; no `npx`/`latest` anywhere in the pip
 
 ## 11. Decisions for the owner
 
+**Accepted by the owner on 2026-10-28: every recommendation below** (ADR-0002 decisions log). RepoSync is wanted and is to be rebuilt better inside this plan.
+
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
 | D1 | Where the corpus lives | **A** its own Supabase project; **B** a `corpus` schema in User-DB; **C** restore Repo-DB as is | **A**, reusing the paused Repo-DB project after a read of what it holds. The free plan allows 2 active projects, so the development project would stay paused when not in use, or a paid plan is needed |

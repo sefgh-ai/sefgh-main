@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server'
+import { CHAT_WINDOW } from '@/lib/ai/chat-window'
 
 // Limits the owner approved on 2026-10-13. They are starting values, to be
 // adjusted from real use. "Characters" are JavaScript string lengths, which
-// count UTF-16 units; the Go backend counts the same way.
+// count UTF-16 units; the Go backend counts the same way. The chat window is
+// shared with the browser, which says when older messages are left out.
 export const AI_LIMITS = {
   requests: 30,
   windowMs: 5 * 60 * 1000,
-  chatMessages: 20,
-  chatCharacters: 8000,
+  chatMessages: CHAT_WINDOW.messages,
+  chatCharacters: CHAT_WINDOW.characters,
   queryCharacters: 500,
 }
 

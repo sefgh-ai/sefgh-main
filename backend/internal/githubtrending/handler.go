@@ -68,7 +68,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// joined them with "+" and then percent-encoded the whole query, so
 	// GitHub received %2B, a literal plus sign, and refused every request
 	// with 422 (bug register R-068, fixed here at contract version 3).
-	search := "stars:>100 created:>" + date.UTC().Format("2006-01-02")
+	// The start is a time, not a date: GitHub reads created:>2026-10-26 as
+	// "after that whole day", so "daily" covered only the hours since
+	// midnight UTC and was empty early in the day (R-203, version 4).
+	search := "stars:>100 created:>" + date.UTC().Format(time.RFC3339)
 	if language != "" && language != "any" {
 		search += " language:" + language
 	}

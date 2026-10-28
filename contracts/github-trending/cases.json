@@ -1,5 +1,5 @@
 {
-  "contract_version": 3,
+  "contract_version": 4,
   "route": "GET /api/github/trending",
   "recorded_from": "7e0820c (version 2); version 3 (BUG-007, 2026-10-15) changes only the GitHub query, owner-approved",
   "notes": "Fixed clock and time zone. Version 3 (R-068): the search terms are separated by spaces; version 2 joined them with \"+\" and percent-encoded it, which GitHub refused with 422. Go (backend/internal/githubtrending) is the implementation of record from version 3; the Next.js handler keeps the version 2 query until trending is switched to Go and the handler is retired, under the owner's rule to fix a backend bug once, in Go.",
@@ -24,7 +24,37 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      }
+    },
+    {
+      "id": "daily-just-after-midnight-utc",
+      "disposition": "preserve",
+      "reason": "R-203 (version 4): \"daily\" is the last 24 hours. At 00:05 UTC the search starts at 00:05 the day before, not at midnight, which left the list empty early in the UTC day.",
+      "request": "/api/github/trending",
+      "now": "2026-10-27T00:05:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": []
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-26T00%3A05%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -54,7 +84,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -84,7 +114,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-09-13&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-09-13T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -114,7 +144,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -144,7 +174,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -174,7 +204,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12%20language%3AGo&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z%20language%3AGo&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -204,7 +234,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12%20language%3AC%2B%2B&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z%20language%3AC%2B%2B&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -378,7 +408,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06%20language%3AGo&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06T12%3A00%3A00Z%20language%3AGo&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -408,7 +438,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-03&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-03T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -438,7 +468,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2024-03-02&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2024-03-02T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -468,7 +498,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-08&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-08T00%3A30%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -498,7 +528,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-07&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-07T23%3A30%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -528,7 +558,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-06T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -923,7 +953,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -988,7 +1018,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1053,7 +1083,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1118,7 +1148,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1161,7 +1191,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1191,7 +1221,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1223,7 +1253,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1253,7 +1283,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1285,7 +1315,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1315,7 +1345,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1344,7 +1374,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1372,7 +1402,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1438,7 +1468,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1504,7 +1534,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1570,7 +1600,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1636,7 +1666,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1702,7 +1732,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1768,7 +1798,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1834,7 +1864,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1900,7 +1930,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1966,7 +1996,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2032,7 +2062,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2098,7 +2128,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2163,7 +2193,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2229,7 +2259,7 @@
         "cache_control": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"

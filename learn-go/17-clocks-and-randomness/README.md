@@ -90,6 +90,20 @@ if the terms ever run together again. The fix was made once, in Go, under the
 owner's rule: the Next.js handler keeps the old query until trending is
 switched to Go and that handler is retired.
 
+On 2026-10-27 a second problem showed up (R-203). GitHub reads
+`created:>2026-10-26` as "after that whole day", so "daily" covered only the
+hours since midnight UTC, and early in the day the list was empty. The search
+now starts at a time, using a layout constant from the `time` package instead
+of a hand-written one:
+
+```go
+search := "stars:>100 created:>" + date.UTC().Format(time.RFC3339)
+```
+
+`time.RFC3339` is `"2006-01-02T15:04:05Z07:00"`. For a UTC time it writes `Z`
+as the zone, so GitHub gets `created:>2026-10-26T04:30:00Z`: the last 24 hours.
+The exercise below still asks for a date; it practises `Format` the same way.
+
 ## Exercise
 
 Implement `previousDay(now func() time.Time) string` in this lesson's exercise.

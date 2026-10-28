@@ -1,6 +1,24 @@
 # GitHub trending characterization (GO-006a)
 
-## Version 3 (BUG-007, 2026-10-15): current
+## Version 4 (BUG-024, 2026-10-28): current
+
+Only the GitHub query changed (bug register R-203), with the owner's approval
+on 2026-10-28. The `created` qualifier now carries the full UTC time the period
+starts at, `created:>2026-10-12T12:00:00Z`, instead of the date alone. GitHub
+reads `created:>2026-10-12` as "after that whole day", so "daily" covered only
+the hours since midnight UTC and was empty early in the day; weekly and monthly
+lost up to a day the same way. The period is still found by local calendar
+subtraction in the request's time zone; only the format changed. The 38
+expected URLs were rewritten by applying that rule to each case's clock and
+time zone, and every new timestamp's date part equals the date version 3
+recorded. One case was added, `daily-just-after-midnight-utc` (00:05 UTC: the
+search starts at 00:05 the day before). 45 cases.
+
+Go is the implementation of record. The Next.js handler keeps its version 2
+query (terms joined with `+`, a date) until it is retired;
+`scripts/contracts/github-trending.test.mjs` converts both changes back for it.
+
+## Version 3 (BUG-007, 2026-10-15)
 
 Only the GitHub query changed (bug register R-068), with the owner's approval.
 The search terms are now separated by spaces (`stars:>100 created:>DATE

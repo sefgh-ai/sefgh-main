@@ -27,6 +27,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { AIMessageRenderer } from "@/components/AIMessageRenderer";
+import { CHAT_WINDOW, messagesSent } from "@/lib/ai/chat-window";
+import { formatNumber } from "@/lib/utils/formatters";
 
 export function MessageList({
   currentConversation,
@@ -97,10 +99,21 @@ export function MessageList({
     );
   }
 
+  // The chat route forwards only the newest messages (R-014); say so rather
+  // than let the assistant forget the start of the conversation unannounced.
+  const sent = messagesSent(messages);
+
   return (
     <div className="glass-premium rounded-2xl shadow-premium border border-border flex-1 overflow-hidden">
       <ScrollArea className="h-full p-6">
         <div className="max-w-6xl mx-auto space-y-6">
+          {sent < messages.length && (
+            <p role="note" className="text-center text-xs text-muted-foreground">
+              The assistant sees only the latest {sent} of these {messages.length} messages
+              (at most {CHAT_WINDOW.messages} messages and {formatNumber(CHAT_WINDOW.characters)} characters),
+              so it may not remember the start of this conversation.
+            </p>
+          )}
           <TooltipProvider>
             {messages.map((message, index) => (
               <div

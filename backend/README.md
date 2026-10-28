@@ -232,7 +232,7 @@ successful hosted run.
 Enable only with `SEFGH_GO_ROUTES=github-trending` and the Go origin. Off by
 default. Public-only: supplied authorization headers are ignored, and no
 caller or server token is sent upstream; the public read token of QUOTA-001
-may be, when one is set. 44 shared fixtures (contract version 3) pin the
+may be, when one is set. 45 shared fixtures (contract version 4) pin the
 calendar, date and query rules and the replies, including 7 defect cases. The
 handler has a 10-second upstream timeout and a 16 MiB body limit, and honors
 cancellation. No private data, database access or shared cache.
@@ -241,6 +241,11 @@ Version 3 (BUG-007, R-068) fixed the GitHub query here only: the search terms
 are separated by spaces. The Next.js handler joined them with `+`, which
 GitHub refused, so trending never worked live. Trending is the first route
 planned to switch to Go; until then the Next.js handler keeps the old query.
+
+Version 4 (BUG-024, R-203, owner-approved 2026-10-28) starts the search at a
+UTC time (`created:>2026-10-26T04:30:00Z`) instead of a date, which GitHub read
+as "after that whole day": "daily" is now the last 24 hours. Go only, as for
+version 3.
 
 ## Developers (GO-007b)
 
