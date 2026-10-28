@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: OWNER-ANSWERS-003, step 1 live, R-017, R-078 and R-103 prepared, keys (Claude Code, 2026-10-28)
 
-Status: **complete; unreviewed; no database change applied.** Writer Claude Code; reviewer unassigned. Branch `main`, base `872c16f`, clean before claim. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `872c16f`).
+Status: **complete; unreviewed; no database change applied.** Writer Claude Code; reviewer unassigned. Branch `main`, base `872c16f`, clean before claim. Resulting commit: `35faf45` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner's answers of 2026-10-28 (second message), and what was done:
 
