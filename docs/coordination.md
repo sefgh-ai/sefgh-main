@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-29 (Asia/Calcutta), by Claude Code: BUG-035 (R-083, High) complete on base `2ac43a4`, uncommitted.
+Last updated: 2026-10-29 (Asia/Calcutta), by Git Agent: synchronized BUG-034 and BUG-035 (commit `f4f6bc5`) on main and go-backend.
 
 ## Start here
 
@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-035, R-083 the save count counts everyone (Claude Code, 2026-10-29)
 
-Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `2ac43a4`).
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: `f4f6bc5` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 R-083 (High; Needs "—", so the fix is approved by the register's rule): the count beside the bookmark button counted only the visitor's own saves.
 
@@ -37,7 +37,7 @@ Writer released: yes. No processes left running.
 
 ## Handoff: BUG-034, R-017 the search sends the navbar's supported filters (Claude Code, 2026-10-28)
 
-Status: **complete; unreviewed; not deployed** (Go with `sefgh-api`, browser with `sefgh-main`). Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: uncommitted.
+Status: **complete; unreviewed; not deployed** (Go with `sefgh-api`, browser with `sefgh-main`). Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: `f4f6bc5` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 R-017's decided part: send license, created, topic and forks; Go; the filters stay visible (owner).
 
