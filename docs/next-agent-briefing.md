@@ -140,6 +140,7 @@ All from `AGENTS.md` and the owner:
 - If your `npm run handoff` says "Verification lease unavailable", find the process ID with `--status` and wait for it. In PowerShell: `Wait-Process -Id <pid> -Timeout 540`. Then check `--status`. `READY_VERIFIED` with `signalMatchesTree: true` means it verified your tree, and you need not rerun.
 - "Source changed during verification" means the Git Agent committed meanwhile; rerun.
 - Never reset a lease.
+- **The Git Agent's sync can overwrite uncommitted edits to `docs/coordination.md`.** On 2026-10-29 it rewrote the file from an older copy and the DECISION-PACK-002 record was lost (restored with BRIEFING-001). Run `npm run handoff` soon after writing your record, and after the sync commit check that your record is still there (`grep` for your task ID).
 
 **Connectors and permissions:**
 
