@@ -5,6 +5,7 @@ import { ActivityLogger } from "@/lib/activity-logger";
 import { logError } from "@/lib/error-tracking";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
 import { lastSearchPage } from "@/lib/github/search-pages";
+import { appendAdvancedFilters } from "@/lib/search/advanced-filters";
 
 const CACHE_KEY = "sefgh_search_cache";
 const CACHE_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
@@ -133,6 +134,7 @@ export function useGitHubSearch(userId) {
 
         if (language) params.append("language", language);
         if (stars) params.append("stars", stars);
+        appendAdvancedFilters(params, advancedFilters);
 
         const response = await fetch(`/api/github/search?${params}`);
         const data = await response.json();
@@ -185,7 +187,7 @@ export function useGitHubSearch(userId) {
         setLoading(false);
       }
     },
-    [searchQuery, sort, language, stars, view, userId]
+    [searchQuery, sort, language, stars, advancedFilters, view, userId]
   );
 
   // Auto-search when there's an initial query from URL params
@@ -226,6 +228,7 @@ export function useGitHubSearch(userId) {
 
       if (language) params.append("language", language);
       if (stars) params.append("stars", stars);
+      appendAdvancedFilters(params, advancedFilters);
 
       const response = await fetch(`/api/github/search?${params}`);
       const data = await response.json();
@@ -256,7 +259,7 @@ export function useGitHubSearch(userId) {
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, searchQuery, sort, language, stars, currentPage, searchResults, totalCount, searchTime, view]);
+  }, [loadingMore, searchQuery, sort, language, stars, advancedFilters, currentPage, searchResults, totalCount, searchTime, view]);
 
   const handlePageChange = useCallback(
     async (page) => {
@@ -274,6 +277,7 @@ export function useGitHubSearch(userId) {
 
         if (language) params.append("language", language);
         if (stars) params.append("stars", stars);
+        appendAdvancedFilters(params, advancedFilters);
 
         const response = await fetch(`/api/github/search?${params}`);
         const data = await response.json();
@@ -308,7 +312,7 @@ export function useGitHubSearch(userId) {
         setLoadingMore(false);
       }
     },
-    [loadingMore, searchQuery, sort, language, stars, currentPage, searchTime, view]
+    [loadingMore, searchQuery, sort, language, stars, advancedFilters, currentPage, searchTime, view]
   );
 
   // Pages are 30 results; GitHub serves only the first 1,000 (R-018).

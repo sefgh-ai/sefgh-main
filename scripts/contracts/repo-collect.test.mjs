@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/repo/collect/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-collect/cases.json', import.meta.url), 'utf8'));
 
 test('collect fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -24,7 +24,7 @@ test('collect fixture integrity', () => {
     if (c.expect.status >= 400) assert.deepEqual(Object.keys(c.expect.body), ['error'], c.id);
     assert.equal(c.expect.cache_control, null, c.id);
     for (const request of c.expect.database) {
-      assert.ok(request.path.startsWith('/rest/v1/repo_collections'), c.id);
+      assert.ok(/^\/rest\/v1\/(repo_collections|repo_collection_stats)(\?|$)/.test(request.path), c.id);
       assert.equal(request.apikey, SUPABASE_KEY, c.id);
       // The visitor's own token, or the public key: never a server credential.
       assert.equal(request.authorization, `Bearer ${c.session ?? SUPABASE_KEY}`, c.id);
@@ -32,11 +32,17 @@ test('collect fixture integrity', () => {
       if (request.method === 'POST') assert.equal(request.body.user_id, c.user.id, c.id);
       if (request.method === 'DELETE') assert.ok(request.path.includes(`?user_id=eq.${c.user.id}&`), c.id);
     }
+    // R-083: Go takes every total from the view of everyone's saves.
+    if (typeof c.expect.body?.totalSaves === 'number') {
+      assert.ok(c.expect.database.some((r) => r.path.startsWith('/rest/v1/repo_collection_stats?select=total_saves&')), c.id);
+    }
   }
 });
 
 for (const c of contract.cases) {
   test(`collect: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runCollectFixture(handlers, c), c.expect);
+    // Version 2 (R-083) is Go's; this Next.js handler keeps counting the
+    // visitor's own rows until it is retired, and its answer is next_expect.
+    assert.deepEqual(await runCollectFixture(handlers, c), c.next_expect ?? c.expect);
   });
 }

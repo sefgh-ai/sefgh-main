@@ -29,6 +29,8 @@ func (s *collectUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(201)
 	case r.URL.Path == "/rest/v1/repo_collections" && r.Method == "GET":
 		io.WriteString(w, `[{"user_id":"user-a"}]`)
+	case r.URL.Path == "/rest/v1/repo_collection_stats" && r.Method == "GET":
+		io.WriteString(w, `[{"total_saves":42}]`) // everyone's saves (R-083)
 	default:
 		w.WriteHeader(401)
 		io.WriteString(w, `{}`)
@@ -57,16 +59,17 @@ func TestCollectWritesAsTheCaller(t *testing.T) {
 	req.Header.Set("X-GitHub-Token", "caller-github-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
-	if rec.Code != 200 || rec.Body.String() != `{"success":true,"saved":true,"totalSaves":1}` {
+	if rec.Code != 200 || rec.Body.String() != `{"success":true,"saved":true,"totalSaves":42}` {
 		t.Fatalf("%d %s", rec.Code, rec.Body)
 	}
 	if got := rec.Header().Get("X-SEFGH-Backend"); got != "go" {
 		t.Errorf("backend header %q", got)
 	}
+	// The total is everyone's saves, from the view (R-083).
 	want := []string{
 		"GET /auth/v1/user|Bearer session-a|public-key|",
 		"POST /rest/v1/repo_collections|Bearer session-a|public-key|",
-		"GET /rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo|Bearer session-a|public-key|",
+		"GET /rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo|Bearer session-a|public-key|",
 	}
 	if got := strings.Join(stand.seen, "\n"); got != strings.Join(want, "\n") {
 		t.Errorf("upstream saw\n%s\nwant\n%s", got, strings.Join(want, "\n"))
@@ -84,8 +87,15 @@ func TestCollectSignedOut(t *testing.T) {
 	}
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, httptest.NewRequest("GET", "/api/repo/collect?repo=octo%2Fdemo", nil))
-	if rec.Code != 200 || len(stand.seen) != 1 || !strings.HasSuffix(stand.seen[0], "|Bearer public-key|public-key|") {
+	// Two reads, both with the public key: the visitor's rows, then the
+	// total from the view (R-083).
+	if rec.Code != 200 || rec.Body.String() != `{"saved":false,"totalSaves":42}` || len(stand.seen) != 2 {
 		t.Errorf("GET: %d %s, upstream %v", rec.Code, rec.Body, stand.seen)
+	}
+	for _, call := range stand.seen {
+		if !strings.HasSuffix(call, "|Bearer public-key|public-key|") {
+			t.Errorf("GET upstream %q", call)
+		}
 	}
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, httptest.NewRequest("PUT", "/api/repo/collect", nil))

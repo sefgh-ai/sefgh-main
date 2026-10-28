@@ -105,6 +105,28 @@ Get `TestParsePage` passing first. Then try `TestParsePageStretch`, which has tw
 - `strconv.Atoi` accepts `"+5"`. Our API does not. A library's rule and your rule are not always the same, so sometimes you check something yourself first.
 - A number with 26 digits does not fit in an `int`. `Atoi` reports that with a specific error, `strconv.ErrRange`, and still returns the biggest number it can hold. Use `errors.Is` to treat that one error differently from the rest.
 
+## Four more filters, one refusal (R-017)
+
+On 2026-10-28 the search learned the navbar's filters GitHub understands: `license`, `created`, `topic` and `forks`. `parseRequest` in `backend/internal/githubsearch/request.go` checks them the same way it checks `stars`, and folds every check into one boolean so there is still a single place that answers `errInvalidParameters`:
+
+```go
+var topics []string
+if topicList != "" {
+	topics = strings.Split(topicList, ",")
+}
+validFilters := (license == "" || licensePattern.MatchString(license)) &&
+	(created == "" || createdPattern.MatchString(created)) &&
+	(forks == "" || starsPattern.MatchString(forks)) &&
+	len(topics) <= maxTopics
+for _, topic := range topics {
+	validFilters = validFilters && topicPattern.MatchString(topic)
+}
+```
+
+`strings.Split("web,cli", ",")` is JavaScript's `"web,cli".split(",")`. One difference to remember: in Go, splitting an empty string gives a list with one empty string, `[""]`, just as in JavaScript; that is why the code only splits when `topicList` is not empty.
+
+The browser turns "Past week" into `created=>=2026-10-21` itself (`src/lib/search/advanced-filters.js`), so the server needs no clock and the contract stays exact. Its test, `scripts/contracts/advanced-filters.test.mjs`, reads `licensePattern` and the others straight out of this Go file and checks every value the browser can send against them, so the two sides cannot drift apart.
+
 ## You now know
 
 - Functions return errors; nothing is thrown

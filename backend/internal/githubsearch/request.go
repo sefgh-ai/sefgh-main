@@ -20,6 +20,13 @@ var (
 	languagePattern = regexp.MustCompile(`^[A-Za-z0-9._+#-]+( [A-Za-z0-9._+#-]+)*$`)
 	starsPattern    = regexp.MustCompile(`^(\*|[0-9]+|[0-9]+\.\.[0-9]+|[<>]=?[0-9]+)$`)
 	integerPattern  = regexp.MustCompile(`^-?[0-9]+$`)
+	// R-017 (contract version 4): the navbar's filters GitHub's search
+	// understands. A license key ("mit", "apache-2.0"), a creation date with
+	// an optional comparison or a range, and topic names; forks use the
+	// stars format.
+	licensePattern = regexp.MustCompile(`^[a-z0-9][a-z0-9.-]{0,49}$`)
+	createdPattern = regexp.MustCompile(`^([<>]=?)?[0-9]{4}-[0-9]{2}-[0-9]{2}$|^[0-9]{4}-[0-9]{2}-[0-9]{2}\.\.[0-9]{4}-[0-9]{2}-[0-9]{2}$`)
+	topicPattern   = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,49}$`)
 )
 
 // Errors returned by parseRequest. Their text is sent to the caller.
@@ -47,11 +54,14 @@ var sortOptions = map[string]sortOption{
 
 // searchRequest is a validated search, ready to send to GitHub.
 type searchRequest struct {
-	query   string // q with the language and stars qualifiers appended
+	query   string // q with the language, stars and R-017 filter qualifiers appended
 	sort    sortOption
 	page    int64
 	perPage int64
 }
+
+// maxTopics is the most topics one search may filter by (R-017).
+const maxTopics = 5
 
 // parseRequest validates the raw query string of an incoming request.
 func parseRequest(rawQuery string) (searchRequest, error) {
@@ -60,6 +70,10 @@ func parseRequest(rawQuery string) (searchRequest, error) {
 	sortName := valueOr(params, "sort", "all")
 	language, _ := params.Get("language")
 	stars, _ := params.Get("stars")
+	license, _ := params.Get("license")
+	created, _ := params.Get("created")
+	topicList, _ := params.Get("topic")
+	forks, _ := params.Get("forks")
 	page := valueOr(params, "page", "1")
 	perPage := valueOr(params, "per_page", "30")
 
@@ -72,7 +86,18 @@ func parseRequest(rawQuery string) (searchRequest, error) {
 	validLanguage := language == "" ||
 		(len(language) <= 50 && languagePattern.MatchString(language))
 	validStars := stars == "" || starsPattern.MatchString(stars)
-	if !validLanguage || !validStars ||
+	var topics []string
+	if topicList != "" {
+		topics = strings.Split(topicList, ",")
+	}
+	validFilters := (license == "" || licensePattern.MatchString(license)) &&
+		(created == "" || createdPattern.MatchString(created)) &&
+		(forks == "" || starsPattern.MatchString(forks)) &&
+		len(topics) <= maxTopics
+	for _, topic := range topics {
+		validFilters = validFilters && topicPattern.MatchString(topic)
+	}
+	if !validLanguage || !validStars || !validFilters ||
 		!integerPattern.MatchString(page) || !integerPattern.MatchString(perPage) {
 		return searchRequest{}, errInvalidParameters
 	}
@@ -87,6 +112,18 @@ func parseRequest(rawQuery string) (searchRequest, error) {
 	}
 	if stars != "" {
 		query += " stars:" + stars
+	}
+	if license != "" {
+		query += " license:" + license
+	}
+	if created != "" {
+		query += " created:" + created
+	}
+	for _, topic := range topics {
+		query += " topic:" + topic
+	}
+	if forks != "" {
+		query += " forks:" + forks
 	}
 
 	option, ok := sortOptions[sortName]

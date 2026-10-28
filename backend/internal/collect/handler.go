@@ -146,7 +146,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	write(w, 200, []byte(`{"saved":`+strconv.FormatBool(saved)+`,"totalSaves":`+string(jscompat.LengthOrZero(data, raw))+`}`))
+	// R-083: the visitor's own rows say whether they saved it; the total
+	// comes from everyone's saves.
+	total := h.count(r, session, repo)
+	write(w, 200, []byte(`{"saved":`+strconv.FormatBool(saved)+`,"totalSaves":`+string(total)+`}`))
 }
 
 // delete removes a repository from one collection: DELETE in the Next.js
@@ -195,11 +198,18 @@ func savesQuery(repo string) string {
 	return supabaserest.Param("select", "user_id") + "&" + supabaserest.Param("repo_full_name", "eq."+repo)
 }
 
-// count is the save count after a write: `const { data: saves }` ignores
-// the error, so a failed read counts 0. Row-level security returns only the
-// visitor's own rows, so this counts the visitor's saves (R-083).
+// statsQuery is a repository's row in the view repo_collection_stats.
+func statsQuery(repo string) string {
+	return supabaserest.Param("select", "total_saves") + "&" + supabaserest.Param("repo_full_name", "eq."+repo)
+}
+
+// count is everyone's save count for a repository (R-083, contract version
+// 2). Row-level security shows a visitor only their own rows of
+// repo_collections, so counting those gave 0 or 1; the view
+// repo_collection_stats runs with its owner's rights and counts every user's
+// saves. A failed read, or no row, counts 0, as a failed count did before.
 func (h *Handler) count(r *http.Request, session, repo string) json.RawMessage {
-	upstream, raw, err := h.db().Select(r.Context(), session, "repo_collections", savesQuery(repo))
+	upstream, raw, err := h.db().Select(r.Context(), session, "repo_collection_stats", statsQuery(repo))
 	if err != nil {
 		h.log("count", upstream, err)
 		return json.RawMessage("0")
@@ -209,7 +219,18 @@ func (h *Handler) count(r *http.Request, session, repo string) json.RawMessage {
 		h.log("count", upstream, nil)
 		return json.RawMessage("0")
 	}
-	return jscompat.LengthOrZero(data, raw)
+	rows, _ := data.([]any)
+	if len(rows) == 0 {
+		return json.RawMessage("0")
+	}
+	row, _ := rows[0].(map[string]any)
+	switch total := row["total_saves"].(type) {
+	case json.Number:
+		return json.RawMessage(total.String())
+	case float64:
+		return json.RawMessage(jscompat.NumberJSON(total))
+	}
+	return json.RawMessage("0")
 }
 
 // insertRow is the object the Next.js handler inserts:

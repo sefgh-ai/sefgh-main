@@ -1,5 +1,7 @@
 # GitHub search contract fixtures
 
+**Version 4** (BUG-034, 2026-10-28): 102 cases. Go accepts four more parameters from the navbar (R-017): `license` (a lower-case license key), `created` (a date with an optional comparison, or a date range), `topic` (up to five comma-separated topic names) and `forks` (the `stars` format). Each becomes a GitHub qualifier after `language` and `stars`, in that order; a malformed one answers `invalid_parameters`; empty ones are ignored. 13 new `filter-*` cases. Go only: the Next.js handler ignores them until it is retired, so each new case carries `next_expect_upstream_url` and `next_expect`, which `scripts/contracts/github-search.test.mjs` uses.
+
 AUTH-001 (2026-10-13): current contract version **3**. The shared
 [access contract](../github-access/README.md) now governs credentials and
 private response caching. In fixtures, github_token is a verified per-user

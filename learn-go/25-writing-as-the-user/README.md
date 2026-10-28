@@ -97,6 +97,25 @@ The contract `contracts/repo-collect` (49 cases) was recorded by running the thr
 
 The contract also keeps a known bug on purpose. The count of saves reads the table *as you*, and the database shows you only your own rows, so "saved by N people" only ever counts you (bug register R-083). The port copies it, so the two can be compared before the switch; the fix comes later, in Go.
 
+On 2026-10-28, with the route on Go in production, the bug was fixed (R-083, contract version 2). The count now reads the view `repo_collection_stats`, which runs with its owner's rights and counts every user's saves, while "did *you* save it?" still reads your own rows. The view answers a list with at most one row, so the Go code picks the number out with two type assertions and a type switch, the same tools as above:
+
+```go
+rows, _ := data.([]any)
+if len(rows) == 0 {
+	return json.RawMessage("0")
+}
+row, _ := rows[0].(map[string]any)
+switch total := row["total_saves"].(type) {
+case json.Number:
+	return json.RawMessage(total.String())
+case float64:
+	return json.RawMessage(jscompat.NumberJSON(total))
+}
+return json.RawMessage("0")
+```
+
+The `_` on the first two lines drops the "was it really that type?" answer on purpose: if the reply is not a list, `rows` is nil and `len(rows)` is 0; if the row is not an object, `row` is a nil map and reading from it gives nil. Go lets you read a nil map (it just finds nothing); only writing to one panics.
+
 ## Your turn
 
 Open `exercise.go` and write `savedBy`, following its steps.

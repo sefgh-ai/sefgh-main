@@ -63,13 +63,25 @@ test("case ids are unique", () => {
   const ids = contract.cases.map((c) => c.id);
   assert.equal(new Set(ids).size, ids.length);
 });
+test("version 4 sends the supported navbar filters (R-017)", () => {
+  assert.equal(contract.contract_version, 4);
+  for (const name of ["license", "created", "topic", "forks"]) {
+    const sent = contract.cases.find((c) => c.expect_upstream_url && new URLSearchParams(c.request).get(name));
+    assert.ok(sent, `no case sends ${name}`);
+    assert.ok(decodeURIComponent(sent.expect_upstream_url).includes(` ${name}:`), `${sent.id}: ${name} is not in Go's query`);
+  }
+});
 
 for (const c of contract.cases) {
   test(`${c.id} [${c.disposition}]`, async () => {
     const upstream = c.upstream
       ? contract.upstream_responses[c.upstream]
       : null;
-    const expected = contract.responses[c.expect];
+    // Version 4 (R-017) is Go's: this Next.js handler ignores the filter
+    // parameters until it is retired, so such a case says what it does in
+    // next_expect_upstream_url and next_expect.
+    const expectedUrl = "next_expect_upstream_url" in c ? c.next_expect_upstream_url : c.expect_upstream_url;
+    const expected = contract.responses[c.next_expect ?? c.expect];
     assert.ok(c.upstream === null || upstream, `unknown upstream ${c.upstream}`);
     assert.ok(expected, `unknown response ${c.expect}`);
     assert.ok(["preserve", "defect"].includes(c.disposition));
@@ -87,13 +99,13 @@ for (const c of contract.cases) {
       fixtureRequest(`http://localhost/api/github/search?${c.request}`, c.github_token)
     );
 
-    if (c.expect_upstream_url === null) {
+    if (expectedUrl === null) {
       assert.equal(calls.length, 0, "upstream was called");
     } else {
       assert.equal(calls.length, 1, "expected exactly one upstream call");
       assert.equal(
         calls[0].url,
-        contract.upstream_url_prefix + c.expect_upstream_url
+        contract.upstream_url_prefix + expectedUrl
       );
       assert.deepEqual(
         calls[0].headers,

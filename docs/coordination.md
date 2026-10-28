@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-28 (Asia/Calcutta), by Git Agent: synchronized BUG-033 (commit `d4b94ba`) on main and go-backend.
+Last updated: 2026-10-29 (Asia/Calcutta), by Claude Code: BUG-035 (R-083, High) complete on base `2ac43a4`, uncommitted.
 
 ## Start here
 
@@ -11,9 +11,50 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released BUG-033 (2026-10-28). **Every route and data area is switched to Go on Production since 2026-10-28 ~14:05 UTC** (owner); the Go project lacks the AI keys and `NEXT_PUBLIC_SITE_URL` until the owner adds them. BUG-026 to BUG-033 reach production with the Go project's next deployment. The owner asked to continue until every bug is fixed. Owner questions collected: R-042 (remember GitHub tokens), R-094, R-096, R-097 (avatar contract changes not covered by the decision pack). Signed-in pass pending (owner). Playground keys left for later. Owner signing stop, worker-execution gate and rollout gates remain.
+- **Active writer:** none. Claude Code released BUG-035 (2026-10-29). **Every route and data area is switched to Go on Production since 2026-10-28 ~14:05 UTC** (owner); the Go project lacks the AI keys and `NEXT_PUBLIC_SITE_URL` until the owner adds them. BUG-026 to BUG-035 reach production with the next deployments. Next agent tasks: R-076, R-063, R-064 (no decision needed); then a decision pack for the ~28 open entries that change a contract. Owner questions collected: R-042 (remember GitHub tokens), R-094, R-096, R-097. Signed-in pass pending (owner). Playground keys left for later. Owner signing stop, worker-execution gate and rollout gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; provisioning/runtime/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 204 entries (R-001 through R-204; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: BUG-035, R-083 the save count counts everyone (Claude Code, 2026-10-29)
+
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `2ac43a4`).
+
+R-083 (High; Needs "—", so the fix is approved by the register's rule): the count beside the bookmark button counted only the visitor's own saves.
+
+- **Live read (read-only):** view `repo_collection_stats` = `select repo_full_name, count(distinct user_id) as total_saves from repo_collections group by repo_full_name`; no `security_invoker`, so it runs with its owner's rights; SELECT granted to `anon` and `authenticated`.
+- **Go** `internal/collect/handler.go`: `count` reads `repo_collection_stats?select=total_saves&repo_full_name=eq.<repo>` and answers its number (a `json.Number` or a float), or 0 for a failure or no row; GET keeps reading the visitor's own rows for `saved` and takes `totalSaves` from `count`.
+- **Contract `repo-collect` version 2** by a script (formatting and line endings kept; every unchanged case asserted identical): 23 cases. POST and DELETE count reads go to the view, with stand-ins answering `[{"total_saves": n}]`; GET gains the view read and its stand-in; `post-count-own-rows` and `get-signed-in-saved` answer 42 where the Next.js handler, recorded by running it, says 1. Node test: version 2, `next_expect ?? expect`, every total comes from the view, paths may be the table or the view. Go pins version 2.
+- **Wiring:** `cmd/api` `TestCollectWritesAsTheCaller` and `TestCollectSignedOut` know the view (42) and expect two public-key reads on GET.
+- **Lesson 25:** the fix, and reading a nil map. Exercise untouched.
+
+Checks (Claude Code): `go test -count=1 ./internal/collect/ ./cmd/api/` pass; `go vet`; `gofmt -l` empty. With the old table read restored for a moment, 23 cases failed (restored, identical SHA-256). `node --test scripts/contracts/repo-collect.test.mjs` 50/50. `npm run handoff` below. No application source changed.
+
+Changed files: `backend/internal/collect/{handler.go,contract_test.go}`, `backend/cmd/api/collect_wiring_test.go`, `contracts/repo-collect/{cases.json,README.md}`, `scripts/contracts/repo-collect.test.mjs`, `learn-go/25-writing-as-the-user/README.md`, `docs/{bug-register.md,coordination.md}`.
+
+Next: R-076, R-063, R-064 (no decision needed); then a decision pack for the contract-change entries.
+
+Writer released: yes. No processes left running.
+
+## Handoff: BUG-034, R-017 the search sends the navbar's supported filters (Claude Code, 2026-10-28)
+
+Status: **complete; unreviewed; not deployed** (Go with `sefgh-api`, browser with `sefgh-main`). Writer Claude Code; reviewer unassigned. Branch `main`, base `2ac43a4`. Resulting commit: uncommitted.
+
+R-017's decided part: send license, created, topic and forks; Go; the filters stay visible (owner).
+
+- **Go** `internal/githubsearch/request.go`: `license` (`licensePattern`), `created` (`createdPattern`: optional `<`, `<=`, `>`, `>=` and a date, or a date range), `topic` (comma list, each `topicPattern`, at most `maxTopics` 5), `forks` (`starsPattern`). Appended after language and stars as `license:`, `created:`, `topic:` each, `forks:`; a malformed value is `errInvalidParameters` (400) before GitHub is asked; empty values are ignored.
+- **Contract `github-search` version 4** (102 cases): 13 `filter-*` cases inserted as text after `stars-less-than` (the file is hand-formatted with CRLF; the script checks the old cases parse unchanged). Each carries `next_expect_upstream_url`/`next_expect` for the Next.js handler, which ignores the filters (one value corrected after the first run: that handler does apply language and stars). Node test reads them and checks version 4 sends all four filters.
+- **Browser:** new `src/lib/search/advanced-filters.js` (`appendAdvancedFilters`): license; the date range as `created=>=<date>` from the browser's clock (GitHub reads `>` on a date as after that whole day, R-203's lesson, so `>=`); topics joined; forks. `useGitHubSearch.js` calls it in all three requests, with `advancedFilters` added to the three callbacks' dependencies. New `scripts/contracts/advanced-filters.test.mjs`: the mapping, the four ranges from a fixed clock, every license the navbar lists and every produced value checked against Go's own patterns read from `request.go`, and the three calls in the hook.
+- **Not sent:** wiki and issues (no GitHub qualifier); the navbar has no inputs for topics or forks yet.
+- **Lesson 4:** a section on the four filters, `strings.Split`, and the shared patterns. Exercise untouched.
+- **R-038 checked, not fixed:** see its register entry (needs the AI keys first).
+
+Checks (Claude Code): `go test -count=1 ./internal/githubsearch/` pass; `go vet`; `gofmt -l` empty. Without the license qualifier, `filter-license`, `filter-license-with-dot` and `filter-all-in-order` failed in memory and over HTTP (restored, identical SHA-256). `node --test scripts/contracts/github-search.test.mjs` 104/104; `advanced-filters.test.mjs` 4/4, and 1 failure with one hook call removed (restored, identical SHA-256). `npm run lint` exit 0; `npm run build` exit 0; `npm run handoff` below.
+
+Changed files: `backend/internal/githubsearch/request.go`, `contracts/github-search/{cases.json,README.md}`, `scripts/contracts/{github-search.test.mjs,advanced-filters.test.mjs}`, new `src/lib/search/advanced-filters.js`, `src/hooks/search/useGitHubSearch.js`, `learn-go/04-errors/README.md`, `docs/{bug-register.md,coordination.md}`.
+
+Next: owner decisions (R-042 GitHub tokens, R-094, R-096, R-097); R-038 once the AI keys are in; the signed-in walk-through (BUG-002).
+
+Writer released: yes. No processes left running.
 
 ## Handoff: BUG-033, R-041 no bucket listing after a failed avatar upload (Claude Code, 2026-10-28)
 

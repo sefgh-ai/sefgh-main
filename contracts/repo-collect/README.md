@@ -1,5 +1,7 @@
 # Repository collection contract
 
+**Version 2** (BUG-035, 2026-10-28): `totalSaves` is everyone's saves, read from the view `repo_collection_stats` (`select=total_saves`, one row per repository; it runs with its owner's rights, R-079), after a save or removal, and on GET after the visitor's own rows (which still say whether they saved it). Before, it counted the visitor's own rows, which row-level security limits to the visitor: 0 or 1 (R-083, High). 23 cases changed; the count stand-ins answer as the view does, and `post-count-own-rows` and `get-signed-in-saved` show the view's 42 where one visitor sees 1. Each keeps the Next.js handler's answer, recorded by running it, as `next_expect` until it is retired.
+
 **Version 1** (COLLECT-001, 2026-10-17): 49 cases, 1 marked `defect`, over three methods of `/api/repo/collect`:
 
 - `POST` saves a repository to one of the signed-in user's collections;

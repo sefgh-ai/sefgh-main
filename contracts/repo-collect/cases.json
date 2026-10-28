@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET, POST and DELETE /api/repo/collect",
   "recorded_from": "the Next.js handlers at 7625677, by scripts/contracts/record-repo-collect.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API; only auth.getUser() is replaced. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
@@ -7,7 +7,7 @@
     {
       "id": "post-saves",
       "disposition": "preserve",
-      "reason": "A signed-in user saves a repository: the row is inserted as the user, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "reason": "A signed-in user saves a repository: the row is inserted as the user, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083). Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"default\"}",
       "session": "session-a",
@@ -25,12 +25,47 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -109,7 +144,7 @@
     {
       "id": "post-defaults",
       "disposition": "preserve",
-      "reason": "Without collectionName and notes, the row gets collection_name \"default\" and notes null.",
+      "reason": "Without collectionName and notes, the row gets collection_name \"default\" and notes null. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\"}",
       "session": "session-a",
@@ -127,12 +162,47 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -171,7 +241,7 @@
     {
       "id": "post-notes",
       "disposition": "preserve",
-      "reason": "A named collection and notes are stored as sent.",
+      "reason": "A named collection and notes are stored as sent. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"work\",\"notes\":\"read later\"}",
       "session": "session-a",
@@ -189,12 +259,47 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "work",
+              "notes": "read later"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -233,7 +338,7 @@
     {
       "id": "post-falsy-collection",
       "disposition": "preserve",
-      "reason": "An empty collectionName becomes \"default\" and empty notes become null: the handler uses ||.",
+      "reason": "An empty collectionName becomes \"default\" and empty notes become null: the handler uses ||. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"\",\"notes\":\"\"}",
       "session": "session-a",
@@ -251,12 +356,47 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -594,7 +734,7 @@
     {
       "id": "post-count-fails",
       "disposition": "preserve",
-      "reason": "The insert succeeds and the count fails: the error is ignored and totalSaves is 0.",
+      "reason": "The insert succeeds and the count fails: the error is ignored and totalSaves is 0. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\"}",
       "session": "session-a",
@@ -642,6 +782,41 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
@@ -655,7 +830,7 @@
     {
       "id": "post-count-own-rows",
       "disposition": "defect",
-      "reason": "Two of the user's own collections hold the repository, so totalSaves is 2. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "reason": "Two of the user's own collections hold the repository, so totalSaves is 2. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083). Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; the view says 42 where one visitor sees fewer; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"work\"}",
       "session": "session-a",
@@ -673,10 +848,7 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
-            },
-            {
-              "user_id": "user-a"
+              "total_saves": 42
             }
           ]
         }
@@ -686,7 +858,42 @@
         "body": {
           "success": true,
           "saved": true,
-          "totalSaves": 2
+          "totalSaves": 42
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "work",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -720,7 +927,7 @@
     {
       "id": "post-number-repo",
       "disposition": "preserve",
-      "reason": "A repoFullName that is a number is inserted as a number, and the count filters on its text, as a template literal writes it.",
+      "reason": "A repoFullName that is a number is inserted as a number, and the count filters on its text, as a template literal writes it. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":42}",
       "session": "session-a",
@@ -765,6 +972,41 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.42",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": 42,
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.42",
             "prefer": null,
             "content_type": null,
@@ -778,7 +1020,7 @@
     {
       "id": "post-object-repo",
       "disposition": "preserve",
-      "reason": "A repoFullName that is an object is inserted as sent, and the count filters on \"[object Object]\".",
+      "reason": "A repoFullName that is an object is inserted as sent, and the count filters on \"[object Object]\". Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":{\"owner\":\"octo\"}}",
       "session": "session-a",
@@ -825,6 +1067,43 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.%5Bobject+Object%5D",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": {
+                "owner": "octo"
+              },
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.%5Bobject+Object%5D",
             "prefer": null,
             "content_type": null,
@@ -838,7 +1117,7 @@
     {
       "id": "post-list-repo",
       "disposition": "preserve",
-      "reason": "A repoFullName that is a list: the count filters on its items joined with commas, null written as nothing.",
+      "reason": "A repoFullName that is a list: the count filters on its items joined with commas, null written as nothing. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":[\"octo\",null,1.5e3,true]}",
       "session": "session-a",
@@ -888,6 +1167,46 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2C%2C1500%2Ctrue",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": [
+                "octo",
+                null,
+                1500,
+                true
+              ],
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2C%2C1500%2Ctrue",
             "prefer": null,
             "content_type": null,
@@ -901,7 +1220,7 @@
     {
       "id": "post-repeated-name",
       "disposition": "preserve",
-      "reason": "A name given twice: JSON.parse keeps the last value.",
+      "reason": "A name given twice: JSON.parse keeps the last value. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"a/b\",\"repoFullName\":\"octo/demo\"}",
       "session": "session-a",
@@ -919,12 +1238,47 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -963,7 +1317,7 @@
     {
       "id": "post-symbols",
       "disposition": "preserve",
-      "reason": "Characters that mean something in a URL are sent as one value of the count's filter.",
+      "reason": "Characters that mean something in a URL are sent as one value of the count's filter. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"a b&c=d+e/é*~\"}",
       "session": "session-a",
@@ -1008,6 +1362,41 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": true,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_collections",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "user-a",
+              "repo_full_name": "a b&c=d+e/é*~",
+              "collection_name": "default",
+              "notes": null
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
             "prefer": null,
             "content_type": null,
@@ -1021,7 +1410,7 @@
     {
       "id": "get-signed-out",
       "disposition": "preserve",
-      "reason": "Signed out: the saves are read with the public key, and saved is false. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "reason": "Signed out: the saves are read with the public key, and saved is false. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083). Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo%2Fdemo",
       "session": null,
@@ -1030,9 +1419,46 @@
         {
           "status": 200,
           "body": []
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 0
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1056,7 +1482,7 @@
     {
       "id": "get-signed-in-saved",
       "disposition": "preserve",
-      "reason": "Signed in, with one of the user's rows: saved is true.",
+      "reason": "Signed in, with one of the user's rows: saved is true. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; the view says 42 where one visitor sees fewer; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": "session-a",
@@ -1073,9 +1499,46 @@
               "user_id": "user-a"
             }
           ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 42
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": true,
+          "totalSaves": 42
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": true,
@@ -1099,7 +1562,7 @@
     {
       "id": "get-signed-in-other-row",
       "disposition": "preserve",
-      "reason": "A row of another user (row-level security would not return one): saved is false, and it is counted.",
+      "reason": "A row of another user (row-level security would not return one): saved is false, and it is counted. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": "session-a",
@@ -1116,9 +1579,46 @@
               "user_id": "user-b"
             }
           ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 1
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1180,7 +1680,7 @@
     {
       "id": "get-repeated-repo",
       "disposition": "preserve",
-      "reason": "The first repo parameter wins, as URLSearchParams.get gives it.",
+      "reason": "The first repo parameter wins, as URLSearchParams.get gives it. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=a%2Fb&repo=octo%2Fdemo",
       "session": null,
@@ -1189,9 +1689,46 @@
         {
           "status": 200,
           "body": []
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 0
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a%2Fb",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.a%2Fb",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1215,7 +1752,7 @@
     {
       "id": "get-plus-is-space",
       "disposition": "preserve",
-      "reason": "A plus in the query is a space.",
+      "reason": "A plus in the query is a space. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo+x",
       "session": null,
@@ -1224,9 +1761,46 @@
         {
           "status": 200,
           "body": []
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 0
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo+x",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo+x",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1368,7 +1942,7 @@
     {
       "id": "get-object-reply-signed-out",
       "disposition": "preserve",
-      "reason": "The same reply signed out: some() is never called, and an object has no length, so totalSaves is 0.",
+      "reason": "The same reply signed out: some() is never called, and an object has no length, so totalSaves is 0. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1379,9 +1953,46 @@
           "body": {
             "user_id": "user-a"
           }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 0
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1405,7 +2016,7 @@
     {
       "id": "get-length-field",
       "disposition": "preserve",
-      "reason": "An object with a length field: totalSaves is that field's value, as saves?.length || 0 reads it.",
+      "reason": "An object with a length field: totalSaves is that field's value, as saves?.length || 0 reads it. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1416,9 +2027,46 @@
           "body": {
             "length": 7
           }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 7
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 7
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1442,7 +2090,7 @@
     {
       "id": "get-text-reply",
       "disposition": "preserve",
-      "reason": "A reply that is JSON text: its length counts UTF-16 units, so \"a😀\" counts 3.",
+      "reason": "A reply that is JSON text: its length counts UTF-16 units, so \"a😀\" counts 3. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats after the visitor's own rows; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1451,9 +2099,46 @@
         {
           "status": 200,
           "body": "a😀"
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 3
+            }
+          ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 3
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "saved": false,
@@ -1517,7 +2202,7 @@
     {
       "id": "delete-removes",
       "disposition": "preserve",
-      "reason": "A signed-in user removes a repository from the default collection, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083).",
+      "reason": "A signed-in user removes a repository from the default collection, then the saves are counted: 200. The count reads repo_collections as the visitor, and row-level security returns only the visitor's own rows, so totalSaves counts the visitor's own saves, never everyone's (bug register R-083). Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "DELETE",
       "query": "repo=octo%2Fdemo",
       "session": "session-a",
@@ -1537,6 +2222,36 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -1631,7 +2346,7 @@
     {
       "id": "delete-collection",
       "disposition": "preserve",
-      "reason": "A named collection is removed by name.",
+      "reason": "A named collection is removed by name. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "DELETE",
       "query": "repo=octo/demo&collection=work",
       "session": "session-a",
@@ -1649,12 +2364,42 @@
           "status": 200,
           "body": [
             {
-              "user_id": "user-a"
+              "total_saves": 1
             }
           ]
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.work",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -1688,7 +2433,7 @@
     {
       "id": "delete-empty-collection",
       "disposition": "preserve",
-      "reason": "An empty collection parameter means \"default\".",
+      "reason": "An empty collection parameter means \"default\". Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "DELETE",
       "query": "repo=octo/demo&collection=",
       "session": "session-a",
@@ -1708,6 +2453,36 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -1782,7 +2557,7 @@
     {
       "id": "delete-count-fails",
       "disposition": "preserve",
-      "reason": "The delete succeeds and the count fails: totalSaves is 0.",
+      "reason": "The delete succeeds and the count fails: totalSaves is 0. Version 2 (R-083): the total is everyone's saves, read from the view repo_collection_stats; next_expect keeps the Next.js handler's answer.",
       "method": "DELETE",
       "query": "repo=octo/demo",
       "session": "session-a",
@@ -1801,6 +2576,36 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "saved": false,
+          "totalSaves": 0
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
+            "prefer": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,

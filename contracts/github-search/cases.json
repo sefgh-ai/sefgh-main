@@ -1,6 +1,6 @@
 {
   "contract": "GET /api/github/search",
-  "contract_version": 3,
+  "contract_version": 4,
   "authorization_contract": "../github-access/cases.json",
   "github_token_semantics": "Per-user GitHub credential, verified with the matching Supabase session; never the server token.",
   "source": "src/app/api/github/search/route.js",
@@ -379,6 +379,149 @@
       "upstream": "empty",
       "expect_upstream_url": "q=react%20stars%3A%3C10&sort=&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
+    },
+    {
+      "id": "filter-license",
+      "disposition": "preserve",
+      "note": "R-017: the navbar's license becomes license:<key>. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&license=mit",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20license%3Amit&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-license-with-dot",
+      "disposition": "preserve",
+      "note": "R-017: license keys may hold dots and hyphens. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&license=apache-2.0",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20license%3Aapache-2.0&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-created-after",
+      "disposition": "preserve",
+      "note": "R-017: the date range arrives as a comparison and a date, computed by the browser. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&created=%3E2026-10-21",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A%3E2026-10-21&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-created-range",
+      "disposition": "preserve",
+      "note": "R-017: a date range is accepted too. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&created=2026-01-01..2026-06-30",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A2026-01-01..2026-06-30&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-topics",
+      "disposition": "preserve",
+      "note": "R-017: topics arrive comma-separated and become one topic: qualifier each. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&topic=web,cli",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20topic%3Aweb%20topic%3Acli&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-forks",
+      "disposition": "preserve",
+      "note": "R-017: forks use the stars format. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&forks=%3E%3D10",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20forks%3A%3E%3D10&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-all-in-order",
+      "disposition": "preserve",
+      "note": "R-017: qualifiers follow language and stars, in the order license, created, topic, forks. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&forks=5..50&topic=ui&created=%3C2020-01-01&license=mit&stars=%3E100&language=Go",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E100%20license%3Amit%20created%3A%3C2020-01-01%20topic%3Aui%20forks%3A5..50&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E100&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-empty-values-ignored",
+      "disposition": "preserve",
+      "note": "R-017: empty filters are ignored, as an empty language or stars is. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&license=&created=&topic=&forks=",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-license-invalid",
+      "disposition": "preserve",
+      "note": "R-017: a license that is not a lower-case key is refused before GitHub is asked. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&license=MIT",
+      "upstream": "empty",
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-created-invalid",
+      "disposition": "preserve",
+      "note": "R-017: a created value that is not a date condition is refused. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&created=yesterday",
+      "upstream": "empty",
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-topic-invalid",
+      "disposition": "preserve",
+      "note": "R-017: a topic must be lower-case letters, digits and hyphens. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&topic=Web%20Dev",
+      "upstream": "empty",
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-topics-too-many",
+      "disposition": "preserve",
+      "note": "R-017: at most five topics. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&topic=a,b,c,d,e,f",
+      "upstream": "empty",
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
+    },
+    {
+      "id": "filter-forks-invalid",
+      "disposition": "preserve",
+      "note": "R-017: forks must use the stars format. Version 4, Go only: the Next.js handler ignores the parameter until it is retired, so next_expect_upstream_url and next_expect hold what it does (an unfiltered search).",
+      "request": "q=react&forks=lots",
+      "upstream": "empty",
+      "expect_upstream_url": null,
+      "expect": "invalid_parameters",
+      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
+      "next_expect": "empty_ok"
     },
     {
       "id": "stars-bare-asterisk",

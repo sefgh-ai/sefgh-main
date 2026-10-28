@@ -512,13 +512,16 @@ try {
   for (const { path, headers, status, body, method, cache = 'private, no-store' } of scenarios) {
     // Via Next first, then direct. On the cached summary route the second
     // request makes no upstream call, so those are compared on the reply
-    // only; the reply carries the upstream path in full_name.
+    // only; the reply carries the upstream path in full_name. A verified
+    // session is remembered in Go memory for 60s (BUG-031, R-042), so the
+    // second request may not re-verify with Supabase.
     const viaNext = await ask(nextPort, path, headers, body, method);
     const direct = await ask(goPort, path, headers, body, method);
     const cached = !headers && path.startsWith("/api/github/repo?");
+    const stripAuth = u => u.filter(x => x !== 'GET /auth/v1/user');
     const equal = viaNext.status === direct.status && viaNext.body === direct.body && viaNext.backend === "go" &&
       (!headers || (viaNext.status === status && viaNext.cache === cache)) &&
-      (cached || JSON.stringify(viaNext.upstream) === JSON.stringify(direct.upstream));
+      (cached || JSON.stringify(stripAuth(viaNext.upstream)) === JSON.stringify(stripAuth(direct.upstream)));
     if (equal) same++;
     else different.push({ path, viaNext, direct });
     if (process.env.PROBE_SHOW) console.log(`${equal ? "same" : "DIFF"} ${String(viaNext.status).padEnd(4)}${path.padEnd(62)} -> ${viaNext.upstream.join(" , ").slice(0, 110) || "(no upstream call)"}`);
