@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-027, R-088 video addresses checked in Go (Claude Code, 2026-10-28)
 
-Status: **complete; unreviewed; Go change not yet deployed to `sefgh-api`.** Writer Claude Code; reviewer unassigned. Branch `main`, base `28c8a64` (BUG-026 committed as `970b603`; the Git Agent's sync commit also carried this task's claim line). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `28c8a64`).
+Status: **complete; unreviewed; Go change not yet deployed to `sefgh-api`.** Writer Claude Code; reviewer unassigned. Branch `main`, base `28c8a64` (BUG-026 committed as `970b603`; the Git Agent's sync commit also carried this task's claim line). Resulting commit: `719c09a` (synchronized by Git Agent on `main` and `go-backend`).
 
 The owner's option A for R-088: accept only `https` addresses whose host is exactly YouTube's or GitHub's.
 
