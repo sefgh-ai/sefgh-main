@@ -80,7 +80,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className="font-medium text-sm">
-                {comment.user_email?.split('@')[0] || comment.user_name || 'Anonymous User'}
+                {comment.user_name || comment.user_email?.split('@')[0] || 'Anonymous User'}
               </span>
               <span className="text-xs text-muted-foreground">
                 {formatDate(comment.created_at)}

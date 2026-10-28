@@ -26,19 +26,6 @@ export async function fetchRepliesRecursively(supabase, commentId) {
             .eq("id", reply.user_id)
             .maybeSingle();
 
-          // Fallback to email if no name
-          let userEmail = null;
-          if (!profile?.full_name) {
-            try {
-              const {
-                data: { user: replyUser },
-              } = await supabase.auth.admin.getUserById(reply.user_id);
-              userEmail = replyUser?.email;
-            } catch (e) {
-              // admin.getUserById might fail, that's okay
-            }
-          }
-
           // Fetch nested replies
           const nestedReplies = await fetchRepliesRecursively(
             supabase,
@@ -48,7 +35,9 @@ export async function fetchRepliesRecursively(supabase, commentId) {
           return {
             ...reply,
             user_name: profile?.full_name || null,
-            user_email: userEmail,
+            // Authors are shown by their public profile only (R-040): no
+            // admin lookup, so no one else's email.
+            user_email: null,
             user_avatar: profile?.avatar_url || null,
             replies: nestedReplies,
           };
@@ -92,26 +81,13 @@ export async function enrichCommentsWithUserData(supabase, rawComments) {
             .eq("id", comment.user_id)
             .maybeSingle();
 
-          // Fallback to email if no name
-          let userEmail = null;
-          if (!profile?.full_name) {
-            try {
-              const {
-                data: { user: commentUser },
-              } = await supabase.auth.admin.getUserById(comment.user_id);
-              userEmail = commentUser?.email;
-            } catch (e) {
-              // admin.getUserById might fail, that's okay
-            }
-          }
-
           // Fetch nested replies
           const replies = await fetchRepliesRecursively(supabase, comment.id);
 
           return {
             ...comment,
             user_name: profile?.full_name || null,
-            user_email: userEmail,
+            user_email: null,
             user_avatar: profile?.avatar_url || null,
             replies: replies,
           };

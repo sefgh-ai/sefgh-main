@@ -110,3 +110,23 @@ test('code asks profiles only for granted columns', () => {
   assert.deepEqual(problems, []);
   for (const [key, id] of KNOWN) assert.ok(seen.has(key), `${key} (${id}) no longer occurs; remove it from KNOWN`);
 });
+
+// R-040: the admin user lookup needs the service-role key, which the app never
+// has, so it can only fail; were it ever to succeed it would hand out other
+// users' emails. Authors are shown from their public profile only. The two
+// Next.js route handlers keep their lookups until they are retired (Go answers
+// both routes without one).
+const ADMIN_KNOWN = ['src/app/api/repo/comments/route.js', 'src/app/api/repo/videos/route.js'];
+
+test('no code asks Supabase Auth about another user (R-040)', () => {
+  const found = sourceFiles(join(root, 'src'))
+    .filter((file) => /auth\.admin\./.test(readFileSync(file, 'utf8')))
+    .map((file) => file.slice(root.length).replace(/\\/g, '/'))
+    .sort();
+  assert.deepEqual(found, ADMIN_KNOWN);
+});
+
+test('a comment shows its author\'s name before any email (R-075)', () => {
+  const section = readFileSync(join(root, 'src/components/repo-details/RepoCommentsSection.jsx'), 'utf8');
+  assert.match(section, /\{comment\.user_name \|\| comment\.user_email\?\.split\('@'\)\[0\] \|\| 'Anonymous User'\}/);
+});

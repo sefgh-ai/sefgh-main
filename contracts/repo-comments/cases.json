@@ -1,5 +1,5 @@
 {
-  "contract_version": 2,
+  "contract_version": 3,
   "route": "GET, POST, PATCH and DELETE /api/repo/comments",
   "recorded_from": "the Next.js handlers at fead0d9, by scripts/contracts/record-repo-comments.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-comment requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
@@ -7,7 +7,7 @@
     {
       "id": "get-top-level",
       "disposition": "defect",
-      "reason": "Signed out: the top-level comments, newest first, 50 from 0, each with its author and reply count. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "reason": "Signed out: the top-level comments, newest first, 50 from 0, each with its author and reply count. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo%2Fdemo",
       "session": null,
@@ -80,6 +80,101 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 2,
+              "user_email": null
+            },
+            {
+              "id": "c2",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Works on Windows too",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c2&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -196,7 +291,7 @@
     {
       "id": "get-signed-in",
       "disposition": "defect",
-      "reason": "Signed in, the same, with the visitor's token for the Data API; the admin lookup still goes with the public key. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "reason": "Signed in, the same, with the visitor's token for the Data API; the admin lookup still goes with the public key. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": "session-a",
@@ -270,6 +365,64 @@
               "is_deleted": false,
               "user_name": null,
               "user_avatar": null,
+              "reply_count": 1,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
               "reply_count": 1
             }
           ]
@@ -323,7 +476,7 @@
     {
       "id": "get-replies",
       "disposition": "preserve",
-      "reason": "parentId asks for the replies of one comment.",
+      "reason": "parentId asks for the replies of one comment. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo&parentId=c1",
       "session": null,
@@ -376,6 +529,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c3",
+              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "repo_full_name": "octo/demo",
+              "parent_id": "c1",
+              "comment_text": "Agreed",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=eq.c1",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c3&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -1045,7 +1256,7 @@
     {
       "id": "get-profile-present",
       "disposition": "preserve",
-      "reason": "Were the profile read to succeed, its username and avatar would be used, and no admin lookup made.",
+      "reason": "Were the profile read to succeed, its username and avatar would be used, and no admin lookup made. Version 3 (R-040, R-075): the stand-in profile has full_name, the column that exists; the Next.js handler, which asks for username, is recorded in next_expect.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1074,7 +1285,7 @@
           "match": "GET /rest/v1/profiles",
           "status": 200,
           "body": {
-            "username": "octo",
+            "full_name": "Octo Cat",
             "avatar_url": "https://avatars.example/octo.png"
           }
         },
@@ -1111,7 +1322,65 @@
               "updated_at": "2026-10-16T08:00:00+00:00",
               "is_edited": false,
               "is_deleted": false,
-              "user_name": "octo",
+              "user_name": "Octo Cat",
+              "user_email": null,
+              "user_avatar": "https://avatars.example/octo.png",
+              "reply_count": 3
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
               "user_email": null,
               "user_avatar": "https://avatars.example/octo.png",
               "reply_count": 3
@@ -1157,7 +1426,7 @@
     {
       "id": "get-admin-answers",
       "disposition": "preserve",
-      "reason": "Were the admin lookup to succeed, the author's email would be sent to everyone (R-040). With the public key it never does.",
+      "reason": "Were the admin lookup to succeed, the author's email would be sent to everyone (R-040). With the public key it never does. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1209,6 +1478,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_email": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -1280,7 +1607,7 @@
     {
       "id": "get-admin-unreachable",
       "disposition": "defect",
-      "reason": "The admin lookup cannot be reached: no email, and the comment is still answered. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "reason": "The admin lookup cannot be reached: no email, and the comment is still answered. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1328,6 +1655,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -1398,7 +1783,7 @@
     {
       "id": "get-user-id-not-uuid",
       "disposition": "preserve",
-      "reason": "An author id that is not a lower-case UUID makes the admin lookup throw before any request: 500 for the whole list.",
+      "reason": "Version 3 (R-040): an author id that is not a UUID is no longer looked up with the admin call, so nothing throws; the comment is answered with no author details. Version 1 (next_expect): An author id that is not a lower-case UUID makes the admin lookup throw before any request: 500 for the whole list.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1444,6 +1829,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "not-a-uuid",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Odd",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_email": null,
+              "user_avatar": null,
+              "reply_count": 0
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.not-a-uuid",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Internal server error"
@@ -1477,7 +1920,7 @@
     {
       "id": "get-count-without-range",
       "disposition": "preserve",
-      "reason": "A count reply without Content-Range has no count: reply_count is 0.",
+      "reason": "A count reply without Content-Range has no count: reply_count is 0. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1523,6 +1966,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -1593,7 +2094,7 @@
     {
       "id": "get-count-error",
       "disposition": "preserve",
-      "reason": "A count that fails is ignored: reply_count is 0.",
+      "reason": "A count that fails is ignored: reply_count is 0. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -1649,6 +2150,64 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "comments": [
+            {
+              "id": "c1",
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Great library",
+              "upvotes": 2,
+              "downvotes": 0,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "updated_at": "2026-10-16T08:00:00+00:00",
+              "is_edited": false,
+              "is_deleted": false,
+              "user_name": null,
+              "user_avatar": null,
+              "reply_count": 0,
+              "user_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "HEAD",
+            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
+            "prefer": "count=exact",
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "comments": [
@@ -1776,7 +2335,7 @@
     {
       "id": "post-comment",
       "disposition": "defect",
-      "reason": "A signed-in user comments: the comment is inserted as the user and returned, with the author's details. Names never show: the profile read asks for username, which does not exist (R-075),.",
+      "reason": "A signed-in user comments: the comment is inserted as the user and returned, with the author's details. Names never show: the profile read asks for username, which does not exist (R-075),. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"  Nice work  \"}",
       "session": "session-a",
@@ -1857,6 +2416,61 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Nice work",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -1871,7 +2485,7 @@
     {
       "id": "post-reply",
       "disposition": "preserve",
-      "reason": "A reply: the parent is checked first, then the reply is inserted with its parent_id.",
+      "reason": "A reply: the parent is checked first, then the reply is inserted with its parent_id. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Agreed\",\"parentId\":\"c1\"}",
       "session": "session-a",
@@ -1914,6 +2528,71 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": "c1",
+            "comment_text": "Agreed",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=id&id=eq.c1",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": "c1",
+              "comment_text": "Agreed",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -2158,7 +2837,7 @@
     {
       "id": "post-trims-javascript-space",
       "disposition": "preserve",
-      "reason": "The text is trimmed as JavaScript trims, a no-break space and a byte-order mark included.",
+      "reason": "The text is trimmed as JavaScript trims, a no-break space and a byte-order mark included. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\" Nice﻿\"}",
       "session": "session-a",
@@ -2195,6 +2874,61 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_email": "a@example.test",
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Nice",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -2306,7 +3040,7 @@
     {
       "id": "post-profile-present",
       "disposition": "preserve",
-      "reason": "Were the profile read to succeed, its username and avatar would be in the reply.",
+      "reason": "Were the profile read to succeed, its username and avatar would be in the reply. Version 3 (R-040, R-075): the stand-in profile has full_name, the column that exists; the Next.js handler, which asks for username, is recorded in next_expect.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
       "session": "session-a",
@@ -2335,7 +3069,7 @@
         {
           "status": 200,
           "body": {
-            "username": "octo",
+            "full_name": "Octo Cat",
             "avatar_url": "a.png"
           }
         }
@@ -2356,7 +3090,62 @@
             "updated_at": "2026-10-16T08:00:00+00:00",
             "is_edited": false,
             "is_deleted": false,
-            "user_name": "octo",
+            "user_name": "Octo Cat",
+            "user_email": "a@example.test",
+            "user_avatar": "a.png"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Hi",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
             "user_email": "a@example.test",
             "user_avatar": "a.png"
           }
@@ -2399,7 +3188,7 @@
     {
       "id": "post-user-without-email",
       "disposition": "preserve",
-      "reason": "A user Auth answers without an email: user_email is undefined and left out of the reply.",
+      "reason": "A user Auth answers without an email: user_email is undefined and left out of the reply. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an author's user_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"Hi\"}",
       "session": "session-a",
@@ -2434,6 +3223,60 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false,
+            "user_name": null,
+            "user_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_comments?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "repo_full_name": "octo/demo",
+              "parent_id": null,
+              "comment_text": "Hi",
+              "upvotes": 0,
+              "downvotes": 0,
+              "is_edited": false,
+              "is_deleted": false
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,

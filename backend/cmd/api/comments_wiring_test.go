@@ -52,9 +52,10 @@ func commentsServer(t *testing.T) (http.Handler, *commentsUpstream) {
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil))), stand
 }
 
-// Signed in, the comment list and its counts go with the caller's token,
-// and the admin lookup with the public key only, never the caller's token
-// or a server key (bug register R-040). No GitHub credential goes anywhere.
+// Signed in, the comment list, its authors' profiles and its counts go with
+// the caller's token, and nothing asks Supabase Auth about another user: no
+// admin lookup since contract version 3 (bug register R-040). No GitHub
+// credential goes anywhere.
 func TestCommentsListAsTheCaller(t *testing.T) {
 	handler, stand := commentsServer(t)
 	req := httptest.NewRequest("GET", "/api/repo/comments?repo=octo%2Fdemo", nil)
@@ -68,7 +69,6 @@ func TestCommentsListAsTheCaller(t *testing.T) {
 	seen := append([]string(nil), stand.seen...)
 	sort.Strings(seen)
 	want := []string{
-		"GET /auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b|Bearer public-key|public-key|",
 		"GET /rest/v1/profiles|Bearer session-a|public-key|",
 		"GET /rest/v1/repo_comments|Bearer session-a|public-key|",
 		"HEAD /rest/v1/repo_comments|Bearer session-a|public-key|",

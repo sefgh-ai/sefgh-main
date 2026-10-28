@@ -1,5 +1,7 @@
-// GET, POST, PATCH and DELETE /api/repo/comments, contract version 2
-// (COMMENTS-001; version 2, R-086). The real handlers run with a client built by the real
+// GET, POST, PATCH and DELETE /api/repo/comments, contract version 3
+// (COMMENTS-001; version 2, R-086; version 3, R-040 and R-075). Where the
+// Next.js handler answers differently from Go, a case keeps its answer as
+// next_expect until that handler is retired. The real handlers run with a client built by the real
 // supabase-js around a stand-in Supabase; see route-db-fixture.mjs. A Go port
 // must pass the same cases; GET's requests may come in any order.
 import assert from 'node:assert/strict';
@@ -16,16 +18,17 @@ const contract = JSON.parse(await readFile(new URL('../../contracts/repo-comment
 // owner's rule is to fix a backend bug once, in Go. Everything else must
 // still match.
 const asSentByNext = (c) => {
+  const expect = c.next_expect ?? c.expect;
   const limit = Number.parseInt(new URLSearchParams(c.query ?? '').get('limit'));
-  if (!(limit > 50)) return c.expect;
+  if (!(limit > 50)) return expect;
   return {
-    ...c.expect,
-    database: c.expect.database.map((request) => ({ ...request, path: request.path.replace('&limit=50&', `&limit=${limit}&`) })),
+    ...expect,
+    database: expect.database.map((request) => ({ ...request, path: request.path.replace('&limit=50&', `&limit=${limit}&`) })),
   };
 };
 
 test('comments fixture integrity', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -35,6 +38,15 @@ test('comments fixture integrity', () => {
     for (const request of c.expect.database) {
       const limit = request.path.match(/[?&]limit=(\d+)/)?.[1];
       if (limit) assert.ok(Number(limit) <= 50, c.id);
+    }
+    // R-040, R-075: Go reads the author's public columns and never makes the
+    // admin lookup, so no author's email is sent.
+    for (const request of c.expect.database) {
+      assert.ok(!request.path.startsWith('/auth/v1/admin/'), c.id);
+      if (request.path.startsWith('/rest/v1/profiles')) assert.ok(request.path.includes('select=full_name%2Cavatar_url&'), c.id);
+    }
+    for (const item of c.method === 'GET' && Array.isArray(c.expect.body?.comments) ? c.expect.body.comments : []) {
+      if (item && 'user_email' in item) assert.equal(item.user_email, null, c.id);
     }
     // Nothing is asked before sign-in and the input checks.
     if ([400, 401].includes(c.expect.status)) assert.deepEqual(c.expect.database, [], c.id);

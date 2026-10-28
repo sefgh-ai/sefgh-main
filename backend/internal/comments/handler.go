@@ -1,13 +1,13 @@
-// Package comments ports GET, POST, PATCH and DELETE /api/repo/comments at
-// contract version 1: reading a repository's comments and replies with
-// their authors and reply counts, posting a comment or reply, and editing
-// or deleting one's own. Every case in contracts/repo-comments is answered
-// as the Next.js handlers answer it, defects included.
-//
-// The author details are copied as they fail today: the profile read asks
-// for a username column that does not exist (bug register R-075), and the
-// admin lookup that follows goes with the public key and is refused
-// (R-040). So names never show. The fix lands here after cutover.
+// Package comments ports GET, POST, PATCH and DELETE /api/repo/comments:
+// reading a repository's comments and replies with their authors and reply
+// counts, posting a comment or reply, and editing or deleting one's own.
+// Every case in contracts/repo-comments is answered as the Next.js handlers
+// answered it at version 1, apart from the fixes made here after cutover:
+// a page holds at most 50 comments (version 2, R-086), and an author's name
+// and picture come from the public profile columns full_name and avatar_url,
+// with no admin lookup (version 3, R-040, R-075). The Next.js handler still
+// asks for a username column that does not exist and makes an admin call the
+// public key cannot, until it is retired.
 //
 // Every database request goes as the visitor, through internal/supabaserest:
 // with the request's bearer when it has one, and with the project's public
@@ -216,16 +216,10 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 	userID, commentID := property(row, "user_id"), property(row, "id")
 	db := h.db()
 
-	// The profile, read as one row; its error is ignored (R-075).
+	// The author's public profile, read as one row; its error is ignored.
+	// Since contract version 3 (R-040, R-075) there is no admin lookup, so
+	// an author's email is never sent.
 	userData := h.profile(ctx, session, jscompat.String(userID))
-	// let userEmail = null, then, with no profile, the admin lookup (R-040).
-	userEmail := json.RawMessage("null")
-	if userData == nil {
-		var ok bool
-		if userEmail, ok = db.AdminUserEmail(ctx, jscompat.String(userID)); !ok {
-			return nil, false // validateUUID, or null.user, throws
-		}
-	}
 	// The reply count; its error is ignored, and count || 0.
 	query := strings.Join([]string{
 		supabaserest.Param("select", "*"),
@@ -238,8 +232,8 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 	}
 
 	fields := jscompat.Spread(row)
-	fields = jscompat.Assign(fields, "user_name", jscompat.FieldOr(userData, "username", []byte("null")))
-	fields = jscompat.Assign(fields, "user_email", userEmail)
+	fields = jscompat.Assign(fields, "user_name", jscompat.FieldOr(userData, "full_name", []byte("null")))
+	fields = jscompat.Assign(fields, "user_email", []byte("null"))
 	fields = jscompat.Assign(fields, "user_avatar", jscompat.FieldOr(userData, "avatar_url", []byte("null")))
 	fields = jscompat.Assign(fields, "reply_count", replies)
 	return fields, true
@@ -248,7 +242,7 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 // profile reads one user's profile as one row and answers its JSON when the
 // read succeeds with a truthy row, or nil.
 func (h *Handler) profile(ctx context.Context, session, userID string) []byte {
-	query := supabaserest.Param("select", "username,avatar_url") + "&" + supabaserest.Param("id", "eq."+userID)
+	query := supabaserest.Param("select", "full_name,avatar_url") + "&" + supabaserest.Param("id", "eq."+userID)
 	upstream, raw, err := h.db().SelectObject(ctx, session, "profiles", query)
 	if failed(upstream, raw, err) {
 		return nil
@@ -341,7 +335,7 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		created = jscompat.Spread(supabaserest.DataJSON(upstream, raw))
 	}
 	userData := h.profile(ctx, session, userID)
-	created = jscompat.Assign(created, "user_name", jscompat.FieldOr(userData, "username", []byte("null")))
+	created = jscompat.Assign(created, "user_name", jscompat.FieldOr(userData, "full_name", []byte("null")))
 	created = jscompat.Assign(created, "user_email", email)
 	created = jscompat.Assign(created, "user_avatar", jscompat.FieldOr(userData, "avatar_url", []byte("null")))
 	var reply bytes.Buffer

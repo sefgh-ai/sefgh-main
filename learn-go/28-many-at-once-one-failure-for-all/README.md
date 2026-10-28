@@ -6,7 +6,7 @@
 
 ## The problem in the app
 
-Under each repository is a comment list. For every comment the Next.js handler fetches three more things: the author's profile, an admin lookup when there is no profile, and the number of replies. It does all comments together:
+Under each repository is a comment list. For every comment the Next.js handler fetches three more things: the author's profile, an admin lookup when there is no profile, and the number of replies. It does all comments together (Go, since contract version 3, reads the profile's `full_name` and `avatar_url` and skips the admin lookup, R-040 and R-075):
 
 ```js
 const commentsWithDetails = await Promise.all(comments.map(async (comment) => { ... }))
@@ -20,7 +20,7 @@ The Go port reads the details with goroutines, like the starred route in lesson 
 
 ## One failure decides
 
-`Promise.all` rejects as soon as any one promise rejects. Here that happens when a comment is `null`, or when its author's id is not a lower-case UUID (auth-js checks it before the admin lookup and throws). The whole list then answers 500. The Go code does the same. The first goroutine that fails records it, then calls `cancel()` on the shared context, so the others stop early instead of doing work nobody will use:
+`Promise.all` rejects as soon as any one promise rejects. Here that happens when a comment is `null`, or when its author's id is not a lower-case UUID (auth-js checks it before the admin lookup and throws). The whole list then answers 500. The Go code did the same until contract version 3 (R-040), which dropped the admin lookup: now only a `null` comment fails the list. The first goroutine that fails records it, then calls `cancel()` on the shared context, so the others stop early instead of doing work nobody will use:
 
 ```go
 if !ok {
@@ -53,7 +53,7 @@ The page size comes from the URL: `parseInt(searchParams.get('limit') || '50')`.
 
 ## A cap, and the number that slips past it
 
-Every comment costs three more requests, so on 2026-10-28 you capped a page at 50 (R-086). The Go handler now has, right after reading `limit`:
+Every comment cost three more requests (two in Go since version 3, which dropped the admin lookup), so on 2026-10-28 you capped a page at 50 (R-086). The Go handler now has, right after reading `limit`:
 
 ```go
 const MaxLimit = 50
