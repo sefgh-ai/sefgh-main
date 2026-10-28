@@ -51,6 +51,24 @@ The page size comes from the URL: `parseInt(searchParams.get('limit') || '50')`.
 
 `jscompat.ParseInt` copies `parseInt`; every row of its test came from Node.
 
+## A cap, and the number that slips past it
+
+Every comment costs three more requests, so on 2026-10-28 you capped a page at 50 (R-086). The Go handler now has, right after reading `limit`:
+
+```go
+const MaxLimit = 50
+
+if limit > MaxLimit {
+    limit = MaxLimit
+}
+```
+
+`const` names a value fixed when the program is compiled, like a top-level `const` in JavaScript that can never be reassigned. Its capital M exports it, so tests in other packages can read `comments.MaxLimit`.
+
+`limit` is a `float64`, because `parseInt` can answer `NaN`. Any comparison with `NaN` is false, in Go as in JavaScript: `NaN > 50`, `NaN < 50` and `NaN == NaN` are all false. So text such as `abc` passes the cap unchanged and is sent as `limit=NaN`, exactly as before; the database refuses it before any per-comment request, which is why the cap can ignore it. If you ever need to catch `NaN`, ask `math.IsNaN(limit)`, the way JavaScript has `Number.isNaN`.
+
+The contract moved to version 2 with two cases, `limit=51` and `limit=1000&offset=20`. The Next.js handler still sends the number as given until it is retired, so its test converts those two cases back.
+
 ## Testing requests in any order
 
 Goroutines finish in a different order on every run, so the comments contract test cannot expect the requests in the order Node made them. For the list, it sorts both the recorded requests and Go's before comparing. The requests must be the same, each the same number of times, in any order. That's your exercise.
@@ -70,4 +88,5 @@ go test -tags solution ./28-many-at-once-one-failure-for-all
 - `Promise.all` fails as soon as one task fails. In Go, record the failure and cancel the shared context.
 - `HEAD` with a count header answers "how many" without sending rows.
 - `parseInt` and `Number` read text differently.
+- Every comparison with `NaN` is false; `math.IsNaN` is the way to test for it.
 - To compare lists whose order is not fixed, sort copies of both.

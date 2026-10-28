@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET, POST, PATCH and DELETE /api/repo/comments",
   "recorded_from": "the Next.js handlers at fead0d9, by scripts/contracts/record-repo-comments.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-comment requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
@@ -543,6 +543,116 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=20&limit=10&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-capped",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-086): a limit above 50 is read as 50, since every comment costs three more requests. Go only: the Next.js handler sends the limit as given until it is retired.",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=51",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "get-limit-capped-with-offset",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-086): a large limit is cut to 50; offset is unchanged.",
+      "method": "GET",
+      "query": "repo=octo/demo&limit=1000&offset=20",
+      "session": null,
+      "user": null,
+      "routes": [
+        {
+          "match": "GET /rest/v1/repo_comments?select=*&repo_full_name=",
+          "status": 200,
+          "body": []
+        },
+        {
+          "match": "GET /rest/v1/profiles",
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        },
+        {
+          "match": "GET /auth/v1/admin/users/",
+          "status": 403,
+          "body": {
+            "code": 403,
+            "error_code": "not_admin",
+            "msg": "User not allowed"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "comments": []
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=20&limit=50&parent_id=is.null",
             "prefer": null,
             "accept": null,
             "content_type": null,

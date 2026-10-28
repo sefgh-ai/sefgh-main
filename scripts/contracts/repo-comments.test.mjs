@@ -1,5 +1,5 @@
-// GET, POST, PATCH and DELETE /api/repo/comments, contract version 1
-// (COMMENTS-001). The real handlers run with a client built by the real
+// GET, POST, PATCH and DELETE /api/repo/comments, contract version 2
+// (COMMENTS-001; version 2, R-086). The real handlers run with a client built by the real
 // supabase-js around a stand-in Supabase; see route-db-fixture.mjs. A Go port
 // must pass the same cases; GET's requests may come in any order.
 import assert from 'node:assert/strict';
@@ -11,13 +11,31 @@ register('./route-db-loader.mjs', import.meta.url);
 const handlers = await import('../../src/app/api/repo/comments/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-comments/cases.json', import.meta.url), 'utf8'));
 
+// Version 2 (R-086) caps a page at 50 comments. Go sends the cap. This
+// Next.js handler keeps sending the limit as given until it is retired: the
+// owner's rule is to fix a backend bug once, in Go. Everything else must
+// still match.
+const asSentByNext = (c) => {
+  const limit = Number.parseInt(new URLSearchParams(c.query ?? '').get('limit'));
+  if (!(limit > 50)) return c.expect;
+  return {
+    ...c.expect,
+    database: c.expect.database.map((request) => ({ ...request, path: request.path.replace('&limit=50&', `&limit=${limit}&`) })),
+  };
+};
+
 test('comments fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
     assert.ok(['GET', 'POST', 'PATCH', 'DELETE'].includes(c.method), c.id);
     assert.ok(c.reason, c.id);
+    // R-086: no page is asked for more than 50 comments.
+    for (const request of c.expect.database) {
+      const limit = request.path.match(/[?&]limit=(\d+)/)?.[1];
+      if (limit) assert.ok(Number(limit) <= 50, c.id);
+    }
     // Nothing is asked before sign-in and the input checks.
     if ([400, 401].includes(c.expect.status)) assert.deepEqual(c.expect.database, [], c.id);
     // A failure never carries the database's own words.
@@ -46,6 +64,6 @@ test('comments fixture integrity', () => {
 
 for (const c of contract.cases) {
   test(`comments: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/comments', c), c.expect);
+    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/comments', c), asSentByNext(c));
   });
 }

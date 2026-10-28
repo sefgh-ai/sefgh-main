@@ -1,5 +1,7 @@
 # Repository comments contract
 
+**Version 2** (BUG-026, 2026-10-28): 52 cases. A page holds at most 50 comments (R-086, the owner's option A): `get-limit-capped` and `get-limit-capped-with-offset` send `limit=50` for 51 and 1000. Text that is not a number and numbers below one are unchanged. Go only: the Next.js handler sends the limit as given until it is retired, and `scripts/contracts/repo-comments.test.mjs` converts those two cases for it.
+
 **Version 1** (COMMENTS-001, 2026-10-17): 50 cases, 6 marked `defect`, over the four methods of `/api/repo/comments`:
 
 - `GET` answers a page of a repository's comments, or one comment's replies, each with its author and reply count;
@@ -52,7 +54,7 @@ GET makes its per-comment requests at the same time. Its cases therefore answer 
 
 ## The Go port
 
-`backend/internal/comments`, off by default; the switch is `repo-comments`. It passes all 50 cases. The new pieces:
+`backend/internal/comments`, off by default; the switch is `repo-comments`. It passes all 50 cases (52 since version 2). The new pieces:
 
 - `supabaserest.InsertReturning`, `Update`, `Count` and `AdminUser`;
 - `jscompat.ParseInt`, `Spread` and `Assign`;

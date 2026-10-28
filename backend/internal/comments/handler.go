@@ -87,6 +87,9 @@ func (h *Handler) db() supabaserest.Client {
 	return supabaserest.Client{HTTP: h.Database, URL: h.SupabaseURL, Key: h.SupabaseKey}
 }
 
+// MaxLimit is the most comments one GET answers (R-086).
+const MaxLimit = 50
+
 // get answers a page of comments, or of one comment's replies, each with
 // its author and reply count: GET in the Next.js handler.
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
@@ -96,6 +99,12 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	// parseInt(searchParams.get('limit') || '50'), and the same for offset.
 	limit := jscompat.ParseInt(orDefault(query, "limit", "50"))
 	offset := jscompat.ParseInt(orDefault(query, "offset", "0"))
+	// R-086 (contract version 2): every comment costs three more requests,
+	// so a page holds at most MaxLimit. Text that is not a number (NaN) and
+	// numbers below one pass as before: the database refuses them first.
+	if limit > MaxLimit {
+		limit = MaxLimit
+	}
 	if repo == "" {
 		write(w, 400, []byte(`{"error":"Repository name is required"}`))
 		return

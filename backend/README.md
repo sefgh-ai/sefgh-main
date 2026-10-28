@@ -409,7 +409,7 @@ Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/
 
 ## Comments (COMMENTS-001)
 
-Opt-in name: `repo-comments`, off by default. `GET`, `POST`, `PATCH` and `DELETE /api/repo/comments`. It passes the 50 cases of `contracts/repo-comments`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`, which now hands supabase-js the session the way the cookie client does, answers by route, and sends PATCH bodies).
+Opt-in name: `repo-comments`, off by default. `GET`, `POST`, `PATCH` and `DELETE /api/repo/comments`. It passes the 52 cases (version 2: a page holds at most `comments.MaxLimit`, 50, R-086) of `contracts/repo-comments`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`, which now hands supabase-js the session the way the cookie client does, answers by route, and sends PATCH bodies).
 
 - **Author details copied as they fail:** the profile read asks for `username`, which does not exist (R-075), and the admin lookup (`supabaserest.AdminUser`, new) goes with the public key and is refused (R-040). Names never show, as today. The lookup is kept so the two can be compared; the fix lands here after cutover.
 - **Concurrency:** each comment's profile, admin lookup and reply count (`supabaserest.Count`, a `HEAD` with `Prefer: count=exact`) run for at most four comments at once, all within `comments.DetailsBudget` (16 seconds) after the list's own read. A comment that makes `Promise.all` reject (null, or an author id that is not a lower-case UUID) answers 500 and cancels the rest.

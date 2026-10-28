@@ -212,7 +212,7 @@ function verifyHandoff() {
 
   // 2. Run Go Backend checks
   console.log('\n2. Checking Go backend (go test, go vet, gofmt)...');
-  const goTest = run('go test -count=1 ./...', resolve(ROOT, 'backend'));
+  const goTest = run('go test -count=1 -p 2 ./...', resolve(ROOT, 'backend'));
   if (!goTest.ok) {
     console.error('❌ backend/ go test failed:\n', [goTest.out, goTest.err].filter(Boolean).join('\n'));
     return false;
