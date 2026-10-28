@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: OWNER-ANSWERS-005, R-078 and R-103 in production, step 3 live (Claude Code, 2026-10-28)
 
-Status: **complete; R-078 and R-103 fixed in production; unreviewed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `6817b78` (OWNER-ANSWERS-004 committed as `9dab639`). Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `6817b78`).
+Status: **complete; R-078 and R-103 fixed in production; unreviewed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `6817b78` (OWNER-ANSWERS-004 committed as `9dab639`). Resulting commit: `223fc85` (synchronized by Git Agent on `main` and `go-backend`).
 
 - **Approval:** "yes, run the R-078 and R-103 database changes on dev and production", then "try again".
 - **The connector declines destructive SQL in this session.** `execute_sql` of the dev test (three times) and `apply_migration` of R-103 on User-DB (once) all returned `declined`; nothing ran. Not retried further.
