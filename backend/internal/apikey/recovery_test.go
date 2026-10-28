@@ -17,7 +17,7 @@ type recoveryFixture struct {
 	calls                []Completion
 	reads                int
 	deadline             bool
-	onComplete           func()
+	onComplete           func(context.Context)
 	onPending            func(context.Context, *PendingCursor)
 }
 
@@ -32,7 +32,7 @@ func (f *recoveryFixture) Pending(ctx context.Context, after *PendingCursor) (Pe
 func (f *recoveryFixture) Complete(ctx context.Context, c Completion) error {
 	f.calls = append(f.calls, c)
 	if f.onComplete != nil {
-		f.onComplete()
+		f.onComplete(ctx)
 	}
 	return f.completeErr
 }
@@ -145,7 +145,7 @@ func TestRecoveryCancellationStopsWithoutInventingReceipt(t *testing.T) {
 	}
 	ctx, cancel = context.WithCancel(context.Background())
 	defer cancel()
-	f.onComplete = cancel
+	f.onComplete = func(context.Context) { cancel() }
 	r, err := RecoverCompletionPage(ctx, f, nil, recoveryOptions())
 	if !errors.Is(err, context.Canceled) || len(f.calls) != 1 || r.Completed != 1 || r.Resume == nil || !r.More {
 		t.Fatal("cancelled batch continued", r, err)
@@ -228,9 +228,9 @@ func TestRecoveryChecksRowsBeyondProcessingCapAndBoundsCompletion(t *testing.T) 
 	f.page.Items = rows
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	f.onComplete = func() {
-		<-ctx.Done()
-		f.completeErr = ctx.Err()
+	f.onComplete = func(inner context.Context) {
+		<-inner.Done()
+		f.completeErr = inner.Err()
 	}
 	r, err := RecoverCompletionPage(ctx, f, nil, recoveryOptions())
 	if !errors.Is(err, context.DeadlineExceeded) || r.Completed != 0 || r.Resume != nil || !r.More || len(f.calls) != 1 {
@@ -241,7 +241,7 @@ func TestRecoveryChecksRowsBeyondProcessingCapAndBoundsCompletion(t *testing.T) 
 func TestRecoveryFailureAfterProgressResumesBeforeFailedRow(t *testing.T) {
 	rows := recoveryRows(3)
 	f := &recoveryFixture{page: PendingPage{Items: rows}}
-	f.onComplete = func() {
+	f.onComplete = func(_ context.Context) {
 		if len(f.calls) == 2 {
 			f.completeErr = ErrUnavailable
 		}
