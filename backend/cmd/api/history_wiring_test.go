@@ -62,10 +62,11 @@ func TestSearchHistoryAsTheCaller(t *testing.T) {
 	if w := ask("DELETE", "/api/search-history/h1", "session-a"); w.Code != 200 || w.Body.String() != "true" {
 		t.Fatalf("delete: %d %s", w.Code, w.Body)
 	}
+	// The second request reuses Supabase's answer about session-a, remembered
+	// for githubaccess.MemoryFor (R-042), so Supabase Auth is asked once.
 	want := []string{
 		"GET /auth/v1/user|Bearer session-a|public-key",
 		"GET /rest/v1/search_history?select=source&user_id=eq." + user + "|Bearer session-a|public-key",
-		"GET /auth/v1/user|Bearer session-a|public-key",
 		"DELETE /rest/v1/search_history?id=eq.h1|Bearer session-a|public-key",
 	}
 	if got := strings.Join(stand.seen, "\n"); got != strings.Join(want, "\n") {

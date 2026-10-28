@@ -61,6 +61,28 @@ with the first cause. Twenty workers each writing a line would bury the reason.
 `Promise.all` in JavaScript gives you the first rejection and drops the rest.
 In Go you choose what to keep.
 
+## Picking the most-starred repository
+
+Each developer's "popular repository" used to be the first answer to `/users/<login>/repos?sort=stars&per_page=1`. GitHub's endpoint for a user's repositories cannot sort by stars, so it quietly ignored that and listed them alphabetically (R-026). Since 2026-10-28 the handler reads one page of up to 100 and keeps the best one so far:
+
+```go
+best, _ := list[0].(map[string]any)
+for _, item := range list[1:] {
+	if repo, isObject := item.(map[string]any); isObject && stars(repo) > stars(best) {
+		best = repo
+	}
+}
+```
+
+In JavaScript you might write `list.reduce((best, repo) => stars(repo) > stars(best) ? repo : best, list[0])`. Go has no `reduce`; a `for range` loop with a variable for the best so far is the usual way. `list[1:]` is a slice of the same list without its first item, like `list.slice(1)` but without copying.
+
+Two details make it safe on whatever GitHub sends:
+
+- `item.(map[string]any)` with `isObject` skips anything that is not an object, instead of panicking.
+- `stars` reads `stargazers_count` as a `json.Number` (the decoder was told `UseNumber`, so numbers keep the exact digits GitHub sent) and answers 0 when the count is missing or is text such as `"999"`.
+
+Because only a strictly larger count replaces the best, a tie keeps the earlier repository. The contract moved to version 2 with three new cases: `most-starred-repository`, `equal-stars-keep-first` and `stars-not-a-number`.
+
 ## Exercise
 
 Implement `collect(count, work)` in exercise.go. Run two work calls at a time,

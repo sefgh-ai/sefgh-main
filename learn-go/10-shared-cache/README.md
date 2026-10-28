@@ -11,7 +11,8 @@ using a verified user's GitHub token bypass it and recheck GitHub on every
 request, so revoked access cannot reuse a private cached answer. See lesson 16.
 
 The public repository summary route asks Next.js to cache GitHub replies for an
-hour. The Go version keeps its own cache. A new process starts empty; this
+hour. The Go version keeps its own cache, for ten minutes since 2026-10-28
+(R-034: a repository made private stayed visible too long). A new process starts empty; this
 cache does not share Next.js's persistent storage or other Go processes.
 
 ## More than one request can run at once
@@ -44,10 +45,13 @@ Our production cache has three paths:
 | State | What happens |
 |---|---|
 | Missing | Fetch GitHub, then store a status-200 reply |
-| Younger than one hour | Return the stored reply |
-| At least one hour old | Return the old reply and start a background refresh |
+| Younger than `FreshFor` (ten minutes) | Return the stored reply |
+| At least `FreshFor` old | Return the old reply and start a background refresh |
 
 If refresh fails, keep the old reply. That is **stale-while-revalidate**.
+One answer is not a failure: a 404 means GitHub says the repository is gone or
+private, so `fill` deletes the stored copy. Before that rule, a copy outlived
+every refresh and a private repository could stay visible indefinitely.
 The cache combines concurrent misses for the same key using a channel:
 the first request fetches, and other requests wait for its completion.
 A **channel** lets goroutines communicate or signal an event. Here
@@ -59,7 +63,7 @@ closing `done`. Receiving that close makes the earlier writes visible to
 waiters; the result must not be mutated afterwards. Even 404s, 429s and
 network errors are shared with existing waiters. Only a 200 is saved in the
 cache for later requests. Sharing one in-progress request and storing a reply
-for an hour are different operations.
+for ten minutes are different operations.
 
 A waiting caller can cancel without blocking everyone else. If the fetching
 caller is cancelled, its surviving waiters retry under their own contexts.
@@ -93,7 +97,9 @@ map and a mutex. Implement `state(key, now)`:
 
 Lock before reading the map. Use `defer c.mu.Unlock()` after locking so
 every return releases it. `now.Sub(saved)` returns a `time.Duration`.
-Tests pass time explicitly; they never wait an hour.
+Tests pass time explicitly; they never wait an hour. (The exercise keeps the
+original hour; the production cache now uses `FreshFor`, and
+`TestCacheDropsARepositoryThatIsGone` pins it at ten minutes.)
 
 ```text
 go test ./10-shared-cache

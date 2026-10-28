@@ -1,5 +1,5 @@
 {
-  "contract_version": 2,
+  "contract_version": 3,
   "route": "GET, POST and DELETE /api/repo/videos",
   "recorded_from": "the Next.js handlers at 7c894a0, by scripts/contracts/record-repo-videos.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-video requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
@@ -7,7 +7,7 @@
     {
       "id": "post-youtube",
       "disposition": "defect",
-      "reason": "A signed-in user adds a YouTube video: its id gives the thumbnail, and the row is inserted as the user and returned. Names never show: the profile read asks for username, which does not exist (R-075).",
+      "reason": "A signed-in user adds a YouTube video: its id gives the thumbnail, and the row is inserted as the user and returned. Names never show: the profile read asks for username, which does not exist (R-075). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\"title\":\"Demo\",\"description\":\"Walkthrough\"}",
       "session": "session-a",
@@ -87,6 +87,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": "Walkthrough",
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -101,7 +155,7 @@
     {
       "id": "post-youtu-be",
       "disposition": "preserve",
-      "reason": "A short youtu.be link gives the same id.",
+      "reason": "A short youtu.be link gives the same id. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://youtu.be/dQw4w9WgXcQ?t=42\"}",
       "session": "session-a",
@@ -181,6 +235,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "https://youtu.be/dQw4w9WgXcQ?t=42",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://youtu.be/dQw4w9WgXcQ?t=42",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -195,7 +303,7 @@
     {
       "id": "post-embed",
       "disposition": "preserve",
-      "reason": "An embed link.",
+      "reason": "An embed link. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/embed/dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -275,6 +383,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -289,7 +451,7 @@
     {
       "id": "post-path-form",
       "disposition": "preserve",
-      "reason": "A link with two path parts before the id.",
+      "reason": "A link with two path parts before the id. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://youtube.com/shorts/abc/def/dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -369,6 +531,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://youtube.com/shorts/abc/def/dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -383,7 +599,7 @@
     {
       "id": "post-v-later",
       "disposition": "preserve",
-      "reason": "v= after other parameters.",
+      "reason": "v= after other parameters. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?feature=x&v=dQw4w9WgXcQ&t=1\"}",
       "session": "session-a",
@@ -463,6 +679,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?feature=x&v=dQw4w9WgXcQ&t=1",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -477,7 +747,7 @@
     {
       "id": "post-github",
       "disposition": "preserve",
-      "reason": "A github.com link is of type github, with no thumbnail.",
+      "reason": "A github.com link is of type github, with no thumbnail. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://github.com/octo/demo/raw/demo.mp4\"}",
       "session": "session-a",
@@ -514,6 +784,60 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "github",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://github.com/octo/demo/raw/demo.mp4",
+              "video_type": "github",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -674,7 +998,7 @@
     {
       "id": "post-youtube-without-id",
       "disposition": "preserve",
-      "reason": "A YouTube link with no 11-character id is of type youtube with no thumbnail.",
+      "reason": "A YouTube link with no 11-character id is of type youtube with no thumbnail. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?v=short\"}",
       "session": "session-a",
@@ -754,6 +1078,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=short",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -768,7 +1146,7 @@
     {
       "id": "post-id-with-emoji",
       "disposition": "preserve",
-      "reason": "JavaScript counts an emoji as two characters, so the 11-character id is 9 letters and the emoji, and the x is left out.",
+      "reason": "JavaScript counts an emoji as two characters, so the 11-character id is 9 letters and the emoji, and the x is left out. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://youtu.be/abcdefghi😀x\"}",
       "session": "session-a",
@@ -848,6 +1226,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://youtu.be/abcdefghi😀x",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/abcdefghi😀/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -862,7 +1294,7 @@
     {
       "id": "post-id-splits-emoji",
       "disposition": "preserve",
-      "reason": "The 11 characters can end in the middle of an emoji: the thumbnail holds half of it.",
+      "reason": "The 11 characters can end in the middle of an emoji: the thumbnail holds half of it. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://youtu.be/abcdefghij😀\"}",
       "session": "session-a",
@@ -942,6 +1374,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://youtu.be/abcdefghij😀",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/abcdefghij\ud83d/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -956,7 +1442,7 @@
     {
       "id": "post-id-no-break-space",
       "disposition": "preserve",
-      "reason": "A no-break space is white space to JavaScript's \\s, so there is no id.",
+      "reason": "A no-break space is white space to JavaScript's \\s, so there is no id. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://youtu.be/ bcdefghijk\"}",
       "session": "session-a",
@@ -993,6 +1479,60 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://youtu.be/ bcdefghijk",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -1153,7 +1693,7 @@
     {
       "id": "post-dot-line-separator",
       "disposition": "preserve",
-      "reason": "JavaScript's . does not match a line separator, so this link has no id.",
+      "reason": "JavaScript's . does not match a line separator, so this link has no id. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/a/b /dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -1190,6 +1730,60 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/a/b /dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -1703,7 +2297,7 @@
     {
       "id": "post-profile-present",
       "disposition": "preserve",
-      "reason": "Were the profile read to succeed, its username and avatar would be in the reply.",
+      "reason": "Were the profile read to succeed, its username and avatar would be in the reply. Version 3 (R-040, R-075): the stand-in profile holds full_name, the column that exists; the Next.js handler, which asks for username, is recorded in next_expect.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -1732,7 +2326,7 @@
         {
           "status": 200,
           "body": {
-            "username": "octo",
+            "full_name": "Octo Cat",
             "avatar_url": "a.png"
           }
         }
@@ -1753,7 +2347,61 @@
             "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "created_at": "2026-10-16T08:00:00+00:00",
             "is_featured": false,
-            "uploader_name": "octo",
+            "uploader_name": "Octo Cat",
+            "uploader_email": "a@example.test",
+            "uploader_avatar": "a.png"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
             "uploader_email": "a@example.test",
             "uploader_avatar": "a.png"
           }
@@ -1795,7 +2443,7 @@
     {
       "id": "post-user-without-email",
       "disposition": "preserve",
-      "reason": "A user Auth answers without an email: uploader_email is left out.",
+      "reason": "A user Auth answers without an email: uploader_email is left out. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -1872,6 +2520,59 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -1886,7 +2587,7 @@
     {
       "id": "post-falsy-title-github",
       "disposition": "preserve",
-      "reason": "Empty title and description are stored as null (as post-falsy-title, with an address version 2 accepts).",
+      "reason": "Empty title and description are stored as null (as post-falsy-title, with an address version 2 accepts). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://github.com/octo/demo/raw/demo.mp4\",\"title\":\"\",\"description\":0}",
       "session": "session-a",
@@ -1966,6 +2667,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "direct",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://github.com/octo/demo/raw/demo.mp4",
+              "video_type": "github",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -1980,7 +2735,7 @@
     {
       "id": "post-m-youtube",
       "disposition": "preserve",
-      "reason": "Version 2 (R-088): m.youtube.com is YouTube.",
+      "reason": "Version 2 (R-088): m.youtube.com is YouTube. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://m.youtube.com/watch?v=dQw4w9WgXcQ\"}",
       "session": "session-a",
@@ -2060,6 +2815,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": null,
+              "description": null,
+              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -2074,7 +2883,7 @@
     {
       "id": "post-www-github",
       "disposition": "preserve",
-      "reason": "Version 2 (R-088): www.github.com is GitHub.",
+      "reason": "Version 2 (R-088): www.github.com is GitHub. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.github.com/octo/demo/raw/demo.mp4\"}",
       "session": "session-a",
@@ -2154,6 +2963,60 @@
           },
           {
             "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "video": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "x",
+            "video_type": "github",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": null,
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false,
+            "uploader_name": null,
+            "uploader_email": "a@example.test",
+            "uploader_avatar": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "POST",
+            "path": "/rest/v1/repo_videos?select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.github.com/octo/demo/raw/demo.mp4",
+              "video_type": "github",
+              "title": null,
+              "description": null,
+              "thumbnail_url": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
+            }
+          },
+          {
+            "method": "GET",
             "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
@@ -2168,7 +3031,7 @@
     {
       "id": "post-host-decides-type",
       "disposition": "preserve",
-      "reason": "Version 2 (R-088): the host decides the type; youtube.com in the path does not make it a YouTube video.",
+      "reason": "Version 2 (R-088): the host decides the type; youtube.com in the path does not make it a YouTube video. Version 3 (R-040, R-075): Go reads full_name, with no admin lookup.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://github.com/octo/youtube.com/raw/demo.mp4\"}",
       "session": "session-a",
@@ -2248,7 +3111,7 @@
           },
           {
             "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -2934,7 +3797,7 @@
     {
       "id": "get-videos",
       "disposition": "defect",
-      "reason": "Signed out: featured first, then newest; a video without uploaded_by is answered as it is, and the others get their uploader. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "reason": "Signed out: featured first, then newest; a video without uploaded_by is answered as it is, and the others get their uploader. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo%2Fdemo",
       "session": null,
@@ -3009,6 +3872,66 @@
               "created_at": "2026-10-16T08:00:00+00:00",
               "is_featured": false,
               "uploader_name": null,
+              "uploader_avatar": null,
+              "uploader_email": null
+            },
+            {
+              "id": "v2",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://example.test/clip.mp4",
+              "video_type": "direct",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": null,
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
               "uploader_avatar": null
             },
             {
@@ -3065,7 +3988,7 @@
     {
       "id": "get-signed-in",
       "disposition": "defect",
-      "reason": "Signed in, the same, with the visitor's token for the Data API; the admin lookup still goes with the public key. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040).",
+      "reason": "Signed in, the same, with the visitor's token for the Data API; the admin lookup still goes with the public key. Names never show: the profile read asks for username, which does not exist (R-075), and the admin lookup that follows runs with the public key and is refused (R-040). Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": "session-a",
@@ -3131,6 +4054,53 @@
               "created_at": "2026-10-16T08:00:00+00:00",
               "is_featured": false,
               "uploader_name": null,
+              "uploader_avatar": null,
+              "uploader_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
               "uploader_avatar": null
             }
           ]
@@ -3174,7 +4144,7 @@
     {
       "id": "get-profile-without-username",
       "disposition": "preserve",
-      "reason": "A profile without a username still leads to the admin lookup (!profile?.username), and its avatar is used.",
+      "reason": "A profile without a username still leads to the admin lookup (!profile?.username), and its avatar is used. Version 3 (R-040, R-075): the stand-in profile holds full_name, the column that exists; the Next.js handler, which asks for username, is recorded in next_expect.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -3203,7 +4173,7 @@
           "match": "GET /rest/v1/profiles",
           "status": 200,
           "body": {
-            "username": null,
+            "full_name": null,
             "avatar_url": "a.png"
           }
         },
@@ -3218,6 +4188,53 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
+              "uploader_avatar": "a.png",
+              "uploader_email": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "videos": [
@@ -3277,7 +4294,7 @@
     {
       "id": "get-profile-with-username",
       "disposition": "preserve",
-      "reason": "A profile with a username: no admin lookup, and uploader_email is null.",
+      "reason": "A profile with a username: no admin lookup, and uploader_email is null. Version 3 (R-040, R-075): the stand-in profile holds full_name, the column that exists; the Next.js handler, which asks for username, is recorded in next_expect.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -3306,7 +4323,7 @@
           "match": "GET /rest/v1/profiles",
           "status": 200,
           "body": {
-            "username": "octo",
+            "full_name": "Octo Cat",
             "avatar_url": "a.png"
           }
         },
@@ -3336,8 +4353,54 @@
               "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
               "created_at": "2026-10-16T08:00:00+00:00",
               "is_featured": false,
-              "uploader_name": "octo",
+              "uploader_name": "Octo Cat",
               "uploader_email": null,
+              "uploader_avatar": "a.png"
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
               "uploader_avatar": "a.png"
             }
           ]
@@ -3364,6 +4427,16 @@
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
             "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
           }
         ]
       }
@@ -3371,7 +4444,7 @@
     {
       "id": "get-admin-answers",
       "disposition": "preserve",
-      "reason": "Were the admin lookup to succeed, the uploader's email would be sent to everyone (R-040). With the public key it never does.",
+      "reason": "Were the admin lookup to succeed, the uploader's email would be sent to everyone (R-040). With the public key it never does. Version 3 (R-040, R-075): the profile read asks for full_name and avatar_url, there is no admin lookup, and an uploader's uploader_email is null; next_expect keeps the Next.js handler's answer.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -3432,6 +4505,53 @@
               "created_at": "2026-10-16T08:00:00+00:00",
               "is_featured": false,
               "uploader_name": null,
+              "uploader_email": null,
+              "uploader_avatar": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
               "uploader_email": "a@example.test",
               "uploader_avatar": null
             }
@@ -3476,7 +4596,7 @@
     {
       "id": "get-admin-null",
       "disposition": "preserve",
-      "reason": "An admin reply that is JSON null makes auth-js throw (null.user): 500.",
+      "reason": "Version 3 (R-040): there is no admin lookup, so nothing throws; the video is answered with no uploader details. Version 1 (next_expect): An admin reply that is JSON null makes auth-js throw (null.user): 500.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -3518,6 +4638,53 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
+              "uploader_email": null,
+              "uploader_avatar": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Internal server error"
@@ -3561,7 +4728,7 @@
     {
       "id": "get-uploader-not-uuid",
       "disposition": "preserve",
-      "reason": "An uploader id that is not a lower-case UUID makes the admin lookup throw: 500.",
+      "reason": "Version 3 (R-040): there is no admin lookup, so nothing throws; the video is answered with no uploader details. Version 1 (next_expect): An uploader id that is not a lower-case UUID makes the admin lookup throw: 500.",
       "method": "GET",
       "query": "repo=octo/demo",
       "session": null,
@@ -3607,6 +4774,53 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": {
+          "videos": [
+            {
+              "id": "v1",
+              "repo_full_name": "octo/demo",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "video_type": "youtube",
+              "title": "Demo",
+              "description": null,
+              "thumbnail_url": null,
+              "duration": null,
+              "uploaded_by": "NOT-A-UUID",
+              "created_at": "2026-10-16T08:00:00+00:00",
+              "is_featured": false,
+              "uploader_name": null,
+              "uploader_email": null,
+              "uploader_avatar": null
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.NOT-A-UUID",
+            "prefer": null,
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": null,
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Internal server error"

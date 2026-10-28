@@ -52,10 +52,10 @@ func videosServer(t *testing.T) (http.Handler, *videosUpstream) {
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil))), stand
 }
 
-// Signed in, the video list and the uploader's profile go with the caller's
-// token, and the admin lookup with the public key only, never the caller's
-// token or a server key (bug register R-040). A video without an uploader is
-// answered as it is. No GitHub credential goes anywhere.
+// Signed in, the video list and the uploader's public profile go with the
+// caller's token, and nothing asks Supabase Auth about another user: no admin
+// lookup since contract version 3 (bug register R-040). A video without an
+// uploader is answered as it is. No GitHub credential goes anywhere.
 func TestVideosListAsTheCaller(t *testing.T) {
 	handler, stand := videosServer(t)
 	req := httptest.NewRequest("GET", "/api/repo/videos?repo=octo%2Fdemo", nil)
@@ -63,15 +63,14 @@ func TestVideosListAsTheCaller(t *testing.T) {
 	req.Header.Set("X-GitHub-Token", "caller-github-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
-	want := `{"videos":[{"id":"v1","uploaded_by":"0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b","uploader_name":null,"uploader_avatar":null},{"id":"v2","uploaded_by":null}]}`
+	want := `{"videos":[{"id":"v1","uploaded_by":"0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b","uploader_name":null,"uploader_email":null,"uploader_avatar":null},{"id":"v2","uploaded_by":null}]}`
 	if rec.Code != 200 || rec.Body.String() != want {
 		t.Fatalf("%d %s", rec.Code, rec.Body)
 	}
 	seen := append([]string(nil), stand.seen...)
 	sort.Strings(seen)
 	wantSeen := []string{
-		"GET /auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b|Bearer public-key|public-key|",
-		"GET /rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b|Bearer session-a|public-key|",
+		"GET /rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b|Bearer session-a|public-key|",
 		"GET /rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc|Bearer session-a|public-key|",
 	}
 	if strings.Join(seen, "\n") != strings.Join(wantSeen, "\n") {

@@ -142,7 +142,10 @@ func (h *Handler) developer(ctx context.Context, base string, index int, item an
 	if login, present := user["login"]; present {
 		name = jsString(login)
 	}
-	status, repos, err := h.fetch(ctx, base+"/users/"+name+"/repos?sort=stars&per_page=1")
+	// GitHub's user repositories endpoint cannot sort by stars (sort=stars
+	// was ignored), so one page of up to 100 is read and the most-starred
+	// chosen (R-026, contract version 2).
+	status, repos, err := h.fetch(ctx, base+"/users/"+name+"/repos?per_page=100")
 	if err != nil {
 		return nil, err
 	}
@@ -156,9 +159,16 @@ func (h *Handler) developer(ctx context.Context, base string, index int, item an
 				if list[0] == nil {
 					return nil, errors.New("first repository is null")
 				}
-				first, _ := list[0].(map[string]any)
-				popular = map[string]any{"description": description(first["description"])}
-				copyField(popular, "name", first, "name")
+				// The first stays unless a later one has more stars, so a tie
+				// keeps the earlier repository.
+				best, _ := list[0].(map[string]any)
+				for _, item := range list[1:] {
+					if repo, isObject := item.(map[string]any); isObject && stars(repo) > stars(best) {
+						best = repo
+					}
+				}
+				popular = map[string]any{"description": description(best["description"])}
+				copyField(popular, "name", best, "name")
 			}
 		case string:
 			// A string has a length too, and its first character has no fields.
@@ -172,6 +182,20 @@ func (h *Handler) developer(ctx context.Context, base string, index int, item an
 		copyField(result, target, user, source)
 	}
 	return result, nil
+}
+
+// stars is a repository's stargazers_count, or 0 when it is missing or not
+// a number.
+func stars(repo map[string]any) float64 {
+	count, isNumber := repo["stargazers_count"].(json.Number)
+	if !isNumber {
+		return 0
+	}
+	value, err := count.Float64()
+	if err != nil {
+		return 0
+	}
+	return value
 }
 
 // jsString converts a decoded JSON value to text as a JavaScript template

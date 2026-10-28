@@ -68,6 +68,14 @@ The returned function is a **closure**: it remembers `h` and `next`. `h.count` i
 
 The browser called `increment_platform_stat` without `await`, and supabase-js only sends a request when it is awaited, so the search counter never moved (R-102). The Go endpoint does not call it either, for now. The port first reproduces what happens today, so the two can be compared. The fix lands once, in Go, after the area is switched on.
 
+On 2026-10-28, with the area on Go in production, it landed. After a successful insert the endpoint counts the search, as the user:
+
+```go
+_, _, _ = c.db.RPC(r.Context(), c.session, "increment_platform_stat", []byte(`{"key":"total_searches"}`))
+```
+
+`RPC` answers three values: status, body and error. The counter is not critical, so all three are thrown away. Go makes you say so: each `_` is the blank identifier, a place to put a value you mean to ignore. In JavaScript you would just not use the result; in Go an unused variable will not compile (lesson 29), so `_` is how you write "ignored on purpose". The contract moved to version 2: the four successful saves gained a `go_database` with the extra call. The browser's own direct path, used only when Go does not answer, still never sends it, until it is retired.
+
 ## Your turn
 
 Safety update (BUG-011): the `signedIn` wrapper now calls

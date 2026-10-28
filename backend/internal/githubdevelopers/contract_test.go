@@ -49,10 +49,14 @@ func TestContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 	var contract struct {
-		Cases []fixture `json:"cases"`
+		Version int       `json:"contract_version"`
+		Cases   []fixture `json:"cases"`
 	}
 	if err = json.Unmarshal(bytes, &contract); err != nil {
 		t.Fatal(err)
+	}
+	if contract.Version != 2 || len(contract.Cases) == 0 {
+		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {
 		for _, wire := range []bool{false, true} {

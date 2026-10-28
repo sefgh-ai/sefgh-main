@@ -104,6 +104,9 @@ func newHandler(logger *slog.Logger) http.Handler {
 		SupabaseURL: os.Getenv("NEXT_PUBLIC_SUPABASE_URL"),
 		SupabaseKey: os.Getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 		GitHubURL:   envOr("GITHUB_API_URL", githubsearch.DefaultBaseURL),
+		// R-042: a session Supabase confirmed is not checked again for
+		// githubaccess.MemoryFor.
+		Memory: githubaccess.NewMemory(),
 	}
 	// Signed-out reads may use the server's public read token (QUOTA-001),
 	// once GitHub has confirmed it can read only public data. A verified

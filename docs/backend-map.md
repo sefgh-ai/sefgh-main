@@ -175,7 +175,7 @@ Paths below are relative to `/api`; corresponding source is `src/app/api/<path>/
 | Path | Methods | Current responsibility / boundary |
 |---|---|---|
 | `github/search` | GET | Public GitHub search; query/filter/page mapping; `{total_count, items, rate_limit}` |
-| `github/repo` | GET | Public `owner` + `name` lookup; selected repository fields; one-hour Next fetch cache |
+| `github/repo` | GET | Public `owner` + `name` lookup; selected repository fields; one-hour Next fetch cache (Go: ten minutes, dropped on 404, R-034) |
 | `github/repo/[owner]/[repo]` | GET | Repository, languages, README; `{repository, languages, readme, rate_limit}` |
 | `github/contents/[owner]/[repo]` | GET | Optional relative `path`; `{contents, rate_limit}` |
 | `github/contributions` | GET | Validated username -> GitHub GraphQL -> contribution grid and stats |
@@ -423,7 +423,9 @@ stored by `src/lib/consent.js`. The Sessions tab calls Supabase's
 `GET /rest/v1/activity_logs` to the Supabase Data API, with the caller's own
 access token and the project's public key, so the table's row-level security
 applies as it does to the Next.js handler's cookie-session client. No service
-key exists in either backend. `githubaccess.Verifier.User` verifies the
+key exists in either backend. Since BUG-031 (R-042) the server's verifier remembers
+Supabase Auth's successful answer about a session for 60 s (`githubaccess.Memory`);
+GitHub tokens are still checked every time. `githubaccess.Verifier.User` verifies the
 bearer and hands it back for that call. The browser's usage card and chat
 both send the bearer through `src/lib/supabase/session-fetch.js`.
 
@@ -518,7 +520,8 @@ the page shows is still read in the browser (`commentHelpers.js`).
 `/api/repo/videos` (GET, POST, DELETE) has a Go port, `backend/internal/videos`,
 off by default (switch `repo-videos`). Its GET reads each video's uploader
 concurrently (four at once, one budget). The admin lookup that comments and
-videos share is `supabaserest.AdminUserEmail`. The video tab
+videos shared, `supabaserest.AdminUserEmail`, was removed in BUG-028b: both
+read the author's `full_name, avatar_url` and make no admin call (R-040). The video tab
 (`RepoVideoTab.jsx`) sends the bearer (`fetchWithSession`) for all three
 calls.
 

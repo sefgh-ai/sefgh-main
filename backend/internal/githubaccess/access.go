@@ -39,6 +39,9 @@ type Verifier struct {
 	Client                              *http.Client
 	// Timeout replaces DefaultTimeout when it is not zero. Tests shorten it.
 	Timeout time.Duration
+	// Memory, when set, remembers Supabase's successful answers about a
+	// session for MemoryFor (R-042).
+	Memory *Memory
 }
 
 // Resolve returns only a verified per-user token, or an empty public identity.
@@ -87,7 +90,7 @@ func (v Verifier) Resolve(r *http.Request) (string, int) {
 	if base == "" {
 		base = "https://api.github.com"
 	}
-	reply, status = v.get(ctx, strings.TrimRight(base, "/")+"/user", map[string]string{"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "User-Agent": "SEFGH"})
+	reply, status = v.askGitHub(ctx, strings.TrimRight(base, "/")+"/user", token)
 	if status != 200 {
 		return "", status
 	}
@@ -126,8 +129,24 @@ func (v Verifier) deadline(r *http.Request) (context.Context, context.CancelFunc
 
 // askSupabase asks the project's Supabase Auth who a session belongs to. The
 // public key goes with it; no other service ever receives that key.
+// A successful answer is remembered in v.Memory, if set, for MemoryFor.
 func (v Verifier) askSupabase(ctx context.Context, session string) (any, int) {
-	return v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session, "apikey": v.SupabaseKey})
+	key := memoryKey("supabase", session)
+	if reply, found := v.Memory.recall(key); found {
+		return reply, 200
+	}
+	reply, status := v.get(ctx, strings.TrimRight(v.SupabaseURL, "/")+"/auth/v1/user", map[string]string{"Authorization": "Bearer " + session, "apikey": v.SupabaseKey})
+	if status == 200 {
+		v.Memory.keep(key, reply)
+	}
+	return reply, status
+}
+
+// askGitHub asks GitHub whose token this is. Unlike a Supabase session, the
+// answer is not remembered: contracts/github-access/isolation.json pins that
+// a revoked GitHub token is refused at once, before any private request.
+func (v Verifier) askGitHub(ctx context.Context, target, token string) (any, int) {
+	return v.get(ctx, target, map[string]string{"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "User-Agent": "SEFGH"})
 }
 
 // truthy reports whether JavaScript would treat a decoded JSON value as true.

@@ -162,8 +162,8 @@ GO-005b adds `github-contributions`, which now needs a verified user credential:
 every valid request answers 500. It works out its date range in the time zone
 of the machine it runs on, as the Next.js handler does.
 They remain off by default and await peer review and ADR cutover gates. The
-summary cache is local to one Go process: one-hour freshness, stale background
-refresh, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
+summary cache is local to one Go process: ten-minute freshness (`FreshFor`, R-034),
+stale background refresh, a copy dropped when GitHub answers 404, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
 and sharing need resolution before public rollout. The repository routes check
 owner, name and path before any request to GitHub (`internal/githubrepos/identifiers.go`,
 contract version 4). See the repository contract README for exact boundaries.
@@ -399,9 +399,9 @@ Opt-in names: `conversation-share` (`POST` and `DELETE /api/conversations/{id}/s
 
 ## Videos (VIDEOS-001)
 
-Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 57 cases (version 2: only `https` addresses on YouTube's or GitHub's exact hosts, R-088) of `contracts/repo-videos`, recorded with the shared runner.
+Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 57 cases (version 2: only `https` addresses on YouTube's or GitHub's exact hosts, R-088; version 3: uploaders from `profiles.full_name, avatar_url`, no admin lookup, R-040 and R-075) of `contracts/repo-videos`, recorded with the shared runner.
 
-- **Uploader details copied as they fail:** as for comments, the profile read asks for `username` (R-075) and the admin lookup, now `supabaserest.AdminUserEmail` and shared with comments, goes with the public key and is refused (R-040). A video without `uploaded_by` is answered as it is.
+- **Uploader details from the public profile (version 3):** the profile read asks for `full_name,avatar_url`, and there is no admin lookup, so `uploader_email` is null for listed videos (R-040, R-075; version 1 copied the failing `username` read and the refused admin call). `supabaserest.AdminUser` and `AdminUserEmail` were removed with it (BUG-028b). A video without `uploaded_by` is answered as it is.
 - **The YouTube pattern matches what JavaScript matches:** `jscompat.JSSpace` and `jscompat.JSDot` stand in for Go's `\s` and `.`, which match different characters, and `jscompat.FindSubmatchUTF16` runs the pattern over UTF-16 units, so the id's `{11}` counts an emoji as two and can end in half of one. The thumbnail is written from those units (`jscompat.UTF16`), so the half survives as JavaScript writes it.
 - **`includes` on text and on a list:** a `videoUrl` that is a list is searched for an equal item, as `Array.prototype.includes` does; one that finds YouTube then throws (a list has no `match()`), and a number or an object throws at once: 500.
 - **Concurrency and budgets:** each video's uploader is read for at most four videos at once within `videos.DetailsBudget` (16 seconds); the first rejection (a null row, an uploader id that is not a lower-case UUID, an admin reply of `null`) answers 500 and cancels the rest. A POST's two calls share `videos.WriteBudget` (20 seconds).

@@ -42,7 +42,7 @@ func TestRecordedDifferencesFromNextJS(t *testing.T) {
 	t.Run("a numeric login keeps the digits GitHub sent", func(t *testing.T) {
 		// JavaScript would ask for /users/1/repos.
 		rec, asked := serve(t, &Handler{}, `{"items":[{"login":1.0}]}`, `[]`)
-		if rec.Code != 200 || len(asked) != 1 || asked[0] != "/users/1.0/repos?sort=stars&per_page=1" {
+		if rec.Code != 200 || len(asked) != 1 || asked[0] != "/users/1.0/repos?per_page=100" {
 			t.Errorf("status %d, asked %q", rec.Code, asked)
 		}
 	})

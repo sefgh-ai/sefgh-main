@@ -1,5 +1,7 @@
 # Trending developers contract (GO-007a)
 
+**Version 2** (BUG-030, 2026-10-28): 60 cases. Each developer's repositories are read as one page of up to 100 (`/users/<login>/repos?per_page=100`; GitHub ignored `sort=stars`) and the most-starred is the popular repository; a tie or missing counts keep the earlier one, and a count that is not a number counts as none (R-026, the owner's option A). Every repository request changed address; the replies are unchanged. New cases `most-starred-repository`, `equal-stars-keep-first`, `stars-not-a-number`; `first-repository-only` is no longer a defect. Go only: the Next.js handler keeps `sort=stars&per_page=1` until retired; its test converts the requests, and the three new cases carry `next_expect`, recorded from it.
+
 Version 1 characterizes the unchanged `GET /api/github/trending-developers`
 handler at `086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3`. There are 57 cases,
 23 marked `defect`, plus two integrity/ordering checks. GO-007a recorded 48;
@@ -64,7 +66,7 @@ The fixtures do not make real GitHub or Supabase requests.
 5. Missing/unvalidated upstream login values are interpolated into repository
    URLs, permitting path/query changes. No credential is sent, but the wrong
    upstream resource can be requested.
-6. The popular-repository label trusts the first response to `sort=stars`;
+6. (Fixed in Go, version 2, R-026.) The popular-repository label trusts the first response to `sort=stars`;
    whether this endpoint actually provides the intended sort is unverified.
 
 The implementation also uses account creation date and follower count as an

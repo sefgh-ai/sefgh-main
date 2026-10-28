@@ -296,8 +296,10 @@ func TestChatAllowanceIsPerUserAndSeparate(t *testing.T) {
 	} else if seconds, err := strconv.Atoi(rec.Header().Get("Retry-After")); err != nil || seconds < 1 || seconds > 300 {
 		t.Errorf("invalid remaining allowance window: %q", rec.Header().Get("Retry-After"))
 	}
-	if got := upstream.take(); len(got) != 1 {
-		t.Errorf("past the allowance, after asking Supabase: %q", got)
+	// Past the allowance nothing goes upstream: the model is not asked, and
+	// Supabase's answer about session-a is remembered (R-042).
+	if got := upstream.take(); len(got) != 0 {
+		t.Errorf("past the allowance, upstream was asked: %q", got)
 	}
 	// Another user from the same address still has a whole allowance.
 	if rec := postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-b", "X-Forwarded-For": "203.0.113.9"}); rec.Code != 200 {

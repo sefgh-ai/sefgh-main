@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "area": "search-history",
   "module": "src/lib/supabase/search-history.js",
   "recorded_from": "the browser module by scripts/contracts/record-search-history.mjs",
@@ -7,8 +7,8 @@
   "cases": [
     {
       "id": "save-search",
-      "disposition": "defect",
-      "reason": "A signed-in search is saved as the user, trimmed, with its filters and result count, and the stored row is returned. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "disposition": "preserve",
+      "reason": "A signed-in search is saved as the user, trimmed, with its filters and result count, and the stored row is returned. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102). Version 2 (R-102): Go then asks increment_platform_stat({ key: \"total_searches\" }) as the user, so the search is counted (go_database); the module's direct path, used only when Go does not answer, still never sends it until it is retired.",
       "call": "saveSearchHistory",
       "args": [
         "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
@@ -40,6 +40,10 @@
             "results_count": 42,
             "created_at": "2026-10-19T09:29:00+00:00"
           }
+        },
+        {
+          "status": 204,
+          "body": null
         }
       ],
       "expect": {
@@ -95,12 +99,46 @@
             "resultsCount": 42
           }
         }
-      }
+      },
+      "go_database": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/search_history?select=*",
+          "prefer": "return=representation",
+          "accept": "application/vnd.pgrst.object+json",
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust async",
+            "source": "search",
+            "filters": {
+              "language": "Rust",
+              "sort": "stars",
+              "stars": ">100"
+            },
+            "results_count": 42
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/rest/v1/rpc/increment_platform_stat",
+          "prefer": null,
+          "accept": null,
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "key": "total_searches"
+          }
+        }
+      ]
     },
     {
       "id": "save-chat",
-      "disposition": "defect",
-      "reason": "A chat message is saved with source chat. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "disposition": "preserve",
+      "reason": "A chat message is saved with source chat. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102). Version 2 (R-102): Go then asks increment_platform_stat({ key: \"total_searches\" }) as the user, so the search is counted (go_database); the module's direct path, used only when Go does not answer, still never sends it until it is retired.",
       "call": "saveSearchHistory",
       "args": [
         "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
@@ -130,6 +168,10 @@
             "results_count": 1,
             "created_at": "2026-10-19T09:28:00+00:00"
           }
+        },
+        {
+          "status": 204,
+          "body": null
         }
       ],
       "expect": {
@@ -182,12 +224,45 @@
             "resultsCount": 1
           }
         }
-      }
+      },
+      "go_database": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/search_history?select=*",
+          "prefer": "return=representation",
+          "accept": "application/vnd.pgrst.object+json",
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "how do lifetimes work?",
+            "source": "chat",
+            "filters": {
+              "model": "gpt-4o",
+              "conversationId": "c1"
+            },
+            "results_count": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/rest/v1/rpc/increment_platform_stat",
+          "prefer": null,
+          "accept": null,
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "key": "total_searches"
+          }
+        }
+      ]
     },
     {
       "id": "save-defaults",
-      "disposition": "defect",
-      "reason": "Without options the filters are {} and the count 0. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "disposition": "preserve",
+      "reason": "Without options the filters are {} and the count 0. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102). Version 2 (R-102): Go then asks increment_platform_stat({ key: \"total_searches\" }) as the user, so the search is counted (go_database); the module's direct path, used only when Go does not answer, still never sends it until it is retired.",
       "call": "saveSearchHistory",
       "args": [
         "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
@@ -207,6 +282,10 @@
             "results_count": 0,
             "created_at": "2026-10-19T09:27:00+00:00"
           }
+        },
+        {
+          "status": 204,
+          "body": null
         }
       ],
       "expect": {
@@ -250,12 +329,42 @@
             "resultsCount": 0
           }
         }
-      }
+      },
+      "go_database": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/search_history?select=*",
+          "prefer": "return=representation",
+          "accept": "application/vnd.pgrst.object+json",
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "go generics",
+            "source": "search",
+            "filters": {},
+            "results_count": 0
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/rest/v1/rpc/increment_platform_stat",
+          "prefer": null,
+          "accept": null,
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "key": "total_searches"
+          }
+        }
+      ]
     },
     {
       "id": "save-without-source",
-      "disposition": "defect",
-      "reason": "Without a source the field is left out of the row, as JSON leaves out undefined. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102).",
+      "disposition": "preserve",
+      "reason": "Without a source the field is left out of the row, as JSON leaves out undefined. The platform's search counter is never asked to increase: the function call is not awaited, so supabase-js never sends it (R-102). Version 2 (R-102): Go then asks increment_platform_stat({ key: \"total_searches\" }) as the user, so the search is counted (go_database); the module's direct path, used only when Go does not answer, still never sends it until it is retired.",
       "call": "saveSearchHistory",
       "args": [
         "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
@@ -274,6 +383,10 @@
             "results_count": 0,
             "created_at": "2026-10-19T09:26:00+00:00"
           }
+        },
+        {
+          "status": 204,
+          "body": null
         }
       ],
       "expect": {
@@ -315,7 +428,36 @@
             "resultsCount": 0
           }
         }
-      }
+      },
+      "go_database": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/search_history?select=*",
+          "prefer": "return=representation",
+          "accept": "application/vnd.pgrst.object+json",
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "query": "rust",
+            "filters": {},
+            "results_count": 0
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/rest/v1/rpc/increment_platform_stat",
+          "prefer": null,
+          "accept": null,
+          "content_type": "application/json",
+          "authorization": "Bearer session-a",
+          "apikey": "public-fixture-key",
+          "body": {
+            "key": "total_searches"
+          }
+        }
+      ]
     },
     {
       "id": "save-no-user",

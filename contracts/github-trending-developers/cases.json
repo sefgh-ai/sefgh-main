@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET /api/github/trending-developers",
   "recorded_from": "086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3",
   "cases": [
@@ -503,8 +503,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -569,8 +569,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -640,8 +640,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -711,8 +711,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -781,8 +781,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -793,8 +793,8 @@
     },
     {
       "id": "first-repository-only",
-      "disposition": "defect",
-      "reason": "Relies on sort=stars on the users repositories endpoint; actual popularity is unverified. Selects only first result.",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-026): one page of repositories is read (sort=stars was ignored by GitHub) and the most-starred chosen; with no star counts the first is kept. Version 1 recorded this as a defect: Relies on sort=stars on the users repositories endpoint; actual popularity is unverified. Selects only first result.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -838,6 +838,359 @@
             "popularRepo": {
               "name": "first",
               "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "most-starred-repository",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-026): the most-starred repository of the page is the popular one, wherever it is in the list.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "alpha",
+              "description": "Small",
+              "stargazers_count": 3
+            },
+            {
+              "name": "zeta",
+              "description": "Popular",
+              "stargazers_count": 900
+            },
+            {
+              "name": "mid",
+              "description": "Middle",
+              "stargazers_count": 40
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "zeta",
+              "description": "Popular"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "alpha",
+              "description": "Small"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "equal-stars-keep-first",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-026): with equal stars the earlier repository is kept.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "one",
+              "description": "First",
+              "stargazers_count": 7
+            },
+            {
+              "name": "two",
+              "description": "Second",
+              "stargazers_count": 7
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "one",
+              "description": "First"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "one",
+              "description": "First"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "stars-not-a-number",
+      "disposition": "preserve",
+      "reason": "Version 2 (R-026): a star count that is not a number counts as none.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "counted",
+              "description": "Counted",
+              "stargazers_count": 5
+            },
+            {
+              "name": "text",
+              "description": "Text count",
+              "stargazers_count": "999"
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "counted",
+              "description": "Counted"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "counted",
+              "description": "Counted"
             },
             "following": false,
             "url": "https://github.com/alice"
@@ -919,8 +1272,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -990,8 +1343,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1060,8 +1413,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1681,160 +2034,160 @@
             }
           },
           {
-            "url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user0/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user0/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user1/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user1/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user2/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user2/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user3/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user3/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user4/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user4/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user5/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user5/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user6/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user6/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user7/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user7/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user8/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user8/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user9/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user9/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user10/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user10/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user11/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user11/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user12/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user12/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user13/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user13/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user14/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user14/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user15/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user15/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user16/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user16/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user17/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user17/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user18/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user18/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/user19/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user19/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1962,24 +2315,24 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/carol/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/carol/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2049,8 +2402,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2120,8 +2473,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2191,8 +2544,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2262,8 +2615,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2333,8 +2686,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2402,16 +2755,16 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
             }
           },
           {
-            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2464,8 +2817,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2518,8 +2871,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2586,8 +2939,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2642,8 +2995,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3020,8 +3373,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3086,8 +3439,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice/../bob/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice/../bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3152,8 +3505,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3245,8 +3598,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/a/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3306,8 +3659,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3367,8 +3720,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3434,8 +3787,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/true/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/true/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/true/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/true/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3501,8 +3854,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/[object Object]/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/[object%20Object]/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/[object Object]/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/[object%20Object]/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3577,8 +3930,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/a,b/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/a,b/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/a,b/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a,b/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3638,8 +3991,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/a/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3700,8 +4053,8 @@
             }
           },
           {
-            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
-            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "url": "https://api.github.com/users/a/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"

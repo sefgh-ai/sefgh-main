@@ -21,9 +21,10 @@
 // nothing saved, nothing deleted), without asking the database. A client
 // cannot name another user.
 //
-// Copied as it is: the platform's search counter is never increased
-// (bug register R-102), because the browser never sent that request. It is
-// fixed here, once, after the area is switched on.
+// Fixed here, once, after the area was switched on: a saved search increases
+// the platform's search counter (bug register R-102, contract version 2).
+// The browser module never sent that request; its direct path, used only when
+// Go does not answer, still does not, until it is retired.
 package searchhistory
 
 import (
@@ -129,6 +130,11 @@ func (h *Handler) save(w http.ResponseWriter, r *http.Request, c caller) {
 		write(w, 200, "null")
 		return
 	}
+	// R-102 (contract version 2): count the search in platform_stats, as the
+	// browser module meant to; its call was never awaited, so never sent.
+	// increment_platform_stat runs with its owner's rights and is granted to
+	// signed-in users. The counter is not critical: its answer is ignored.
+	_, _, _ = c.db.RPC(r.Context(), c.session, "increment_platform_stat", []byte(`{"key":"total_searches"}`))
 	write(w, 200, value(supabaserest.DataJSON(status, raw), "null"))
 }
 

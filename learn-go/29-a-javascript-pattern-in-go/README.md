@@ -98,6 +98,16 @@ Three Go ideas are in there:
 
 The host alone gives the type now, so `https://github.com/octo/youtube.com/...` is a GitHub video. The contract moved to version 2: six recorded cases are refused with 400, and ten new ones pin the rule (`post-http`, `post-lookalike-host`, `post-user-name`, `post-port`, `post-host-case` and more). The Next.js handler still accepts any text until it is retired, so where it differs each case keeps its recorded answer as `next_expect`.
 
+## Go will not compile what you no longer use
+
+Version 3 (R-040, R-075) dropped the admin lookup: an uploader's name now comes from the public profile's `full_name`, and nothing asks Supabase Auth about another user. Deleting the lookup left a line behind, `db := h.db()`, that nothing used any more, and Go refused to build:
+
+```text
+internal/videos/handler.go:197:2: declared and not used: db
+```
+
+Deleting the helpers it called, `AdminUser` and `AdminUserEmail` in `internal/supabaserest`, left the `regexp` import unused too, which is also an error. JavaScript would run both and a linter might warn; Go makes you clean up, so dead code cannot linger after a fix.
+
 ## How the port was checked
 
 The videos contract (`contracts/repo-videos`) was recorded from the real Next.js handler, with addresses for each trap: a no-break space, a vertical tab, a line separator, an emoji inside the id and one cut in half. Then each fix was undone on purpose, one at a time. Go's own `\s`, Go's own `.`, matching over runes, and writing the id through a Go string: every one made a contract case fail.

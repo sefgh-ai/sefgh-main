@@ -1,5 +1,5 @@
-// GET, POST and DELETE /api/repo/videos, contract version 2
-// (VIDEOS-001; version 2, R-088). Version 2 accepts only an https address
+// GET, POST and DELETE /api/repo/videos, contract version 3
+// (VIDEOS-001; version 2, R-088; version 3, R-040 and R-075). Version 2 accepts only an https address
 // whose host is exactly YouTube's or GitHub's. Go answers `expect`. This
 // Next.js handler keeps accepting any text until it is retired (the owner's
 // rule: fix a backend bug once, in Go), so where the two differ it answers
@@ -16,7 +16,7 @@ const handlers = await import('../../src/app/api/repo/videos/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-videos/cases.json', import.meta.url), 'utf8'));
 
 test('videos fixture integrity', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -29,6 +29,15 @@ test('videos fixture integrity', () => {
       const address = new URL(request.body.video_url);
       assert.equal(address.protocol, 'https:', c.id);
       assert.equal(request.body.video_type, hosts[address.host], c.id);
+    }
+    // R-040, R-075: Go reads the uploader's public columns and never makes
+    // the admin lookup, so no uploader's email is sent.
+    for (const request of c.expect.database) {
+      assert.ok(!request.path.startsWith('/auth/v1/admin/'), c.id);
+      if (request.path.startsWith('/rest/v1/profiles')) assert.ok(request.path.includes('select=full_name%2Cavatar_url&'), c.id);
+    }
+    for (const item of c.method === 'GET' && Array.isArray(c.expect.body?.videos) ? c.expect.body.videos : []) {
+      if (item && 'uploader_email' in item) assert.equal(item.uploader_email, null, c.id);
     }
     // Nothing is asked before sign-in and the input checks.
     if ([400, 401].includes(c.expect.status)) assert.deepEqual(c.expect.database, [], c.id);

@@ -165,3 +165,29 @@ that to every letter in the pattern, using Unicode's rules, so `[A-Za-z]`
 also matched the long s (U+017F) and the Kelvin sign (U+212A). JavaScript's
 `/i` does not. The pattern now spells the word out, `[Bb][Ee][Aa][Rr][Ee][Rr]`,
 and leaves the token's letters as plain ASCII.
+
+## Remembering a session for a minute (R-042)
+
+Every signed-in request used to ask Supabase Auth "whose session is this?", even when the same person sent ten requests in a second. Since 2026-10-28 a successful answer is kept for `MemoryFor`, 60 seconds, in `backend/internal/githubaccess/memory.go`:
+
+```go
+func (v Verifier) askSupabase(ctx context.Context, session string) (any, int) {
+	key := memoryKey("supabase", session)
+	if reply, found := v.Memory.recall(key); found {
+		return reply, 200
+	}
+	reply, status := v.get(ctx, ..., session)
+	if status == 200 {
+		v.Memory.keep(key, reply)
+	}
+	return reply, status
+}
+```
+
+Three Go ideas are in there:
+
+- **An array can be a map key.** `memoryKey` returns `sha256.Sum256(...)`, a `[32]byte`. Arrays of comparable things are comparable in Go, so `map[[32]byte]memoryEntry` works. In JavaScript two arrays are never `===`, so you would turn the hash into a string first. Keying by the hash means the session itself is never stored.
+- **A method can be called on a nil pointer.** `recall` and `keep` start with `if m == nil { return ... }`. A `Verifier` built without `Memory` has a nil `*Memory`, and calling `v.Memory.recall(key)` is still safe: it simply answers "not found". That keeps every test fixture that builds a plain `Verifier` working unchanged.
+- **A mutex guards the map.** Requests run on many goroutines at once, and Go maps are not safe for concurrent writes, so `recall` and `keep` hold `m.mu` while they touch `m.entries`.
+
+Only successes are kept: a refused session is asked about every time, so a wrong session cannot be "remembered" into working. GitHub tokens are deliberately not remembered: `contracts/github-access/isolation.json` pins that a revoked GitHub token is refused at once, before any private repository is read. The cost of remembering sessions is that someone who signs out can still pass for up to a minute; you accepted that trade.

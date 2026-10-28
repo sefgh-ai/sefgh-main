@@ -1,12 +1,11 @@
-// Package videos ports GET, POST and DELETE /api/repo/videos at contract
-// version 1: a repository's videos with their uploaders, adding a video,
-// and deleting one's own. Every case in contracts/repo-videos is answered as
-// the Next.js handlers answer it, defects included.
-//
-// The uploader details are copied as they fail today, as for comments: the
-// profile read asks for a username column that does not exist (bug register
-// R-075), and the admin lookup that follows goes with the public key and is
-// refused (R-040).
+// Package videos ports GET, POST and DELETE /api/repo/videos: a
+// repository's videos with their uploaders, adding a video, and deleting
+// one's own. Every case in contracts/repo-videos is answered as the Next.js
+// handlers answered it at version 1, apart from the fixes made here after
+// cutover: a video address must be https on YouTube's or GitHub's exact hosts
+// (version 2, R-088), and an uploader's name and picture come from the public
+// profile columns full_name and avatar_url, with no admin lookup (version 3,
+// R-040, R-075). The Next.js handler keeps the old behaviour until retired.
 //
 // Every database request goes as the visitor, through internal/supabaserest:
 // with the request's bearer when it has one, and with the project's public
@@ -194,20 +193,12 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 	if !jscompat.Truthy(uploader) {
 		return row, true
 	}
-	db := h.db()
+	// The uploader's public profile; since contract version 3 (R-040,
+	// R-075) there is no admin lookup, so an uploader's email is never sent.
 	profile := h.profile(ctx, session, jscompat.String(uploader))
-	// let userEmail = null, then, unless profile?.username, the admin
-	// lookup (R-040).
-	email := json.RawMessage("null")
-	if !jscompat.TruthyJSON(jscompat.FieldOr(profile, "username", nil)) {
-		var ok bool
-		if email, ok = db.AdminUserEmail(ctx, jscompat.String(uploader)); !ok {
-			return nil, false
-		}
-	}
 	fields := jscompat.Spread(row)
-	fields = jscompat.Assign(fields, "uploader_name", jscompat.FieldOr(profile, "username", []byte("null")))
-	fields = jscompat.Assign(fields, "uploader_email", email)
+	fields = jscompat.Assign(fields, "uploader_name", jscompat.FieldOr(profile, "full_name", []byte("null")))
+	fields = jscompat.Assign(fields, "uploader_email", []byte("null"))
 	fields = jscompat.Assign(fields, "uploader_avatar", jscompat.FieldOr(profile, "avatar_url", []byte("null")))
 	var out bytes.Buffer
 	jscompat.WriteObject(&out, fields)
@@ -217,7 +208,7 @@ func (h *Handler) detail(ctx context.Context, session string, row json.RawMessag
 // profile reads one user's profile as one row and answers its JSON when the
 // read succeeds with a truthy row, or nil.
 func (h *Handler) profile(ctx context.Context, session, userID string) []byte {
-	query := supabaserest.Param("select", "username,avatar_url") + "&" + supabaserest.Param("id", "eq."+userID)
+	query := supabaserest.Param("select", "full_name,avatar_url") + "&" + supabaserest.Param("id", "eq."+userID)
 	upstream, raw, err := h.db().SelectObject(ctx, session, "profiles", query)
 	if failed(upstream, raw, err) {
 		return nil
@@ -298,7 +289,7 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		created = jscompat.Spread(supabaserest.DataJSON(upstream, raw))
 	}
 	profile := h.profile(ctx, session, userID)
-	created = jscompat.Assign(created, "uploader_name", jscompat.FieldOr(profile, "username", []byte("null")))
+	created = jscompat.Assign(created, "uploader_name", jscompat.FieldOr(profile, "full_name", []byte("null")))
 	created = jscompat.Assign(created, "uploader_email", email)
 	created = jscompat.Assign(created, "uploader_avatar", jscompat.FieldOr(profile, "avatar_url", []byte("null")))
 	var reply bytes.Buffer

@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-28 (Asia/Calcutta), by Claude Code: BUG-028a (R-040/R-075 for comments) complete on base `40936fc`, uncommitted.
+Last updated: 2026-10-28 (Asia/Calcutta), by Claude Code: BUG-032 (R-102) complete on base `ba0dd5e`, uncommitted (with BUG-028b to BUG-031, verified but not yet committed by the Git Agent).
 
 ## Start here
 
@@ -11,9 +11,100 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** Claude Code, task BUG-028b (R-040 and R-075 for videos: uploaders from `profiles.full_name, avatar_url`, no admin call; Go `internal/videos`, contract `repo-videos` version 3), base `381518e`, claimed 2026-10-28. The owner asked to continue until every bug is fixed.
+- **Active writer:** none. Claude Code released BUG-032 (2026-10-28). **Every route and data area is switched to Go on Production since 2026-10-28 ~14:05 UTC** (owner); the Go project lacks the AI keys and `NEXT_PUBLIC_SITE_URL` until the owner adds them. BUG-026 to BUG-032 reach production with the Go project's next deployment. The owner asked to continue until every bug is fixed; next: the avatar group (R-041, R-094, R-096, R-097). Owner question collected: remember GitHub tokens too (R-042). Signed-in pass pending (owner). Playground keys left for later. Owner signing stop, worker-execution gate and rollout gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Twenty-three of 25 API routes are implemented in Go (92% of routes, not of the whole migration): every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; provisioning/runtime/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the route is retired in TREND-001c. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 204 entries (R-001 through R-204; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: BUG-032, R-102 a saved search is counted (Claude Code, 2026-10-28)
+
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `ba0dd5e`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `ba0dd5e`).
+
+- **Live check (read-only):** `increment_platform_stat(key text) returns void`, security definer, empty `search_path`, granted to `authenticated` (SEC-001); it adds one to `platform_stats.stat_value` where `stat_key = key`.
+- **Go** `internal/searchhistory/handler.go`: after a successful insert, `c.db.RPC(..., "increment_platform_stat", {"key":"total_searches"})` as the user; its answer ignored (not critical, as the module meant). Package comment updated.
+- **Contract `search-history` version 2:** the four successful saves carry `go_database` (insert, then the call) and a stand-in 204; `preserve`. Node test: version 2; "Go never asks more than the module" now allows exactly that call after a save, and every Go save must make it. Go pins version 2.
+- **Lesson 34:** the fix, and the blank identifier. Exercise untouched. **Docs:** contract README, register.
+
+Checks (Claude Code): `go test -count=1 ./internal/searchhistory/ ./cmd/api/` pass; `go vet`; `gofmt -l` empty. Without the call, the four save cases failed (restored, identical SHA-256). `node --test scripts/contracts/search-history.test.mjs` 101/101. `npm run lint` exit 0. The first `npm run handoff` failed on `TestBrowserBudgetStartsBeforeIdentityAndReachesDatabase` (`internal/supabaserest`), which counted one database call for a save; it now expects two for history (the counter, within the same budget). Second `npm run handoff` below.
+
+Changed files: `backend/internal/searchhistory/{handler.go,contract_test.go}`, `backend/internal/supabaserest/browser_budget_test.go`, `contracts/search-history/{cases.json,README.md}`, `scripts/contracts/search-history.test.mjs`, `learn-go/34-a-browser-call-moves-to-the-server/README.md`, `docs/{bug-register.md,coordination.md}`.
+
+Next: the avatar group R-041, R-094, R-096, R-097; then R-017's filters, R-038.
+
+Writer released: yes. No processes left running.
+
+## Handoff: BUG-031, R-042 a verified session remembered for a minute (Claude Code, 2026-10-28)
+
+Status: **complete for sessions; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `ba0dd5e`. Resulting commit: uncommitted (BUG-028b to BUG-030 also still in the tree, verified, awaiting the Git Agent).
+
+- **Go** new `internal/githubaccess/memory.go`: `Memory` keeps Supabase Auth's successful answer about a session for `MemoryFor` (60 s), keyed by `sha256(kind, credential)` (the session itself is never kept), bounded at 10,000 entries (expired first, then any), mutex-guarded, nil-safe. `askSupabase` recalls and keeps; `Verifier.Memory` is optional, so the zero `Verifier` (every fixture) asks every time. `cmd/api/main.go` sets `Memory: githubaccess.NewMemory()`, so `Resolve`, `User` and `UserEmail` all share it.
+- **Not remembered: GitHub tokens.** First tried; `TestPrivateRepositoryIsolation` (from `contracts/github-access/isolation.json`) then failed on `bob-token-revoked`: a revoked token was accepted. That fixture deliberately pins immediate refusal, so `askGitHub` asks every time. Remembering tokens too is an owner decision (contract change).
+- **Tests:** new `memory_test.go`: one Supabase call per session per minute and a second after `MemoryFor` (which it pins at 60 s), refused sessions asked every time and never kept, GitHub asked every time, the bound, and no `Memory` asking every time. `cmd/api`: `TestSearchHistoryAsTheCaller` expects one Supabase call; `TestChatAllowanceIsPerUserAndSeparate` expects nothing upstream past the allowance.
+- **Lesson 16:** new section (array map keys, nil-pointer methods, the mutex, why GitHub is not remembered). Exercise untouched. **Docs:** backend map, register.
+
+Checks (Claude Code): `go test -count=1 ./internal/githubaccess/ ./cmd/api/` pass; `go vet`; `gofmt -l` empty. With recall disabled, `TestMemoryRemembersASessionForAMinute` failed (Supabase asked 3 times; restored, identical SHA-256). `npm run handoff` below. No contract or application source changed.
+
+Changed files: new `backend/internal/githubaccess/{memory.go,memory_test.go}`, `backend/internal/githubaccess/access.go`, `backend/cmd/api/{main.go,history_wiring_test.go,ai_wiring_test.go}`, `learn-go/16-verifying-access/README.md`, `docs/{backend-map.md,bug-register.md,coordination.md}`.
+
+Next: R-102 (search counter), the avatar group, R-017's filters, R-038.
+
+Writer released: yes. No processes left running.
+
+## Handoff: BUG-030, R-026 trending developers' most-starred repository (Claude Code, 2026-10-28)
+
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `ba0dd5e`. Resulting commit: uncommitted. BUG-028b and BUG-029 were verified (`npm run handoff`) but not yet committed by the Git Agent when this task began, so their changes share this working tree; each has its own record below.
+
+- **Go** `internal/githubdevelopers/handler.go`: the repository request is `/users/<login>/repos?per_page=100` (GitHub's user repositories endpoint ignores `sort=stars`, so the old request gave the alphabetically first). The first item stays the popular one unless a later object has strictly more `stargazers_count` (`stars`: a `json.Number`, else 0). Every existing case keeps its answer; the odd replies (null first, text, object) behave as before.
+- **Contract `github-trending-developers` version 2** (60 cases), built by a script (formatting round-trips): 54 repository request addresses rewritten (`wire_url` checked against `new URL(url).href`); `first-repository-only` now `preserve`; new `most-starred-repository` (Go `zeta`, Next.js `alpha`), `equal-stars-keep-first`, `stars-not-a-number`, each with `next_expect` recorded from the Next.js handler. Node test: version 2, converts Go's requests back for the Next.js handler, integrity check that Go never sends `sort=stars`. Go: the contract test now pins version 2 (it had no pin); `TestRecordedDifferencesFromNextJS` expects the new address.
+- **Lesson 18:** new section before the exercise on the running-best loop (`reduce` comparison, `list[1:]`, comma-ok type assertion, `json.Number`). Exercise untouched.
+
+Checks (Claude Code): `go test -count=1 ./internal/githubdevelopers/ ./cmd/api/` pass; `go vet`; `gofmt -l` empty. With the star comparison disabled for a moment, `most-starred-repository` failed in both the memory and socket runs (restored, identical SHA-256). `node --test scripts/contracts/github-trending-developers.test.mjs` 62/62. `npm run lint` and `npm run handoff` below.
+
+Changed files: `backend/internal/githubdevelopers/{handler.go,contract_test.go,review_test.go}`, `contracts/github-trending-developers/{cases.json,README.md}`, `scripts/contracts/github-trending-developers.test.mjs`, `learn-go/18-bounded-parallel-work/README.md`, `docs/{bug-register.md,coordination.md}`.
+
+Next: R-042 (remember a verified token about 60 s, by hash), R-102, the avatar group, R-017's filters, R-038.
+
+Writer released: yes. No processes left running.
+
+## Handoff: BUG-029, R-034 signed-out repository summaries cached ten minutes (Claude Code, 2026-10-28)
+
+Status: **complete; unreviewed; not deployed** (with `sefgh-api`'s next deployment). Writer Claude Code; reviewer unassigned. Branch `main`, base `ba0dd5e`. Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+
+- **Go** `internal/githubrepos/cache.go`: `const FreshFor = 10 * time.Minute` replaces the hour (owner's option A). Found while reading it: `fill` kept a stale copy on every non-200 refresh, so after a repository went private (GitHub 404 to the public read) its copy outlived every refresh and was served indefinitely. A 404 now deletes the copy; other failures (network, rate limit, 5xx) still keep it. The cache is used only for signed-out reads (`h.token == ""`), so no private data is involved.
+- **Test** `TestCacheDropsARepositoryThatIsGone`: reused just before ten minutes, one stale read after, then the 404 refresh drops it and the next read asks GitHub; it also pins `FreshFor` at ten minutes. `TestCacheFreshStaleAndRecovery` now advances by `FreshFor`.
+- **Lesson 10** (CRLF kept): ten minutes, the 404 rule, and a note that the exercise keeps its original hour. Exercise untouched.
+- **Docs:** backend README, backend map, register R-034 fixed.
+
+Checks (Claude Code): `go test -count=1 ./internal/githubrepos/` pass; `go vet`; `gofmt -l` empty. Without the 404 rule the new test fails ("after a 404 the copy was still served"); with `FreshFor` an hour it fails on the pin (both restored, identical SHA-256). `npm run handoff` below. No contract changed (the cache is not in a contract fixture); no application source, so no lint or build needed.
+
+Changed files: `backend/internal/githubrepos/{cache.go,cache_test.go}`, `learn-go/10-shared-cache/README.md`, `backend/README.md`, `docs/{backend-map.md,bug-register.md,coordination.md}`.
+
+Next: R-026 (trending developers' most-starred repository), R-042, R-102, the avatar group, R-017's filters, R-038.
+
+Writer released: yes. No processes left running.
+
+## Handoff: BUG-028b, video uploaders from the public profile, no admin call (Claude Code, 2026-10-28)
+
+Status: **complete; unreviewed; not deployed** (with `sefgh-api`'s next deployment). Writer Claude Code; reviewer unassigned. Branch `main`, base `ba0dd5e` (BUG-028a committed as `381518e`; the Git Agent's sync commit carried this task's claim line). Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+
+R-040 and R-075, option A, for videos; with BUG-028a both entries are fixed.
+
+- **Go** `internal/videos`: the profile read asks for `full_name,avatar_url`; `uploader_name` is `full_name`; no admin lookup; `uploader_email` null for listed videos (a new video keeps the poster's own email). Package comment updated. `supabaserest.AdminUser`, `AdminUserEmail` and `uuidPattern` removed (no caller left; `regexp` import gone).
+- **Contract `repo-videos` version 3** (57 cases), built by a script from version 2 (formatting round-trips): profile paths renamed, admin calls dropped, `uploader_email: null` on listed videos; stand-in profiles in `post-profile-present`, `get-profile-with-username` (`Octo Cat`) and `get-profile-without-username` (no name) hold `full_name`; `get-admin-null` and `get-uploader-not-uuid` answer 200. 24 cases changed; those without an R-088 `next_expect` got one (version 2's answer, or the real handler's through the shared runner for the three profile cases). Node test: version 3 and the same integrity check as comments.
+- **Unit tests** that relied on the admin lookup: `TestDetailsBudgetBoundsHangingReads` now expects `uploader_email: null` twenty times; `TestFirstFailureStopsTheRest` fails the list with a `null` row (the only way left); `cmd/api` `TestVideosListAsTheCaller` expects the `full_name` read and no admin request.
+- **Lesson 29:** new short section, "Go will not compile what you no longer use", from this change (`declared and not used: db`, the unused `regexp` import). Exercise untouched.
+- **Docs:** contract README (version 3), backend README, backend map, register R-040 and R-075 fixed.
+
+Checks (Claude Code, Windows, Go 1.27.2, Node 24.22.0):
+
+- `go test -count=1 ./internal/videos/ ./cmd/api/` pass; `go vet ./...`; `go build ./...`; `gofmt -l .` empty. With `username` restored in the Go read for a moment, 24 contract cases failed (restored, identical SHA-256).
+- `node --test scripts/contracts/repo-videos.test.mjs` 58/58. Changed files scanned for stray control characters (one found and fixed in lesson 29 before this record).
+- `npm run lint` and `npm run handoff` below. No application source changed, so no build.
+
+Changed files: `backend/internal/videos/{handler.go,handler_test.go,contract_test.go}`, `backend/internal/supabaserest/supabaserest.go`, `backend/cmd/api/videos_wiring_test.go`, `contracts/repo-videos/{cases.json,README.md}`, `scripts/contracts/repo-videos.test.mjs`, `learn-go/29-a-javascript-pattern-in-go/README.md`, `backend/README.md`, `docs/{backend-map.md,bug-register.md,coordination.md}`.
+
+Next (owner: continue until every bug is fixed): R-034 (public repository cache 10 minutes), R-026 (trending developers' most-starred repository), R-042 (remember a verified token about 60 s by hash), R-102 (search counter), the avatar group R-041/R-094/R-096/R-097, R-017's supported filters, R-038 (AI allowance keyed on the address Vercel sets).
+
+Writer released: yes. No processes left running.
 
 ## Handoff: BUG-028a, comment authors from the public profile, no admin call (Claude Code, 2026-10-28)
 

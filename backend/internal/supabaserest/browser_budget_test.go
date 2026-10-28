@@ -68,8 +68,14 @@ func TestBrowserBudgetStartsBeforeIdentityAndReachesDatabase(t *testing.T) {
 				}
 				w := httptest.NewRecorder()
 				mux.ServeHTTP(w, httptest.NewRequest(method, path, strings.NewReader(body)).WithContext(parent))
-				if w.Code != 200 || calls != 1 {
-					t.Fatalf("status %d, database calls %d", w.Code, calls)
+				// A saved search is then counted (R-102): a second call, within
+				// the same budget, which the transport above checks for each.
+				want := 1
+				if area == "history" {
+					want = 2
+				}
+				if w.Code != 200 || calls != want {
+					t.Fatalf("status %d, database calls %d, want %d", w.Code, calls, want)
 				}
 				if identityContext == nil || identityContext.Err() != context.Canceled {
 					t.Error("route context not canceled on return")

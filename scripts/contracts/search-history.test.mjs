@@ -1,5 +1,5 @@
 // The browser's search history (src/lib/supabase/search-history.js),
-// contract version 1 (DATA-001a, DATA-001b). The module's real functions run
+// contract version 2 (DATA-001a, DATA-001b; version 2, R-102). The module's real functions run
 // against a stand-in Supabase; see browser-db-fixture.mjs. Switched to Go,
 // the module must send `expect.go_request` and give what Go answers; with no
 // Go route (404) it must take its direct path as before. The Go endpoints
@@ -16,7 +16,7 @@ const contract = JSON.parse(await readFile(new URL('../../contracts/search-histo
 const AREA = 'search-history';
 
 test('search history fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -28,8 +28,22 @@ test('search history fixture integrity', () => {
       assert.equal(request.authorization, `Bearer ${c.session ?? SUPABASE_KEY}`, c.id);
       assert.ok(request.path.startsWith('/rest/v1/search_history'), c.id);
     }
-    // Go never asks more than the browser module does.
-    if (c.go_database) assert.ok(c.go_database.length <= c.expect.database.length, c.id);
+    // Go never asks more than the browser module does, except that after a
+    // saved search it counts it (R-102): one call, and only that function.
+    if (c.go_database) {
+      const extra = c.go_database.filter((r) => r.path.startsWith('/rest/v1/rpc/'));
+      assert.ok(c.go_database.length - extra.length <= c.expect.database.length, c.id);
+      for (const request of extra) {
+        assert.equal(c.call, 'saveSearchHistory', c.id);
+        assert.equal(request.path, '/rest/v1/rpc/increment_platform_stat', c.id);
+        assert.deepEqual(request.body, { key: 'total_searches' }, c.id);
+        assert.equal(request.authorization, `Bearer ${c.session}`, c.id);
+      }
+    }
+    // R-102: every save Go makes is counted.
+    if (c.call === 'saveSearchHistory' && c.expect.database.length === 1 && c.expect.returns !== null) {
+      assert.ok(c.go_database?.some((r) => r.path === '/rest/v1/rpc/increment_platform_stat'), c.id);
+    }
     // The module asks Go only when it would have asked the database, and
     // only with the signed-in user's own token, to this site.
     assert.equal(c.expect.go_request === null, c.expect.database.length === 0, c.id);

@@ -38,7 +38,12 @@ func newCache(maxEntries, maxBytes int) *repoCache {
 	return &repoCache{entries: map[string]cacheEntry{}, pending: map[string]*cacheFlight{}, maxEntries: maxEntries, maxBytes: maxBytes, now: time.Now, logPanic: func() { slog.Error("repository cache loader panicked") }}
 }
 
-// get implements one-hour freshness followed by stale-while-revalidate.
+// FreshFor is how long a cached repository is served without asking GitHub
+// again: ten minutes since R-034 (the Next.js handler's revalidate is an
+// hour). Only signed-out reads use the cache.
+const FreshFor = 10 * time.Minute
+
+// get implements FreshFor freshness followed by stale-while-revalidate.
 // Values are immutable after publication. Never hold the mutex during I/O.
 func (c *repoCache) get(ctx context.Context, key string, load func(context.Context) (upstreamReply, error)) (upstreamReply, error) {
 	for {
@@ -49,7 +54,7 @@ func (c *repoCache) get(ctx context.Context, key string, load func(context.Conte
 		entry, found := c.entries[key]
 		flight, running := c.pending[key]
 		if found {
-			if c.now().Sub(entry.saved) >= time.Hour && !running {
+			if c.now().Sub(entry.saved) >= FreshFor && !running {
 				flight = &cacheFlight{done: make(chan struct{})}
 				c.pending[key] = flight
 				go func() {
@@ -108,8 +113,15 @@ func (c *repoCache) fill(ctx context.Context, key string, load func(context.Cont
 	result, err = load(ctx)
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	// A 404 means the repository is gone or no longer public: stop serving
+	// the copy (R-034). Without this the stale copy outlived every refresh.
+	if old, exists := c.entries[key]; exists && err == nil && result.status == 404 {
+		c.bytes -= old.size
+		delete(c.entries, key)
+	}
 	// Next's fetch cache stores status 200 responses, before parsing JSON.
-	// Errors leave any stale entry intact for the next refresh attempt.
+	// Other failures leave any stale entry intact for the next refresh
+	// attempt, so a GitHub outage does not empty the page.
 	if err == nil && result.status == 200 {
 		size := len(key) + len(result.body)
 		for k, values := range result.header {

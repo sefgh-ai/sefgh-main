@@ -75,7 +75,8 @@ func TestDetailsRunFourAtATime(t *testing.T) {
 // One budget bounds every video's uploader lookups together. Here every
 // read after the list hangs until it is cancelled: each must carry the
 // budget's deadline, and when it runs out the reads count as failed and the
-// reply still comes, with no names and no emails. The deadline is checked
+// reply still comes, with no names (and, since contract version 3, every
+// uploader_email null). The deadline is checked
 // rather than how fast the reply came, so a busy machine cannot fail this
 // test (R-091); without a budget the reply never comes, and the test stops
 // waiting after 30 seconds.
@@ -116,23 +117,22 @@ func TestDetailsBudgetBoundsHangingReads(t *testing.T) {
 		t.Errorf("%d reads had no deadline within the %v budget", unbounded, budget)
 	}
 	body := w.Body.String()
-	if w.Code != 200 || strings.Count(body, `"uploader_name":null`) != 20 || strings.Contains(body, `"uploader_email"`) {
+	if w.Code != 200 || strings.Count(body, `"uploader_name":null`) != 20 || strings.Count(body, `"uploader_email":null`) != 20 {
 		t.Errorf("%d %.300s", w.Code, body)
 	}
 }
 
 // The first video that throws decides the answer, as Promise.all's first
 // rejection does, and the lookups still hanging are stopped, not waited
-// for until the budget runs out.
+// for until the budget runs out. Since contract version 3 there is no admin
+// lookup to throw, so the failing video is a null row (video.uploaded_by on
+// null).
 func TestFirstFailureStopsTheRest(t *testing.T) {
-	rows := `[{"id":"bad","uploaded_by":"not-a-uuid"},` + strings.TrimPrefix(twenty(), "[")
+	rows := `[null,` + strings.TrimPrefix(twenty(), "[")
 	h := &Handler{
 		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
 			if strings.Contains(r.URL.RawQuery, "repo_full_name=") {
 				return reply(r, 200, rows), nil
-			}
-			if strings.Contains(r.URL.RawQuery, "not-a-uuid") {
-				return reply(r, 400, `{"message":"invalid input syntax for type uuid"}`), nil
 			}
 			<-r.Context().Done()
 			return nil, r.Context().Err()
