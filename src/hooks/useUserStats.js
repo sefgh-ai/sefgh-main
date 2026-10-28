@@ -3,6 +3,19 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+// A new user's stats: the column defaults of public.user_stats.
+const DEFAULT_STATS = {
+  level: 1,
+  title: "Newbie",
+  xp: 0,
+  xp_to_next_level: 100,
+  contributions: 0,
+  contributions_max: 64,
+  followers: 0,
+  following: 0,
+  projects: 0,
+};
+
 export function useUserStats(userId) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +36,7 @@ export function useUserStats(userId) {
       setLoading(true);
 
       // Try to fetch existing stats
-      let { data, error: fetchError } = await supabase
+      const { data, error: fetchError } = await supabase
         .from("user_stats")
         .select("*")
         .eq("user_id", userId)
@@ -32,23 +45,14 @@ export function useUserStats(userId) {
       // Only update state if component is still mounted
       if (!isMountedRef.current) return;
 
-      // If no stats exist, create them
+      // The server creates every user's row and is the only writer (R-103).
+      // If one is missing, show the starting values rather than create it.
       if (fetchError && fetchError.code === "PGRST116") {
-        const { data: newData, error: insertError } = await supabase
-          .from("user_stats")
-          .insert({ user_id: userId })
-          .select()
-          .single();
-
-        if (!isMountedRef.current) return;
-
-        if (insertError) {
-          throw insertError;
-        }
-        data = newData;
-      } else if (fetchError) {
-        throw fetchError;
+        setStats(DEFAULT_STATS);
+        setError(null);
+        return;
       }
+      if (fetchError) throw fetchError;
 
       setStats(data);
       setError(null);
@@ -57,17 +61,7 @@ export function useUserStats(userId) {
       console.error("[useUserStats] Error fetching stats:", err);
       setError(err.message);
       // Fallback to default stats
-      setStats({
-        level: 1,
-        title: "Newbie",
-        xp: 0,
-        xp_to_next_level: 100,
-        contributions: 0,
-        contributions_max: 64,
-        followers: 0,
-        following: 0,
-        projects: 0,
-      });
+      setStats(DEFAULT_STATS);
     } finally {
       if (isMountedRef.current) {
         setLoading(false);
@@ -122,49 +116,11 @@ export function useUserStats(userId) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, userId, fetchStats]);
 
-  // Function to update stats
-  const updateStats = useCallback(
-    async (updates) => {
-      if (!userId) return { error: "No user ID" };
-
-      try {
-        const { data, error } = await supabase
-          .from("user_stats")
-          .update(updates)
-          .eq("user_id", userId)
-          .select()
-          .single();
-
-        if (error) throw error;
-        if (isMountedRef.current) {
-          setStats(data);
-        }
-        return { data };
-      } catch (err) {
-        console.error("[useUserStats] Error updating stats:", err);
-        return { error: err.message };
-      }
-    },
-    [supabase, userId]
-  );
-
-  // Function to increment a specific stat
-  const incrementStat = useCallback(
-    async (statName, amount = 1) => {
-      if (!userId || !stats) return { error: "No user ID or stats" };
-
-      const currentValue = stats[statName] || 0;
-      return updateStats({ [statName]: currentValue + amount });
-    },
-    [userId, stats, updateStats]
-  );
-
+  // Stats are read-only here: the server changes them (R-103).
   return {
     stats,
     loading,
     error,
     refresh: fetchStats,
-    updateStats,
-    incrementStat,
   };
 }

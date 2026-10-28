@@ -59,10 +59,10 @@ answers a Data API-shaped 502. Lesson 38 covers both boundaries.
 A refused request gets a 403 that looks like the database's own error:
 
 ```json
-{"code":"42501","details":null,"hint":null,"message":"user_stats.xp cannot be written for user-stats"}
+{"code":"42501","details":null,"hint":null,"message":"POST user_stats is not allowed for user-stats"}
 ```
 
-supabase-js then hands the browser code an `error` exactly as if the database had refused, and the code's existing error handling does the rest. Here the rules close a real gap: through Go, nobody can set their own XP (R-103).
+supabase-js then hands the browser code an `error` exactly as if the database had refused, and the code's existing error handling does the rest. Here the rules close a real gap: through Go, nobody can set their own XP (R-103). A write to a column the rules leave out is refused the same way, with `<table>.<column> cannot be written for <area>`. Since 2026-10-28 `user_stats` allows reads only: the server creates every row, and the database refuses users' writes too.
 
 ## Logs without secrets
 

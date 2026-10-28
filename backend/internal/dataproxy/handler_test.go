@@ -93,6 +93,7 @@ func TestWritesAreChecked(t *testing.T) {
 		{"POST", "/api/data/home/rest/v1/categories", `[{"name":"Go"},{"name":"x","owner":"me"}]`, 403},
 		{"PATCH", "/api/data/user-stats/rest/v1/user_stats?user_id=eq.u1", `{"xp":99999}`, 403},
 		{"POST", "/api/data/user-stats/rest/v1/user_stats?select=%2A", `{"user_id":"u1","level":50}`, 403},
+		{"POST", "/api/data/user-stats/rest/v1/user_stats?select=%2A", `{"user_id":"u1"}`, 403}, // R-103: the server creates every row
 		{"POST", "/api/data/conversations/rest/v1/user_conversations", `"not an object"`, 403},
 		{"DELETE", "/api/data/profile/rest/v1/profiles?id=eq.u1", "", 403},
 	} {

@@ -1,18 +1,20 @@
--- R-078: four tables this application never uses had loose or no rules.
+-- R-078: four tables this application never reads had loose or no rules.
 -- Anyone could add a repository_notifications row for any user, naming any
 -- sender, and a repository_shares row under any user id; everyone could read
 -- every user's repository_bookmarks; "user-data" had no policies at all.
--- The owner chose option A on 2026-10-28: drop the four tables, backup first.
+-- The owner chose on 2026-10-28: drop the unused tables, backup first, but
+-- keep repository_notifications for a later notifications feature.
 --
 -- Live definitions, read on 2026-10-28 (docs/database/user-db.md): rows
--- 0 notifications, 0 shares, 1 bookmark, 1 "user-data". Nothing references
--- the tables except two functions, handled below:
+-- 0 notifications, 0 shares, 1 bookmark, 1 "user-data". Two functions use
+-- the tables:
 --
--- - create_reply_notification(), run by trigger_reply_notification on
---   repository_comments, inserts a notification whenever someone replies to
---   another user's comment. Dropping the table alone would make those replies
---   fail, so the trigger and its function go first. Nothing shows
---   notifications, so replies lose nothing a user can see.
+-- - create_reply_notification(), run by trigger_reply_notification after
+--   each insert on repository_comments, adds a notification when someone
+--   replies to another user's comment. It ran as the replying user, which is
+--   why anyone could insert. It now runs with its owner's rights (postgres,
+--   which owns the table), so the open insert rule can go and replies keep
+--   notifying.
 -- - get_repository_stats(text) counts bookmarks and shares. Nothing in this
 --   repository or the Go backend calls it.
 --
@@ -26,8 +28,6 @@
 create schema r078_backup;
 revoke all on schema r078_backup from public, anon, authenticated;
 
-create table r078_backup.repository_notifications (like public.repository_notifications including all);
-insert into r078_backup.repository_notifications select * from public.repository_notifications;
 create table r078_backup.repository_shares (like public.repository_shares including all);
 insert into r078_backup.repository_shares select * from public.repository_shares;
 create table r078_backup.repository_bookmarks (like public.repository_bookmarks including all);
@@ -37,13 +37,35 @@ insert into r078_backup."user-data" select * from public."user-data";
 
 revoke all on all tables in schema r078_backup from public, anon, authenticated;
 
--- 2. What writes or reads the tables.
-drop trigger trigger_reply_notification on public.repository_comments;
-drop function public.create_reply_notification();
-drop function public.get_repository_stats(text);
+-- 2. Notifications stay; only the reply trigger writes them. Users keep
+--    reading and marking their own.
+create or replace function public.create_reply_notification()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  parent_user_id uuid;
+begin
+  -- Only replies notify, and never a reply to one's own comment.
+  if new.parent_comment_id is not null then
+    select user_id into parent_user_id from public.repository_comments where id = new.parent_comment_id;
+    if parent_user_id != new.user_id then
+      insert into public.repository_notifications (user_id, type, repo_full_name, comment_id, from_user_id)
+      values (parent_user_id, 'comment_reply', new.repo_full_name, new.id, new.user_id);
+    end if;
+  end if;
+  return new;
+end;
+$function$;
+-- Only the trigger runs it; Postgres checks this right when a trigger is
+-- created, not when it fires.
+revoke execute on function public.create_reply_notification() from public, anon, authenticated;
+drop policy "System can insert notifications" on public.repository_notifications;
 
--- 3. The tables.
-drop table public.repository_notifications;
+-- 3. The unused tables, and the function that reads two of them.
+drop function public.get_repository_stats(text);
 drop table public.repository_shares;
 drop table public.repository_bookmarks;
 drop table public."user-data";

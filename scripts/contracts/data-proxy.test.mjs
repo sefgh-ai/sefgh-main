@@ -195,8 +195,6 @@ const WRITES = [
   ['src/hooks/useSendNotification.js', 'notifications', 'insert', ['user_id', 'title', 'message', 'type', 'link']],
   ['src/hooks/profile/useProfileData.js', 'profiles', 'update', ['bio', 'website']],
   ['src/lib/supabase/profiles.js', 'profiles', 'update', ['(generic, no caller)']],
-  ['src/hooks/useUserStats.js', 'user_stats', 'insert', ['user_id']],
-  ['src/hooks/useUserStats.js', 'user_stats', 'update', ['(generic, no caller)']],
   ['src/hooks/home/useCategories.js', 'categories', 'insert', ['name', 'icon', 'type', 'description', 'usage_count', 'is_active']],
   ['src/hooks/home/useCategories.js', 'categories', 'update', ['(generic, no caller)']],
   ['src/hooks/home/useCategories.js', 'categories', 'update', ['is_active']],
@@ -247,9 +245,10 @@ test('every write the code makes on a proxied table is allowed by the policy', a
       assert.ok(rules[table].writable.includes(field), `${file}: ${table}.${field}`);
     }
   }
-  // Through Go nobody can set their own stats: updateStats has no caller,
-  // and the policy refuses the update it would send (R-103).
-  assert.ok(!rules.user_stats.methods.includes('PATCH'));
+  // Stats are read-only for users (R-103): the server creates every row and
+  // is the only writer, and the browser writes none (the list above).
+  assert.deepEqual(rules.user_stats.methods, ['GET', 'HEAD']);
+  assert.equal(rules.user_stats.writable, undefined);
   // The activity logger's one function call.
   const logger = await readFile(new URL('src/lib/activity-logger.js', root), 'utf8');
   const args = [...logger.match(/rpc\('log_user_activity',\s*\{([^}]*)\}/)[1].matchAll(/(p_[a-z_]+):/g)].map((m) => m[1]);

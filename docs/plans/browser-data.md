@@ -15,7 +15,7 @@ Outside `src/app/api`, 25 browser files use 19 tables and 3 database functions t
 | Onboarding | `onboarding_data` | read, insert, update, delete | `src/lib/supabase/onboarding.js` |
 | Profile | `profiles` | read, update | `src/lib/supabase/profiles.js`, `src/hooks/profile/useProfileData.js` |
 | Notifications | `notifications` | read, insert, update, delete | `src/lib/notifications.js`, `src/contexts/NotificationContext.js`, `src/hooks/notifications/useNotifications.js`, `src/hooks/useSendNotification.js` |
-| User stats | `user_stats` | read, insert, update | `src/hooks/useUserStats.js` |
+| User stats | `user_stats` | read (insert and update removed 2026-10-28, R-103: the server creates every row) | `src/hooks/useUserStats.js` |
 | Activity | `log_user_activity` | function | `src/lib/activity-logger.js` |
 | Home | `projects`, `categories` | read; `categories` also insert, update | `src/hooks/home/useProjects.js`, `useCategories.js` |
 | Submissions | `repo_submissions` | read, insert, delete | `src/hooks/submissions/useSubmissions.js`, `src/components/SubmitProjectDialog.jsx` |

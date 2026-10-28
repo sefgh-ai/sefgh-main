@@ -6,7 +6,7 @@
     "profiles": { "methods": ["GET", "HEAD", "PATCH"], "writable": ["bio", "website"] }
   },
   "user-stats": {
-    "user_stats": { "methods": ["GET", "HEAD", "POST"], "writable": ["user_id"] }
+    "user_stats": { "methods": ["GET", "HEAD"] }
   },
   "home": {
     "projects": { "methods": ["GET", "HEAD"] },

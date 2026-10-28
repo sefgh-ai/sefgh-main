@@ -334,7 +334,7 @@ The rest of the browser's own database calls: notifications, profile, user stats
 - **Destination and schema (BUG-011):** redirects are refused on a copy of the HTTP client; a redirect answers a Data API-shaped 502. Both profile headers must be absent or `public`, and the outgoing method explicitly selects `public` regardless of deployment defaults. Every repeated header value is checked.
 - **No extra Auth call:** the Data API checks the token, as before. Without a bearer the request goes with the public key, as a signed-out browser's does.
 - **Bounds:** 20 seconds for the body and the reply together (`dataproxy.Budget`), 4 MiB bodies, 16 MiB replies; logs name the area, the table and the status only.
-- **Closes a gap through Go:** `user_stats` cannot be updated (R-103); nothing in the code does.
+- **Closes a gap through Go:** `user_stats` is read-only (R-103): the server creates and changes every row, and since 2026-10-28 the database refuses users' writes too.
 - **Without the rewrite** the browser gets a 404 that Go did not mark, and sends the request to Supabase directly, as before.
 
 ## Onboarding (DATA-002)
