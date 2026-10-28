@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-28 (Asia/Calcutta), by Claude Code: BUG-033 (R-041) complete on base `c612932`, uncommitted (with BUG-028b to BUG-032, verified but not yet committed by the Git Agent).
+Last updated: 2026-10-28 (Asia/Calcutta), by Git Agent: synchronized BUG-033 (commit `d4b94ba`) on main and go-backend.
 
 ## Start here
 
@@ -17,7 +17,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-033, R-041 no bucket listing after a failed avatar upload (Claude Code, 2026-10-28)
 
-Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `c612932`. Resulting commit: uncommitted; Git Agent commit and synchronization pending (base `c612932`).
+Status: **complete; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `c612932`. Resulting commit: `d4b94ba` (synchronized by Git Agent on `main` and `go-backend`).
 
 - **Go** `internal/avatar/handler.go`: after a failed upload, no `GET /storage/v1/bucket`; the answer is always "Failed to upload avatar" with the same `details` (owner's option A, 2026-10-23). `details` itself is R-097, not decided.
 - **Contract `upload-avatar` version 2** by a script (formatting round-trips): the bucket request removed from 7 cases, the setup-file message replaced in the two "bucket missing" cases; each keeps the Next.js handler's answer as `next_expect`. Node test: version 2, `next_expect ?? expect`, integrity: no bucket listing and no setup-file name in `expect`. Go pins version 2.
