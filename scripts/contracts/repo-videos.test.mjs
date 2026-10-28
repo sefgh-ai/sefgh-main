@@ -1,5 +1,9 @@
-// GET, POST and DELETE /api/repo/videos, contract version 1
-// (VIDEOS-001). The real handlers run with a client built by the real
+// GET, POST and DELETE /api/repo/videos, contract version 2
+// (VIDEOS-001; version 2, R-088). Version 2 accepts only an https address
+// whose host is exactly YouTube's or GitHub's. Go answers `expect`. This
+// Next.js handler keeps accepting any text until it is retired (the owner's
+// rule: fix a backend bug once, in Go), so where the two differ it answers
+// the case's `next_expect`, recorded from it. The real handlers run with a client built by the real
 // supabase-js around a stand-in Supabase; see route-db-fixture.mjs. A Go port
 // must pass the same cases; GET's requests may come in any order.
 import assert from 'node:assert/strict';
@@ -12,12 +16,20 @@ const handlers = await import('../../src/app/api/repo/videos/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-videos/cases.json', import.meta.url), 'utf8'));
 
 test('videos fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
     assert.ok(['GET', 'POST', 'DELETE'].includes(c.method), c.id);
     assert.ok(c.reason, c.id);
+    // R-088: whatever Go stores is an https address on one of these hosts,
+    // with the type that host gives.
+    const hosts = { 'youtube.com': 'youtube', 'www.youtube.com': 'youtube', 'm.youtube.com': 'youtube', 'youtu.be': 'youtube', 'github.com': 'github', 'www.github.com': 'github' };
+    for (const request of c.expect.database.filter((r) => r.method === 'POST')) {
+      const address = new URL(request.body.video_url);
+      assert.equal(address.protocol, 'https:', c.id);
+      assert.equal(request.body.video_type, hosts[address.host], c.id);
+    }
     // Nothing is asked before sign-in and the input checks.
     if ([400, 401].includes(c.expect.status)) assert.deepEqual(c.expect.database, [], c.id);
     // A failure never carries the database's own words.
@@ -43,6 +55,6 @@ test('videos fixture integrity', () => {
 
 for (const c of contract.cases) {
   test(`videos: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/videos', c), c.expect);
+    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/videos', c), c.next_expect ?? c.expect);
   });
 }

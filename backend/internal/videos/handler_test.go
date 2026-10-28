@@ -185,7 +185,7 @@ func TestLogsKeepTheVisitorOut(t *testing.T) {
 		SupabaseURL: "https://project.invalid", SupabaseKey: "public-key",
 		Logger: slog.New(slog.NewTextHandler(&logs, nil)),
 	}
-	body := `{"repoFullName":"octo/repo-secret-3","videoUrl":"https://example.test/url-secret-4.mp4","title":"title-secret-5"}`
+	body := `{"repoFullName":"octo/repo-secret-3","videoUrl":"https://github.com/octo/url-secret-4.mp4","title":"title-secret-5"}`
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, httptest.NewRequest("POST", "/api/repo/videos", strings.NewReader(body)))
 	if w.Code != 500 {
@@ -202,8 +202,8 @@ func TestLogsKeepTheVisitorOut(t *testing.T) {
 	}
 }
 
-// kind answers the type of every value a request body can hold, and
-// throws (ok false) where JavaScript has no includes() or no match().
+// kind accepts only text that is an https address on one of videoHosts,
+// and the host alone gives the type (R-088, contract version 2).
 func TestKind(t *testing.T) {
 	tests := []struct {
 		in        string
@@ -214,11 +214,16 @@ func TestKind(t *testing.T) {
 		{`"https://youtu.be/dQw4w9WgXcQ"`, "youtube", `"https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"`, true},
 		{`"https://www.youtube.com/watch?v=short"`, "youtube", `null`, true},
 		{`"https://github.com/octo/demo/raw/main/demo.mp4"`, "github", `null`, true},
-		{`"https://example.test/clip.mp4"`, "direct", `null`, true},
-		{`["x"]`, "direct", `null`, true},
-		{`["github.com"]`, "github", `null`, true},
-		{`["https://github.com/octo/demo"]`, "direct", `null`, true}, // an item must equal the text
-		{`["youtu.be"]`, "", "", false},                              // found, then a list has no match()
+		{`"https://github.com/octo/youtube.com/watch?v=dQw4w9WgXcQ"`, "github", `null`, true}, // the host decides
+		{`"https://example.test/clip.mp4"`, "", "", false},
+		{`"http://github.com/octo/demo"`, "", "", false},
+		{`"https://GitHub.com/octo/demo"`, "", "", false},       // exact, case included
+		{`"https://github.com.evil.test/x"`, "", "", false},     // only starts with it
+		{`"https://github.com@evil.test/x"`, "", "", false},     // a user name
+		{`"https://github.com:443/x"`, "", "", false},           // a port, even the usual one
+		{`"github.com/octo/demo"`, "", "", false},               // no scheme
+		{`"https://youtu.be/abcdefghij\u000bk"`, "", "", false}, // a control character
+		{`["https://github.com/octo/demo"]`, "", "", false},
 		{`42`, "", "", false},
 		{`true`, "", "", false},
 		{`{"href":"https://youtu.be/dQw4w9WgXcQ"}`, "", "", false},

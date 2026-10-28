@@ -399,7 +399,7 @@ Opt-in names: `conversation-share` (`POST` and `DELETE /api/conversations/{id}/s
 
 ## Videos (VIDEOS-001)
 
-Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 47 cases of `contracts/repo-videos`, recorded with the shared runner.
+Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 57 cases (version 2: only `https` addresses on YouTube's or GitHub's exact hosts, R-088) of `contracts/repo-videos`, recorded with the shared runner.
 
 - **Uploader details copied as they fail:** as for comments, the profile read asks for `username` (R-075) and the admin lookup, now `supabaserest.AdminUserEmail` and shared with comments, goes with the public key and is refused (R-040). A video without `uploaded_by` is answered as it is.
 - **The YouTube pattern matches what JavaScript matches:** `jscompat.JSSpace` and `jscompat.JSDot` stand in for Go's `\s` and `.`, which match different characters, and `jscompat.FindSubmatchUTF16` runs the pattern over UTF-16 units, so the id's `{11}` counts an emoji as two and can end in half of one. The thumbnail is written from those units (`jscompat.UTF16`), so the half survives as JavaScript writes it.

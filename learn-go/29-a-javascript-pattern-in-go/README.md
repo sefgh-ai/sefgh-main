@@ -66,20 +66,37 @@ return units[start:end], true
 
 A Go string cannot hold half an emoji (Go would put U+FFFD, "�", in its place). So the id stays a `jscompat.UTF16`, and its `MarshalJSON` (lesson 20) writes the lone half as an escape, as JavaScript's `JSON.stringify` does.
 
-## A list has `includes` too
+## A list has `includes` too (until version 2)
 
-`videoUrl` comes from the request body, so it may be a list. In JavaScript, `["youtube.com"].includes("youtube.com")` is true: a list's `includes` looks for an equal item. Then `.match` does not exist on a list, so the handler throws, and the answer is 500. `kind` copies both versions of `includes` with a type switch (lesson 25):
+`videoUrl` comes from the request body, so it may be a list. In JavaScript, `["youtube.com"].includes("youtube.com")` is true: a list's `includes` looks for an equal item. The port first copied that with a type switch (lesson 25), so a list, or `https://other.test/clip.mp4?github.com`, was stored as a video. That was a recorded defect (R-088).
+
+## Version 2: read the address instead of searching it
+
+On 2026-10-28 you chose: only an `https` address whose host is exactly YouTube's or GitHub's. `kind` now parses the text and looks the host up:
 
 ```go
-switch v := videoURL.(type) {
-case string:
-	includes = func(part string) bool { return strings.Contains(v, part) }
-case []any:
-	includes = func(part string) bool { ... an item equal to part ... }
-default:
-	return "", nil, false // a number or an object has no includes()
+var videoHosts = map[string]string{
+	"youtube.com": "youtube", "youtu.be": "youtube", "github.com": "github", // and three more
 }
+
+text, isText := videoURL.(string)
+if !isText {
+	return "", nil, false
+}
+address, err := url.Parse(text)
+if err != nil || address.Scheme != "https" || address.User != nil || address.Port() != "" {
+	return "", nil, false
+}
+videoType, ok = videoHosts[address.Host]
 ```
+
+Three Go ideas are in there:
+
+- `videoURL.(string)` with two results is a type assertion that cannot panic: `isText` is false for a list, a number or an object. In JavaScript you would write `typeof videoURL === "string"`.
+- `videoHosts[address.Host]` with two results is the "comma ok" form. A missing key gives the zero value, `""`, and `ok` false, like `map.get(key)` giving `undefined` in JavaScript, but you are told which one happened.
+- `url.Parse` is not `new URL()`. JavaScript lower-cases the host (`new URL("https://GitHub.com").host` is `github.com`); Go keeps it as written. So `https://GitHub.com/...` is refused here, and that is on purpose: the page's YouTube player only recognises the lower-case spelling. Go also refuses an address holding a control character such as the vertical tab. JavaScript's `URL` removes tabs and line breaks without a word and percent-encodes other control characters in the path.
+
+The host alone gives the type now, so `https://github.com/octo/youtube.com/...` is a GitHub video. The contract moved to version 2: six recorded cases are refused with 400, and ten new ones pin the rule (`post-http`, `post-lookalike-host`, `post-user-name`, `post-port`, `post-host-case` and more). The Next.js handler still accepts any text until it is retired, so where it differs each case keeps its recorded answer as `next_expect`.
 
 ## How the port was checked
 
@@ -101,3 +118,5 @@ go test -tags solution ./29-a-javascript-pattern-in-go
 - Go's `regexp` answers in byte offsets; count runes or units to get other positions.
 - Half of an emoji fits in UTF-16 units, but not in a Go string.
 - `includes` means different things on text and on a list.
+- Parse an address and compare its parts; never search the text. `url.Parse` keeps the host's case, unlike JavaScript's `URL`.
+- `v, ok := m[k]` tells a missing key from a stored zero value.

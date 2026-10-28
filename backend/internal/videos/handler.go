@@ -21,6 +21,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"sync"
@@ -257,7 +258,7 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 	}
 	videoType, thumbnail, ok := kind(parse(videoURL))
 	if !ok {
-		h.fail(w, "video_url", 0, nil, 500, "Internal server error")
+		write(w, 400, []byte(`{"error":"Video URL must be an https link to YouTube or GitHub"}`))
 		return
 	}
 	title, description := fields["title"], fields["description"]
@@ -307,48 +308,48 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 	write(w, 200, reply.Bytes())
 }
 
-// kind is the handler's "Detect video type" step: the type, and the
-// thumbnail's JSON (null without a YouTube id). It works on text, as
-// String.prototype.includes and match do, and on a list, as
-// Array.prototype.includes does, which finds an item. ok is false where
-// JavaScript throws: a value without includes(), or a list that would reach
-// match().
+// videoHosts are the hosts a video may come from, each with the type it
+// gives (R-088). The match is exact, case included: the page's YouTube player
+// recognises only these spellings.
+var videoHosts = map[string]string{
+	"youtube.com":     "youtube",
+	"www.youtube.com": "youtube",
+	"m.youtube.com":   "youtube",
+	"youtu.be":        "youtube",
+	"github.com":      "github",
+	"www.github.com":  "github",
+}
+
+// kind gives a video's type and the thumbnail's JSON (null without a YouTube
+// id). Since contract version 2 (R-088) a video is text that parses as an
+// https address with no user name or port, whose host is one of videoHosts;
+// the host alone decides the type. ok is false for anything else, which is
+// answered 400.
 func kind(videoURL any) (videoType string, thumbnail json.RawMessage, ok bool) {
-	includes := func(part string) bool { return false }
-	switch v := videoURL.(type) {
-	case string:
-		includes = func(part string) bool { return strings.Contains(v, part) }
-	case []any:
-		includes = func(part string) bool {
-			for _, item := range v {
-				if text, isText := item.(string); isText && text == part {
-					return true
-				}
-			}
-			return false
-		}
-	default:
+	text, isText := videoURL.(string)
+	if !isText {
 		return "", nil, false
 	}
-	switch {
-	case includes("youtube.com") || includes("youtu.be"):
-		text, isText := videoURL.(string)
-		if !isText {
-			return "", nil, false // a list has no match()
-		}
-		units, found := jscompat.FindSubmatchUTF16(youtubeID, text, 1)
-		if !found {
-			return "youtube", json.RawMessage("null"), true
-		}
-		// `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`, as
-		// UTF-16 units, so half of a pair is written as JSON writes it.
-		url := append(append(jscompat.ToUTF16("https://img.youtube.com/vi/"), units...), jscompat.ToUTF16("/maxresdefault.jpg")...)
-		thumbnail, _ = url.MarshalJSON()
-		return "youtube", thumbnail, true
-	case includes("github.com"):
-		return "github", json.RawMessage("null"), true
+	address, err := url.Parse(text)
+	if err != nil || address.Scheme != "https" || address.User != nil || address.Port() != "" {
+		return "", nil, false
 	}
-	return "direct", json.RawMessage("null"), true
+	videoType, ok = videoHosts[address.Host]
+	if !ok {
+		return "", nil, false
+	}
+	if videoType != "youtube" {
+		return videoType, json.RawMessage("null"), true
+	}
+	units, found := jscompat.FindSubmatchUTF16(youtubeID, text, 1)
+	if !found {
+		return "youtube", json.RawMessage("null"), true
+	}
+	// `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`, as UTF-16
+	// units, so half of a pair is written as JSON writes it.
+	image := append(append(jscompat.ToUTF16("https://img.youtube.com/vi/"), units...), jscompat.ToUTF16("/maxresdefault.jpg")...)
+	thumbnail, _ = image.MarshalJSON()
+	return "youtube", thumbnail, true
 }
 
 // delete removes the caller's own video: DELETE in the Next.js handler.
