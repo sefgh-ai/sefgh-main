@@ -1,6 +1,43 @@
 # GitHub trending characterization (GO-006a)
 
-## Version 4 (BUG-024, 2026-10-28): current
+## Version 7 (BUG-042, R-023, 2026-10-30): current
+
+59 cases. Go reports GitHub 429, or 403 with Retry-After/zero remaining, as
+429 with search's fixed error and `rate_limit: {remaining, reset}` (null when
+absent). Retry-After is forwarded when supplied. Ordinary 403 stays generic
+500; success is not reclassified because of rate headers. One old rate case
+revised and five cases added; all other prior cases remain identical. The Go
+harness now delivers upstream headers and checks Retry-After. Node's stand-in
+captures that header only for cases marked `capture_retry_after`; their old
+Next.js replies remain in `next_expect`. The shared helper is
+`backend/internal/githublimit/response.go`. No browser message change is implied
+(R-205 records that remaining work).
+
+## Version 6 (BUG-041, R-022, 2026-10-30)
+
+Go counts back 1, 7 or 30 elapsed days in UTC for daily, weekly or monthly,
+retaining the full timestamp. This fixes month overflow and DST shifts. There
+are 54 cases: three existing cutoff URLs changed, and three new empty-result
+cases pin a 30-day month and a week across DST in New York and UTC. The real
+rollback Next.js replies are recorded in `next_expect` where the cutoff differs.
+The remaining prior cases are unchanged. Integrity checks pin each cutoff as
+an elapsed duration from its fixed clock. The monthly filter remains a 30-day
+window; no yearly option was added to this endpoint.
+
+## Version 5 (BUG-040, R-021, 2026-10-30)
+
+Owner approved pack 2 option A. Go accepts all names in the existing embedded
+language catalog, case-insensitively, alongside previously accepted simple
+names. Multiword catalog names become one quoted GitHub qualifier; the whole
+query stays percent-encoded. The C# case now succeeds in Go; six added cases
+cover F#, F*, apostrophes, parentheses, multiword names and lowercase C#.
+There are 51 cases; the other 44 existing cases are identical. `next_expect`
+records the real rollback Next.js answers for the seven changed/new cases.
+An additional Go test sends every catalog name and lowercase variant through
+the handler, asserting the exact query GitHub receives. Unknown names containing
+spaces, slashes, excessive length or qualifier syntax remain refused.
+
+## Version 4 (BUG-024, 2026-10-28)
 
 Only the GitHub query changed (bug register R-203), with the owner's approval
 on 2026-10-28. The `created` qualifier now carries the full UTC time the period

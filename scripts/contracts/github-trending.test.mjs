@@ -25,7 +25,7 @@ const asSentByNext = (expect) => ({
 });
 
 test('trending fixture integrity', () => {
-  assert.equal(contract.contract_version,4);
+  assert.equal(contract.contract_version,7);
   for (const c of contract.cases) {
     for (const call of c.expect.calls) {
       const terms = decodeURIComponent(new URL(call.url).search.match(/q=([^&]*)/)[1]).split(' ');
@@ -48,8 +48,29 @@ test('trending fixture integrity', () => {
     if(c.expect.status === 400) assert.equal(c.expect.calls.length,0,c.id);
   }
 });
+test('trending cutoffs are fixed UTC durations (R-022)', () => {
+  for (const c of contract.cases) {
+    const since = new URL('https://fixture.invalid' + c.request).searchParams.get('since') || 'daily';
+    const days = {daily: 1, weekly: 7, monthly: 30}[since];
+    for (const call of c.expect.calls) {
+      const cutoff = new URL(call.url).searchParams.get('q').match(/created:>(\S+)/)[1];
+      assert.equal(cutoff, new Date(Date.parse(c.now) - days * 86400000).toISOString().replace('.000Z', 'Z'), c.id);
+    }
+  }
+});
+test('trending rate-limit cases pin status and wait metadata (R-023)', () => {
+  for (const c of contract.cases) {
+    const headers = c.upstream.headers ?? {};
+    if (c.upstream.status === 429 || (c.upstream.status === 403 && (headers['retry-after'] || headers['x-ratelimit-remaining'] === '0'))) {
+      assert.equal(c.expect.status, 429, c.id);
+      assert.deepEqual(c.expect.body.rate_limit, {remaining: headers['x-ratelimit-remaining'] ?? null, reset: headers['x-ratelimit-reset'] ?? null}, c.id);
+      assert.equal(c.expect.retry_after, headers['retry-after'] ?? null, c.id);
+      assert.equal(c.next_expect.status, 500, c.id);
+    }
+  }
+});
 for (const c of contract.cases) {
   test(`trending: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runTrendingFixture(GET,c),asSentByNext(c.expect));
+    assert.deepEqual(await runTrendingFixture(GET,c),c.next_expect ?? asSentByNext(c.expect));
   });
 }

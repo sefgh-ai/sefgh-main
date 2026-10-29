@@ -85,6 +85,22 @@ Because only a strictly larger count replaces the best, a tie keeps the earlier 
 
 ## Exercise
 
+BUG-042 (R-023) preserves headers from the initial user search. `fetch` now
+returns four values: status, `http.Header`, decoded data and error. The search
+passes the headers to the shared rate-limit helper (lesson 17); a repository
+enrichment that does not use them writes `_` in that return position. JavaScript
+would return an object and pull out only the fields it needs. HTTP 429 or a
+rate-related 403 now reaches the API caller with wait metadata instead of a
+generic 500. The separate enrichment-failure policy is still R-025.
+
+BUG-041 (R-022) also fixes this route's search window. Before starting the
+parallel work, it subtracts 1, 7 or 30 elapsed days from the clock in UTC,
+using `time.Duration` and `Add` as lesson 17 explains. It formats the entire
+RFC3339 timestamp, rather than only a date, so the exact cutoff reaches
+GitHub. The same injected clock drives tests in New York and UTC; the weekly
+cutoff is identical even across DST. Contract v3 retains the rollback
+Next.js answers separately. Existing concurrency exercises remain unchanged.
+
 Implement `collect(count, work)` in exercise.go. Run two work calls at a time,
 never more, and return results in index order after they have all finished.
 The test checks that two really do run together, so a plain loop does not

@@ -1,5 +1,23 @@
 # Trending developers contract (GO-007a)
 
+**Version 4** (BUG-042, R-023, 2026-10-30): 68 cases. The initial user search
+reports GitHub rate limits as 429 with nullable remaining/reset metadata and
+Retry-After when supplied, matching search's policy. Ordinary 403 stays 500.
+Two prior search-rate cases revised, five added, all other cases unchanged;
+real Next.js answers remain in `next_expect`. The Go harness now supplies
+upstream headers and checks Retry-After. Developer repository-enrichment
+failures remain governed by R-025; this change handles the initial search.
+Browser wait-time rendering remains R-205.
+
+**Version 3** (BUG-041, R-022, 2026-10-30): 63 cases. Go subtracts 1, 7 or
+30 elapsed days in UTC for daily/weekly/monthly. Its `created:>` qualifier
+includes the full cutoff timestamp, preserving the exact interval instead
+of GitHub's date-only "after that whole day" interpretation. All 56 existing
+search URLs changed; the four pre-fetch refusal cases remain identical. Three
+new cases cover a fixed 30-day month and weekly DST/UTC equivalence. Real
+unchanged Next.js replies are recorded in `next_expect` for each changed/new
+case, including its old repository-request behavior. No new yearly option.
+
 **Version 2** (BUG-030, 2026-10-28): 60 cases. Each developer's repositories are read as one page of up to 100 (`/users/<login>/repos?per_page=100`; GitHub ignored `sort=stars`) and the most-starred is the popular repository; a tie or missing counts keep the earlier one, and a count that is not a number counts as none (R-026, the owner's option A). Every repository request changed address; the replies are unchanged. New cases `most-starred-repository`, `equal-stars-keep-first`, `stars-not-a-number`; `first-repository-only` is no longer a defect. Go only: the Next.js handler keeps `sort=stars&per_page=1` until retired; its test converts the requests, and the three new cases carry `next_expect`, recorded from it.
 
 Version 1 characterizes the unchanged `GET /api/github/trending-developers`

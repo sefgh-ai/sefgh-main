@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 )
 
@@ -51,25 +52,28 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.Now != nil {
 		now = h.Now
 	}
-	date := now()
+	days := 1
 	switch since {
 	case "weekly":
-		date = date.AddDate(0, 0, -7)
+		days = 7
 	case "monthly":
-		date = date.AddDate(0, -1, 0)
-	default:
-		date = date.AddDate(0, 0, -1)
+		days = 30
 	}
+	// R-022: fixed elapsed UTC days, with the exact cutoff retained below.
+	date := now().UTC().Add(-time.Duration(days) * 24 * time.Hour)
 	base := strings.TrimRight(h.BaseURL, "/")
 	if base == "" {
 		base = DefaultBaseURL
 	}
-	status, body, err := h.fetch(ctx, base+"/search/users?q=followers:>100+created:>"+date.UTC().Format("2006-01-02")+"&sort=followers&order=desc&per_page=30")
+	status, headers, body, err := h.fetch(ctx, base+"/search/users?q=followers:>100+created:>"+date.Format(time.RFC3339)+"&sort=followers&order=desc&per_page=30")
 	if err != nil {
 		h.fail(w, "search", err)
 		return
 	}
 	if status < 200 || status >= 300 {
+		if githublimit.Write(w, status, headers) {
+			return
+		}
 		h.fail(w, "search", fmt.Errorf("GitHub answered %d", status))
 		return
 	}
@@ -145,7 +149,7 @@ func (h *Handler) developer(ctx context.Context, base string, index int, item an
 	// GitHub's user repositories endpoint cannot sort by stars (sort=stars
 	// was ignored), so one page of up to 100 is read and the most-starred
 	// chosen (R-026, contract version 2).
-	status, repos, err := h.fetch(ctx, base+"/users/"+name+"/repos?per_page=100")
+	status, _, repos, err := h.fetch(ctx, base+"/users/"+name+"/repos?per_page=100")
 	if err != nil {
 		return nil, err
 	}
@@ -227,14 +231,14 @@ func jsString(value any) string {
 	}
 }
 
-func (h *Handler) fetch(ctx context.Context, target string) (int, any, error) {
+func (h *Handler) fetch(ctx context.Context, target string) (int, http.Header, any, error) {
 	parsed, err := jscompat.FetchURL(target)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, DefaultBaseURL, nil)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	req.URL, req.Host = parsed, parsed.Host
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -245,24 +249,24 @@ func (h *Handler) fetch(ctx context.Context, target string) (int, any, error) {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return resp.StatusCode, nil, nil
+		return resp.StatusCode, resp.Header, nil, nil
 	}
 	bytes, err := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	if len(bytes) > maxBodyBytes {
-		return 0, nil, errors.New("GitHub reply too large")
+		return 0, nil, nil, errors.New("GitHub reply too large")
 	}
 	data, err := jscompat.DecodeJSON(bytes)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
-	return resp.StatusCode, data, nil
+	return resp.StatusCode, resp.Header, data, nil
 }
 
 func copyField(out map[string]any, name string, in map[string]any, key string) {

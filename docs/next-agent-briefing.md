@@ -13,7 +13,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 1. `AGENTS.md`: the shared rules for every agent. (Claude Code also loads `CLAUDE.md`, which imports it.) Non-negotiable; summarised in section 6 below.
 2. `docs/coordination.md`: the top ("Current state", "Active writer") and the newest handoff records, from **DECISION-PACK-002** down to **OWNER-ANSWERS-003**. Each record lists changed files, checks and the next step.
 3. `docs/plans/phase6-decision-pack-2.md`: 28 open bugs whose fixes change a contract, each with a recommendation. **Owner answered on 2026-10-29: recommendation A for every item; see the recorded answer in the pack and ADR.**
-4. `docs/bug-register.md`: every bug, R-001 to R-204. The last column is the status; "Needs" says whether a fix needs the owner (`owner`), a contract change (`contract`) or nothing (`—`).
+4. `docs/bug-register.md`: every bug, through R-205. The last column is the status; "Needs" says whether a fix needs the owner (`owner`), a contract change (`contract`) or nothing (`—`).
 5. `docs/adr/0002-go-backend.md`: the accepted plan (phases and gates) and the decisions log (newest rows dated 2026-10-28 and 2026-10-29).
 6. `docs/cutover.md`: the switches (`SEFGH_GO_ROUTES`, `NEXT_PUBLIC_SEFGH_GO_DATA`, `SEFGH_GO_API_URL`) and what is switched on in production.
 7. `backend/README.md`: how the Go routes are built, switched and tested; each contract's own `contracts/<name>/README.md` explains its fixtures and versions.
@@ -61,17 +61,20 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 | BUG-036 | R-063 |
 | BUG-037 | R-076 (Codex; full local handoff passed, deployment pending) |
 | BUG-038 | R-064 (Codex; full local handoff passed, deployment pending) |
-| BUG-039 | R-016 (Codex; monthly/yearly date filters, deployment pending) |
+| BUG-039 | R-016 (Codex; committed 66024e6, deployment pending) |
+| BUG-040 | R-021 (Codex; catalog language acceptance, deployment pending) |
+| BUG-041 | R-022 (Codex; fixed UTC windows in both trending endpoints, deployment pending) |
+| BUG-042 | R-023 (Codex; API rate-limit metadata, deployment pending; UI follow-up R-205 open) |
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-040**, register entry **R-205**. Never reuse or renumber.
+**Next free IDs:** task **BUG-043**, register entry **R-206**. Never reuse or renumber.
 
 ## 4. Your work queue, in order
 
 1. **Claim the writer role** (section 5, step 1) before editing anything.
 2. **If the owner has answered decision pack 2**, fix each approved entry as its own bounded task (BUG-037, BUG-038, …), following section 5. Record the answers in `docs/plans/phase6-decision-pack-2.md` and an ADR decisions-log row first. Entries the owner chose B for: record the decision and leave or defer as they said. **If they have not answered**, do item 3 meanwhile, and do not fix pack entries.
-3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); next is BUG-040 for R-021, then the remaining approved pack entries in order.
+3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); R-021 is implemented in BUG-040 (trending contract v5); R-022 is implemented in BUG-041 (repository v6/developers v3); R-023 is implemented in BUG-042 (repository v7/developers v4); next is BUG-043 for R-024, then the remaining approved pack entries in order. R-205 records the browser hook discarding rate-limit metadata; it is open.
 4. **R-038**, after the owner adds the AI keys. Check whether visitors reaching Go through the website's rewrite are told apart by the AI allowance: Go project logs, or signed-in chat from two addresses. An outside probe of suggestions cannot tell, because over the allowance they answer 200 with the fallback.
 5. **The signed-in walk-through (BUG-002)** needs the owner's test account.
    - The file sits outside the repository, at `D:\Users\Windows\Downloads\` (`sefgh mail and password for testing.txt`).

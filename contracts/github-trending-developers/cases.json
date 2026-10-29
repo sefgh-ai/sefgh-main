@@ -1,5 +1,5 @@
 {
-  "contract_version": 2,
+  "contract_version": 4,
   "route": "GET /api/github/trending-developers",
   "recorded_from": "086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3",
   "cases": [
@@ -19,6 +19,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -59,6 +76,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -85,6 +119,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -125,6 +176,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-09-13T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-09-13T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-09-13&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-09-13&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -158,6 +226,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -184,6 +269,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -279,8 +381,8 @@
     },
     {
       "id": "month-overflow",
-      "disposition": "defect",
-      "reason": "Month subtraction overflows into March rather than clamping to February.",
+      "disposition": "preserve",
+      "reason": "R-022: fixed elapsed UTC days, with the full cutoff timestamp, independent of calendar overflow or DST.",
       "request": "/api/github/trending-developers?since=monthly",
       "now": "2026-03-31T12:00:00Z",
       "timezone": "UTC",
@@ -300,6 +402,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-01T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-01T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -312,8 +431,8 @@
     },
     {
       "id": "leap-overflow",
-      "disposition": "defect",
-      "reason": "Leap-year month overflow retained.",
+      "disposition": "preserve",
+      "reason": "R-022: fixed elapsed UTC days, with the full cutoff timestamp, independent of calendar overflow or DST.",
       "request": "/api/github/trending-developers?since=monthly",
       "now": "2024-03-31T12:00:00Z",
       "timezone": "UTC",
@@ -333,6 +452,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2024-03-01T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2024-03-01T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2024-03-02&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2024-03-02&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -345,8 +481,8 @@
     },
     {
       "id": "dst-local",
-      "disposition": "defect",
-      "reason": "Local calendar subtraction changes the UTC query date across DST.",
+      "disposition": "preserve",
+      "reason": "R-022: fixed elapsed UTC days, with the full cutoff timestamp, independent of calendar overflow or DST.",
       "request": "/api/github/trending-developers",
       "now": "2026-03-08T23:30:00Z",
       "timezone": "America/New_York",
@@ -359,6 +495,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-07T23:30:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-07T23:30:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -399,6 +552,23 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-07T23:30:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-07T23:30:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-07&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-07&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -425,6 +595,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-06T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -495,8 +682,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -505,6 +692,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -561,8 +787,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -571,6 +797,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -632,8 +897,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -642,6 +907,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -703,8 +1007,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -713,6 +1017,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -773,8 +1116,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -783,6 +1126,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "demo",
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -848,8 +1230,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -858,6 +1240,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "first",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -930,8 +1351,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1046,8 +1467,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1162,8 +1583,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1264,8 +1685,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1274,6 +1695,41 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "popularRepo": {
+              "description": "Only description"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1335,8 +1791,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1345,6 +1801,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": null,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": null,
+            "popularRepo": {
+              "name": null,
+              "description": "No description provided"
+            },
+            "following": false,
+            "url": null
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1405,8 +1900,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -1415,6 +1910,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2026,8 +2560,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2194,6 +2728,444 @@
             }
           }
         ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "user0",
+            "username": "user0",
+            "avatar": "https://example.test/user0",
+            "popularRepo": {
+              "name": "project0",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user0"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "user1",
+            "username": "user1",
+            "avatar": "https://example.test/user1",
+            "popularRepo": {
+              "name": "project1",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user1"
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "user2",
+            "username": "user2",
+            "avatar": "https://example.test/user2",
+            "popularRepo": {
+              "name": "project2",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user2"
+          },
+          {
+            "id": 4,
+            "rank": 4,
+            "name": "user3",
+            "username": "user3",
+            "avatar": "https://example.test/user3",
+            "popularRepo": {
+              "name": "project3",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user3"
+          },
+          {
+            "id": 5,
+            "rank": 5,
+            "name": "user4",
+            "username": "user4",
+            "avatar": "https://example.test/user4",
+            "popularRepo": {
+              "name": "project4",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user4"
+          },
+          {
+            "id": 6,
+            "rank": 6,
+            "name": "user5",
+            "username": "user5",
+            "avatar": "https://example.test/user5",
+            "popularRepo": {
+              "name": "project5",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user5"
+          },
+          {
+            "id": 7,
+            "rank": 7,
+            "name": "user6",
+            "username": "user6",
+            "avatar": "https://example.test/user6",
+            "popularRepo": {
+              "name": "project6",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user6"
+          },
+          {
+            "id": 8,
+            "rank": 8,
+            "name": "user7",
+            "username": "user7",
+            "avatar": "https://example.test/user7",
+            "popularRepo": {
+              "name": "project7",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user7"
+          },
+          {
+            "id": 9,
+            "rank": 9,
+            "name": "user8",
+            "username": "user8",
+            "avatar": "https://example.test/user8",
+            "popularRepo": {
+              "name": "project8",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user8"
+          },
+          {
+            "id": 10,
+            "rank": 10,
+            "name": "user9",
+            "username": "user9",
+            "avatar": "https://example.test/user9",
+            "popularRepo": {
+              "name": "project9",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user9"
+          },
+          {
+            "id": 11,
+            "rank": 11,
+            "name": "user10",
+            "username": "user10",
+            "avatar": "https://example.test/user10",
+            "popularRepo": {
+              "name": "project10",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user10"
+          },
+          {
+            "id": 12,
+            "rank": 12,
+            "name": "user11",
+            "username": "user11",
+            "avatar": "https://example.test/user11",
+            "popularRepo": {
+              "name": "project11",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user11"
+          },
+          {
+            "id": 13,
+            "rank": 13,
+            "name": "user12",
+            "username": "user12",
+            "avatar": "https://example.test/user12",
+            "popularRepo": {
+              "name": "project12",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user12"
+          },
+          {
+            "id": 14,
+            "rank": 14,
+            "name": "user13",
+            "username": "user13",
+            "avatar": "https://example.test/user13",
+            "popularRepo": {
+              "name": "project13",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user13"
+          },
+          {
+            "id": 15,
+            "rank": 15,
+            "name": "user14",
+            "username": "user14",
+            "avatar": "https://example.test/user14",
+            "popularRepo": {
+              "name": "project14",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user14"
+          },
+          {
+            "id": 16,
+            "rank": 16,
+            "name": "user15",
+            "username": "user15",
+            "avatar": "https://example.test/user15",
+            "popularRepo": {
+              "name": "project15",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user15"
+          },
+          {
+            "id": 17,
+            "rank": 17,
+            "name": "user16",
+            "username": "user16",
+            "avatar": "https://example.test/user16",
+            "popularRepo": {
+              "name": "project16",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user16"
+          },
+          {
+            "id": 18,
+            "rank": 18,
+            "name": "user17",
+            "username": "user17",
+            "avatar": "https://example.test/user17",
+            "popularRepo": {
+              "name": "project17",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user17"
+          },
+          {
+            "id": 19,
+            "rank": 19,
+            "name": "user18",
+            "username": "user18",
+            "avatar": "https://example.test/user18",
+            "popularRepo": {
+              "name": "project18",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user18"
+          },
+          {
+            "id": 20,
+            "rank": 20,
+            "name": "user19",
+            "username": "user19",
+            "avatar": "https://example.test/user19",
+            "popularRepo": {
+              "name": "project19",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/user19"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user19/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
       }
     },
     {
@@ -2307,8 +3279,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2333,6 +3305,87 @@
           {
             "url": "https://api.github.com/users/carol/repos?per_page=100",
             "wire_url": "https://api.github.com/users/carol/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "slow",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "popularRepo": {
+              "name": "fast",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/bob"
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "carol",
+            "username": "carol",
+            "avatar": "https://example.test/carol",
+            "popularRepo": {
+              "name": "middle",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/carol"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2394,8 +3447,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2404,6 +3457,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2465,8 +3557,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2475,6 +3567,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2536,8 +3667,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2546,6 +3677,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2607,8 +3777,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2617,6 +3787,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2678,8 +3887,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2688,6 +3897,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2747,8 +3995,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2765,6 +4013,41 @@
           {
             "url": "https://api.github.com/users/bob/repos?per_page=100",
             "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2809,8 +4092,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2819,6 +4102,33 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2863,8 +4173,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2873,6 +4183,33 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2931,8 +4268,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2941,6 +4278,45 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2987,8 +4363,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -2997,6 +4373,33 @@
           {
             "url": "https://api.github.com/users/alice/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3019,6 +4422,25 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3063,6 +4485,25 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -3089,6 +4530,25 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3135,6 +4595,25 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -3159,6 +4638,25 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3200,6 +4698,25 @@
         "retry_after": null,
         "calls": [
           {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
             "headers": {
@@ -3212,8 +4729,8 @@
     },
     {
       "id": "search-http-403",
-      "disposition": "defect",
-      "reason": "Upstream failure is flattened to generic 500; rate-limit details are lost.",
+      "disposition": "preserve",
+      "reason": "R-023: expose a GitHub rate limit as 429 with nullable remaining/reset and Retry-After when supplied.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3229,6 +4746,29 @@
         }
       ],
       "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": "20",
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3250,8 +4790,8 @@
     },
     {
       "id": "search-http-429",
-      "disposition": "defect",
-      "reason": "Upstream failure is flattened to generic 500; rate-limit details are lost.",
+      "disposition": "preserve",
+      "reason": "R-023: expose a GitHub rate limit as 429 with nullable remaining/reset and Retry-After when supplied.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3267,6 +4807,29 @@
         }
       ],
       "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": "20",
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3305,6 +4868,25 @@
         }
       ],
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch trending developers"
@@ -3365,8 +4947,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3375,6 +4957,41 @@
           {
             "url": "https://api.github.com/users/undefined/repos?per_page=100",
             "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3431,8 +5048,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3441,6 +5058,45 @@
           {
             "url": "https://api.github.com/users/alice/../bob/repos?per_page=100",
             "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice/../bob",
+            "username": "alice/../bob",
+            "avatar": "https://example.test/alice/../bob",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice/../bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/../bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3497,8 +5153,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3507,6 +5163,45 @@
           {
             "url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
             "wire_url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice?x=1",
+            "username": "alice?x=1",
+            "avatar": "https://example.test/alice?x=1",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice?x=1"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice?x=1/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3529,6 +5224,23 @@
         }
       ],
       "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": [],
         "content_type": "application/json",
@@ -3590,8 +5302,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3600,6 +5312,43 @@
           {
             "url": "https://api.github.com/users/a/repos?per_page=100",
             "wire_url": "https://api.github.com/users/a/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "a",
+            "username": "a",
+            "popularRepo": {
+              "name": "r",
+              "description": "d"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3651,8 +5400,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3661,6 +5410,40 @@
           {
             "url": "https://api.github.com/users/undefined/repos?per_page=100",
             "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "demo",
+              "description": "A demo"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3712,8 +5495,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3722,6 +5505,40 @@
           {
             "url": "https://api.github.com/users/undefined/repos?per_page=100",
             "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "demo",
+              "description": "A demo"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/undefined/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3779,8 +5596,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3789,6 +5606,43 @@
           {
             "url": "https://api.github.com/users/true/repos?per_page=100",
             "wire_url": "https://api.github.com/users/true/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": true,
+            "username": true,
+            "popularRepo": {
+              "name": "demo",
+              "description": "A demo"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/true/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/true/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3846,8 +5700,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3856,6 +5710,43 @@
           {
             "url": "https://api.github.com/users/[object Object]/repos?per_page=100",
             "wire_url": "https://api.github.com/users/[object%20Object]/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": {},
+            "username": {},
+            "popularRepo": {
+              "name": "demo",
+              "description": "A demo"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/[object Object]/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/[object%20Object]/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3922,8 +5813,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3932,6 +5823,49 @@
           {
             "url": "https://api.github.com/users/a,b/repos?per_page=100",
             "wire_url": "https://api.github.com/users/a,b/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": [
+              "a",
+              "b"
+            ],
+            "username": [
+              "a",
+              "b"
+            ],
+            "popularRepo": {
+              "name": "demo",
+              "description": "A demo"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a,b/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a,b/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3983,8 +5917,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -3993,6 +5927,42 @@
           {
             "url": "https://api.github.com/users/a/repos?per_page=100",
             "wire_url": "https://api.github.com/users/a/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "a",
+            "username": "a",
+            "popularRepo": {
+              "description": "No description provided"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -4045,8 +6015,8 @@
         "retry_after": null,
         "calls": [
           {
-            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
-            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -4055,6 +6025,490 @@
           {
             "url": "https://api.github.com/users/a/repos?per_page=100",
             "wire_url": "https://api.github.com/users/a/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "a",
+            "username": "a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "monthly-fixed-thirty-days",
+      "disposition": "preserve",
+      "reason": "R-022: fixed-duration month and weekly DST boundary, checked in UTC.",
+      "request": "/api/github/trending-developers?since=monthly",
+      "now": "2026-03-01T00:05:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-01-30T00:05:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-01-30T00:05:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-02-01&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-02-01&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "weekly-across-dst",
+      "disposition": "preserve",
+      "reason": "R-022: fixed-duration month and weekly DST boundary, checked in UTC.",
+      "request": "/api/github/trending-developers?since=weekly",
+      "now": "2026-03-10T12:00:00Z",
+      "timezone": "America/New_York",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "weekly-same-instant-utc",
+      "disposition": "preserve",
+      "reason": "R-022: fixed-duration month and weekly DST boundary, checked in UTC.",
+      "request": "/api/github/trending-developers?since=weekly",
+      "now": "2026-03-10T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-03-03&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-03-03&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "rate-primary-403",
+      "disposition": "preserve",
+      "reason": "R-023: expose a GitHub rate limit as 429 with nullable remaining/reset and Retry-After when supplied.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 403,
+          "body": {
+            "message": "upstream detail stays private"
+          },
+          "headers": {
+            "x-ratelimit-remaining": "0",
+            "x-ratelimit-reset": "1793320200"
+          }
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": "1793320200"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "rate-secondary-403",
+      "disposition": "preserve",
+      "reason": "R-023: expose a GitHub rate limit as 429 with nullable remaining/reset and Retry-After when supplied.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 403,
+          "body": {
+            "message": "upstream detail stays private"
+          },
+          "headers": {
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": "30",
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "rate-metadata-429",
+      "disposition": "preserve",
+      "reason": "R-023: expose a GitHub rate limit as 429 with nullable remaining/reset and Retry-After when supplied.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 429,
+          "body": {
+            "message": "upstream detail stays private"
+          },
+          "headers": {
+            "retry-after": "Fri, 30 Oct 2026 00:30:00 GMT",
+            "x-ratelimit-remaining": "0",
+            "x-ratelimit-reset": "1793320200"
+          }
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": "1793320200"
+          }
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": "Fri, 30 Oct 2026 00:30:00 GMT",
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "rate-ordinary-403",
+      "disposition": "preserve",
+      "reason": "R-023: distinguish rate limits from ordinary refusals and successful replies.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 403,
+          "body": {
+            "message": "upstream detail stays private"
+          },
+          "headers": {
+            "x-ratelimit-remaining": "20"
+          }
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "success-with-rate-headers",
+      "disposition": "preserve",
+      "reason": "R-023: distinguish rate limits from ordinary refusals and successful replies.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": []
+          },
+          "headers": {
+            "x-ratelimit-remaining": "0",
+            "retry-after": "30"
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"

@@ -234,11 +234,16 @@ successful hosted run.
 
 ## Trending (GO-006b)
 
+BUG-040 (R-021, contract version 5): all embedded catalog names, including
+C# and multiword names, are accepted case-insensitively; names with spaces
+are quoted before encoding. 51 fixtures retain separate rollback Next.js
+expectations. The public catalog response itself is unchanged.
+
 Enable only with `SEFGH_GO_ROUTES=github-trending` and the Go origin. Off by
 default. Public-only: supplied authorization headers are ignored, and no
 caller or server token is sent upstream; the public read token of QUOTA-001
-may be, when one is set. 45 shared fixtures (contract version 4) pin the
-calendar, date and query rules and the replies, including 7 defect cases. The
+may be, when one is set. 59 shared fixtures (contract version 7) pin the
+date and query rules and the replies, including remaining recorded defects. The
 handler has a 10-second upstream timeout and a 16 MiB body limit, and honors
 cancellation. No private data, database access or shared cache.
 
@@ -253,6 +258,18 @@ as "after that whole day": "daily" is now the last 24 hours. Go only, as for
 version 3.
 
 ## Developers (GO-007b)
+
+BUG-042 (R-023): `internal/githublimit` shares the existing search policy with
+both trending searches. GitHub 429 or a rate-related 403 becomes 429 with a
+fixed message, nullable remaining/reset fields and Retry-After when supplied.
+Ordinary 403 stays a generic failure. Current contracts: repository v7 (59
+cases), developer v4 (68 cases). Repository-enrichment failures remain R-025;
+browser wait-time rendering remains R-205. Deployment pending.
+
+BUG-041 (R-022): both trending endpoints use fixed elapsed UTC days (1, 7,
+30); developer contract v3 has 63 cases and includes full timestamp cutoffs.
+Repository trending is v6. Month overflow and DST fixtures are corrected;
+rollback Next.js answers remain recorded separately. Deployment pending.
 
 Opt-in name: `github-trending-developers`, off by default. Public-only; no token
 is forwarded. Shared v1 fixtures preserve status/body/date/URL behavior and

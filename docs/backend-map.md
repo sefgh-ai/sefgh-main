@@ -1,5 +1,21 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-042, R-023): new leaf helper `internal/githublimit`
+gives both trending searches the existing search API's 429/rate-related-403
+policy, preserving Retry-After and nullable remaining/reset metadata without
+exposing upstream error bodies. Contracts: repository v7, developers v4.
+The browser still discards error metadata (R-205, open); no deployment here.
+
+Update 2026-10-30 (BUG-041, R-022): both trending endpoints use 1/7/30 fixed
+elapsed UTC days, with full timestamp cutoffs. Contracts are repository v6
+and developer v3; month-end and DST cases pin the new behavior, preserving
+rollback Next.js answers separately. No deployment performed by this task.
+
+Update 2026-10-30 (BUG-040, R-021): trending accepts the existing embedded
+language catalog through a private lookup in `internal/githublanguages` and
+quotes multiword names before encoding. The catalog response is unchanged;
+contract v5 retains rollback Next.js expectations. Deployment pending.
+
 Update 2026-10-29 (BUG-038, R-064): `internal/activity` reads yearly activity
 in 1000-row pages ordered by date/type, within one shared 10-second database
 deadline. Contract version 3 pins each page; later-page failures never return

@@ -21,11 +21,12 @@ type call struct {
 	Headers map[string]string `json:"headers"`
 }
 type step struct {
-	Status  int             `json:"status"`
-	Body    json.RawMessage `json:"body"`
-	Raw     *string         `json:"raw_body"`
-	Network bool            `json:"network_error"`
-	Delay   int             `json:"delay_ms"`
+	Status  int               `json:"status"`
+	Body    json.RawMessage   `json:"body"`
+	Raw     *string           `json:"raw_body"`
+	Network bool              `json:"network_error"`
+	Delay   int               `json:"delay_ms"`
+	Headers map[string]string `json:"headers"`
 }
 type fixture struct {
 	ID       string `json:"id"`
@@ -34,9 +35,10 @@ type fixture struct {
 	Timezone string `json:"timezone"`
 	Upstream []step `json:"upstream"`
 	Expect   struct {
-		Status int    `json:"status"`
-		Body   any    `json:"body"`
-		Calls  []call `json:"calls"`
+		Status     int     `json:"status"`
+		Body       any     `json:"body"`
+		Calls      []call  `json:"calls"`
+		RetryAfter *string `json:"retry_after"`
 	} `json:"expect"`
 }
 type roundTrip func(*http.Request) (*http.Response, error)
@@ -55,7 +57,7 @@ func TestContracts(t *testing.T) {
 	if err = json.Unmarshal(bytes, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 2 || len(contract.Cases) == 0 {
+	if contract.Version != 4 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {
@@ -106,7 +108,11 @@ func TestContracts(t *testing.T) {
 					if s.Raw != nil {
 						body = *s.Raw
 					}
-					return &http.Response{StatusCode: s.Status, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(body))}, nil
+					headers := make(http.Header)
+					for name, value := range s.Headers {
+						headers.Set(name, value)
+					}
+					return &http.Response{StatusCode: s.Status, Header: headers, Body: io.NopCloser(strings.NewReader(body))}, nil
 				})}
 				var status int
 				var body []byte
@@ -145,7 +151,11 @@ func TestContracts(t *testing.T) {
 				if !reflect.DeepEqual(calls, expected) {
 					t.Fatalf("calls %#v; want %#v", calls, expected)
 				}
-				if header.Get("Content-Type") != "application/json" || header.Get("Cache-Control") != "" || header.Get("Retry-After") != "" {
+				wantRetry := ""
+				if f.Expect.RetryAfter != nil {
+					wantRetry = *f.Expect.RetryAfter
+				}
+				if header.Get("Content-Type") != "application/json" || header.Get("Cache-Control") != "" || header.Get("Retry-After") != wantRetry {
 					t.Fatalf("headers %v", header)
 				}
 			})

@@ -81,10 +81,11 @@ type fixture struct {
 	Now      string `json:"now"`
 	Timezone string `json:"timezone"`
 	Upstream struct {
-		Status       int             `json:"status"`
-		Body         json.RawMessage `json:"body"`
-		Raw          *string         `json:"raw_body"`
-		NetworkError bool            `json:"network_error"`
+		Status       int               `json:"status"`
+		Body         json.RawMessage   `json:"body"`
+		Raw          *string           `json:"raw_body"`
+		NetworkError bool              `json:"network_error"`
+		Headers      map[string]string `json:"headers"`
 	} `json:"upstream"`
 	Expect struct {
 		Status      int     `json:"status"`
@@ -93,6 +94,7 @@ type fixture struct {
 		RandomCalls int     `json:"random_calls"`
 		ContentType string  `json:"content_type"`
 		Cache       *string `json:"cache_control"`
+		RetryAfter  *string `json:"retry_after"`
 	} `json:"expect"`
 }
 type roundTrip func(*http.Request) (*http.Response, error)
@@ -111,7 +113,7 @@ func TestContracts(t *testing.T) {
 	if err := json.Unmarshal(content, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 4 || len(contract.Cases) == 0 {
+	if contract.Version != 7 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {
@@ -144,7 +146,11 @@ func TestContracts(t *testing.T) {
 					if f.Upstream.Raw != nil {
 						body = *f.Upstream.Raw
 					}
-					return &http.Response{StatusCode: f.Upstream.Status, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(body))}, nil
+					headers := make(http.Header)
+					for name, value := range f.Upstream.Headers {
+						headers.Set(name, value)
+					}
+					return &http.Response{StatusCode: f.Upstream.Status, Header: headers, Body: io.NopCloser(strings.NewReader(body))}, nil
 				})}
 				var status int
 				var header http.Header
@@ -191,6 +197,13 @@ func TestContracts(t *testing.T) {
 				}
 				if header.Get("Content-Type") != f.Expect.ContentType || header.Get("Cache-Control") != "" {
 					t.Fatalf("unexpected headers %v", header)
+				}
+				wantRetry := ""
+				if f.Expect.RetryAfter != nil {
+					wantRetry = *f.Expect.RetryAfter
+				}
+				if header.Get("Retry-After") != wantRetry {
+					t.Fatalf("Retry-After %q, want %q", header.Get("Retry-After"), wantRetry)
 				}
 			})
 		}

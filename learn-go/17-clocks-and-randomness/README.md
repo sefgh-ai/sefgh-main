@@ -104,7 +104,41 @@ search := "stars:>100 created:>" + date.UTC().Format(time.RFC3339)
 as the zone, so GitHub gets `created:>2026-10-26T04:30:00Z`: the last 24 hours.
 The exercise below still asks for a date; it practises `Format` the same way.
 
+## Names from the selector (BUG-040, R-021)
+
+Trending now also accepts the language endpoint's embedded catalog (lesson 12).
+The original simple-name validation still works. Names such as Visual Basic
+.NET must be one search qualifier, so Go puts double quotes around a catalog
+name containing spaces before percent-encoding the whole query. In JavaScript
+this is the same sequence: build `language:"Visual Basic .NET"`, then call
+`encodeURIComponent` on the complete query. Encoding and search quoting solve
+different problems; both are needed. Contract version 5 retains the rollback
+Next.js handler's rejected answers in `next_expect`.
+
 ## Exercise
+
+BUG-042 (R-023) gives trending a separate response for rate limits. The shared
+`githublimit.Write(w, status, headers)` helper returns a boolean: true means it
+already wrote a 429 response and the handler should return; false means normal
+handling continues. This is like `if (writeRateLimit(...)) return` in JavaScript.
+A GitHub 429 always qualifies. A 403 qualifies only with Retry-After or zero
+remaining requests, so ordinary forbidden responses stay ordinary failures.
+The helper copies the wait header and uses `*string` for metadata: a nil pointer
+encodes as JSON null, while a present value stays text. It never sends GitHub's
+error body to the visitor. The contract tests cover both missing and present
+headers, including an HTTP date. Quick exercise: would HTTP 200 with zero
+remaining be a failed request? No; `success-with-rate-headers` pins that answer.
+
+BUG-041 (R-022) changes the route to elapsed UTC days: daily 1, weekly 7,
+monthly 30. `current.UTC().Add(-time.Duration(days) * 24 * time.Hour)` is like
+`new Date(now.getTime() - days * 86400000)` in JavaScript. `AddDate` changes a
+calendar date and can produce 23/25-hour days at DST or overflow February;
+`Add` subtracts a duration. The full timestamp remains in the query. Contract
+v6 tests month end and matching instants in New York and UTC. The existing
+exercise below intentionally still practices the earlier calendar operation;
+keep your work in `exercise.go` untouched. A separate quick exercise: March 1,
+2026 at 00:05 UTC minus 30 days is January 30 at 00:05 UTC; find that cutoff
+in `monthly-fixed-thirty-days`.
 
 Implement `previousDay(now func() time.Time) string` in this lesson's exercise.
 Call the injected clock once, subtract one local calendar day, then format in UTC.

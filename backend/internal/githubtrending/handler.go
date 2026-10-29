@@ -1,4 +1,4 @@
-// Package githubtrending ports the trending route at contract version 2,
+// Package githubtrending ports the trending route at contract version 7,
 // including the defects still recorded in contracts/github-trending.
 package githubtrending
 
@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 )
 
@@ -44,7 +46,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if since == "" {
 		since = "daily"
 	}
-	if (since != "daily" && since != "weekly" && since != "monthly") || (language != "" && !languagePattern.MatchString(language)) {
+	if (since != "daily" && since != "weekly" && since != "monthly") || (language != "" && !languagePattern.MatchString(language) && !githublanguages.Contains(language)) {
 		write(w, 400, map[string]string{"error": "Invalid parameters"})
 		return
 	}
@@ -53,17 +55,15 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		now = h.Now
 	}
 	current := now()
-	date := current
+	days := 1
 	switch since {
 	case "weekly":
-		date = date.AddDate(0, 0, -7)
+		days = 7
 	case "monthly":
-		date = date.AddDate(0, -1, 0)
-	default:
-		date = date.AddDate(0, 0, -1)
+		days = 30
 	}
-	// AddDate preserves local calendar subtraction and month overflow; only
-	// then convert to UTC, matching setDate/setMonth followed by toISOString.
+	// R-022: elapsed days in UTC do not overflow months or change at DST.
+	date := current.UTC().Add(-time.Duration(days) * 24 * time.Hour)
 	// GitHub's search terms are separated by spaces. The Next.js handler
 	// joined them with "+" and then percent-encoded the whole query, so
 	// GitHub received %2B, a literal plus sign, and refused every request
@@ -73,7 +73,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// midnight UTC and was empty early in the day (R-203, version 4).
 	search := "stars:>100 created:>" + date.UTC().Format(time.RFC3339)
 	if language != "" && language != "any" {
-		search += " language:" + language
+		// Known catalog names can contain spaces; GitHub needs one quoted
+		// qualifier value, not several search words (R-021).
+		if strings.Contains(language, " ") {
+			search += ` language:"` + language + `"`
+		} else {
+			search += " language:" + language
+		}
 	}
 	base := h.BaseURL
 	if base == "" {
@@ -97,6 +103,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
+	if githublimit.Write(w, resp.StatusCode, resp.Header) {
+		return
+	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		h.fail(w, "status", fmt.Errorf("GitHub answered %d", resp.StatusCode))
 		return

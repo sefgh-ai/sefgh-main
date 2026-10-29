@@ -22,7 +22,7 @@ const asSentByNext = (c) => c.next_expect ?? {
 };
 
 test('developer fixture integrity and credential boundaries', () => {
-  assert.equal(contract.contract_version,2);
+  assert.equal(contract.contract_version,4);
   assert.equal(new Set(contract.cases.map(c=>c.id)).size,contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve','defect'].includes(c.disposition), c.id);
@@ -37,6 +37,28 @@ test('developer fixture integrity and credential boundaries', () => {
       if (call.url.includes('/repos?')) assert.ok(call.url.endsWith('/repos?per_page=100') && !call.url.includes('sort=stars'),c.id);
     }
     if (c.expect.status===400) assert.equal(c.expect.calls.length,0,c.id);
+  }
+});
+test('developer cutoffs are fixed UTC durations (R-022)', () => {
+  for (const c of contract.cases) {
+    const since = new URL('https://fixture.invalid' + c.request).searchParams.get('since') || 'daily';
+    const days = {daily: 1, weekly: 7, monthly: 30}[since];
+    for (const call of c.expect.calls.filter((call) => new URL(call.url).pathname === '/search/users')) {
+      const cutoff = new URL(call.url).searchParams.get('q').match(/created:>(\S+)/)[1];
+      assert.equal(cutoff, new Date(Date.parse(c.now) - days * 86400000).toISOString().replace('.000Z', 'Z'), c.id);
+    }
+  }
+});
+test('developer search rate-limit cases pin status and wait metadata (R-023)', () => {
+  for (const c of contract.cases) {
+    const upstream = c.upstream[0] ?? {};
+    const headers = upstream.headers ?? {};
+    if (upstream.status === 429 || (upstream.status === 403 && (headers['retry-after'] || headers['x-ratelimit-remaining'] === '0'))) {
+      assert.equal(c.expect.status, 429, c.id);
+      assert.deepEqual(c.expect.body.rate_limit, {remaining: headers['x-ratelimit-remaining'] ?? null, reset: headers['x-ratelimit-reset'] ?? null}, c.id);
+      assert.equal(c.expect.retry_after, headers['retry-after'] ?? null, c.id);
+      assert.equal(c.next_expect.status, 500, c.id);
+    }
   }
 });
 for (const c of contract.cases) {

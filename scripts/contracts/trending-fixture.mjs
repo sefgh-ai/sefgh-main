@@ -17,7 +17,7 @@ export async function runTrendingFixture(GET, fixture) {
       calls.push({ url, headers: init.headers });
       if (fixture.upstream.network_error) throw new TypeError('fetch failed');
       return new Response(fixture.upstream.raw_body ?? JSON.stringify(fixture.upstream.body), {
-        status: fixture.upstream.status, headers: {'content-type':'application/json'},
+        status: fixture.upstream.status, headers: {'content-type':'application/json', ...fixture.upstream.headers},
       });
     };
     const response = await GET(new Request(`https://app.test${fixture.request}`));
@@ -28,6 +28,7 @@ export async function runTrendingFixture(GET, fixture) {
       cache_control: response.headers.get('cache-control'),
       calls,
       random_calls: randomCalls,
+      ...(fixture.capture_retry_after ? {retry_after: response.headers.get('retry-after')} : {}),
     };
   } finally {
     globalThis.fetch = original.fetch;

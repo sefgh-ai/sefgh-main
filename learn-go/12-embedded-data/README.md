@@ -37,6 +37,33 @@ The production file is independent of the expected contract snapshot. This
 matters: testing a file against itself would never catch accidental changes.
 The Next.js array and Go artifact must both match the approved snapshot.
 
+## One catalog, two uses (BUG-040, R-021)
+
+The trending selector reads this catalog. Its API used to reject names such
+as C# and Visual Basic .NET, because a separate validation pattern knew less
+than the catalog did. `Contains` now answers whether a name is in the same
+embedded data. The package decodes it once and builds a private set:
+
+```go
+known := make(map[string]struct{}, len(names))
+for _, name := range names {
+    known[strings.ToLower(name)] = struct{}{}
+}
+```
+
+`map[string]struct{}` is Go's set: the empty struct needs no value data, and
+the comma-ok lookup tells you whether a key exists. JavaScript would use
+`new Set(names.map(name => name.toLowerCase()))`. Lowercase lookup also accepts
+the selector's fallback spellings. No caller gets the map, and no code changes
+it after initialization, so concurrent requests only read it. The served JSON
+is unchanged. The embedded artifact must be valid JSON; invalid compiled-in
+data stops startup instead of silently serving a different validation list.
+
+Small exercise outside your existing `exercise.go`: check whether C#, c# and
+an unknown name with a colon belong in the set. The first two do; the last
+does not. `TestEveryCatalogLanguageReachesGitHub` checks the full catalog and
+the lowercase forms through the actual trending handler.
+
 ## Your turn
 
 `lesson.go` embeds a tiny `sample.json`. Implement `serveCatalog` in

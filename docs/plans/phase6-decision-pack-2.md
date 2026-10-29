@@ -2,7 +2,7 @@
 
 **Owner answer (2026-10-29): recommendation A for every item.** All 28 listed fixes are approved as separate bounded tasks. R-011 is deferred until after Phase 7; R-042's GitHub-token checks remain immediate, without caching. This approval does not authorize deployment, production SQL, credentials or resuming the parked items. Recorded by Codex from the owner's answer in this session.
 
-Implementation progress: R-016 fixed locally in BUG-039 (contract v5, uncommitted; deployment and independent review pending). Next approved entry: R-021. The other 27 fixes remain queued.
+Implementation progress: R-016 committed at 66024e6 (BUG-039); R-021, R-022 and R-023 fixed locally in BUG-040/041/042 (repository trending v7, developers v4, uncommitted). Deployment and independent review pending. Next approved entry: R-024. The other 24 pack fixes remain queued; newly recorded R-205 is a separate UI follow-up.
 
 Prepared by Claude Code on 2026-10-29 (DECISION-PACK-002) for the owner. Every route is on Go in production since 2026-10-28, so each of these can now be fixed once, in Go (or in React where it says so). Each fix changes what a contract records, which needs your approval. Recommendation **A** is what an agent would build; **B** is the alternative. The register (`../bug-register.md`) has the full detail for each entry.
 
