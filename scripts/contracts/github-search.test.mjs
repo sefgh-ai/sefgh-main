@@ -64,12 +64,26 @@ test("case ids are unique", () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 test("version 4 sends the supported navbar filters (R-017)", () => {
-  assert.equal(contract.contract_version, 4);
+  assert.equal(contract.contract_version, 5);
   for (const name of ["license", "created", "topic", "forks"]) {
     const sent = contract.cases.find((c) => c.expect_upstream_url && new URLSearchParams(c.request).get(name));
     assert.ok(sent, `no case sends ${name}`);
     assert.ok(decodeURIComponent(sent.expect_upstream_url).includes(` ${name}:`), `${sent.id}: ${name} is not in Go's query`);
   }
+});
+
+test("version 5 monthly/yearly windows use fixed UTC days (R-016)", () => {
+  const periods = contract.cases.filter((c) => ["monthly", "yearly"].includes(new URLSearchParams(c.request).get("sort")));
+  assert.equal(periods.length, 7);
+  for (const c of periods) {
+    const days = new URLSearchParams(c.request).get("sort") === "monthly" ? 30 : 365;
+    const from = new Date(Date.parse(c.now) - days * 86400000).toISOString().replace(".000Z", "Z");
+    assert.ok(decodeURIComponent(c.expect_upstream_url).includes(` created:>${from}`), c.id);
+    assert.ok(c.next_expect_upstream_url, c.id);
+    assert.ok(!decodeURIComponent(c.next_expect_upstream_url).includes("created:"), c.id);
+  }
+  const byId = Object.fromEntries(periods.map((c) => [c.id, c]));
+  assert.equal(byId["monthly-dst-offset"].expect_upstream_url, byId["monthly-same-instant-india"].expect_upstream_url);
 });
 
 for (const c of contract.cases) {

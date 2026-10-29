@@ -54,6 +54,7 @@ type fixture struct {
 	User         json.RawMessage `json:"user"`
 	ClientThrows bool            `json:"client_throws"`
 	Database     []answer        `json:"database"`
+	GoDatabase   *[]answer       `json:"go_database"`
 	Expect       struct {
 		Status      int             `json:"status"`
 		Body        json.RawMessage `json:"body"`
@@ -76,7 +77,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 1 || len(contract.Cases) == 0 {
+	if contract.Version != 2 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -122,8 +123,12 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 	}
 	s.calls = append(s.calls, call)
 	next := answer{Status: 200, Body: json.RawMessage(`[]`)}
-	if len(s.calls) <= len(s.f.Database) {
-		next = s.f.Database[len(s.calls)-1]
+	answers := s.f.Database
+	if s.f.GoDatabase != nil {
+		answers = *s.f.GoDatabase
+	}
+	if len(s.calls) <= len(answers) {
+		next = answers[len(s.calls)-1]
 	}
 	if next.NetworkError {
 		return nil, errors.New("fetch failed")

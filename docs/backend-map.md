@@ -1,5 +1,11 @@
 # SEFGH backend map
 
+Update 2026-10-29 (BUG-038, R-064): `internal/activity` reads yearly activity
+in 1000-row pages ordered by date/type, within one shared 10-second database
+deadline. Contract version 3 pins each page; later-page failures never return
+partial totals. Caller-scoped authorization and the rollback Next.js handler
+remain characterized separately. No deployment performed by this task.
+
 Update2026-10-23 (KEYS-PROVISION-001b / BUG-022): reviewed trusted Node operator
 is isolated from app/Go runtime, with one fixed-role token, verified owner
 sessions, exclusive journal, isolated child and acknowledged logout. Chrome
@@ -211,7 +217,7 @@ Source: `src/app/api/github/search/route.js`; consumers are `src/hooks/search/us
 Open findings, recorded and not fixed:
 
 - The search navbar sends `sort=stars` and `sort=updated`, names the API does not know, so "Most Stars" and "Recently Updated" silently behave as `all`. Pinned as `defect` cases awaiting an owner decision. The `SearchFilters` panel uses the API's own names and works.
-- `monthly` and `yearly` add no date filter; they behave exactly like `latest`.
+- Fixed in Go (BUG-039, R-016, 2026-10-29): `monthly` and `yearly` add UTC creation cutoffs 30/365 fixed days before the injected clock; contract v5 retains rollback Next.js URLs separately. Deployment pending.
 - The navbar's advanced filters (license, date range, topics, forks, wiki, issues) are held in UI state and never sent to the API.
 - The UI offers "load more" while it holds fewer results than `total_count`, but GitHub serves only the first 1000. Requests past that now answer 400 where they used to answer 500.
 
@@ -490,8 +496,8 @@ one rule for reading a bearer.
 
 `/api/repo/vote` (GET, POST) has a Go port, `backend/internal/vote`, off by
 default (switch `repo-vote`). Writes go as the caller (`supabaserest.Upsert`,
-`Delete`); the stats function is called with `supabaserest.RPC` and, as on
-the live database, fails, so the votes are counted by hand. The vote arrows
+`Delete`); BUG-037 (R-076, 2026-10-29) counts votes directly without the
+missing stats function. Contract version 2 retains Next.js answers separately. The vote arrows
 send the bearer (`fetchWithSession`).
 
 ## RATING-001 update (2026-10-17)

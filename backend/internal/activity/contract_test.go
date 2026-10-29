@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -28,14 +29,16 @@ const (
 )
 
 type fixture struct {
-	ID           string          `json:"id"`
-	Now          string          `json:"now"`
-	Timezone     string          `json:"timezone"`
-	User         json.RawMessage `json:"user"`
-	ClientThrows bool            `json:"client_throws"`
-	Rows         json.RawMessage `json:"rows"`
-	QueryError   string          `json:"query_error"`
-	Expect       struct {
+	ID              string          `json:"id"`
+	Now             string          `json:"now"`
+	Timezone        string          `json:"timezone"`
+	User            json.RawMessage `json:"user"`
+	ClientThrows    bool            `json:"client_throws"`
+	Rows            json.RawMessage `json:"rows"`
+	QueryError      string          `json:"query_error"`
+	GoQueries       [][][]any       `json:"go_queries"`
+	PageErrorOffset *int            `json:"page_error_offset"`
+	Expect          struct {
 		Status      int             `json:"status"`
 		Body        json.RawMessage `json:"body"`
 		ContentType string          `json:"content_type"`
@@ -57,7 +60,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 2 || len(contract.Cases) == 0 {
+	if contract.Version != 3 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -99,13 +102,31 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 		if got := r.Header.Get("Authorization"); got != "Bearer "+acceptedSession {
 			s.t.Errorf("%s: the database was asked with %q, not the user's token", s.f.ID, got)
 		}
-		if s.f.QueryError != "" {
+		offset, _ := strconv.Atoi(r.URL.Query().Get("offset"))
+		if s.f.QueryError != "" || (s.f.PageErrorOffset != nil && offset >= *s.f.PageErrorOffset) {
 			body, _ := json.Marshal(map[string]string{"code": "42501", "message": s.f.QueryError})
 			return answer(403, string(body))
 		}
 		rows := string(s.f.Rows)
 		if rows == "" {
 			rows = "[]"
+		}
+		var list []json.RawMessage
+		if strings.HasPrefix(rows, "[") && json.Unmarshal([]byte(rows), &list) == nil {
+			limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+			if err != nil {
+				limit = 1000
+			}
+			if offset < 0 || offset > len(list) {
+				offset = len(list)
+			}
+			end := min(offset+limit, len(list))
+			page := list[offset:end]
+			if page == nil {
+				page = []json.RawMessage{}
+			}
+			raw, _ := json.Marshal(page)
+			rows = string(raw)
 		}
 		return answer(200, rows)
 	}
@@ -177,7 +198,29 @@ func check(t *testing.T, f fixture) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("body differs: %s", firstDifference(got, want))
 	}
-	checkQuery(t, stand.database, f.Expect.Query)
+	queries := f.GoQueries
+	if queries == nil && len(f.Expect.Query) > 0 {
+		queries = [][][]any{pagedSteps(f.Expect.Query, 0)}
+	}
+	if len(stand.database) != len(queries) {
+		t.Fatalf("database requests %d, expected %d", len(stand.database), len(queries))
+	}
+	for i, steps := range queries {
+		checkQuery(t, stand.database[i:i+1], steps)
+	}
+}
+
+// Generated comparisons still record the rollback handler's builder steps.
+// Go uses the same filters with stable ordering and an explicit first page.
+func pagedSteps(steps [][]any, offset int) [][]any {
+	result := make([][]any, 0, len(steps)+2)
+	for _, step := range steps {
+		if step[0] == "order" {
+			step = []any{"order", "activity_date,activity_type", map[string]any{"ascending": true}}
+		}
+		result = append(result, step)
+	}
+	return append(result, []any{"limit", 1000}, []any{"offset", offset})
 }
 
 // compact decodes a reply and writes each day of its grid as
@@ -312,7 +355,13 @@ func postgrestURL(t *testing.T, steps [][]any) (string, [][2]string) {
 			if options["ascending"] == true {
 				direction = "asc"
 			}
-			pairs = append(pairs, [2]string{"order", text(1) + "." + direction})
+			columns := strings.Split(text(1), ",")
+			for i := range columns {
+				columns[i] += "." + direction
+			}
+			pairs = append(pairs, [2]string{"order", strings.Join(columns, ",")})
+		case "limit", "offset":
+			pairs = append(pairs, [2]string{text(0), fmt.Sprint(step[1])})
 		default:
 			t.Fatalf("the runner does not know the step %v", step)
 		}

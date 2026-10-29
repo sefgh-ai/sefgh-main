@@ -1,5 +1,7 @@
 # Repository vote contract
 
+**Version 2** (BUG-037, 2026-10-29): R-076 is fixed in Go. After a successful write Go reads and counts votes directly, without calling the missing `get_repo_vote_stats`. All 37 cases remain: 15 have `go_database` replies and Go request expectations without the RPC, while their original inputs and Next.js answers remain in `database` and `next_expect`. The three hypothetical successful-RPC cases now supply rows for Go to count; their old object/list/null RPC answers remain checked against Next.js. Failed counts still return zeros. No Next.js handler changed.
+
 **Version 1** (VOTE-001, 2026-10-17): 37 cases, 5 marked `defect`, over `GET` and `POST /api/repo/vote`. `POST` records an upvote or downvote, or removes the vote; `GET` answers the counts and the visitor's own vote. The vote arrows (`src/components/repo-details/RepoVoteSection.jsx`) call `POST`. Nothing in the browser calls `GET`.
 
 ```text
@@ -18,7 +20,7 @@ A fixture gives:
 - `session`: the visitor's access token. Next.js sends it from the session cookie, and Go reads it as a bearer.
 - `user`: what Supabase Auth says about it.
 - `client_throws`.
-- `database`: the Data API's replies, in order.
+- `database`: the rollback Next.js handler's Data API replies, in order. Optional `go_database` replaces that list for Go; absent means use `database`, while an empty list means no supplied replies. `next_expect` retains Next.js behavior when Go's `expect` differs.
 
 `expect.database` lists every request: method, path and query exactly as sent, `Prefer`, `Accept`, `Content-Type`, `Authorization`, `apikey`, and the body as JSON.
 
@@ -31,7 +33,7 @@ A fixture gives:
   - the vote type: a truthy `voteType` that is not exactly `"upvote"` or `"downvote"` is 400.
 
   A truthy `voteType` is upserted as the user (`on_conflict=user_id,repo_full_name`, `Prefer: resolution=merge-duplicates`, `updated_at` from the clock). A falsy one deletes the user's vote. A failed write is 500 `Failed to save vote` or `Failed to remove vote`.
-- **Then the stats function** `get_repo_vote_stats` is called (`POST /rest/v1/rpc/...`):
+- **In the rollback Next.js handler, the stats function** `get_repo_vote_stats` is called (`POST /rest/v1/rpc/...`); Go version 2 counts directly:
   - **Defect** (R-076): the live database has no such function, so the call fails and the handler counts the votes itself from `repo_votes`.
   - Were the function present, its answer would be the reply's `votes` as it is, list or object, or zeros when it answers nothing.
   - A failed count is ignored, so every number is 0.

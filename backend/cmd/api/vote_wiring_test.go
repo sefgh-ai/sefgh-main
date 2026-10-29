@@ -40,7 +40,7 @@ func (s *voteUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // A vote goes to Supabase as the caller, with the caller's own token; the
-// missing stats function is called, then the votes are counted. No GitHub
+// votes are counted directly without a stats function. No GitHub
 // credential goes anywhere.
 func TestVoteWritesAsTheCaller(t *testing.T) {
 	stand := &voteUpstream{}
@@ -68,7 +68,6 @@ func TestVoteWritesAsTheCaller(t *testing.T) {
 	wantSeen := []string{
 		"GET /auth/v1/user|Bearer session-a|public-key|",
 		"POST /rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name|Bearer session-a|public-key|",
-		"POST /rest/v1/rpc/get_repo_vote_stats|Bearer session-a|public-key|",
 		"GET /rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo|Bearer session-a|public-key|",
 	}
 	if got := strings.Join(stand.seen, "\n"); got != strings.Join(wantSeen, "\n") {

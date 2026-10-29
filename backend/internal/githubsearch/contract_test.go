@@ -20,6 +20,7 @@ import (
 // handler.
 
 type contract struct {
+	Version        int                          `json:"contract_version"`
 	URLPrefix      string                       `json:"upstream_url_prefix"`
 	RequestHeaders map[string]map[string]string `json:"upstream_request_headers"`
 	Upstream       map[string]upstreamReply     `json:"upstream_responses"`
@@ -42,6 +43,7 @@ type expectedReply struct {
 }
 
 type contractCase struct {
+	Now         string  `json:"now"`
 	ID          string  `json:"id"`
 	Disposition string  `json:"disposition"`
 	Request     string  `json:"request"`
@@ -62,8 +64,8 @@ func loadContract(t *testing.T) contract {
 	if err := json.Unmarshal(data, &c); err != nil {
 		t.Fatalf("decoding contract: %v", err)
 	}
-	if len(c.Cases) == 0 {
-		t.Fatal("contract has no cases")
+	if c.Version != 5 || len(c.Cases) == 0 {
+		t.Fatalf("contract version %d with %d cases", c.Version, len(c.Cases))
 	}
 	return c
 }
@@ -96,6 +98,18 @@ func (u upstreamReply) bodyBytes() string {
 }
 
 var quietLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
+
+func (tc contractCase) clock(t *testing.T) func() time.Time {
+	t.Helper()
+	if tc.Now == "" {
+		return nil
+	}
+	now, err := time.Parse(time.RFC3339, tc.Now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return func() time.Time { return now }
+}
 
 func TestContractCaseIDsAreUnique(t *testing.T) {
 	seen := map[string]bool{}
@@ -141,7 +155,7 @@ func TestContract(t *testing.T) {
 				}, nil
 			})
 
-			h := &Handler{Client: &http.Client{Transport: stub}, Token: tc.GitHubToken, Logger: quietLogger}
+			h := &Handler{Client: &http.Client{Transport: stub}, Token: tc.GitHubToken, Logger: quietLogger, Now: tc.clock(t)}
 			req := httptest.NewRequest(http.MethodGet, "/api/github/search", nil)
 			req.URL.RawQuery = tc.Request
 			rec := httptest.NewRecorder()
@@ -207,6 +221,7 @@ func TestContractOverHTTP(t *testing.T) {
 			defer github.Close()
 
 			api := httptest.NewServer(&Handler{
+				Now:     tc.clock(t),
 				Client:  &http.Client{Timeout: 5 * time.Second},
 				BaseURL: github.URL,
 				Token:   tc.GitHubToken,

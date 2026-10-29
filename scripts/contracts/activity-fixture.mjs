@@ -42,7 +42,8 @@ export async function runActivityFixture(GET, fixture) {
             order: (...args) => (query.push(['order', ...args]), builder),
             then: (resolve) => resolve(fixture.query_error
               ? { data: null, error: { message: fixture.query_error } }
-              : { data: fixture.rows ?? [], error: null }),
+              : { data: Array.isArray(fixture.rows) && fixture.row_limit
+                ? fixture.rows.slice(0, fixture.row_limit) : fixture.rows ?? [], error: null }),
           };
           return builder;
         },

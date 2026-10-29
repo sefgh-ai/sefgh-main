@@ -12,7 +12,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 
 1. `AGENTS.md`: the shared rules for every agent. (Claude Code also loads `CLAUDE.md`, which imports it.) Non-negotiable; summarised in section 6 below.
 2. `docs/coordination.md`: the top ("Current state", "Active writer") and the newest handoff records, from **DECISION-PACK-002** down to **OWNER-ANSWERS-003**. Each record lists changed files, checks and the next step.
-3. `docs/plans/phase6-decision-pack-2.md`: 28 open bugs whose fixes change a contract, each with a recommendation. **The owner has not answered it yet.**
+3. `docs/plans/phase6-decision-pack-2.md`: 28 open bugs whose fixes change a contract, each with a recommendation. **Owner answered on 2026-10-29: recommendation A for every item; see the recorded answer in the pack and ADR.**
 4. `docs/bug-register.md`: every bug, R-001 to R-204. The last column is the status; "Needs" says whether a fix needs the owner (`owner`), a contract change (`contract`) or nothing (`—`).
 5. `docs/adr/0002-go-backend.md`: the accepted plan (phases and gates) and the decisions log (newest rows dated 2026-10-28 and 2026-10-29).
 6. `docs/cutover.md`: the switches (`SEFGH_GO_ROUTES`, `NEXT_PUBLIC_SEFGH_GO_DATA`, `SEFGH_GO_API_URL`) and what is switched on in production.
@@ -38,7 +38,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 - Add `NEXT_PUBLIC_SITE_URL=https://sefgh-main.vercel.app` to `sefgh-api`.
 - Redeploy both projects, so BUG-026 to BUG-036 go live.
 - Do one signed-in pass on the site.
-- Answer decision pack 2.
+- Decision pack 2 is answered: all A (2026-10-29). Its fixes remain queued as bounded tasks; R-011 is deferred until after Phase 7 and GitHub-token checks stay immediate.
 - Renew the domain `sefgh.org` in November.
 - Later, drop the backup schema `r078_backup` (section 4 of `supabase/checks/r078_rollback.sql`).
 
@@ -59,22 +59,19 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 | BUG-034 | R-017, its decided part |
 | BUG-035 | R-083 |
 | BUG-036 | R-063 |
+| BUG-037 | R-076 (Codex; full local handoff passed, deployment pending) |
+| BUG-038 | R-064 (Codex; full local handoff passed, deployment pending) |
+| BUG-039 | R-016 (Codex; monthly/yearly date filters, deployment pending) |
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-037**, register entry **R-205**. Never reuse or renumber.
+**Next free IDs:** task **BUG-040**, register entry **R-205**. Never reuse or renumber.
 
 ## 4. Your work queue, in order
 
 1. **Claim the writer role** (section 5, step 1) before editing anything.
 2. **If the owner has answered decision pack 2**, fix each approved entry as its own bounded task (BUG-037, BUG-038, …), following section 5. Record the answers in `docs/plans/phase6-decision-pack-2.md` and an ADR decisions-log row first. Entries the owner chose B for: record the decision and leave or defer as they said. **If they have not answered**, do item 3 meanwhile, and do not fix pack entries.
-3. **R-064 and R-076 (Low, Needs "—"; no decision needed).** Each first needs its Go contract test harness extended:
-   - **R-076 (`repo-vote`):** Go should stop calling the missing database function `get_repo_vote_stats`.
-     - The stand-in answers in each case's `database` list are handed out in order and shared by both implementations. The Next.js handler still makes that call (15 cases have it at index 1).
-     - So give the Go harness (`backend/internal/vote/contract_test.go`) its own optional answer list for Go, or route-matched answers. Keep the Next.js expectation as `next_expect`.
-   - **R-064 (`activity`):** read the year's rows in pages. Use `limit` 1000 and `offset`, with a stable order (`activity_date`, then `activity_type`), until a page is short.
-     - The contract records supabase-js builder calls (`expect.query`), so the Go harness in `backend/internal/activity/contract_test.go` must answer and record paged requests.
-     - Add a case with more than 1,000 rows.
+3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); next is BUG-040 for R-021, then the remaining approved pack entries in order.
 4. **R-038**, after the owner adds the AI keys. Check whether visitors reaching Go through the website's rewrite are told apart by the AI allowance: Go project logs, or signed-in chat from two addresses. An outside probe of suggestions cannot tell, because over the allowance they answer 200 with the fallback.
 5. **The signed-in walk-through (BUG-002)** needs the owner's test account.
    - The file sits outside the repository, at `D:\Users\Windows\Downloads\` (`sefgh mail and password for testing.txt`).

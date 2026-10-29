@@ -6,7 +6,9 @@
 
 ## The problem in the app
 
-The up and down arrows on a repository send `POST /api/repo/vote` with `voteType` set to `"upvote"`, `"downvote"`, or `null` to take the vote back. After saving, the handler asks the database function `get_repo_vote_stats` for the new counts. The live database has no such function (bug register R-076), so that call always fails. The handler then counts the votes itself. The Go port does the same, failing call included, so the two can be compared before the switch.
+The up and down arrows on a repository send `POST /api/repo/vote` with `voteType` set to `"upvote"`, `"downvote"`, or `null` to take the vote back. The old handler first calls a missing database function, then counts the votes when that fails. BUG-037 (R-076) removes that failed call from Go: after saving, Go reads the rows and counts directly. The Next.js rollback handler keeps its old behavior, checked separately by contract version 2.
+
+The Go test fixture has `GoDatabase *[]answer`: a pointer to a slice. A nil pointer means "use the shared replies"; a pointer to an empty slice means "Go has its own empty reply list". In JavaScript this choice is `fixture.go_database ?? fixture.database`. Separate lists let Go skip a call without shifting the answers that the old handler receives.
 
 ## Three kinds of nothing
 
@@ -37,7 +39,7 @@ A `json.RawMessage` holding the four letters `null` is not `nil`: it is a real J
 
 ## One deadline for several calls
 
-Each database call may take up to 10 seconds, and the server must answer within 30 (lesson 21). A vote can make three calls after the 4-second sign-in check: save the vote, ask for the stats, count. That is 4 + 30 = 34 seconds, which is too long.
+Each database call may take up to 10 seconds, and the server must answer within 30 (lesson 21). The original port made three calls after the 4-second sign-in check: save the vote, ask for the stats, count. That was 4 + 30 = 34 seconds, which was too long. Go now makes only the write and count, retaining the existing 24-second overall budget.
 
 No one had to notice this by hand. `TestHandlersFinishInsideTheWriteTimeout` adds up every route's worst case, and it failed the moment the vote route was wired in:
 
@@ -52,7 +54,7 @@ ctx, cancel := context.WithTimeout(r.Context(), budget)
 defer cancel()
 ```
 
-Each call gets this same `ctx`. When 24 seconds are used up, whatever call is running is cancelled, and the ones after it fail at once. Lesson 23 used the same idea for goroutines running side by side; here the calls run one after another. `TestBudgetBoundsAHangingStatsCall` makes the stats call hang and checks that the reply still arrives quickly.
+Each call gets this same `ctx`. When 24 seconds are used up, whatever call is running is cancelled, and the ones after it fail at once. Lesson 23 used the same idea for goroutines running side by side; here the calls run one after another. `TestBudgetBoundsAHangingCount` makes the count hang and checks that the reply still arrives quickly. The existing exercise below still practices missing, null and empty values; leave your `exercise.go` work in place.
 
 ## Stopping the clock
 

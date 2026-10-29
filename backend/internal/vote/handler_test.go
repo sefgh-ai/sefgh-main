@@ -65,14 +65,13 @@ func TestLogsKeepTheVisitorOut(t *testing.T) {
 }
 
 // One budget bounds a vote's database calls together. Here the vote is
-// stored and the stats call hangs: when the budget runs out the stats call
-// counts as failed, the count that follows fails at once, and the reply is
-// all zeros, quickly.
-func TestBudgetBoundsAHangingStatsCall(t *testing.T) {
+// stored and the count hangs: when the budget runs out the count fails,
+// and the reply is all zeros, quickly.
+func TestBudgetBoundsAHangingCount(t *testing.T) {
 	h := &Handler{
 		User: func(*http.Request) (string, string, int) { return "user-a", "session-a", 200 },
 		Database: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
-			if strings.Contains(r.URL.Path, "/rpc/") {
+			if r.Method == http.MethodGet {
 				<-r.Context().Done()
 				return nil, r.Context().Err()
 			}

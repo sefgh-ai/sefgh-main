@@ -1,15 +1,13 @@
-// Package vote ports GET and POST /api/repo/vote at contract version 1:
+// Package vote ports GET and POST /api/repo/vote at contract version 2:
 // upvoting, downvoting or removing a vote on a repository, and reading the
-// counts. Every case in contracts/repo-vote is answered as the Next.js
-// handlers answer it, defects included.
+// counts. Go counts directly after a write (R-076); the contract retains
+// the rollback Next.js handler's answers separately.
 //
 // Every database request goes as the visitor, through internal/supabaserest:
 // with the request's bearer when it has one, and with the project's public
 // key otherwise, so row-level security decides each read and write as it
 // does for the Next.js handlers' cookie client. After a vote the handler
-// calls the database function get_repo_vote_stats, which the live database
-// does not have (bug register R-076); it then counts the votes itself, as
-// the Next.js handler does. The planned difference, as for activity: Go
+// reads the votes directly, avoiding the missing stats function. Go
 // reads a bearer, not the session cookie, and the browser sends one.
 package vote
 
@@ -33,12 +31,10 @@ import (
 // cannot be read. The Next.js handler has no bound of its own.
 const MaxBodyBytes = 1 << 20
 
-// Budget bounds a vote's database calls together: the write, the stats call
-// and the count. Each call may take supabaserest.Timeout, and three of them
-// after the sign-in check would outlast the server's 30-second write
-// timeout. A call cut short reads as a failed one. The Next.js handler has
-// no bound. A test in cmd/api keeps sign-in and this budget inside the
-// write timeout.
+// Budget bounds a vote's write and count together. It retains the original
+// 24-second ceiling after removing the missing stats call (R-076). A call
+// cut short reads as a failed one. The Next.js handler has no bound. A test
+// in cmd/api keeps sign-in and this budget inside the write timeout.
 const Budget = 24 * time.Second
 
 // Handler answers GET and POST /api/repo/vote. User, Database and the two
@@ -130,29 +126,15 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// .rpc('get_repo_vote_stats', { repo_name: repoFullName })
-	args := append(append([]byte(`{"repo_name":`), repo...), '}')
-	upstream, raw, err := db.RPC(ctx, session, "get_repo_vote_stats", args)
-	var votes []byte
-	if failed(upstream, raw, err) {
-		// "Fallback to manual count if RPC fails": the count's own error is
-		// ignored, so a failed read counts nothing.
-		h.log("stats", upstream, err)
-		data := h.read(ctx, session, supabaserest.Param("select", "vote_type")+"&"+supabaserest.Param("repo_full_name", "eq."+repoText))
-		up, down, ok := count(data)
-		if !ok {
-			h.fail(w, "rows", 0, nil, 500, "Internal server error")
-			return
-		}
-		votes = counts(up, down)
-	} else {
-		// voteStats || { upvotes: 0, downvotes: 0, net_votes: 0 }
-		data, _ := supabaserest.ReadResult(upstream, raw)
-		votes = counts(0, 0)
-		if jscompat.Truthy(data) {
-			votes = supabaserest.DataJSON(upstream, raw)
-		}
+	// The live database has no stats function (R-076). Count directly,
+	// retaining the old fallback's behavior: a failed read counts nothing.
+	data := h.read(ctx, session, supabaserest.Param("select", "vote_type")+"&"+supabaserest.Param("repo_full_name", "eq."+repoText))
+	up, down, ok := count(data)
+	if !ok {
+		h.fail(w, "rows", 0, nil, 500, "Internal server error")
+		return
 	}
+	votes := counts(up, down)
 
 	var reply bytes.Buffer
 	reply.WriteString(`{"success":true,"votes":`)

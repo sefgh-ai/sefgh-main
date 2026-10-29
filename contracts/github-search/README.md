@@ -1,5 +1,7 @@
 # GitHub search contract fixtures
 
+**Version 5** (BUG-039, R-016, 2026-10-29): 107 cases. Owner approved decision pack 2 option A. Go's `sort=monthly` and `sort=yearly` append `created:>` at the UTC instant 30 or 365 fixed days before `Handler.Now` (defaults to `time.Now`). Existing filters still apply and updated sorting stays. The two original period cases and five new clock/boundary cases pin exact URLs, month end, leap day, DST/offset equivalence and intersection with explicit filters. Each period fixture supplies `now`; the unchanged rollback Next.js handler's URL stays in `next_expect_upstream_url`. Other 100 existing cases remain identical. The Go runner now requires contract version 5.
+
 **Version 4** (BUG-034, 2026-10-28): 102 cases. Go accepts four more parameters from the navbar (R-017): `license` (a lower-case license key), `created` (a date with an optional comparison, or a date range), `topic` (up to five comma-separated topic names) and `forks` (the `stars` format). Each becomes a GitHub qualifier after `language` and `stars`, in that order; a malformed one answers `invalid_parameters`; empty ones are ignored. 13 new `filter-*` cases. Go only: the Next.js handler ignores them until it is retired, so each new case carries `next_expect_upstream_url` and `next_expect`, which `scripts/contracts/github-search.test.mjs` uses.
 
 AUTH-001 (2026-10-13): current contract version **3**. The shared
@@ -35,6 +37,7 @@ Each case has:
 - `upstream`: the stub reply to use, or `null` when GitHub must not be called.
 - `expect_upstream_url`: the exact URL suffix sent to GitHub, or `null`.
 - `expect`: the named reply the caller gets.
+- `now`: optional RFC3339 clock instant for Go's monthly/yearly window. `next_expect_upstream_url` and `next_expect` preserve the rollback Next.js URL/response where Go differs.
 - `disposition`: `preserve` or `defect`.
 
 ## What an implementation must match

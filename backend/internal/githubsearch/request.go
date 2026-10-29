@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 )
@@ -64,7 +65,7 @@ type searchRequest struct {
 const maxTopics = 5
 
 // parseRequest validates the raw query string of an incoming request.
-func parseRequest(rawQuery string) (searchRequest, error) {
+func parseRequest(rawQuery string, now time.Time) (searchRequest, error) {
 	params := jscompat.ParseQuery(rawQuery)
 	query, _ := params.Get("q")
 	sortName := valueOr(params, "sort", "all")
@@ -124,6 +125,18 @@ func parseRequest(rawQuery string) (searchRequest, error) {
 	}
 	if forks != "" {
 		query += " forks:" + forks
+	}
+	// R-016: these choices filter repository creation, in addition to their
+	// updated sort. Fixed UTC durations avoid month overflow and DST shifts.
+	days := 0
+	if sortName == "monthly" {
+		days = 30
+	} else if sortName == "yearly" {
+		days = 365
+	}
+	if days != 0 {
+		from := now.UTC().Add(-time.Duration(days) * 24 * time.Hour)
+		query += " created:>" + from.Format(time.RFC3339)
 	}
 
 	option, ok := sortOptions[sortName]

@@ -233,7 +233,7 @@ func TestTheQueryIsTheUsersOwn(t *testing.T) {
 	if got := seen.URL.Query()["user_id"]; len(got) != 1 || got[0] != "eq.a&order=x.desc b" {
 		t.Errorf("user_id %q", got)
 	}
-	if got := seen.URL.Query()["order"]; len(got) != 1 || got[0] != "activity_date.asc" {
+	if got := seen.URL.Query()["order"]; len(got) != 1 || got[0] != "activity_date.asc,activity_type.asc" {
 		t.Errorf("order %q", got)
 	}
 }

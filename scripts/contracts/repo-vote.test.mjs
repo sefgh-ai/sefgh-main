@@ -1,4 +1,4 @@
-// GET and POST /api/repo/vote, contract version 1 (VOTE-001). The real
+// GET and POST /api/repo/vote, contract version 2 (BUG-037). The real
 // handlers run with a client built by the real supabase-js around a
 // stand-in Data API; see route-db-fixture.mjs. A Go port must pass the same
 // cases.
@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/repo/vote/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-vote/cases.json', import.meta.url), 'utf8'));
 
 test('vote fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -24,7 +24,7 @@ test('vote fixture integrity', () => {
     if (c.expect.status >= 400) assert.deepEqual(Object.keys(c.expect.body), ['error'], c.id);
     assert.equal(c.expect.cache_control, null, c.id);
     for (const request of c.expect.database) {
-      assert.ok(/^\/rest\/v1\/(repo_votes|rpc\/get_repo_vote_stats)\b/.test(request.path), c.id);
+      assert.ok(/^\/rest\/v1\/repo_votes\b/.test(request.path), c.id);
       assert.equal(request.apikey, SUPABASE_KEY, c.id);
       // The visitor's own token, or the public key: never a server credential.
       assert.equal(request.authorization, `Bearer ${c.session ?? SUPABASE_KEY}`, c.id);
@@ -35,11 +35,17 @@ test('vote fixture integrity', () => {
       }
       if (request.method === 'DELETE') assert.ok(request.path.includes(`?user_id=eq.${c.user.id}&`), c.id);
     }
+    if (c.next_expect) {
+      assert.equal(c.go_database.length, c.expect.database.length, c.id);
+      assert.ok(c.next_expect.database.some((request) => request.path === '/rest/v1/rpc/get_repo_vote_stats'), c.id);
+      assert.equal(c.expect.database.length, 2, c.id);
+      assert.equal(c.expect.database[1].method, 'GET', c.id);
+    }
   }
 });
 
 for (const c of contract.cases) {
   test(`vote: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/vote', c), c.expect);
+    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/vote', c), c.next_expect ?? c.expect);
   });
 }

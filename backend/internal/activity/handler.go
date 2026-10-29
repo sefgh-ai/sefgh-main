@@ -1,7 +1,7 @@
-// Package activity ports GET /api/activity at contract version 1: the
+// Package activity ports GET /api/activity at contract version 3: the
 // signed-in user's activity over the last year, as weeks of days and some
-// statistics. Every case in contracts/activity is answered as the Next.js
-// handler answers it, the two marked defect included.
+// statistics. Go distinguishes Auth outages and reads all yearly pages;
+// rollback Next.js expectations remain in the contract separately.
 //
 // The database is asked as the user, never as the server, through
 // internal/supabaserest: the user's own access token with the project's
@@ -15,15 +15,17 @@ package activity
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/supabaserest"
 )
 
-// Timeout bounds the database call. The Next.js handler sets none.
+// Timeout bounds all database pages together. Next.js sets none.
 const Timeout = supabaserest.Timeout
 
 // Handler answers GET /api/activity. User and Client are required; Now and
@@ -69,14 +71,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		now = h.Now
 	}
 	from, to := dateRange(now())
-	upstream, raw, err := askDatabase(r.Context(), db, userID, session, from, to)
+	upstream, data, err := askDatabase(r.Context(), db, userID, session, from, to)
 	if err != nil {
 		h.fail(w, "database", upstream, err, "Failed to fetch activity data")
-		return
-	}
-	data, failed := supabaserest.ReadResult(upstream, raw)
-	if failed {
-		h.fail(w, "database", upstream, nil, "Failed to fetch activity data")
 		return
 	}
 	counts, total, err := sumRows(data)
@@ -87,22 +84,44 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	write(w, 200, buildReply(from, to, counts, total))
 }
 
-// askDatabase sends the query the Next.js handler builds:
-//
-//	.from('activity_logs').select('activity_date, activity_count')
-//	.eq('user_id', id).gte('activity_date', from).lte('activity_date', to)
-//	.order('activity_date', { ascending: true })
-//
-// written as supabase-js writes it in the URL.
-func askDatabase(ctx context.Context, db supabaserest.Client, userID, session string, from, to time.Time) (int, []byte, error) {
+// askDatabase keeps the same user and date filters as Next.js, but reads
+// 1000-row pages (R-064). The unique user/date/type key makes the combined
+// order stable for a fixed dataset. One deadline bounds the entire read.
+func askDatabase(ctx context.Context, db supabaserest.Client, userID, session string, from, to time.Time) (int, any, error) {
+	ctx, cancel := context.WithTimeout(ctx, Timeout)
+	defer cancel()
 	query := strings.Join([]string{
 		supabaserest.Param("select", "activity_date,activity_count"),
 		supabaserest.Param("user_id", "eq."+userID),
 		supabaserest.Param("activity_date", "gte."+day(from)),
 		supabaserest.Param("activity_date", "lte."+day(to)),
-		supabaserest.Param("order", "activity_date.asc"),
+		supabaserest.Param("order", "activity_date.asc,activity_type.asc"),
+		supabaserest.Param("limit", "1000"),
 	}, "&")
-	return db.Select(ctx, session, "activity_logs", query)
+	var rows []any
+	for offset := 0; ; offset += 1000 {
+		upstream, raw, err := db.Select(ctx, session, "activity_logs", query+"&"+supabaserest.Param("offset", strconv.Itoa(offset)))
+		if err != nil {
+			return upstream, nil, err
+		}
+		data, failed := supabaserest.ReadResult(upstream, raw)
+		if failed {
+			return upstream, nil, errors.New("activity page failed")
+		}
+		page, ok := data.([]any)
+		if !ok {
+			// Preserve existing first-page odd-value behavior. Later pages
+			// must be arrays; nothing may turn a partial read into success.
+			if offset == 0 {
+				return upstream, data, nil
+			}
+			return upstream, nil, errors.New("invalid activity page")
+		}
+		rows = append(rows, page...)
+		if len(page) < 1000 {
+			return upstream, rows, nil
+		}
+	}
 }
 
 // fail logs the stage and the database's status, never the user, the rows

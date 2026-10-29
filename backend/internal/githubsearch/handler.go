@@ -2,8 +2,8 @@
 // of GitHub's repository search.
 //
 // Its behaviour is fixed by contracts/github-search/cases.json. The Next.js
-// handler in src/app/api/github/search/route.js follows the same file, and
-// the two must change together.
+// rollback handler in src/app/api/github/search/route.js is characterized
+// separately through next_expect fields when an approved Go fix differs.
 package githubsearch
 
 import (
@@ -53,6 +53,8 @@ type Handler struct {
 	Token string
 	// Logger records failures. Nil means slog.Default().
 	Logger *slog.Logger
+	// Now supplies the clock for monthly/yearly windows; nil means time.Now.
+	Now func() time.Time
 }
 
 // rateLimit reports GitHub's rate-limit headers. A nil field becomes JSON
@@ -74,7 +76,11 @@ type errorResponse struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	search, err := parseRequest(r.URL.RawQuery)
+	now := time.Now
+	if h.Now != nil {
+		now = h.Now
+	}
+	search, err := parseRequest(r.URL.RawQuery, now())
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, errorResponse{Error: err.Error()})
 		return

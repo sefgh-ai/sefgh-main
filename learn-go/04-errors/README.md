@@ -67,7 +67,7 @@ var (
 The handler turns either one into a 400 reply, using the error's text as the message:
 
 ```go
-search, err := parseRequest(r.URL.RawQuery)
+search, err := parseRequest(r.URL.RawQuery, now())
 if err != nil {
 	writeJSON(w, http.StatusBadRequest, errorResponse{Error: err.Error()})
 	return
@@ -91,6 +91,19 @@ n, _ := strconv.ParseInt(s, 10, 64)
 ```
 
 The `_` throws the error away. That is normally a mistake, so the comment above the function explains why it is safe here: the text was already checked to be digits, so the only possible failure is "too big", and in that case `ParseInt` returns the largest number it can, which `clamp` then limits anyway. Ignoring an error is allowed. Ignoring one without saying why is not.
+
+## A clock is an input too (BUG-039, R-016)
+
+Monthly and yearly search now mean repositories created in the last 30 or 365 days. `parseRequest` accepts a `time.Time` alongside the query string. The handler supplies the clock: its `Now func() time.Time` field defaults to `time.Now`, and a test supplies a fixed instant. In JavaScript this is the same idea as passing `now = () => new Date()` into a function instead of reading the real clock deep inside it.
+
+```go
+from := now.UTC().Add(-time.Duration(days) * 24 * time.Hour)
+query += " created:>" + from.Format(time.RFC3339)
+```
+
+`time.Duration` measures elapsed time. This subtracts exactly 30 or 365 days, rather than changing a calendar month or year, so leap days and daylight saving do not change the duration. `UTC()` makes the output independent of the clock's offset. The full timestamp matters: GitHub treats a plain `created:>DATE` as after that entire day (R-203).
+
+Small exercise, separate from your existing `exercise.go`: work out the start for `2024-03-01T12:00:00Z` minus 365 days. It is `2023-03-02T12:00:00Z`, since 2024 includes February 29. `yearly-across-leap-day` checks this in memory and over HTTP; the two monthly offset cases check that the same instant produces the same URL.
 
 ## Your turn
 

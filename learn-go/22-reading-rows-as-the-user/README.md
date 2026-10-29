@@ -111,6 +111,26 @@ if status != 200 {
 
 The order matters: check the specific case first, then the general one. The unit test now uses a map from the status the verifier gives to the answer expected, `map[int]string{401: ..., 403: ..., 503: ...}`, which is Go's table-driven style: one loop, one row per case.
 
+## Reading every page (R-064, BUG-038)
+
+The Data API returns at most 1000 rows by default. A user can have several activity types on one day, so a year can exceed that limit. `askDatabase` now repeats the same user/date filters with `limit=1000` and offsets 0, 1000, 2000, and so on. It orders by date and type together: those fields uniquely identify a row for this user, so a fixed dataset has a stable order across pages.
+
+```go
+for offset := 0; ; offset += 1000 {
+	// Ask for this page, then check its status and JSON shape.
+	rows = append(rows, page...)
+	if len(page) < 1000 {
+		return upstream, rows, nil
+	}
+}
+```
+
+Go's three-part `for` works like JavaScript's `for (let offset = 0; ; offset += 1000)`. `page...` spreads a slice into `append`, like `rows.push(...page)` in JavaScript. A page of exactly 1000 is not proof that the read is finished: ask once more, and stop on the short or empty page.
+
+One `context.WithTimeout` wraps the entire loop. Starting a fresh ten seconds for each page could exceed the server's total deadline. A failed, canceled or malformed later page returns an error instead of showing the first page's totals as a complete year. The regression fixtures check 1001 rows, an exact 1000-row boundary and a second-page failure; unit tests verify that every page inherits the same deadline.
+
+Small exercise (without changing your existing `exercise.go`): for 0, 999, 1000, 1001 and 2000 rows, write down the offsets requested. Expected answers are `[0]`, `[0]`, `[0,1000]`, `[0,1000]`, `[0,1000,2000]`. Compare the exact-boundary example with `TestContract/exactly-one-page` and the shared-deadline test in `pagination_test.go`.
+
 ## Your turn
 
 Open `exercise.go` and write `tenths`: how many tenths `x` is, rounded the way `toFixed(1)` rounds. For example `tenths(0.25)` is 3, `tenths(1.45)` is 14, and `tenths(999.95)` is 10000. `x` is never negative.

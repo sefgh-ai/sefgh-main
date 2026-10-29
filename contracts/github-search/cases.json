@@ -1,6 +1,6 @@
 {
   "contract": "GET /api/github/search",
-  "contract_version": 4,
+  "contract_version": 5,
   "authorization_contract": "../github-access/cases.json",
   "github_token_semantics": "Per-user GitHub credential, verified with the matching Supabase session; never the server token.",
   "source": "src/app/api/github/search/route.js",
@@ -223,19 +223,24 @@
     {
       "id": "sort-monthly",
       "disposition": "preserve",
-      "note": "monthly and yearly map to the same upstream request as latest; no date filter is added.",
+      "note": "R-016: fixed UTC duration window; rollback Next.js still sends only the sort.",
       "request": "q=react&sort=monthly",
       "upstream": "empty",
-      "expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
-      "expect": "empty_ok"
+      "expect_upstream_url": "q=react%20created%3A%3E2026-09-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "now": "2026-10-29T12:34:56Z",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30"
     },
     {
       "id": "sort-yearly",
       "disposition": "preserve",
       "request": "q=react&sort=yearly",
       "upstream": "empty",
-      "expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
-      "expect": "empty_ok"
+      "expect_upstream_url": "q=react%20created%3A%3E2025-10-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok",
+      "now": "2026-10-29T12:34:56Z",
+      "note": "R-016: fixed UTC duration window; rollback Next.js still sends only the sort.",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30"
     },
     {
       "id": "sort-featured",
@@ -1058,6 +1063,61 @@
       "request": "q=%E3%80A",
       "upstream": "empty",
       "expect_upstream_url": "q=%EF%BF%BDA&sort=&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "monthly-end-of-march",
+      "disposition": "preserve",
+      "note": "R-016: fixed 30/365 days in UTC, independent of calendar and clock offset; existing filters intersect.",
+      "request": "q=react&sort=monthly",
+      "now": "2026-03-31T12:00:00Z",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A%3E2026-03-01T12%3A00%3A00Z&sort=updated&order=desc&page=1&per_page=30",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "yearly-across-leap-day",
+      "disposition": "preserve",
+      "note": "R-016: fixed 30/365 days in UTC, independent of calendar and clock offset; existing filters intersect.",
+      "request": "q=react&sort=yearly",
+      "now": "2024-03-01T12:00:00Z",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A%3E2023-03-02T12%3A00%3A00Z&sort=updated&order=desc&page=1&per_page=30",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "monthly-dst-offset",
+      "disposition": "preserve",
+      "note": "R-016: fixed 30/365 days in UTC, independent of calendar and clock offset; existing filters intersect.",
+      "request": "q=react&sort=monthly",
+      "now": "2026-03-08T23:30:00-04:00",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A%3E2026-02-07T03%3A30%3A00Z&sort=updated&order=desc&page=1&per_page=30",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "monthly-same-instant-india",
+      "disposition": "preserve",
+      "note": "R-016: fixed 30/365 days in UTC, independent of calendar and clock offset; existing filters intersect.",
+      "request": "q=react&sort=monthly",
+      "now": "2026-03-09T09:00:00+05:30",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20created%3A%3E2026-02-07T03%3A30%3A00Z&sort=updated&order=desc&page=1&per_page=30",
+      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
+      "expect": "empty_ok"
+    },
+    {
+      "id": "monthly-existing-filters",
+      "disposition": "preserve",
+      "note": "R-016: fixed 30/365 days in UTC, independent of calendar and clock offset; existing filters intersect.",
+      "request": "q=react&sort=monthly&language=Go&stars=%3E10&created=%3E%3D2026-01-01",
+      "now": "2026-10-29T12:34:56Z",
+      "upstream": "empty",
+      "expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E10%20created%3A%3E%3D2026-01-01%20created%3A%3E2026-09-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
+      "next_expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E10&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     }
   ]

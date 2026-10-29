@@ -171,6 +171,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 
 | Date | Decision |
 |---|---|
+| 2026-10-29 | Owner approved recommendation A for every item in `../plans/phase6-decision-pack-2.md`: 28 fixes as separate bounded tasks; R-011 deferred until after Phase 7, R-042 GitHub tokens remain checked on every request. Existing deployment, database, signing and worker gates remain. Codex recorded the answer during BUG-038 |
 | 2026-10-28 | Owner approved R-203: trending contract version 4 starts the search at a UTC time, so "daily" is the last 24 hours. Go only, as for R-068 (BUG-024) |
 | 2026-10-28 | Owner answered the Phase 6 decision pack (`../plans/phase6-owner-decisions.md`): every recommendation except section 4's R-002, R-004, R-005, R-007, R-008 and R-051, which stay visible as they are, deferred, features to be built later. R-017 is asked again |
 | 2026-10-28 | Owner accepted the HLD's recommendations for D1 to D8 (`../architecture/hld.md`): D1 A (own Supabase project for the corpus, reusing the paused Repo-DB after a read of what it holds), D2 A (`pg_cron` ticks to the Go worker), D3 a hosted 768-dimension model stored as `halfvec`, D4 C (no LLM summaries in version 1), D5 start small, D6 A (local ES256 check), D7 measure then decide, D8 A for signed-in users. RepoSync is wanted and is to be rebuilt better inside that plan; until then the recommended design stands |

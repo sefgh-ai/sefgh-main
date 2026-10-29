@@ -28,6 +28,11 @@ API routes that have moved out of Next.js. The plan and its rules are in `../doc
 
 It uses only Go's standard library: there are no third-party dependencies.
 
+BUG-039 (R-016, 2026-10-29): search's monthly/yearly options add creation
+cutoffs 30/365 fixed UTC days before the handler's clock. Contract version 5
+pins clock and boundary cases; rollback Next.js URLs remain characterized
+separately. This local fix requires deployment before it changes live results.
+
 ## Unregistered key HTTP adapters
 
 KEYS-HTTP-001 adds `internal/apikey.NewHTTP` for bearer-only key management
@@ -435,9 +440,9 @@ Opt-in name: `repo-rating`, off by default. `POST`, `DELETE` and `GET /api/repo/
 Opt-in name: `repo-vote`, off by default. `POST` and `GET /api/repo/vote`: upvoting, downvoting or removing a vote, and the counts. It passes the 37 cases of `contracts/repo-vote`, recorded from the Next.js handlers with the real supabase-js and a fixed clock (`scripts/contracts/route-db-fixture.mjs`).
 
 - **Writes go as the caller:** `supabaserest.Upsert` (new: `on_conflict` and `Prefer: resolution=merge-duplicates`) and `Delete`, with the caller's own token. `updated_at` comes from `Handler.Now`, written by `jscompat.ISOString` as `toISOString()` writes it.
-- **The stats function** is called with `supabaserest.RPC` (new). The live database has no `get_repo_vote_stats` (R-076), so the call fails and the votes are counted by hand, as in Next.js. The port keeps the failing call so the two can be compared; the fix comes after cutover.
+- **Counts (BUG-037, R-076):** Go reads votes directly after a successful write. Contract version 2 removes the missing `get_repo_vote_stats` call from Go; `next_expect` keeps the rollback Next.js handler characterized. Failed counts retain zeros.
 - **Shared helpers:** `jscompat.RequestFields` (the body read like `const { a, b } = await request.json()`) and `jscompat.TruthyJSON` moved out of collect, which uses them too. `jscompat.Truthy` is the rule `supabaserest.Truthy` now calls.
-- **Differs from Next.js:** a bearer instead of the session cookie (the vote arrows now use `fetchWithSession`). A POST body over 1 MiB is answered as unreadable. The write, the stats call and the count share one 24-second budget (`vote.Budget`), because three 10-second calls after sign-in would outlast the 30-second write timeout. `TestHandlersFinishInsideTheWriteTimeout` caught that when the route was wired. A call cut short reads as a failed one.
+- **Differs from Next.js:** a bearer instead of the session cookie (the vote arrows now use `fetchWithSession`). A POST body over 1 MiB is answered as unreadable. The write and count retain one 24-second budget (`vote.Budget`), originally added when the missing stats call meant three calls after sign-in. `TestHandlersFinishInsideTheWriteTimeout` guards the overall bound. A call cut short reads as a failed one.
 
 ## Collect (COLLECT-001)
 
@@ -483,23 +488,24 @@ The caller sends `Authorization: Bearer <Supabase access token>`, which
 account counts as a user, as it does for `supabase.auth.getUser()`. The
 browser sends the bearer through `../src/lib/supabase/session-fetch.js`.
 
-The database is asked as the caller: one `GET /rest/v1/activity_logs` to
+The database is asked as the caller: paged `GET /rest/v1/activity_logs` reads to
 the Supabase Data API with the caller's own token and the project's public
-key, the query supabase-js builds for the Next.js handler. No service key is
+key. BUG-038 (R-064, contract version 3) keeps the user/date filters and adds
+1000-row pages, offsets and stable date/type ordering until a short page. No service key is
 used, so the table's row-level security decides which rows come back, as
 it does now.
 
 Where Go differs, all outside the contract's cases:
 
 - **Cookie.** Next.js reads its session cookie; Go reads the bearer only.
-- **Bounds.** The database call is abandoned after 10 seconds and a reply
+- **Bounds.** All database pages share one 10-second deadline, and a reply
   over 8 MiB is refused, both answered `Failed to fetch activity data`;
   redirects are not followed. Next.js sets none of these.
 - **Odd rows.** A count that is truthy but not a number, which JavaScript
   would add as text, is answered 500 `Internal server error`. A Supabase
   Auth reply whose `id` is not text is refused with 401.
-- **Same as Next.js, on purpose.** Supabase Auth being unreachable is 401
-  `Unauthorized`, as it is for `getUser()` (bug register R-063). Missing
+- **Auth outages (BUG-036, R-063).** Go answers 503 `Sign-in could not be verified`;
+  refused sessions stay 401. Missing
   Supabase settings are 500 `Internal server error`, the contract's
   `client-fails` case. supabase-js's reading of odd Data API replies, such
   as an empty 404 meaning "no rows", is copied (`readResult`).
