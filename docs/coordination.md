@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-30 (Asia/Calcutta), by Codex: BUG-040 (R-021), BUG-041 (R-022) and BUG-042 (R-023) implemented, uncommitted. R-205 recorded; final full handoff follows latest record.
+Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized BUG-040 through BUG-042 (commit `a728edc`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-042, R-023 retain trending rate limits and wait metadata (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current e197504; resulting commit uncommitted (Git Agent owns synchronization). Prior BUG-040/041 preserved; both full handoffs passed. At takeover READY_VERIFIED with matching signal, no lease and writer released. Owner approved pack 2 A previously.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `e197504`. Resulting commit: `a728edc` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 New leaf helper internal/githublimit.Write shares the existing search policy: GitHub 429, or 403 with Retry-After/zero remaining, becomes 429 with the same fixed message and nullable remaining/reset metadata. Retry-After is forwarded (including HTTP-date form). Ordinary forbidden responses and success with rate headers retain their prior handling. Upstream bodies remain private. Repository trending calls the helper before its generic status branch; developers returns headers from fetch and uses it only for the initial user search. Repository enrichment failures remain R-025.
 
@@ -37,7 +37,7 @@ Writer released: yes.
 
 ## Handoff: BUG-041, R-022 fixed elapsed UTC trending periods (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current e197504 plus verified uncommitted BUG-040 preserved; resulting commit uncommitted (Git Agent owns synchronization). Previous writer released, READY_VERIFIED with matching signal and no lease at takeover. Pack 2 all-A approval retained.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `e197504`. Resulting commit: `a728edc` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 Both trending handlers subtract 1/7/30 fixed elapsed UTC days for daily/weekly/monthly; no new yearly option. Repository trending keeps its full cutoff timestamp. Developers now sends the full timestamp too, so the elapsed interval is not rounded away by GitHub's date-only interpretation. Existing caller boundaries, concurrency, sorting and response bodies remain.
 
@@ -53,7 +53,7 @@ Writer released: yes.
 
 ## Handoff: BUG-040, R-021 accept every offered trending language (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current e197504; resulting commit uncommitted (Git Agent owns synchronization). Initially clean, previous writer released, IDLE_CLEAN. Owner approved pack 2 A previously; no new approval needed.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `e197504`. Resulting commit: `a728edc` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 Go trending keeps accepted simple names and also accepts every name in the embedded language catalog, case-insensitively. internal/githublanguages.Contains exposes a private set built once from the same served catalog; no duplicate catalog or mutable data is exported, and the endpoint response is unchanged. Known names with spaces become one quoted GitHub qualifier before URL encoding. Unknown spaces/slashes/qualifier syntax and excessive lengths remain refused.
 
