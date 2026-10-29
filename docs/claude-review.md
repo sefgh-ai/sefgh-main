@@ -1,5 +1,15 @@
 # Claude Code review and reconciliation
 
+## REVIEW-029: KEYS-WIRING-001 and gated refresh retirement (2026-10-30)
+
+Reviewer: independent read-only agent review_keys_wiring; writer Codex. Base 5889bff, uncommitted source at review. Accepted the default-off runtime/forwarding design with existing live SQL, signing, hosted acceptance, activation and cutover gates preserved. No critical/important runtime issue found.
+
+Corrected a low-priority deadline guard: startup policy loading is separately bounded before ListenAndServe; request accounting includes HTTP18s, detached completion up to10s and recovery1s, totaling29s below server30s. Added production-mux policy failure cases. Reviewer accepted correction.
+
+The probe review found interruption cleanup and stale-receipt risks before final acceptance. Corrected to one idempotent signal/finally cleanup routine, awaited process-tree termination and bounded exit checks; invalidate prior receipts before launch, record failed/interrupted states and source/executable identity, and write passed only after cleanup. Clarified inherited environment versus synthetic exercised endpoint credentials. Reviewer accepted corrections by source inspection, with no important issue remaining. Writer independently ran cooperative Windows SIGTERM (exit143, interrupted receipt, recorded PIDs absent) and the corrected normal production probe (passed); reviewer did not rerun them.
+
+Retirement audit: reviewer confirmed the single153-line route deletion patch, unchanged source SHA-256 ed02d832fb37ef891a9f68a19db700229fb75ab74b900f458867d51f15559593, absence of repository callers within named surfaces and use of topics replacement. It remains an unapplied gated proposal, not approval to bypass Phase6. Addendum hash f212c12e9a17f88bec2137d3fd7da636e5a3e0d6d1d970237785d5092d10dde3 independently read back. No external scheduler/live traffic, hosted grant or signing verification claimed. Reviewer performed no edits, live operations or broad checks.
+
 ## REVIEW-028: AVATAR-001a/b (Codex), 2026-10-24
 
 Reviewer: Claude Code, independent of the author (Codex). Base `0abbe31`. Scope: the avatar port `backend/internal/avatar`, its contract `contracts/upload-avatar` and its tests, with the AVATAR-001 handoff's named risks: cleanup timing, multipart parsing and account isolation. Part of BATCH-CC-002.

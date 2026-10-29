@@ -4,7 +4,9 @@ Real code: [rpc.go](../../backend/internal/apikey/rpc.go),
 [rpc_accounting.go](../../backend/internal/apikey/rpc_accounting.go) and
 [rpc_json.go](../../backend/internal/apikey/rpc_json.go).
 These adapters are implemented locally. The owner-approved SQL is applied only
-to the isolated development project; the new endpoints remain unregistered.
+to the isolated development project. Lesson 47 connects the new endpoints
+behind default-off runtime and forwarding gates; hosted acceptance and
+activation remain separate approvals.
 The separate `RPCClient.OpenRecovery` capability is explained in lesson44.
 
 ## A method can retain one verified capability

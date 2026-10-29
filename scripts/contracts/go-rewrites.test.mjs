@@ -2,6 +2,32 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import config from '../../next.config.mjs';
 
+test('v1 key forwarding requires route, UI and origin gates together', async () => {
+  const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA', 'NEXT_PUBLIC_SEFGH_KEYS_V1'];
+  const old = Object.fromEntries(names.map((name) => [name, process.env[name]]));
+  try {
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
+    process.env.SEFGH_GO_API_URL = 'http://127.0.0.1:8787/';
+    process.env.SEFGH_GO_ROUTES = 'playground-keys-v1';
+    for (const flag of ['', '0', 'true']) {
+      process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = flag;
+      assert.deepEqual(await config.rewrites(), {beforeFiles: []});
+    }
+    process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = '1';
+    const paths = ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search'];
+    assert.deepEqual(await config.rewrites(), {beforeFiles: paths.map((path) => ({source: path, destination: `http://127.0.0.1:8787${path}`}))});
+    process.env.SEFGH_GO_ROUTES = 'playground-keys';
+    assert.deepEqual(await config.rewrites(), {beforeFiles: []}, 'legacy plaintext route is never forwarded by this switch');
+    process.env.SEFGH_GO_ROUTES = 'playground-keys-v1';
+    process.env.SEFGH_GO_API_URL = '';
+    assert.deepEqual(await config.rewrites(), {beforeFiles: []});
+  } finally {
+    for (const name of names) {
+      if (old[name] === undefined) delete process.env[name]; else process.env[name] = old[name];
+    }
+  }
+});
+
 test('Go routing is opt-in, exact, and independently reversible per route', async () => {
   const oldURL = process.env.SEFGH_GO_API_URL;
   const oldRoutes = process.env.SEFGH_GO_ROUTES;

@@ -1,5 +1,21 @@
 # SEFGH Go backend
 
+KEYS-WIRING-001 (2026-10-30) connects the reviewed hashed-key adapters to the
+production mux at `/api/v1/keys`, its selector child and `/api/v1/search`.
+They stay disabled unless `SEFGH_KEYS_V1=1`; disabled paths return 404/no-store
+outside the GitHub session verifier. Enabled startup requires the existing
+Supabase URL/public key, separately provisioned `SEFGH_KEYS_ACCOUNTANT_JWT`,
+and the restricted RPC's enabled approved policy. Missing/invalid configuration
+or policy installs a fixed 503/no-store handler. No quota defaults or privileged
+fallback are provided. Runtime, SQL, signing, policy, cutover and deployment
+gates remain. [Completion review](../docs/plans/route-completion-review.md).
+
+Next.js forwards these paths only with the Go origin,
+`SEFGH_GO_ROUTES=playground-keys-v1` and `NEXT_PUBLIC_SEFGH_KEYS_V1=1` together.
+The old `/api/playground/keys` path is not rewritten. The production localhost
+forwarding probe is `node scripts/keys-routing-probe.mjs <compiled-api>`;
+its secret-free receipt distinguishes local stand-ins from live evidence.
+
 KEYS-DB-001 adds unregistered `internal/apikey` RPC adapters: a verified user
 manager and separate server accountant. That original foundation had no SQL
 apply. KEYS-STAGE-001 subsequently applied the exact owner-approved additive

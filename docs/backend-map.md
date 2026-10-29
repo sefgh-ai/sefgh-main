@@ -1,5 +1,12 @@
 # SEFGH backend map
 
+Update 2026-10-30 (KEYS-WIRING-001): hashed-key v1 owner management and public
+accounted search now have default-off Go runtime and Next forwarding wiring.
+Owner/session and accountant capabilities stay separate; database policy is
+authoritative and missing configuration fails closed. No live activation,
+signing or SQL change. Refresh retirement is prepared as an unapplied narrow
+patch behind Phase 6/owner-exception gates. [Review packet](plans/route-completion-review.md).
+
 Update 2026-10-30 (BUG-042, R-023): new leaf helper `internal/githublimit`
 gives both trending searches the existing search API's 429/rate-related-403
 policy, preserving Retry-After and nullable remaining/reset metadata without

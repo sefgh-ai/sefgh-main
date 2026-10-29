@@ -100,7 +100,13 @@ function goBackendRewrites() {
   const data = Object.entries(goDataAreas)
     .filter(([name]) => areas.includes(name))
     .flatMap(([, paths]) => paths.map((path) => ({ source: path, destination: `${origin}${path}` })));
-  return [...routes, ...data];
+  // New hashed-key endpoints replace the legacy plaintext flow only after
+  // separate UI and per-route opt-ins. Direct Go activation is independent.
+  const keys = enabled.includes('playground-keys-v1') && process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1'
+    ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
+      .map((path) => ({ source: path, destination: `${origin}${path}` }))
+    : [];
+  return [...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

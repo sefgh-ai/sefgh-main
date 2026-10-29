@@ -2,6 +2,8 @@
 
 Written by Claude Code at the end of a long session, for an agent with no context of this project. It does not replace the repository's own instructions; it tells you where they are, what state the work is in, what to do next, and the traps that cost time. If anything here disagrees with `docs/coordination.md`, the coordination file is newer and wins.
 
+**Update 2026-10-30 (Codex, ROUTE-CLOSE-001 / KEYS-WIRING-001):** the owner requested finishing the two remaining route entries. Local hashed-key v1 runtime/Next forwarding wiring is implemented and reviewed, with a production localhost routing receipt; no live activation. A source-hashed 153-line refresh deletion patch is prepared and unapplied. Read `plans/route-completion-review.md` and the latest coordination records before continuing. Signing approval/hosted acceptance and the Phase 6 retirement gate remain; overall route closure is incomplete. Pack census correction: 27 fixes, four done, 23 remaining, plus two larger choices and open UI R-205.
+
 ## 1. What this project is
 
 SEFGH is a Next.js (App Router, JavaScript) site backed by Supabase, deployed on Vercel. Its API is being migrated, route by route, to a Go backend in `backend/` (standard library only). Every route and every browser data area now runs on Go in production; the old Next.js handlers stay in the code as the rollback path until Phase 7 removes them. The current phase is **Phase 6: fix every recorded bug** (`docs/bug-register.md`), mostly in Go.

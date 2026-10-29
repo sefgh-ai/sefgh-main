@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "startedAt": "2026-10-29T19:21:19.020Z",
+  "endedAt": "2026-10-29T19:21:36.245Z",
+  "sourceCommit": "5889bffa15a13f38391ebcc96878f8b7e74a6f29",
+  "sourceDirty": true,
+  "executableSHA256": "3f2f2fbb9d823dbd9d7edb75d3068f9fc87c754b621062b0ef5be8b8e519fd8f",
+  "wiringSourceHashes": {
+    "backend/cmd/api/keys.go": "bbd0cd1fe4ffa421672075b7684a833e17603a436cf54cc62191a5fa29e5b9d4",
+    "backend/cmd/api/main.go": "5e134312bbc56dbe56d0a8d56a204abbd5a7b0b9e62c938f6cb5d78c61a8cf1e",
+    "next.config.mjs": "99616179c41da5bd0814299cc92b0cadd544d8c6accc0f1af48a55c282912f61",
+    "scripts/keys-routing-probe.mjs": "bee2c26535730a8b7cc0252df0279c8eb5f94cfe5d10ef82e84cb7b9410cc8cc"
+  },
+  "nextMode": "production",
+  "backend": "compiled Go production mux",
+  "services": "exercised RPC/provider endpoints are local stand-ins; child environment and Next env files are inherited",
+  "checks": [
+    "owner issuance through production rewrite",
+    "metadata-only list",
+    "accounted public search and preserved query",
+    "failed completion withheld and recovery saved",
+    "revocation denies provider work"
+  ],
+  "providerCalls": 2,
+  "browserUI": "not exercised",
+  "liveDeployment": "not exercised",
+  "cleanup": "all owned children stopped"
+}

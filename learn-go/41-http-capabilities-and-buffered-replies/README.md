@@ -2,8 +2,9 @@
 
 Real code: [http.go](../../backend/internal/apikey/http.go) and
 [http_search.go](../../backend/internal/apikey/http_search.go). These HTTP
-adapters are built and tested but are not registered in the running server.
-Database access and rollout are separate steps.
+adapters are built and tested. Lesson 47 connects them to the server behind
+default-off runtime and forwarding gates. Live database acceptance and rollout
+remain separate steps.
 
 Lesson42 implements the proposed session/RPC boundary. `ownedHTTPClient` in
 `http_search.go` is now shared by the RPC client: each call to the helper makes

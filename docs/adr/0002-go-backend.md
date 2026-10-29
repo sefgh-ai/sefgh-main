@@ -171,6 +171,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 
 | Date | Decision |
 |---|---|
+| 2026-10-30 | Owner requested finishing the remaining route work. Codex resumes local key-route integration under the reviewed design, with default-off runtime/forwarding and no invented production limits. Existing exact signing-replacement approval, hosted acceptance, SQL/runtime/cutover and deployment gates remain. Refresh retirement is prepared for review; Phase 6 still gates applying it unless the owner explicitly approves a narrow exception. Completion packet: `../plans/route-completion-review.md`. Pack census correction: 27 fixes plus two larger choices, not 28 fixes; all-A choices unchanged |
 | 2026-10-29 | Owner approved recommendation A for every item in `../plans/phase6-decision-pack-2.md`: 28 fixes as separate bounded tasks; R-011 deferred until after Phase 7, R-042 GitHub tokens remain checked on every request. Existing deployment, database, signing and worker gates remain. Codex recorded the answer during BUG-038 |
 | 2026-10-28 | Owner approved R-203: trending contract version 4 starts the search at a UTC time, so "daily" is the last 24 hours. Go only, as for R-068 (BUG-024) |
 | 2026-10-28 | Owner answered the Phase 6 decision pack (`../plans/phase6-owner-decisions.md`): every recommendation except section 4's R-002, R-004, R-005, R-007, R-008 and R-051, which stay visible as they are, deferred, features to be built later. R-017 is asked again |

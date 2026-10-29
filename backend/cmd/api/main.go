@@ -120,6 +120,9 @@ func newHandler(logger *slog.Logger) http.Handler {
 	// The AI routes have their own rules about who may call them, so they sit
 	// beside the GitHub access check, not behind it.
 	top := http.NewServeMux()
+	// API-key bearers must never enter the ordinary GitHub session verifier.
+	// The separate runtime is disabled unless explicitly configured.
+	top.Handle("/api/v1/", keysMux(logger))
 	top.Handle("/api/ai/", aiMux(logger, verifier))
 	top.Handle("/api/activity", activityMux(logger, verifier))
 	top.Handle("/api/repo/starred", starredMux(logger, verifier, public))
