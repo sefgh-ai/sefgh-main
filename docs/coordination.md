@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-30 (Asia/Calcutta), by Codex: KEYS-WIRING-001 local implementation complete/reviewed, uncommitted. ROUTE-CLOSE-001 overall remains incomplete pending exact owner gates; full bounded-task handoff follows.
+Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized KEYS-WIRING-001 (commit `de1ea2c`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: KEYS-WIRING-001, default-off key route integration (Codex, 2026-10-30)
 
-Status: **implementation complete; independent review complete; not activated or deployed**. Writer Codex; reviewer review_keys_wiring (read-only, REVIEW-029). Branch main, base/current5889bff; resulting commit uncommitted, Git Agent owns synchronization. This completed bounded task is source integration only.
+Status: **implementation complete; independent review complete; not activated or deployed**. Writer Codex; reviewer review_keys_wiring (read-only, REVIEW-029). Branch `main`, base `5889bff`. Resulting commit: `de1ea2c` (synchronized by Git Agent on `main` and `go-backend`). This completed bounded task is source integration only.
 
 Overall ROUTE-CLOSE-001 remains incomplete under the separate checkpoint below; this handoff signals only the completed default-off source integration.
 
