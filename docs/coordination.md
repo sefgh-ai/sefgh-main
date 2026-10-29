@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-29 (Asia/Calcutta), by Codex: BUG-037 (R-076), BUG-038 (R-064), BUG-039 (R-016) implemented; pack 2 approved all A. Changes uncommitted; final full handoff command follows the latest record.
+Last updated: 2026-10-29 (Asia/Calcutta), by Git Agent: synchronized BUG-037 through BUG-039 (commit `66024e6`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-039, R-016 real monthly/yearly search periods (Codex, 2026-10-29)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current b2cef38; resulting commit uncommitted (Git Agent owns synchronization). BUG-037 and BUG-038 preserved; their full handoffs passed. Final combined full verification is run immediately after this record; consult the matching handoff signal/status for that receipt.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `b2cef38`. Resulting commit: `66024e6` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 Owner approved all A in decision pack 2 this turn (recorded in the pack and ADR). Go search monthly/yearly now append a created timestamp 30/365 fixed days before the handler's clock, in UTC. Updated sorting and explicit filters remain; creation qualifiers intersect. Handler.Now defaults to time.Now and supplies a fixed clock in tests. The Next.js rollback handler remains unchanged.
 
@@ -37,7 +37,7 @@ Writer released: yes.
 
 ## Handoff: BUG-038, R-064 read every page of the activity year (Codex, 2026-10-29)
 
-Status: **implementation complete; locally verified; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current b2cef38 with verified uncommitted BUG-037 preserved; resulting commit uncommitted (Git Agent owns synchronization). Full npm run handoff passed (contracts, all Go tests/vet/gofmt, lessons skipped); READY_VERIFIED with matching signal observed before BUG-039 claim.
+Status: **implementation complete; locally verified; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `b2cef38`. Resulting commit: `66024e6` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 Go reads activity_logs in 1000-row pages ordered by activity_date,activity_type, increasing offset until a short page. The recorded unique user/type/date key supplies stable ordering for a fixed dataset. One shared 10-second database deadline preserves the existing total bound. Failed, canceled or malformed later pages return the fixed database error rather than partial totals. Offset paging does not provide a database snapshot across concurrent writes.
 
@@ -55,7 +55,7 @@ Writer released: yes.
 
 ## Handoff: BUG-037, R-076 count votes without the missing RPC (Codex, 2026-10-29)
 
-Status: **implementation complete; locally verified; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base b2cef38; resulting commit uncommitted (Git Agent owns synchronization). Full npm run handoff passed; READY_VERIFIED with matching tree signal observed before BUG-038 claim.
+Status: **implementation complete; locally verified; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `b2cef38`. Resulting commit: `66024e6` (batch synchronized by Git Agent on `main` and `go-backend`).
 
 Go counts votes directly after a successful write, retaining failed-count zeros, caller authorization and the shared 24-second budget. Contract repo-vote version 2 retains all 37 cases: 15 now use optional go_database replies and next_expect for the unchanged rollback handler. The rewrite script asserted exact old JSON formatting, identical old replies/Next.js expectations and 22 unchanged cases. Wiring checks no RPC; the hanging-count test retains deadline coverage. Lesson 26/index and route/map/contract/register/briefing docs updated; existing exercises untouched.
 
