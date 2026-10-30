@@ -30,8 +30,9 @@ type fixture struct {
 	Token   string        `json:"github_token"`
 	Calls   []fixtureCall `json:"calls"`
 	Expect  struct {
-		Status int             `json:"status"`
-		Body   json.RawMessage `json:"body"`
+		Status     int             `json:"status"`
+		Body       json.RawMessage `json:"body"`
+		RetryAfter string          `json:"retry_after"`
 	} `json:"expect"`
 }
 
@@ -63,12 +64,13 @@ func loadFixtures(t *testing.T) []fixture {
 		t.Fatal(err)
 	}
 	var data struct {
-		Cases []fixture `json:"cases"`
+		Version int       `json:"contract_version"`
+		Cases   []fixture `json:"cases"`
 	}
 	if err = json.Unmarshal(b, &data); err != nil {
 		t.Fatal(err)
 	}
-	if len(data.Cases) == 0 {
+	if data.Version != 5 || len(data.Cases) == 0 {
 		t.Fatal("no fixtures")
 	}
 	return data.Cases
@@ -128,7 +130,7 @@ func TestContracts(t *testing.T) {
 			if !reflect.DeepEqual(got, want) {
 				t.Errorf("body %s want %s", rec.Body.String(), tc.Expect.Body)
 			}
-			for k, v := range map[string]string{"Content-Type": "application/json", "Cache-Control": "", "Retry-After": ""} {
+			for k, v := range map[string]string{"Content-Type": "application/json", "Cache-Control": "", "Retry-After": tc.Expect.RetryAfter} {
 				if rec.Header().Get(k) != v {
 					t.Errorf("header %s = %q", k, rec.Header().Get(k))
 				}

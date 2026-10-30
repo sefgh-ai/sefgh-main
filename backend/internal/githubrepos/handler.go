@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/jscompat"
 )
 
@@ -159,6 +160,27 @@ func (h *Handler) fail(w http.ResponseWriter, status int, message string) {
 	}
 	replyJSON(w, status, map[string]string{"error": message})
 }
+
+// requiredFailure classifies a required GitHub lookup. Optional enrichment
+// fallbacks remain at their call sites. Never pass the upstream body through.
+func (h *Handler) requiredFailure(w http.ResponseWriter, up upstreamReply, err error, message string) bool {
+	if err != nil {
+		h.fail(w, http.StatusBadGateway, message)
+		return true
+	}
+	if up.ok() {
+		return false
+	}
+	if githublimit.Write(w, up.status, up.header) {
+		return true
+	}
+	if up.status == http.StatusNotFound {
+		h.fail(w, http.StatusNotFound, "Repository not found")
+	} else {
+		h.fail(w, http.StatusBadGateway, message)
+	}
+	return true
+}
 func rateLimit(h http.Header) map[string]any {
 	result := map[string]any{"remaining": nil, "reset": nil}
 	for field, name := range map[string]string{"remaining": "X-Ratelimit-Remaining", "reset": "X-Ratelimit-Reset"} {
@@ -199,16 +221,7 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 	} else {
 		up, err = h.cache.get(r.Context(), key, load)
 	}
-	if err != nil {
-		h.fail(w, 500, "Failed to fetch repository")
-		return
-	}
-	if !up.ok() {
-		if up.status == 404 {
-			h.fail(w, 404, "Repository not found")
-		} else {
-			h.fail(w, 500, fmt.Sprintf("GitHub API error: %d", up.status))
-		}
+	if h.requiredFailure(w, up, err, "Failed to fetch repository") {
 		return
 	}
 	repo, err := decode(up.body)
@@ -244,8 +257,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	target := h.baseURL + "/repos/" + owner + "/" + repoName
 	up, err := h.fetch(ctx, target, "application/vnd.github.v3+json", true)
 	const message = "Failed to fetch repository details"
-	if err != nil || !up.ok() {
-		h.fail(w, 500, message)
+	if h.requiredFailure(w, up, err, message) {
 		return
 	}
 	repo, err := decode(up.body)
@@ -265,7 +277,7 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	}
 	languagesReply, err := h.fetch(ctx, languagesURL, "application/vnd.github.v3+json", true)
 	if err != nil {
-		h.fail(w, 500, message)
+		h.fail(w, 502, message)
 		return
 	}
 	var languages any = map[string]any{}
@@ -301,8 +313,7 @@ func (h *Handler) contents(w http.ResponseWriter, r *http.Request) {
 	target := h.baseURL + "/repos/" + owner + "/" + repoName + "/contents/" + encodedPath
 	up, err := h.fetch(r.Context(), target, "application/vnd.github.v3+json", true)
 	const message = "Failed to fetch repository contents"
-	if err != nil || !up.ok() {
-		h.fail(w, 500, message)
+	if h.requiredFailure(w, up, err, message) {
 		return
 	}
 	contents, err := decode(up.body)

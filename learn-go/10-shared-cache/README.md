@@ -1,5 +1,25 @@
 # Lesson 10: Sharing a cache safely
 
+## Classify the failure after a required lookup (BUG-046)
+
+The repository handlers now call `requiredFailure` after a required fetch. Its
+Boolean result tells the caller whether a response has already been written.
+This is an early-return helper, similar to JavaScript's
+`if (writeFailure(response)) return`. Go's `http.ResponseWriter` does not stop
+execution when you write a status, so the caller must return explicitly.
+
+A transport error becomes 502. A non-success HTTP reply becomes 404 when the
+repository is missing, 429 when the shared rate-limit helper recognizes it,
+or a fixed 502 otherwise. The rate helper copies only wait headers and nullable
+metadata; raw GitHub bodies are never returned. `http.Header` is passed to it
+directly, so both numeric and HTTP-date Retry-After values survive unchanged.
+
+The cache still stores the upstream reply and follows its existing refresh and
+eviction rules. Failure classification happens after that read, so this change
+does not add caching for an authenticated request or alter stale-data policy.
+Optional languages/README HTTP fallbacks stay at their existing call sites.
+The fixtures retain the old Next.js replies separately in `next_expect`.
+
 **You will learn:** mutexes, time comparisons, and why network calls stay
 outside a lock.
 

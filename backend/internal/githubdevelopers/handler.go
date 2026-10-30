@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -24,6 +25,10 @@ const MaxConcurrent = 4
 const maxBodyBytes = 2 << 20
 
 var defaultClient = &http.Client{Timeout: 10 * time.Second}
+
+// Personal account logins: ASCII letters/digits and single internal hyphens.
+// The byte-length check below also counts hyphens toward the 39-byte limit.
+var loginPattern = regexp.MustCompile(`^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$`)
 
 // Handler has no token field: the existing route is public-only. Now permits
 // deterministic calendar checks without replacing a process-wide clock.
@@ -83,17 +88,28 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "search", errors.New("reply has no list of items"))
 		return
 	}
-	if len(items) > 20 {
-		items = items[:20]
+	// R-027: filter before the cap and URL construction. Invalid entries must
+	// neither consume a displayed rank nor trigger an enrichment request.
+	users := make([]map[string]any, 0, 20)
+	for _, item := range items {
+		user, ok := item.(map[string]any)
+		login, text := user["login"].(string)
+		if !ok || !text || len(login) > 39 || !loginPattern.MatchString(login) {
+			continue
+		}
+		users = append(users, user)
+		if len(users) == 20 {
+			break
+		}
 	}
-	results := make([]map[string]any, len(items))
+	results := make([]map[string]any, len(users))
 	// One error per developer. A nil entry means that developer succeeded.
-	errs := make([]error, len(items))
+	errs := make([]error, len(users))
 	slots := make(chan struct{}, MaxConcurrent)
 	var workers sync.WaitGroup
-	for index, item := range items {
+	for index, user := range users {
 		workers.Add(1)
-		go func(index int, item any) {
+		go func(index int, user map[string]any) {
 			defer workers.Done()
 			select {
 			case slots <- struct{}{}:
@@ -106,8 +122,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				errs[index] = ctx.Err()
 				return
 			}
-			results[index], errs[index] = h.developer(ctx, base, index, item)
-		}(index, item)
+			results[index], errs[index] = h.developer(ctx, base, index, user)
+		}(index, user)
 	}
 	// Wait before reading per-index results. Workers never mutate the same slot.
 	// Unlike the old Promise.all, no background request outlives this response.
@@ -129,7 +145,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if fatal {
-		h.fail(w, "enrichment", fmt.Errorf("%d of %d developers failed, first: %v", failed, len(items), cause(first)))
+		h.fail(w, "enrichment", fmt.Errorf("%d of %d developers failed, first: %v", failed, len(users), cause(first)))
 		return
 	}
 	if failed > 0 {
@@ -143,19 +159,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	write(w, 200, results)
 }
 
-// developer builds one entry of the reply. item is whatever GitHub's search
-// listed at that position, so every field may be missing or the wrong type.
-func (h *Handler) developer(ctx context.Context, base string, index int, item any) (map[string]any, error) {
-	if item == nil {
-		return nil, errors.New("search listed null in place of a user")
-	}
-	// JavaScript reads a field of a number, string or array as undefined, so
-	// the old handler carries on as if the user had no fields at all.
-	user, _ := item.(map[string]any)
-	name := "undefined"
-	if login, present := user["login"]; present {
-		name = jsString(login)
-	}
+// developer receives an object whose login has already passed validation.
+// Other optional display fields retain their recorded treatment.
+func (h *Handler) developer(ctx context.Context, base string, index int, user map[string]any) (map[string]any, error) {
+	name := user["login"].(string)
 	// R-025: retain the user even when its repository lookup fails. Only a
 	// successful empty array establishes that it has no public repositories.
 	result := map[string]any{"rank": index + 1, "popularRepo": map[string]any{
@@ -213,35 +220,6 @@ func stars(repo map[string]any) float64 {
 		return 0
 	}
 	return value
-}
-
-// jsString converts a decoded JSON value to text as a JavaScript template
-// literal does. A number keeps the digits GitHub sent, so 1.0 stays "1.0"
-// where JavaScript prints "1". A login is never a number.
-func jsString(value any) string {
-	switch v := value.(type) {
-	case nil:
-		return "null"
-	case string:
-		return v
-	case bool:
-		if v {
-			return "true"
-		}
-		return "false"
-	case json.Number:
-		return v.String()
-	case []any:
-		parts := make([]string, len(v))
-		for i, element := range v {
-			if element != nil {
-				parts[i] = jsString(element)
-			}
-		}
-		return strings.Join(parts, ",")
-	default:
-		return "[object Object]"
-	}
 }
 
 func (h *Handler) fetch(ctx context.Context, target string) (int, http.Header, any, error) {

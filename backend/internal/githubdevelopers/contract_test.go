@@ -29,12 +29,13 @@ type step struct {
 	Headers map[string]string `json:"headers"`
 }
 type fixture struct {
-	ID       string `json:"id"`
-	Request  string `json:"request"`
-	Now      string `json:"now"`
-	Timezone string `json:"timezone"`
-	Upstream []step `json:"upstream"`
-	Expect   struct {
+	ID         string `json:"id"`
+	Request    string `json:"request"`
+	Now        string `json:"now"`
+	Timezone   string `json:"timezone"`
+	Upstream   []step `json:"upstream"`
+	GoUpstream []step `json:"go_upstream"`
+	Expect     struct {
 		Status     int     `json:"status"`
 		Body       any     `json:"body"`
 		Calls      []call  `json:"calls"`
@@ -57,10 +58,14 @@ func TestContracts(t *testing.T) {
 	if err = json.Unmarshal(bytes, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 5 || len(contract.Cases) == 0 {
+	if contract.Version != 6 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {
+		upstream := f.Upstream
+		if f.GoUpstream != nil {
+			upstream = f.GoUpstream
+		}
 		for _, wire := range []bool{false, true} {
 			mode := "memory"
 			if wire {
@@ -97,7 +102,7 @@ func TestContracts(t *testing.T) {
 					if r.Header.Get("Authorization") != "" || r.Header.Get("X-GitHub-Token") != "" {
 						return nil, errors.New("credential leaked")
 					}
-					s := f.Upstream[index]
+					s := upstream[index]
 					if s.Delay > 0 {
 						time.Sleep(time.Duration(s.Delay) * time.Millisecond)
 					}

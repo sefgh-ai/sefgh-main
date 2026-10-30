@@ -68,17 +68,19 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 | BUG-041 | R-022 (Codex; fixed UTC windows in both trending endpoints, deployment pending) |
 | BUG-042 | R-023 (Codex; API rate-limit metadata, deployment pending; UI follow-up R-205 open) |
 | BUG-043 | R-024 (Codex; committed bed362d, safe colour map and C++ query regression, deployment pending) |
-| BUG-044 | R-025 (Codex; per-developer unavailable repository card, successful siblings retained; deployment pending) |
+| BUG-044 | R-025 (Codex; committed d725f53, per-developer unavailable repository card, successful siblings retained; deployment pending) |
+| BUG-045 | R-027 (Codex; validate developer logins before lookups, compact valid ranks; deployment pending) |
+| BUG-046 | R-029 (Codex; required repository lookup status/wait metadata; deployment pending) |
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-045**, register entry **R-207**. Never reuse or renumber.
+**Next free IDs:** task **BUG-047**, register entry **R-208**. Never reuse or renumber.
 
 ## 4. Your work queue, in order
 
 1. **Claim the writer role** (section 5, step 1) before editing anything.
 2. **If the owner has answered decision pack 2**, fix each approved entry as its own bounded task (BUG-037, BUG-038, …), following section 5. Record the answers in `docs/plans/phase6-decision-pack-2.md` and an ADR decisions-log row first. Entries the owner chose B for: record the decision and leave or defer as they said. **If they have not answered**, do item 3 meanwhile, and do not fix pack entries.
-3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); R-021 is implemented in BUG-040 (trending contract v5); R-022 is implemented in BUG-041 (repository v6/developers v3); R-023 is implemented in BUG-042 (repository v7/developers v4); R-024 completed locally in BUG-043 (trending contract v8, uncommitted); R-025 completed locally in BUG-044 (developer contract v5, uncommitted); next is BUG-045 for R-027, then the remaining approved pack entries in order. R-205 records the browser hook discarding rate-limit metadata; it is open.
+3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); R-021 is implemented in BUG-040 (trending contract v5); R-022 is implemented in BUG-041 (repository v6/developers v3); R-023 is implemented in BUG-042 (repository v7/developers v4); R-024 completed locally in BUG-043 (trending contract v8, uncommitted); R-025 completed locally in BUG-044 (developer contract v5, uncommitted); R-027 completed locally in BUG-045 (developer contract v6, uncommitted); R-029 completed locally in BUG-046 (repository contract v5, uncommitted); next is BUG-047 for R-030, then the remaining approved pack entries in order. R-205 records the browser hook discarding rate-limit metadata; it is open.
 4. **R-038**, after the owner adds the AI keys. Check whether visitors reaching Go through the website's rewrite are told apart by the AI allowance: Go project logs, or signed-in chat from two addresses. An outside probe of suggestions cannot tell, because over the allowance they answer 200 with the fallback.
 5. **The signed-in walk-through (BUG-002)** needs the owner's test account.
    - The file sits outside the repository, at `D:\Users\Windows\Downloads\` (`sefgh mail and password for testing.txt`).

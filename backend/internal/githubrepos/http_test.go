@@ -88,6 +88,9 @@ func TestContractsOverHTTP(t *testing.T) {
 			if res.StatusCode != tc.Expect.Status || !reflect.DeepEqual(got, want) {
 				t.Errorf("status %d body %s; want %d %s", res.StatusCode, b, tc.Expect.Status, tc.Expect.Body)
 			}
+			if res.Header.Get("Retry-After") != tc.Expect.RetryAfter {
+				t.Errorf("Retry-After %q want %q", res.Header.Get("Retry-After"), tc.Expect.RetryAfter)
+			}
 			if int(calls.Load()) != len(tc.Calls) {
 				t.Errorf("calls %d want %d", calls.Load(), len(tc.Calls))
 			}

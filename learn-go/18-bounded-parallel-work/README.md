@@ -1,5 +1,26 @@
 # 18. Run work concurrently without losing order
 
+## Validate before starting workers (BUG-045)
+
+The handler now builds a `[]map[string]any` of valid users before starting any
+goroutines. `user, ok := item.(map[string]any)` checks that a decoded JSON item
+is an object. `login, text := user["login"].(string)` checks its login type.
+These two-value assertions return a zero value and false on a mismatch; they
+do not panic. Reading a nil map is safe, so a rejected object can be checked
+without calling a method on it.
+
+The loop uses `continue` to skip invalid entries and `break` after twenty valid
+ones. A compiled regular expression accepts ASCII letters/digits and single
+internal hyphens; `len(login) <= 39` separately counts every byte, including
+hyphens. In JavaScript this resembles `items.filter(validUser).slice(0, 20)`.
+The result indices then give consecutive ranks, rather than leaving holes.
+
+Only validated objects reach `developer`, so its `user["login"].(string)`
+single-value assertion is safe. The old `jsString` coercion is removed: a number,
+array or object must never turn into a repository path. The contract checks
+that rejected entries trigger no upstream lookup. It keeps the old Next.js
+answers separately, including the requests that Go now correctly omits.
+
 ## Keep a useful result when one lookup fails (BUG-044)
 
 `developer` can now return both a result and an error. The result keeps the
@@ -10,7 +31,7 @@ Go's separate return values let the caller retain the result and the diagnostic.
 
 After `Wait`, a non-nil result with an error is usable. A nil result still means
 that entry could not be built; the handler keeps its existing whole-request
-failure for that case until R-027 changes malformed-user handling. A cancelled
+failure for that case in version 5; version 6 filters malformed users first. A cancelled
 request still fails after all workers join. One warning counts incomplete
 lookups; it includes no upstream body, login or URL.
 

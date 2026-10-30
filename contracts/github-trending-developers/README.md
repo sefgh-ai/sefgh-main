@@ -1,5 +1,17 @@
 # Trending developers contract (GO-007a)
 
+**Version 6** (BUG-045, R-027, 2026-10-30): 75 cases. Before repository URL
+construction, Go skips non-object users and absent/non-string/invalid logins.
+Accepted logins have 1..39 ASCII letters/digits with single internal hyphens,
+consistent with the existing contributions login rule and an explicit total
+length bound. Filtering precedes the twenty-user cap; ranks are consecutive in
+the remaining search order. Empty valid results are `[]`, not a failure.
+Nine prior cases revised, four added for invalid/valid boundaries, mixed users
+and filling the cap after skips; the other 62 prior cases remain identical.
+Actual unchanged Next.js answers remain in `next_expect`. Optional `go_upstream`
+supplies only the replies for Go's surviving users; `upstream` retains the raw
+rollback inputs for the Next.js runner. Credential/cancellation policy unchanged.
+
 **Version 5** (BUG-044, R-025, 2026-10-30): 71 cases. A failed HTTP/network
 repository lookup, invalid JSON, non-array reply or non-object array entry now
 produces a fixed `Repository unavailable` card for that developer. Successful

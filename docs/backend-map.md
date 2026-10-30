@@ -1,5 +1,17 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-046, R-029): Go repository summary/detail/contents use a
+shared required-lookup classifier:404for missing,429for rate limits with wait
+metadata,502for other HTTP/transport failures. Optional languages/README HTTP
+fallbacks and malformed successful replies (R-030) remain characterized.
+Repository contract v5 retains rollback Next.js responses. No deployment here.
+
+Update 2026-10-30 (BUG-045, R-027): Go developer search filters malformed users
+and invalid/non-text logins before constructing repository URLs and selecting
+twenty valid users. Valid order is retained with compact ranks; no valid users
+returns an empty list. Contract v6 retains separate Next.js inputs/answers for
+the removed lookups. No browser or deployment changes.
+
 Update 2026-10-30 (BUG-044, R-025): developer repository HTTP/network/JSON/shape
 failures now retain the developer with a fixed unavailable card and retain
 successful siblings. Successful empty lists alone report no repositories.

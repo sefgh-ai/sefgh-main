@@ -63,8 +63,8 @@ func TestDetailStopsWaitingForAHungRepositoryCall(t *testing.T) {
 	var calls atomic.Int32
 	rec, took := detailWithDeadline(hangingAfter(0, &calls), 60*time.Millisecond)
 
-	if rec.Code != http.StatusInternalServerError {
-		t.Errorf("status = %d, want 500", rec.Code)
+	if rec.Code != http.StatusBadGateway {
+		t.Errorf("status = %d, want 502", rec.Code)
 	}
 	if took > 2*time.Second {
 		t.Errorf("took %v; the route's own deadline was 60ms", took)
@@ -75,9 +75,9 @@ func TestDetailStopsWaitingForAHungLanguagesCall(t *testing.T) {
 	var calls atomic.Int32
 	rec, took := detailWithDeadline(hangingAfter(1, &calls), 60*time.Millisecond)
 
-	// Unlike the README, the languages call is required: its failure is a 500.
-	if rec.Code != http.StatusInternalServerError {
-		t.Errorf("status = %d, want 500", rec.Code)
+	// Unlike the README, a transport failure during languages is a 502.
+	if rec.Code != http.StatusBadGateway {
+		t.Errorf("status = %d, want 502", rec.Code)
 	}
 	if took > 2*time.Second {
 		t.Errorf("took %v; the route's own deadline was 60ms", took)

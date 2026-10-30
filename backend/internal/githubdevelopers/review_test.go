@@ -36,13 +36,13 @@ func serve(t *testing.T, h *Handler, searchBody, reposBody string) (*httptest.Re
 }
 
 // These malformed shapes exercise intentional differences from Next.js.
-// R-025 now labels an object repository reply unavailable; numeric login
-// handling still awaits R-027. Neither shape is a normal GitHub response.
+// R-025 labels an object repository reply unavailable; R-027 skips numeric
+// logins. Neither shape is a normal GitHub response.
 func TestRecordedDifferencesFromNextJS(t *testing.T) {
-	t.Run("a numeric login keeps the digits GitHub sent", func(t *testing.T) {
+	t.Run("a numeric login is skipped before any repository request", func(t *testing.T) {
 		// JavaScript would ask for /users/1/repos.
 		rec, asked := serve(t, &Handler{}, `{"items":[{"login":1.0}]}`, `[]`)
-		if rec.Code != 200 || len(asked) != 1 || asked[0] != "/users/1.0/repos?per_page=100" {
+		if rec.Code != 200 || len(asked) != 0 || rec.Body.String() != "[]\n" {
 			t.Errorf("status %d, asked %q", rec.Code, asked)
 		}
 	})
@@ -58,33 +58,6 @@ func TestRecordedDifferencesFromNextJS(t *testing.T) {
 			t.Errorf("popularRepo = %v", popular)
 		}
 	})
-}
-
-func TestJSString(t *testing.T) {
-	// Each "want" is what `${value}` gives in Node for the same JSON.
-	tests := []struct{ in, want string }{
-		{`"octo"`, "octo"},
-		{`null`, "null"},
-		{`true`, "true"},
-		{`false`, "false"},
-		{`123`, "123"},
-		{`{}`, "[object Object]"},
-		{`{"a":1}`, "[object Object]"},
-		{`[]`, ""},
-		{`["a","b"]`, "a,b"},
-		{`[null,"a",[true,[]],{}]`, ",a,true,,[object Object]"},
-	}
-	for _, tt := range tests {
-		decoder := json.NewDecoder(strings.NewReader(tt.in))
-		decoder.UseNumber()
-		var value any
-		if err := decoder.Decode(&value); err != nil {
-			t.Fatal(err)
-		}
-		if got := jsString(value); got != tt.want {
-			t.Errorf("jsString(%s) = %q, want %q", tt.in, got, tt.want)
-		}
-	}
 }
 
 // Failed searches log one error; incomplete repository enrichment logs one

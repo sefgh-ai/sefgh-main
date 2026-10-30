@@ -1,6 +1,17 @@
 # GitHub repository read contracts
 
-AUTH-001 (2026-10-13): current contract version **4**. The shared
+Version **5** (BUG-046, R-029, 2026-10-30): 136 cases. Required primary
+repository/contents lookups now return 404 for missing repositories, 429 with
+nullable rate metadata and Retry-After for rate limits, and fixed 502 messages
+for other HTTP/transport failures. Rate-related 403 means Retry-After or zero
+remaining; ordinary 403 is 502. Required languages transport failure is also 502.
+Existing optional languages/README HTTP fallbacks and successful malformed-body
+handling are unchanged (the latter is R-030). Fifteen prior cases revised,
+twelve added, 109 prior cases unchanged. `next_expect` retains the unchanged
+Next.js answers, verified by its real handlers. Go memory/socket harnesses pin
+Retry-After; no cache, credential, live-provider or deployment change.
+
+AUTH-001 (2026-10-13) introduced contract version **4**. The shared
 [access contract](../github-access/README.md) now governs credentials and
 private response caching. In fixtures, github_token is a verified per-user
 credential, never an environment-token fallback. Anonymous reads use no token.

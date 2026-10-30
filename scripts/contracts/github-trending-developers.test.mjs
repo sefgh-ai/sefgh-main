@@ -22,12 +22,13 @@ const asSentByNext = (c) => c.next_expect ?? {
 };
 
 test('developer fixture integrity and credential boundaries', () => {
-  assert.equal(contract.contract_version,5);
+  assert.equal(contract.contract_version,6);
   assert.equal(new Set(contract.cases.map(c=>c.id)).size,contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve','defect'].includes(c.disposition), c.id);
     assert.ok(c.reason,c.id);
-    assert.equal(c.upstream.length,c.expect.calls.length,c.id);
+    assert.equal((c.go_upstream ?? c.upstream).length,c.expect.calls.length,c.id);
+    if (c.go_upstream) assert.equal(c.upstream.length,c.next_expect.calls.length,c.id);
     assert.ok(c.expect.calls.length<=21,c.id);
     for (const call of c.expect.calls) {
       assert.equal(call.headers.authorization,undefined,c.id);
@@ -49,6 +50,16 @@ test('failed repository lookups are unavailable and keep successful siblings (R-
   }
   const empty = contract.cases.find(c => c.id === 'empty-repositories');
   assert.equal(empty.expect.body[0].popularRepo.name, 'No repositories');
+});
+
+test('invalid logins never become repository requests and ranks stay compact (R-027)', () => {
+  for (const c of contract.cases.filter(c => c.reason.startsWith('R-027:'))) {
+    const users = c.upstream[0].body.items.filter(u => u && typeof u.login === 'string' &&
+      u.login.length <= 39 && /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(u.login)).slice(0,20);
+    assert.deepEqual(c.expect.body.map(u => u.username),users.map(u => u.login),c.id);
+    assert.deepEqual(c.expect.body.map(u => u.rank),users.map((_,i) => i+1),c.id);
+    assert.deepEqual(c.expect.calls.slice(1).map(call => new URL(call.url).pathname),users.map(u => '/users/'+u.login+'/repos'),c.id);
+  }
 });
 
 test('developer cutoffs are fixed UTC durations (R-022)', () => {

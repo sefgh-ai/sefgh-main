@@ -1,5 +1,5 @@
 {
-  "contract_version": 5,
+  "contract_version": 6,
   "route": "GET /api/github/trending-developers",
   "recorded_from": "086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3",
   "cases": [
@@ -4632,7 +4632,7 @@
     {
       "id": "null-user",
       "disposition": "preserve",
-      "reason": "Preserve existing status, output and upstream requests.",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4647,10 +4647,8 @@
         }
       ],
       "expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending developers"
-        },
+        "status": 200,
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -4683,7 +4681,17 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "search-malformed-json",
@@ -4969,8 +4977,8 @@
     },
     {
       "id": "missing-login",
-      "disposition": "defect",
-      "reason": "Missing upstream login is interpolated as undefined without validation.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4992,17 +5000,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5010,14 +5008,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/undefined/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5059,12 +5049,24 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "login-path-segments",
-      "disposition": "defect",
-      "reason": "Upstream login is interpolated unescaped; wire URL normalizes path segments.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5089,21 +5091,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "name": "alice/../bob",
-            "username": "alice/../bob",
-            "avatar": "https://example.test/alice/../bob",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
-            "url": "https://github.com/alice/../bob"
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5111,14 +5099,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/alice/../bob/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5164,12 +5144,27 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice/../bob",
+                "avatar_url": "https://example.test/alice/../bob",
+                "html_url": "https://github.com/alice/../bob"
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "query-in-login",
-      "disposition": "defect",
-      "reason": "Upstream login can alter the URL query without validation.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5194,21 +5189,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "name": "alice?x=1",
-            "username": "alice?x=1",
-            "avatar": "https://example.test/alice?x=1",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
-            "url": "https://github.com/alice?x=1"
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5216,14 +5197,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/alice?x=1/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5269,7 +5242,22 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice?x=1",
+                "avatar_url": "https://example.test/alice?x=1",
+                "html_url": "https://github.com/alice?x=1"
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "search-byte-order-mark",
@@ -5420,8 +5408,8 @@
     },
     {
       "id": "number-in-place-of-user",
-      "disposition": "defect",
-      "reason": "A search entry that is not an object is treated as a user with no fields, and \"undefined\" is looked up.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5446,16 +5434,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "rank": 1,
-            "popularRepo": {
-              "name": "demo",
-              "description": "A demo"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5463,14 +5442,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/undefined/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5511,12 +5482,22 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              5
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "array-in-place-of-user",
-      "disposition": "defect",
-      "reason": "A search entry that is not an object is treated as a user with no fields, and \"undefined\" is looked up.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5541,16 +5522,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "rank": 1,
-            "popularRepo": {
-              "name": "demo",
-              "description": "A demo"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5558,14 +5530,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/undefined/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/undefined/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5606,12 +5570,22 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              []
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "boolean-login",
-      "disposition": "defect",
-      "reason": "A login that is not a string is converted to text and looked up.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5639,19 +5613,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "name": true,
-            "username": true,
-            "popularRepo": {
-              "name": "demo",
-              "description": "A demo"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5659,14 +5621,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/true/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/true/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5710,12 +5664,25 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": true,
+                "id": 1
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "object-login",
-      "disposition": "defect",
-      "reason": "A login that is not a string is converted to text and looked up.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5743,19 +5710,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "name": {},
-            "username": {},
-            "popularRepo": {
-              "name": "demo",
-              "description": "A demo"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5763,14 +5718,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/[object Object]/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/[object%20Object]/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5814,12 +5761,25 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": {},
+                "id": 1
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "array-login",
-      "disposition": "defect",
-      "reason": "A login that is not a string is converted to text and looked up.",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5850,25 +5810,7 @@
       ],
       "expect": {
         "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "rank": 1,
-            "name": [
-              "a",
-              "b"
-            ],
-            "username": [
-              "a",
-              "b"
-            ],
-            "popularRepo": {
-              "name": "demo",
-              "description": "A demo"
-            },
-            "following": false
-          }
-        ],
+        "body": [],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5876,14 +5818,6 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
-            "headers": {
-              "accept": "application/vnd.github.v3+json",
-              "user-agent": "SEFGH-AI-App"
-            }
-          },
-          {
-            "url": "https://api.github.com/users/a,b/repos?per_page=100",
-            "wire_url": "https://api.github.com/users/a,b/repos?per_page=100",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"
@@ -5933,7 +5867,23 @@
             }
           }
         ]
-      }
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": [
+                  "a",
+                  "b"
+                ],
+                "id": 1
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "repository-reply-is-text",
@@ -7077,6 +7027,1938 @@
           }
         ]
       }
+    },
+    {
+      "id": "invalid-login-boundaries",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": ""
+              },
+              {
+                "login": null
+              },
+              {
+                "login": 12
+              },
+              {
+                "login": "-alice"
+              },
+              {
+                "login": "alice-"
+              },
+              {
+                "login": "a--b"
+              },
+              {
+                "login": "a_b"
+              },
+              {
+                "login": "a.b"
+              },
+              {
+                "login": "alice bob"
+              },
+              {
+                "login": "a%2Fb"
+              },
+              {
+                "login": "octö"
+              },
+              {
+                "login": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "login": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "name": "",
+            "username": "",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 2,
+            "name": null,
+            "username": null,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 3,
+            "name": 12,
+            "username": 12,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 4,
+            "name": "-alice",
+            "username": "-alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 5,
+            "name": "alice-",
+            "username": "alice-",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 6,
+            "name": "a--b",
+            "username": "a--b",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 7,
+            "name": "a_b",
+            "username": "a_b",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 8,
+            "name": "a.b",
+            "username": "a.b",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 9,
+            "name": "alice bob",
+            "username": "alice bob",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 10,
+            "name": "a%2Fb",
+            "username": "a%2Fb",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 11,
+            "name": "octö",
+            "username": "octö",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 12,
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "rank": 13,
+            "name": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users//repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users//repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/null/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/null/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/12/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/12/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/-alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/-alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice-/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice-/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a--b/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a--b/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a_b/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a_b/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a.b/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a.b/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice%20bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a%2Fb/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a%2Fb/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/octö/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/oct%C3%B6/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": ""
+              },
+              {
+                "login": null
+              },
+              {
+                "login": 12
+              },
+              {
+                "login": "-alice"
+              },
+              {
+                "login": "alice-"
+              },
+              {
+                "login": "a--b"
+              },
+              {
+                "login": "a_b"
+              },
+              {
+                "login": "a.b"
+              },
+              {
+                "login": "alice bob"
+              },
+              {
+                "login": "a%2Fb"
+              },
+              {
+                "login": "octö"
+              },
+              {
+                "login": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "login": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "valid-login-boundaries",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": "a",
+                "id": 1
+              },
+              {
+                "login": "7",
+                "id": 2
+              },
+              {
+                "login": "Octo-Cat",
+                "id": 3
+              },
+              {
+                "login": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "id": 4
+              },
+              {
+                "login": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+                "id": 5
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "a",
+            "username": "a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "7",
+            "username": "7",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "Octo-Cat",
+            "username": "Octo-Cat",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 4,
+            "rank": 4,
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 5,
+            "rank": 5,
+            "name": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/7/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/7/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/Octo-Cat/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/Octo-Cat/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "a",
+            "username": "a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "7",
+            "username": "7",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 3,
+            "rank": 3,
+            "name": "Octo-Cat",
+            "username": "Octo-Cat",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 4,
+            "rank": 4,
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          },
+          {
+            "id": 5,
+            "rank": 5,
+            "name": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/7/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/7/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/Octo-Cat/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/Octo-Cat/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "login": "a",
+                "id": 1
+              },
+              {
+                "login": "7",
+                "id": 2
+              },
+              {
+                "login": "Octo-Cat",
+                "id": 3
+              },
+              {
+                "login": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "id": 4
+              },
+              {
+                "login": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+                "id": 5
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ]
+    },
+    {
+      "id": "mixed-valid-logins",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null,
+              {
+                "login": "alice",
+                "id": 1
+              },
+              {
+                "login": "bad/name"
+              },
+              {
+                "login": "bob",
+                "id": 2
+              },
+              {
+                "login": false
+              },
+              {
+                "login": "carol",
+                "id": 3
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 1
+          },
+          {
+            "id": 2,
+            "name": "bob",
+            "username": "bob",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 2
+          },
+          {
+            "id": 3,
+            "name": "carol",
+            "username": "carol",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 3
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/carol/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/carol/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bad/name/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bad/name/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/false/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/false/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/carol/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null,
+              {
+                "login": "alice",
+                "id": 1
+              },
+              {
+                "login": "bad/name"
+              },
+              {
+                "login": "bob",
+                "id": 2
+              },
+              {
+                "login": false
+              },
+              {
+                "login": "carol",
+                "id": 3
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ]
+    },
+    {
+      "id": "valid-limit-after-skips",
+      "disposition": "preserve",
+      "reason": "R-027: skip invalid/non-text GitHub logins before URL construction and the twenty-valid-user cap; compact ranks preserve search order. Next.js output and raw inputs retained separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null,
+              {
+                "login": "user0",
+                "id": 1
+              },
+              {
+                "login": "user1",
+                "id": 2
+              },
+              {
+                "login": "user2",
+                "id": 3
+              },
+              {
+                "login": "user3",
+                "id": 4
+              },
+              {
+                "login": "user4",
+                "id": 5
+              },
+              {
+                "login": "user5",
+                "id": 6
+              },
+              {
+                "login": "user6",
+                "id": 7
+              },
+              {
+                "login": "user7",
+                "id": 8
+              },
+              {
+                "login": "user8",
+                "id": 9
+              },
+              {
+                "login": "user9",
+                "id": 10
+              },
+              {
+                "login": "user10",
+                "id": 11
+              },
+              {
+                "login": "user11",
+                "id": 12
+              },
+              {
+                "login": "user12",
+                "id": 13
+              },
+              {
+                "login": "user13",
+                "id": 14
+              },
+              {
+                "login": "user14",
+                "id": 15
+              },
+              {
+                "login": "user15",
+                "id": 16
+              },
+              {
+                "login": "user16",
+                "id": 17
+              },
+              {
+                "login": "user17",
+                "id": 18
+              },
+              {
+                "login": "user18",
+                "id": 19
+              },
+              {
+                "login": "user19",
+                "id": 20
+              },
+              {
+                "login": "user20",
+                "id": 21
+              },
+              {
+                "login": "user21",
+                "id": 22
+              },
+              {
+                "login": "user22",
+                "id": 23
+              },
+              {
+                "login": "user23",
+                "id": 24
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "name": "user0",
+            "username": "user0",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 1
+          },
+          {
+            "id": 2,
+            "name": "user1",
+            "username": "user1",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 2
+          },
+          {
+            "id": 3,
+            "name": "user2",
+            "username": "user2",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 3
+          },
+          {
+            "id": 4,
+            "name": "user3",
+            "username": "user3",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 4
+          },
+          {
+            "id": 5,
+            "name": "user4",
+            "username": "user4",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 5
+          },
+          {
+            "id": 6,
+            "name": "user5",
+            "username": "user5",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 6
+          },
+          {
+            "id": 7,
+            "name": "user6",
+            "username": "user6",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 7
+          },
+          {
+            "id": 8,
+            "name": "user7",
+            "username": "user7",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 8
+          },
+          {
+            "id": 9,
+            "name": "user8",
+            "username": "user8",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 9
+          },
+          {
+            "id": 10,
+            "name": "user9",
+            "username": "user9",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 10
+          },
+          {
+            "id": 11,
+            "name": "user10",
+            "username": "user10",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 11
+          },
+          {
+            "id": 12,
+            "name": "user11",
+            "username": "user11",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 12
+          },
+          {
+            "id": 13,
+            "name": "user12",
+            "username": "user12",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 13
+          },
+          {
+            "id": 14,
+            "name": "user13",
+            "username": "user13",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 14
+          },
+          {
+            "id": 15,
+            "name": "user14",
+            "username": "user14",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 15
+          },
+          {
+            "id": 16,
+            "name": "user15",
+            "username": "user15",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 16
+          },
+          {
+            "id": 17,
+            "name": "user16",
+            "username": "user16",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 17
+          },
+          {
+            "id": 18,
+            "name": "user17",
+            "username": "user17",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 18
+          },
+          {
+            "id": 19,
+            "name": "user18",
+            "username": "user18",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 19
+          },
+          {
+            "id": 20,
+            "name": "user19",
+            "username": "user19",
+            "following": false,
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "rank": 20
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user0/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user0/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user1/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user1/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user2/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user2/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user3/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user3/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user4/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user4/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user5/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user5/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user6/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user6/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user7/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user7/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user8/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user8/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user9/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user9/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user10/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user10/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user11/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user11/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user12/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user12/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user13/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user13/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user14/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user14/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user15/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user15/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user16/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user16/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user17/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user17/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user18/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user18/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user19/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/user19/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch trending developers"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user0/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user1/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user2/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user3/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user4/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user5/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user6/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user7/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user8/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user9/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user10/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user11/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user12/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user13/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user14/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user15/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user16/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user17/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/user18/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "go_upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              null,
+              {
+                "login": "user0",
+                "id": 1
+              },
+              {
+                "login": "user1",
+                "id": 2
+              },
+              {
+                "login": "user2",
+                "id": 3
+              },
+              {
+                "login": "user3",
+                "id": 4
+              },
+              {
+                "login": "user4",
+                "id": 5
+              },
+              {
+                "login": "user5",
+                "id": 6
+              },
+              {
+                "login": "user6",
+                "id": 7
+              },
+              {
+                "login": "user7",
+                "id": 8
+              },
+              {
+                "login": "user8",
+                "id": 9
+              },
+              {
+                "login": "user9",
+                "id": 10
+              },
+              {
+                "login": "user10",
+                "id": 11
+              },
+              {
+                "login": "user11",
+                "id": 12
+              },
+              {
+                "login": "user12",
+                "id": 13
+              },
+              {
+                "login": "user13",
+                "id": 14
+              },
+              {
+                "login": "user14",
+                "id": 15
+              },
+              {
+                "login": "user15",
+                "id": 16
+              },
+              {
+                "login": "user16",
+                "id": 17
+              },
+              {
+                "login": "user17",
+                "id": 18
+              },
+              {
+                "login": "user18",
+                "id": 19
+              },
+              {
+                "login": "user19",
+                "id": 20
+              },
+              {
+                "login": "user20",
+                "id": 21
+              },
+              {
+                "login": "user21",
+                "id": 22
+              },
+              {
+                "login": "user22",
+                "id": 23
+              },
+              {
+                "login": "user23",
+                "id": 24
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ]
     }
   ]
 }

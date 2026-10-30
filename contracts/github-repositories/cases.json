@@ -1,5 +1,5 @@
 {
-  "contract_version": 4,
+  "contract_version": 5,
   "cases": [
     {
       "id": "missing-both",
@@ -446,13 +446,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "GitHub API error: 403"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+      }
     },
     {
       "id": "summary-status-429",
@@ -475,13 +481,23 @@
         }
       ],
       "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "GitHub API error: 429"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+      }
     },
     {
       "id": "summary-status-422",
@@ -504,13 +520,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "GitHub API error: 422"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+      }
     },
     {
       "id": "summary-status-500",
@@ -533,13 +555,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "GitHub API error: 500"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream statuses other than 404 collapse to 500; error details are exposed."
+      }
     },
     {
       "id": "summary-null-body",
@@ -621,13 +649,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "detail-complete",
@@ -985,13 +1019,19 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "Repository not found"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
-      },
-      "disposition": "defect",
-      "note": "Repository status is collapsed to 500."
+      }
     },
     {
       "id": "detail-status-403",
@@ -1012,13 +1052,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "defect",
-      "note": "Repository status is collapsed to 500."
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
     },
     {
       "id": "detail-status-429",
@@ -1039,13 +1085,23 @@
         }
       ],
       "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
-      },
-      "disposition": "defect",
-      "note": "Repository status is collapsed to 500."
+      }
     },
     {
       "id": "detail-status-500",
@@ -1066,13 +1122,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "defect",
-      "note": "Repository status is collapsed to 500."
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
     },
     {
       "id": "detail-languages-404",
@@ -1457,12 +1519,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "preserve"
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-languages-invalid-json",
@@ -2699,13 +2768,19 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "Repository not found"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository contents"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream status is collapsed to 500."
+      }
     },
     {
       "id": "contents-status-403",
@@ -2726,13 +2801,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository contents"
         }
       },
-      "disposition": "defect",
-      "note": "Upstream status is collapsed to 500."
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
     },
     {
       "id": "contents-status-429",
@@ -2753,13 +2834,23 @@
         }
       ],
       "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository contents"
         }
-      },
-      "disposition": "defect",
-      "note": "Upstream status is collapsed to 500."
+      }
     },
     {
       "id": "contents-status-500",
@@ -2780,13 +2871,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository contents"
         }
       },
-      "disposition": "defect",
-      "note": "Upstream status is collapsed to 500."
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
     },
     {
       "id": "contents-network",
@@ -2808,12 +2905,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository contents"
         }
       },
-      "disposition": "preserve"
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-invalid-json",
@@ -4990,6 +5094,506 @@
       },
       "disposition": "preserve",
       "note": "An unfinished three-byte sequence is one replacement character, and the byte after it is kept."
+    },
+    {
+      "id": "summary-rate-primary-403",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": "1793350000"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": "1793350000"
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 403"
+        }
+      }
+    },
+    {
+      "id": "summary-rate-secondary-403",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "Retry-After": "30"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "retry_after": "30"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 403"
+        }
+      }
+    },
+    {
+      "id": "summary-rate-metadata-429",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {
+            "Retry-After": "Fri, 30 Oct 2026 12:00:00 GMT",
+            "X-RateLimit-Remaining": "0"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": null
+          }
+        },
+        "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 429"
+        }
+      }
+    },
+    {
+      "id": "summary-ordinary-403-with-allowance",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "10"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub API error: 403"
+        }
+      }
+    },
+    {
+      "id": "detail-rate-primary-403",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": "1793350000"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": "1793350000"
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
+    },
+    {
+      "id": "detail-rate-secondary-403",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "Retry-After": "30"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "retry_after": "30"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
+    },
+    {
+      "id": "detail-rate-metadata-429",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {
+            "Retry-After": "Fri, 30 Oct 2026 12:00:00 GMT",
+            "X-RateLimit-Remaining": "0"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": null
+          }
+        },
+        "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
+    },
+    {
+      "id": "detail-ordinary-403-with-allowance",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "10"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      }
+    },
+    {
+      "id": "contents-rate-primary-403",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": "1793350000"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": "1793350000"
+          }
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
+    },
+    {
+      "id": "contents-rate-secondary-403",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "Retry-After": "30"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        },
+        "retry_after": "30"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
+    },
+    {
+      "id": "contents-rate-metadata-429",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 429,
+          "response_headers": {
+            "Retry-After": "Fri, 30 Oct 2026 12:00:00 GMT",
+            "X-RateLimit-Remaining": "0"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 429,
+        "body": {
+          "error": "GitHub rate limit reached, please try again shortly",
+          "rate_limit": {
+            "remaining": "0",
+            "reset": null
+          }
+        },
+        "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
+    },
+    {
+      "id": "contents-ordinary-403-with-allowance",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 403,
+          "response_headers": {
+            "X-RateLimit-Remaining": "10"
+          },
+          "body": {
+            "message": "upstream-private-detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      }
     }
   ],
   "authorization_contract": "../github-access/cases.json",

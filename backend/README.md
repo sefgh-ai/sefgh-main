@@ -1,5 +1,15 @@
 # SEFGH Go backend
 
+BUG-046 (R-029, 2026-10-30): repository contract v5 classifies required primary
+lookup failures as missing404, rate-limit429with wait metadata, or fixed502.
+Required transport failures use502; optional enrichment HTTP fallbacks, caching
+and credential boundaries remain. Rollback Next.js expectations retained.
+
+BUG-045 (R-027, 2026-10-30): developer contract v6 skips malformed users and
+invalid/non-text logins before any repository request. Up to twenty valid users
+retain their search order with consecutive ranks. Rollback Next.js expectations
+and original upstream inputs remain recorded; deployment pending.
+
 BUG-044 (R-025, 2026-10-30): developer contract v5 keeps the list when a
 repository lookup fails and displays a fixed unavailable card for that user.
 Empty lists remain distinct. Full-request cancellation and credential isolation
