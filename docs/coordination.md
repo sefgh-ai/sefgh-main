@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized BUG-045 and BUG-046 (commit `569741a`) on main and go-backend.
+Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized BUG-047 (commit `83cd859`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-047, R-030 validate repository success shapes (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, claim base374a8ca; current2493237; resulting BUG-047 explicitly uncommitted. During the task Git Agent committed the prior completed BUG-045/046 at569741a and coordination2493237; current diff/ownership/checkpoint were rechecked and preserved. Nine of27pack fixes complete locally,18remain starting R-033. Hosted key acceptance remains under its separate checkpoint; no live actions.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `2493237`. Resulting commit: `83cd859` (synchronized by Git Agent on `main` and `go-backend`). During the task Git Agent committed the prior completed BUG-045/046 at 6dff661 and coordination 2493237; current diff/ownership/checkpoint were rechecked and preserved. Nine of27pack fixes complete locally,18remain starting R-033. Hosted key acceptance remains under its separate checkpoint; no live actions.
 
 New githubrepos/shapes.go validates minimum consumer shapes before successful replies. Repository identity needs positive whole ID, usable name/full_name/html_url and owner login. Known malformed counts, description/language/homepage, licence and topics are omitted/filtered; legitimate nullable values remain. Details requires a nonempty languages URL and object languages response, retaining only nonnegative whole counts. Contents supports file/symlink/submodule or a directory list; bad directory entries omitted, bad roots/core shapes or unusable JSON fixed502. Empty valid lists/maps and BOM JSON remain valid. Optional HTTP fallbacks, credentials and cache policy remain. This is a minimum consumer shape, not the full provider schema.
 
@@ -39,7 +39,7 @@ Status: **in progress / incomplete**. Writer Codex; reviewer unassigned; branch 
 
 ## Handoff: BUG-046, R-029 classify required repository lookup failures (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `374a8ca`. Resulting commit: `569741a` (batch synchronized by Git Agent on `main` and `go-backend`). Prior completed BUG-045 preserved (full handoff tree5413c3127c2c). Eight of27pack fixes complete locally,19remain starting R-030. Hosted key acceptance remains under its separate checkpoint; no live actions.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `374a8ca`. Resulting commit: `6dff661` (batch synchronized by Git Agent on `main` and `go-backend`). Prior completed BUG-045 preserved (full handoff tree5413c3127c2c). Eight of27pack fixes complete locally,19remain starting R-030. Hosted key acceptance remains under its separate checkpoint; no live actions.
 
 Summary/detail/contents now share requiredFailure after their primary GitHub lookup:404for missing repository,429with shared fixed rate message/nullable remaining-reset/Retry-After for429or rate-related403,502with fixed route message for other HTTP/transport failures. Ordinary403 stays distinct from rate-related403. Required languages transport failure also502. Existing optional languages/README HTTP fallbacks, malformed successful-body behavior (R-030), cache permissions/freshness/eviction and credential boundaries retained. Lesson10/index updated; existing exercises untouched.
 
@@ -57,7 +57,7 @@ Status: **in progress / incomplete**. Writer Codex; reviewer unassigned. Branch 
 
 ## Handoff: BUG-045, R-027 validate developer logins before lookup (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `374a8ca`. Resulting commit: `569741a` (batch synchronized by Git Agent on `main` and `go-backend`). Prior BUG-044 committed d725f53. Seven of27pack fixes complete locally,20remain starting R-029. Hosted key acceptance remains under its independent checkpoint; no live actions.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `374a8ca`. Resulting commit: `6dff661` (batch synchronized by Git Agent on `main` and `go-backend`). Prior BUG-044 committed d725f53. Seven of27pack fixes complete locally,20remain starting R-029. Hosted key acceptance remains under its independent checkpoint; no live actions.
 
 Go filters non-object users and absent/non-text/invalid logins before constructing repository URLs and selecting twenty valid users. Allowed names are1..39ASCII letters/digits with single internal hyphens; total length explicitly includes hyphens. Valid order/ranks are compact, empty valid results are[]; cancellation and credential isolation retained. Removed obsolete jsString coercion and its mirror-only test; numeric-login regression now asserts zero enrichment calls. Nine prior contract cases revised; four added for invalid/valid boundaries, mixed users and cap-after-skips. Contract v6 has75cases,62prior cases asserted identical. Actual unchanged Next.js answers/raw upstream inputs retained; optional go_upstream supplies only Go's surviving lookup replies. Lesson18/index updated; existing exercises untouched.
 
