@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized BUG-047 (commit `83cd859`) on main and go-backend.
+Last updated: 2026-10-31 (Asia/Calcutta), by Git Agent: synchronized Decision Pack 2 through CLOSEOUT-001 (commit `b034e1f`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: CLOSEOUT-001 recovery decision and current pickup (Codex, 2026-10-31)
 
-Status: **bounded documentation complete**. Owner Codex; reviewer unassigned. Main base/current f5c5640, explicitly uncommitted. Prior 131-file tree c1ab4576a0d3 passed full handoff; no lease or writer at claim. Prior dirty work preserved. Overall migration gates are recorded separately below.
+Status: **bounded documentation complete**. Owner Codex; reviewer unassigned. Branch `main`, base `f5c5640`. Resulting commit: `b034e1f` (batch synchronized by Git Agent on `main` and `go-backend`). Prior 131-file tree c1ab4576a0d3 passed full handoff; no lease or writer at claim. Prior dirty work preserved. Overall migration gates are recorded separately below.
 
 Owner decision 2026-10-31 (CLOSEOUT-001): accept manual crash-lock recovery and defer R-209 automatic recovery until after Phase 7. An operator must verify the owning request/process stopped and remove only the exact user lock after inspecting the current profile. Never remove by age or steal a potentially active lock. Hosted lock permissions, insert atomicity, signed-in replacement and participation by all active upload writers remain rollout gates. This decision authorizes no activation or deployment.
 
