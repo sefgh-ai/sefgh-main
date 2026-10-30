@@ -1,6 +1,18 @@
 # GitHub trending characterization (GO-006a)
 
-## Version 7 (BUG-042, R-023, 2026-10-30): current
+## Version 8 (BUG-043, R-024, 2026-10-30): current
+
+60 cases. Go returns a colour string from the real table or `#8b949e` for
+every unknown name, including `__proto__` and JavaScript's inherited method
+names. It no longer emulates prototype lookup. The shared item formatter also
+serves Go trending topics. One prior colour case revised, one eleven-name case
+added, and the C++ case reclassified as preserved: R-068 already fixed query
+encoding. The query decoder and existing Go upstream test pin literal `C++`
+inside the language qualifier with spaces between search terms. Actual unchanged
+Next.js replies are saved in `next_expect` for both revised and the new case;
+the other 57 prior cases are identical. No live GitHub query is claimed here.
+
+## Version 7 (BUG-042, R-023, 2026-10-30)
 
 59 cases. Go reports GitHub 429, or 403 with Retry-After/zero remaining, as
 429 with search's fixed error and `rate_limit: {remaining, reset}` (null when

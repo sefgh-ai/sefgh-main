@@ -25,7 +25,7 @@ const asSentByNext = (expect) => ({
 });
 
 test('trending fixture integrity', () => {
-  assert.equal(contract.contract_version,7);
+  assert.equal(contract.contract_version,8);
   for (const c of contract.cases) {
     for (const call of c.expect.calls) {
       const terms = decodeURIComponent(new URL(call.url).search.match(/q=([^&]*)/)[1]).split(' ');
@@ -48,6 +48,19 @@ test('trending fixture integrity', () => {
     if(c.expect.status === 400) assert.equal(c.expect.calls.length,0,c.id);
   }
 });
+test('colours use only the real table and C++ survives query decoding (R-024)', () => {
+  for (const id of ['prototype-color', 'inherited-color-names']) {
+    const c = contract.cases.find(c => c.id === id);
+    assert.ok(c.expect.body.length > 0);
+    for (const item of c.expect.body) assert.equal(item.languageColor, '#8b949e', item.language);
+    assert.notDeepEqual(c.expect.body, c.next_expect.body);
+  }
+  const cpp = contract.cases.find(c => c.id === 'cpp-language');
+  const query = new URL(cpp.expect.calls[0].url).searchParams.get('q');
+  assert.ok(query.endsWith(' language:C++'));
+  assert.ok(!query.includes('+created:'));
+});
+
 test('trending cutoffs are fixed UTC durations (R-022)', () => {
   for (const c of contract.cases) {
     const since = new URL('https://fixture.invalid' + c.request).searchParams.get('since') || 'daily';

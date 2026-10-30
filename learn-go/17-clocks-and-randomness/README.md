@@ -1,5 +1,25 @@
 # 17. Pass in clocks and random numbers
 
+## A Go map does not inherit JavaScript object properties (BUG-043)
+
+The real `languageColor` function now returns a `string`. It reads the small
+`map[string]string` of known colours using `color, ok := colors[name]`. If `ok`
+is false, it returns `#8b949e`. Names such as `__proto__` and `constructor`
+are ordinary strings; Go maps have no prototype chain. A JavaScript equivalent
+would check `Object.hasOwn(colors, name)` before reading `colors[name]`.
+
+The earlier port deliberately emulated JavaScript's inherited values so it could
+be compared with the old handler. Owner-approved contract version 8 removes that
+emulation. Returning `string` also prevents an object or an omitted field from
+being used as a colour. `Item` uses this result for both trending endpoints.
+The regression fixtures retain the old Next.js reply separately in `next_expect`.
+
+Query encoding has a different concern: spaces separate GitHub search terms,
+while the plus signs in `language:C++` belong to the name. `EncodeURIComponent`
+turns those plus signs into `%2B`; decoding the query restores `C++`, rather than
+turning its plus signs into spaces. R-068 already made this correction; BUG-043
+adds an explicit fixture integrity check alongside the existing upstream test.
+
 The trending handler in `backend/internal/githubtrending/handler.go` uses today's
 date. A test cannot predict it if the handler calls the real clock, so the handler
 accepts a function instead:

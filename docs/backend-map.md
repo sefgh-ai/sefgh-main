@@ -1,5 +1,22 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-043, R-024): Go trending's shared item formatter reads
+only its real language-colour map and returns the fallback string for unknown
+names, including JavaScript inherited-property names. Trending contract v8
+preserves the rollback Next.js replies. The existing C++ percent encoding is
+verified by decoding the query and the Go upstream test; no live provider call.
+The shared formatter is also used by Go topics. Deployment remains pending.
+
+Update 2026-10-30 (TREND-001c): owner explicitly approved a narrow exception to
+the Phase 6 retirement gate. The unused 153-line Next.js trending refresh route
+is removed locally using the reviewed patch. Its replacement is the existing
+Go `/api/trending/topics` endpoint. `src/lib/trending.js`, database tables and
+stored data are retained. External schedulers/live traffic and deployment are
+unverified. Development key replacement is now explicitly approved, but fresh
+Dashboard/catalog preflight and hosted acceptance remain incomplete because
+the browser access host is unavailable; no replacement material was generated.
+This update supersedes the pending-approval statements in earlier dated records.
+
 Update 2026-10-30 (KEYS-WIRING-001): hashed-key v1 owner management and public
 accounted search now have default-off Go runtime and Next forwarding wiring.
 Owner/session and accountant capabilities stay separate; database policy is
@@ -227,7 +244,7 @@ Paths below are relative to `/api`; corresponding source is `src/app/api/<path>/
 | `playground/keys` | POST | Authenticated random API-key creation; raw key stored in `api_keys` |
 | `activity` | GET | Authenticated activity -> contribution-style grid and stats |
 | `upload-avatar` | POST | Authenticated multipart upload, Auth metadata/profile update, old-file cleanup |
-| `trending/refresh` | POST, GET | POST requires `CRON_SECRET`; deletes/refills database cache; GET reports freshness |
+| `trending/refresh` | retired locally (TREND-001c) | Owner-approved narrow deletion; existing Go topics replacement; deployment unverified |
 
 ### First-port contract: GitHub search
 

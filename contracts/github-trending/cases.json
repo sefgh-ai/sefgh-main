@@ -1,5 +1,5 @@
 {
-  "contract_version": 7,
+  "contract_version": 8,
   "route": "GET /api/github/trending",
   "recorded_from": "7e0820c (version 2); version 3 (BUG-007, 2026-10-15) changes only the GitHub query, owner-approved",
   "notes": "Fixed clock and time zone. Version 3 (R-068): the search terms are separated by spaces; version 2 joined them with \"+\" and percent-encoded it, which GitHub refused with 422. Go (backend/internal/githubtrending) is the implementation of record from version 3; the Next.js handler keeps the version 2 query until trending is switched to Go and the handler is retired, under the owner's rule to fix a backend bug once, in Go.",
@@ -216,8 +216,8 @@
     },
     {
       "id": "cpp-language",
-      "disposition": "defect",
-      "reason": "Query separators are literal plus signs inside the encoded search query; verify real GitHub parsing before cutover.",
+      "disposition": "preserve",
+      "reason": "R-024: decoded GitHub query retains language:C++ while words are separated by spaces; percent encoding was already fixed in R-068. Rollback Next.js output remains separate.",
       "request": "/api/github/trending?language=C%2B%2B",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
@@ -235,6 +235,22 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z%20language%3AC%2B%2B&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12%2Blanguage%3AC%2B%2B&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1159,8 +1175,8 @@
     },
     {
       "id": "prototype-color",
-      "disposition": "defect",
-      "reason": "Language-color lookup reads inherited properties; __proto__ serializes as an object.",
+      "disposition": "preserve",
+      "reason": "R-024: names outside the real colour table use the fallback; rollback Next.js inherited-property output is recorded separately.",
       "request": "/api/github/trending",
       "now": "2026-10-13T12:00:00.000Z",
       "timezone": "UTC",
@@ -1193,7 +1209,7 @@
             "name": "demo",
             "description": "Demo",
             "language": "__proto__",
-            "languageColor": {},
+            "languageColor": "#8b949e",
             "stars": 123,
             "forks": 4,
             "starsPerDay": null,
@@ -1213,6 +1229,43 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__proto__",
+            "languageColor": {},
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -3026,6 +3079,627 @@
         ],
         "random_calls": 0,
         "retry_after": null
+      }
+    },
+    {
+      "id": "inherited-color-names",
+      "disposition": "preserve",
+      "reason": "R-024: names outside the real colour table use the fallback; rollback Next.js inherited-property output is recorded separately.",
+      "request": "/api/github/trending",
+      "now": "2026-10-13T12:00:00.000Z",
+      "timezone": "UTC",
+      "upstream": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "id": 10,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "constructor",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 11,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "toString",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 12,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "valueOf",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 13,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "hasOwnProperty",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 14,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "isPrototypeOf",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 15,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "propertyIsEnumerable",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 16,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "toLocaleString",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 17,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "__defineGetter__",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 18,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "__defineSetter__",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 19,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "__lookupGetter__",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            },
+            {
+              "id": 20,
+              "owner": {
+                "login": "octo",
+                "avatar_url": "https://example.test/avatar"
+              },
+              "name": "demo",
+              "description": "Demo",
+              "language": "__lookupSetter__",
+              "stargazers_count": 123,
+              "forks_count": 4,
+              "html_url": "https://github.com/octo/demo"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 10,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "constructor",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 11,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "toString",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 12,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "valueOf",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 13,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "hasOwnProperty",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 14,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "isPrototypeOf",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 15,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "propertyIsEnumerable",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 16,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "toLocaleString",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 17,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__defineGetter__",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 18,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__defineSetter__",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 19,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__lookupGetter__",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 20,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__lookupSetter__",
+            "languageColor": "#8b949e",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 10,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "constructor",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 11,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "toString",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 12,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "valueOf",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 13,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "hasOwnProperty",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 14,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "isPrototypeOf",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 15,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "propertyIsEnumerable",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 16,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "toLocaleString",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 17,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__defineGetter__",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 18,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__defineSetter__",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 19,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__lookupGetter__",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          },
+          {
+            "id": 20,
+            "author": "octo",
+            "name": "demo",
+            "description": "Demo",
+            "language": "__lookupSetter__",
+            "stars": 123,
+            "forks": 4,
+            "starsPerDay": null,
+            "contributors": [
+              {
+                "avatar": "https://example.test/avatar",
+                "name": "octo"
+              }
+            ],
+            "heatLevel": 1,
+            "trending": true,
+            "url": "https://github.com/octo/demo"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
+            "headers": {
+              "Accept": "application/vnd.github.v3+json",
+              "User-Agent": "SEFGH-AI-App"
+            }
+          }
+        ],
+        "random_calls": 0
       }
     }
   ]

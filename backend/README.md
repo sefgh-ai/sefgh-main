@@ -1,5 +1,7 @@
 # SEFGH Go backend
 
+BUG-043 (R-024, 2026-10-30): trending contract v8 returns only known colour-map values or the fallback string. Shared topics items use the same formatter. C++ query encoding was already correct after R-068 and is now explicitly pinned. Rollback Next.js answers remain characterized; deployment pending.
+
 KEYS-WIRING-001 (2026-10-30) connects the reviewed hashed-key adapters to the
 production mux at `/api/v1/keys`, its selector child and `/api/v1/search`.
 They stay disabled unless `SEFGH_KEYS_V1=1`; disabled paths return 404/no-store
@@ -419,6 +421,12 @@ Opt-in name: `github-public-repo` in `SEFGH_GO_ROUTES`, off by default. The repo
 ## Trending topics (TREND-001a)
 
 Opt-in name: `trending-topics`, off by default. `GET /api/trending/topics` is new: it has no Next.js handler, so with the switch off the path is a 404. It replaces the stored `trending_repos` table and its refresh route, which could not write the table (R-077); the owner chose this design on 2026-10-19 (`../docs/plans/trending-refresh.md`, option A). It passes the 11 hand-written cases of `contracts/trending-topics`.
+
+TREND-001c (2026-10-30): the owner approved a narrow Phase 6 gate exception to
+remove only the unused Next.js `/api/trending/refresh` handler. That deletion is
+applied locally. The legacy helper, table and stored data are retained; external
+schedulers/live traffic and deployment are unverified. No general Phase 7
+retirement or SQL cleanup is authorized by this exception.
 
 - **Six public searches**, two at a time within `trendingtopics.Budget` (20 seconds), each with the public read token when one is set and never a caller's credential. The topic words are searched as text joined by `OR`: GitHub refuses `OR` between `topic:` qualifiers (R-101).
 - **Partial answers:** a topic whose search fails is answered empty with `complete: false`; only when every search fails is the answer 502.

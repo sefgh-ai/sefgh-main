@@ -1,4 +1,4 @@
-// Package githubtrending ports the trending route at contract version 7,
+// Package githubtrending ports the trending route at contract version 8,
 // including the defects still recorded in contracts/github-trending.
 package githubtrending
 
@@ -157,9 +157,7 @@ func Item(repo map[string]any, now time.Time) map[string]any {
 	copyField(out, "author", owner, "login")
 	out["description"] = fallback(repo["description"], "No description provided")
 	out["language"] = fallback(repo["language"], "Unknown")
-	if color, present := languageColor(repo["language"]); present {
-		out["languageColor"] = color
-	}
+	out["languageColor"] = languageColor(repo["language"])
 	perDay := starsPerDay(repo["stargazers_count"], repo["created_at"], now)
 	out["starsPerDay"] = perDay
 	out["heatLevel"] = heatLevel(perDay)
@@ -232,7 +230,7 @@ func fallback(value any, replacement string) any {
 	return value
 }
 
-func languageColor(language any) (any, bool) {
+func languageColor(language any) string {
 	name, _ := language.(string)
 	colors := map[string]string{
 		"JavaScript": "#f1e05a", "TypeScript": "#3178c6", "Python": "#3572A5",
@@ -241,18 +239,11 @@ func languageColor(language any) (any, bool) {
 		"Kotlin": "#A97BFF", "Vue": "#41b883", "React": "#61dafb",
 	}
 	if color, ok := colors[name]; ok {
-		return color, true
+		return color
 	}
-	// Preserve the JS object's inherited-property defect until both contracts
-	// change: __proto__ serializes as {}, inherited functions are omitted.
-	if name == "__proto__" {
-		return map[string]any{}, true
-	}
-	switch name {
-	case "constructor", "toString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "__defineGetter__", "__defineSetter__", "__lookupGetter__", "__lookupSetter__":
-		return nil, false
-	}
-	return "#8b949e", true
+	// R-024: Go maps have no inherited properties. Unknown names, including
+	// JavaScript's built-in object names, always get the same colour string.
+	return "#8b949e"
 }
 
 // fail answers the one generic error the contract allows and tells the

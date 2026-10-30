@@ -1,5 +1,15 @@
 # KEYS-ACCEPT-001: hosted development acceptance
 
+Update 2026-10-30: the owner approved the exact replacement addendum SHA-256
+`f212c12e9a17f88bec2137d3fd7da636e5a3e0d6d1d970237785d5092d10dde3`.
+This supersedes the signing-stop/pending-approval statements below, which record
+the prior attempt. Fresh Dashboard/catalog preflight and the approved run remain
+incomplete: the browser access host is unavailable, including on resume. No new
+replacement material, users, sessions, accountant JWT or hosted run was created.
+No Supabase connector is exposed in this session. Restore the browser connection
+and resume the exact approved procedure; do not request the same approval again,
+reapply SQL, or infer current key/catalog state from the historical receipts.
+
 Status: runner implemented and tested against synthetic gateways; **not run
 against hosted lifecycle state**. On 2026-10-22 the owner approved the exact
 test policy and one provider-free run once separately approved credentials are

@@ -2,7 +2,7 @@
 
 Written by Claude Code at the end of a long session, for an agent with no context of this project. It does not replace the repository's own instructions; it tells you where they are, what state the work is in, what to do next, and the traps that cost time. If anything here disagrees with `docs/coordination.md`, the coordination file is newer and wins.
 
-**Update 2026-10-30 (Codex, ROUTE-CLOSE-001 / KEYS-WIRING-001):** the owner requested finishing the two remaining route entries. Local hashed-key v1 runtime/Next forwarding wiring is implemented and reviewed, with a production localhost routing receipt; no live activation. A source-hashed 153-line refresh deletion patch is prepared and unapplied. Read `plans/route-completion-review.md` and the latest coordination records before continuing. Signing approval/hosted acceptance and the Phase 6 retirement gate remain; overall route closure is incomplete. Pack census correction: 27 fixes, four done, 23 remaining, plus two larger choices and open UI R-205.
+**Update 2026-10-30 (Codex, ROUTE-CLOSE-001 / TREND-001c):** local hashed-key v1 runtime/Next forwarding wiring is implemented and reviewed, with a production localhost routing receipt; no live activation. The owner explicitly approved the exact one-key development replacement addendum and a narrow Phase 6 retirement exception. The reviewed 153-line refresh deletion patch is now applied locally; no helper/table/data cleanup. Read `plans/route-completion-review.md` and the latest coordination records before continuing. The development run is authorized but fresh Dashboard/catalog preflight is blocked by unavailable browser access; no new material/users/tokens/run were created. Do not ask for the same approval again. Overall route closure remains incomplete until hosted acceptance and separate rollout gates. Pack census: 27 fixes, four done, 23 remaining, plus two larger choices and open UI R-205.
 
 ## 1. What this project is
 
@@ -67,16 +67,17 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 | BUG-040 | R-021 (Codex; catalog language acceptance, deployment pending) |
 | BUG-041 | R-022 (Codex; fixed UTC windows in both trending endpoints, deployment pending) |
 | BUG-042 | R-023 (Codex; API rate-limit metadata, deployment pending; UI follow-up R-205 open) |
+| BUG-043 | R-024 (Codex; safe colour map and C++ query regression, deployment pending) |
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-043**, register entry **R-206**. Never reuse or renumber.
+**Next free IDs:** task **BUG-044**, register entry **R-206**. Never reuse or renumber.
 
 ## 4. Your work queue, in order
 
 1. **Claim the writer role** (section 5, step 1) before editing anything.
 2. **If the owner has answered decision pack 2**, fix each approved entry as its own bounded task (BUG-037, BUG-038, …), following section 5. Record the answers in `docs/plans/phase6-decision-pack-2.md` and an ADR decisions-log row first. Entries the owner chose B for: record the decision and leave or defer as they said. **If they have not answered**, do item 3 meanwhile, and do not fix pack entries.
-3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); R-021 is implemented in BUG-040 (trending contract v5); R-022 is implemented in BUG-041 (repository v6/developers v3); R-023 is implemented in BUG-042 (repository v7/developers v4); next is BUG-043 for R-024, then the remaining approved pack entries in order. R-205 records the browser hook discarding rate-limit metadata; it is open.
+3. **R-064 and R-076 completed locally in BUG-038 and BUG-037 (Codex, 2026-10-29).** Activity contract v3 pins 1000-row pages, offsets and stable date/type ordering; vote contract v2 skips the missing RPC. Both retain rollback Next.js characterization. Deployment and independent review remain pending. R-016 is also completed locally in BUG-039 (search contract v5); R-021 is implemented in BUG-040 (trending contract v5); R-022 is implemented in BUG-041 (repository v6/developers v3); R-023 is implemented in BUG-042 (repository v7/developers v4); R-024 completed locally in BUG-043 (trending contract v8, uncommitted); next is BUG-044 for R-025, then the remaining approved pack entries in order. R-205 records the browser hook discarding rate-limit metadata; it is open.
 4. **R-038**, after the owner adds the AI keys. Check whether visitors reaching Go through the website's rewrite are told apart by the AI allowance: Go project logs, or signed-in chat from two addresses. An outside probe of suggestions cannot tell, because over the allowance they answer 200 with the fallback.
 5. **The signed-in walk-through (BUG-002)** needs the owner's test account.
    - The file sits outside the repository, at `D:\Users\Windows\Downloads\` (`sefgh mail and password for testing.txt`).

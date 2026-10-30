@@ -760,3 +760,25 @@ does not assert transcript erasure, cache purge or active-token rejection.
 Owner decision2026-10-23: **keep signing changes stopped; continue other
 migration work**. The replacement is not authorized. Continue independent
 source/verification work without new signing changes, credentials or live runs.
+
+### ROUTE-CLOSE-001 / TREND-001c owner decisions (2026-10-30)
+
+The owner explicitly approved the exact one-replacement development plan at
+`../database/keys-dev-replacement-review.md`, SHA-256
+`f212c12e9a17f88bec2137d3fd7da636e5a3e0d6d1d970237785d5092d10dde3`.
+This supersedes the 2026-10-23 signing stop only for that bounded development
+procedure and its cleanup. One replacement import, two previously approved
+disposable users, one 300-second accountant-only JWT and one provider-free run
+remain the exact caps. Fresh prerequisites and reviewed private-form observation
+remain required. Production, legacy privileges, runtime activation, cutover and
+deployment remain excluded. Execution has not begun because browser access is
+unavailable; no new secret material or hosted mutation occurred.
+
+The owner also explicitly authorized applying
+`../plans/trending-refresh-retirement.patch` now as a narrow exception to the
+Phase 6 retirement gate. TREND-001c removes only the unused 153-line Next.js
+refresh route, whose prior source SHA-256 was
+`ed02d832fb37ef891a9f68a19db700229fb75ab74b900f458867d51f15559593`.
+No helper, SQL, table or stored data is removed. The repository caller audit and
+independent review accepted this scope; external schedulers/live traffic remain
+unverified. This is not authorization to begin general Phase 7 retirement.

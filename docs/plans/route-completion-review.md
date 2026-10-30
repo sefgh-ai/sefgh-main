@@ -3,6 +3,16 @@
 Prepared by Codex on 2026-10-30, ROUTE-CLOSE-001 / KEYS-WIRING-001,
 base `5889bff`. The owner asked to finish the remaining route work.
 
+Execution update, 2026-10-30 (base `fb34d4e`): the owner approved both exact
+requests below. The narrow refresh patch has been applied locally. Development
+replacement/provisioning/acceptance is authorized under the unchanged proposal
+hash, but not executed: browser selection and inventory returned "The browser
+access host is unavailable", including the retry after resuming. No Supabase
+connector is exposed. Fresh signing/catalog prerequisites cannot be verified;
+no replacement key/password/user/session/accountant token/run was created.
+Restore browser access, then resume the approved preflight without asking for
+the same approval. Production/runtime/cutover/deployment remain excluded.
+
 ## Playground keys: local integration
 
 The reviewed hashed-key lifecycle, owner RPC, accounting RPC and HTTP adapter
@@ -75,7 +85,8 @@ of external scheduler configuration or live traffic.
 The [retirement patch](trending-refresh-retirement.patch) deletes only
 `src/app/api/trending/refresh/route.js` (153 lines). It does not drop a table,
 modify stored data, or perform broad dead-code cleanup. It passed
-`git apply --check`; it has **not been applied**.
+`git apply --check`; the owner then approved the explicit narrow gate exception,
+and it was **applied locally on 2026-10-30**. Deployment is not part of this task.
 
 Source SHA-256:
 `ed02d832fb37ef891a9f68a19db700229fb75ab74b900f458867d51f15559593`
@@ -94,4 +105,4 @@ approved production policy and accountant lifecycle, live cutover/rollback,
 deployment and the owner's signed-in walkthrough remain separate evidence.
 The historical 23/25 route count is not a claim that this work makes 25/25 live.
 Local key replacement wiring is ready behind gates; refresh deletion is a
-reviewed proposal until the gate or an explicit exception authorizes it.
+locally applied retirement under the owner's explicit narrow exception.

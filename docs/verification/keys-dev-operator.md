@@ -1,5 +1,16 @@
 # KEYS-PROVISION-001b / BUG-022: operator and containment evidence
 
+Update 2026-10-30 (KEYS-PROVISION-001c): the owner explicitly approved the exact
+one-key replacement addendum SHA-256
+`f212c12e9a17f88bec2137d3fd7da636e5a3e0d6d1d970237785d5092d10dde3`.
+The historical signing stop below is superseded only for that procedure.
+Execution has not started: browser selection/inventory and the resumed retry
+all returned "The browser access host is unavailable". No new private material,
+user, session, accountant JWT or acceptance run exists from this attempt.
+Fresh project/key/catalog/no-consumer preflight remains required after reconnect.
+The frozen approved proposal is unchanged; production/runtime/deployment remain
+excluded and the reviewed observation/cleanup requirements still apply.
+
 Writer Codex; base main87ba11b. Source work is a separate trusted local Node
 operator and browser observation helper, outside app/Go runtime. Original setup
 and generated non-deliverable test labels were approved. One replacement key
