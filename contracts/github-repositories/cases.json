@@ -1,5 +1,5 @@
 {
-  "contract_version": 5,
+  "contract_version": 6,
   "cases": [
     {
       "id": "missing-both",
@@ -222,10 +222,17 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
         "status": 200,
         "body": {}
       },
-      "disposition": "preserve"
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-plus",
@@ -304,11 +311,17 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
         "status": 200,
         "body": {}
-      },
-      "disposition": "defect",
-      "note": "Malformed successful upstream shapes are accepted."
+      }
     },
     {
       "id": "summary-explicit-nulls",
@@ -334,14 +347,20 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
         "status": 200,
         "body": {
           "id": null,
           "description": null
         }
-      },
-      "disposition": "defect",
-      "note": "Malformed successful upstream shapes are accepted."
+      }
     },
     {
       "id": "summary-array-body",
@@ -364,11 +383,17 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
         "status": 200,
         "body": {}
-      },
-      "disposition": "defect",
-      "note": "Malformed successful upstream shapes are accepted."
+      }
     },
     {
       "id": "summary-boolean-body",
@@ -391,11 +416,17 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
         "status": 200,
         "body": {}
-      },
-      "disposition": "defect",
-      "note": "Malformed successful upstream shapes are accepted."
+      }
     },
     {
       "id": "summary-status-404",
@@ -590,13 +621,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "summary-empty-json",
@@ -619,13 +656,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "summary-network",
@@ -1589,12 +1632,70 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        }
+      ],
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "preserve"
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "detail-readme-404",
@@ -2215,6 +2316,65 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        }
+      ],
+      "next_expect": {
         "status": 200,
         "body": {
           "repository": {
@@ -2250,9 +2410,7 @@
             "reset": null
           }
         }
-      },
-      "disposition": "defect",
-      "note": "Language JSON shape is not validated."
+      }
     },
     {
       "id": "detail-repo-null",
@@ -2273,12 +2431,33 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": null,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "preserve"
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "detail-repo-invalid",
@@ -2299,12 +2478,33 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "",
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository details"
         }
       },
-      "disposition": "preserve"
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "contents-root",
@@ -2938,12 +3138,19 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to fetch repository contents"
         }
       },
-      "disposition": "preserve"
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "contents-null-body",
@@ -2967,6 +3174,14 @@
         }
       ],
       "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
         "status": 200,
         "body": {
           "contents": null,
@@ -2975,9 +3190,7 @@
             "reset": "123"
           }
         }
-      },
-      "disposition": "defect",
-      "note": "Contents JSON shape is not validated."
+      }
     },
     {
       "id": "contents-token-not-sent",
@@ -3184,13 +3397,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "summary-truncated-json",
@@ -3213,13 +3432,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "summary-whitespace-json",
@@ -3242,13 +3467,19 @@
         }
       ],
       "expect": {
-        "status": 500,
+        "status": 502,
         "body": {
           "error": "Failed to fetch repository"
         }
       },
       "disposition": "preserve",
-      "note": "Owner approved stable internal-error text on 2026-10-12."
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      }
     },
     {
       "id": "detail-readme-utf8-bom",
@@ -5594,6 +5825,1123 @@
           "error": "Failed to fetch repository contents"
         }
       }
+    },
+    {
+      "id": "summary-null-owner",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": null,
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": null,
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "summary-text-id",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": "42",
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "id": "42",
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "summary-invalid-optional",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": {
+              "bad": true
+            },
+            "stargazers_count": "7",
+            "forks_count": -1,
+            "language": [],
+            "topics": [
+              "go",
+              null,
+              42,
+              "web"
+            ],
+            "license": false,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "topics": [
+            "go",
+            "web"
+          ],
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": {
+            "bad": true
+          },
+          "stargazers_count": "7",
+          "forks_count": -1,
+          "language": [],
+          "topics": [
+            "go",
+            null,
+            42,
+            "web"
+          ],
+          "license": false,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "summary-nullable-control",
+      "route": "summary",
+      "request": "/api/github/repo?owner=octo&name=demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": {
+            "revalidate": 3600
+          },
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "id": 42,
+          "full_name": "octo/demo",
+          "name": "demo",
+          "owner": {
+            "login": "octo"
+          },
+          "html_url": "https://github.com/octo/demo",
+          "description": null,
+          "stargazers_count": 7,
+          "forks_count": 2,
+          "language": null,
+          "topics": [],
+          "license": null,
+          "created_at": "2024-01-01",
+          "updated_at": "2024-02-01",
+          "pushed_at": "2024-02-01",
+          "homepage": "",
+          "clone_url": "https://github.com/octo/demo.git",
+          "default_branch": "main",
+          "open_issues_count": 1,
+          "watchers_count": 7,
+          "size": 12
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "detail-invalid-id",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": false,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": false,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        }
+      ],
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": false,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "detail-array-languages",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository details"
+        }
+      },
+      "disposition": "preserve",
+      "go_calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        }
+      ],
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": [],
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "detail-filter-language-counts",
+      "route": "detail",
+      "request": "/api/github/repo/octo/demo",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/languages",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "Go": 5,
+            "Python": 0,
+            "bad": "2",
+            "negative": -1,
+            "fraction": 1.5,
+            "missing": null
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/languages"
+        },
+        {
+          "url": "https://api.github.com/repos/octo/demo/readme",
+          "headers": {
+            "Accept": "application/vnd.github.v3.raw",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "next": null,
+          "raw_body": "# Demo\n",
+          "wire_url": "https://api.github.com/repos/octo/demo/readme"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5,
+            "Python": 0
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "repository": {
+            "id": 42,
+            "full_name": "octo/demo",
+            "name": "demo",
+            "owner": {
+              "login": "octo"
+            },
+            "html_url": "https://github.com/octo/demo",
+            "description": null,
+            "stargazers_count": 7,
+            "forks_count": 2,
+            "language": null,
+            "topics": [],
+            "license": null,
+            "created_at": "2024-01-01",
+            "updated_at": "2024-02-01",
+            "pushed_at": "2024-02-01",
+            "homepage": "",
+            "clone_url": "https://github.com/octo/demo.git",
+            "default_branch": "main",
+            "open_issues_count": 1,
+            "watchers_count": 7,
+            "size": 12,
+            "languages_url": "https://api.github.com/repos/octo/demo/languages",
+            "extra": "kept only in detail"
+          },
+          "languages": {
+            "Go": 5,
+            "Python": 0,
+            "bad": "2",
+            "negative": -1,
+            "fraction": 1.5,
+            "missing": null
+          },
+          "readme": "# Demo\n",
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "contents-primitive-success",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": 42,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "contents": 42,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "contents-boolean-success",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": true,
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "contents": true,
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "contents-file-invalid-content",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "type": "file",
+            "content": 42,
+            "encoding": "base64"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 502,
+        "body": {
+          "error": "Failed to fetch repository contents"
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "contents": {
+            "type": "file",
+            "content": 42,
+            "encoding": "base64"
+          },
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "contents-filter-invalid-entries",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": [
+            null,
+            {},
+            true,
+            {
+              "type": "file",
+              "name": "main.go"
+            },
+            {
+              "type": "dir",
+              "name": "src"
+            },
+            {
+              "type": "unknown",
+              "name": "bad"
+            },
+            {
+              "type": "file",
+              "name": 4
+            }
+          ],
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": [
+            {
+              "type": "file",
+              "name": "main.go"
+            },
+            {
+              "type": "dir",
+              "name": "src"
+            }
+          ],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "contents": [
+            null,
+            {},
+            true,
+            {
+              "type": "file",
+              "name": "main.go"
+            },
+            {
+              "type": "dir",
+              "name": "src"
+            },
+            {
+              "type": "unknown",
+              "name": "bad"
+            },
+            {
+              "type": "file",
+              "name": 4
+            }
+          ],
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
+    },
+    {
+      "id": "contents-symlink-control",
+      "route": "contents",
+      "request": "/api/github/contents/octo/demo?path=src/main.go",
+      "calls": [
+        {
+          "url": "https://api.github.com/repos/octo/demo/contents/src/main.go",
+          "headers": {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "SEFGH-NextJS-App"
+          },
+          "status": 200,
+          "response_headers": {},
+          "body": {
+            "type": "symlink",
+            "name": "link",
+            "target": "src/main.go"
+          },
+          "next": null,
+          "wire_url": "https://api.github.com/repos/octo/demo/contents/src/main.go"
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "contents": {
+            "type": "symlink",
+            "name": "link",
+            "target": "src/main.go"
+          },
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "disposition": "preserve",
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "contents": {
+            "type": "symlink",
+            "name": "link",
+            "target": "src/main.go"
+          },
+          "rate_limit": {
+            "remaining": null,
+            "reset": null
+          }
+        }
+      },
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     }
   ],
   "authorization_contract": "../github-access/cases.json",

@@ -49,7 +49,7 @@ func (u *upstreamLog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case strings.Contains(r.URL.Path, "/contents/"):
 		io.WriteString(w, `[]`)
 	default:
-		fmt.Fprintf(w, `{"id":1,"languages_url":"http://%s/repos/o/r/languages"}`, r.Host)
+		fmt.Fprintf(w, `{"id":1,"name":"r","full_name":"o/r","owner":{"login":"o"},"html_url":"https://github.com/o/r","languages_url":"http://%s/repos/o/r/languages"}`, r.Host)
 	}
 }
 

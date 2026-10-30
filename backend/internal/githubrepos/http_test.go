@@ -149,7 +149,7 @@ func TestSummaryCacheIsConnectedAndScopedToHandler(t *testing.T) {
 	var calls atomic.Int32
 	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		calls.Add(1)
-		return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"id":1}`))}, nil
+		return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"id":1,"name":"demo","full_name":"octo/demo","owner":{"login":"octo"},"html_url":"https://github.com/octo/demo"}`))}, nil
 	})}
 	for range 2 {
 		mux := http.NewServeMux()

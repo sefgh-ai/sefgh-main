@@ -1,5 +1,11 @@
 # SEFGH Go backend
 
+BUG-047 (R-030, 2026-10-30): repository contract v6 validates minimum consumer
+shapes in `internal/githubrepos/shapes.go`, returns502for unusable successes and
+filters malformed directory entries/topics/language counts. Legitimate nulls,
+valid empty lists/maps, BOM JSON, cache/credential rules and optional HTTP
+fallbacks remain. Next.js rollback answers/calls retained; deployment pending.
+
 BUG-046 (R-029, 2026-10-30): repository contract v5 classifies required primary
 lookup failures as missing404, rate-limit429with wait metadata, or fixed502.
 Required transport failures use502; optional enrichment HTTP fallbacks, caching

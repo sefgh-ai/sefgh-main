@@ -1,5 +1,23 @@
 # GitHub repository read contracts
 
+Version **6** (BUG-047, R-030, 2026-10-30): 148 cases. Repository replies need
+a positive whole-number ID, nonempty name/full_name/html_url and an owner with
+a nonempty login. Unusable JSON or core shapes return a fixed502. Known malformed
+counts, description/language/homepage, licence and topics are omitted or filtered;
+legitimate nullable description/language/licence values remain. Details require
+a nonempty languages URL; a successful languages reply must be an object, whose
+values are nonnegative whole counts (bad entries omitted). Contents is a file,
+symlink, submodule or directory list; invalid directory entries are omitted,
+and invalid top-level shapes return502. File content/encoding must be strings;
+symlinks need a target and submodules need their Git URL. Empty valid lists/maps
+remain valid. This is a minimum consumer-shape check, not the entire GitHub schema.
+
+Sixteen prior cases revised, twelve added,120prior cases unchanged. Original
+Next.js inputs/answers remain; optional `go_calls` stops Go at an early shape
+failure without deleting the later calls made by Next.js. Both Go transports
+check only their selected calls. Real unchanged Next.js handlers pass152checks.
+Valid BOM JSON, nullable values, and existing optional HTTP fallbacks remain.
+
 Version **5** (BUG-046, R-029, 2026-10-30): 136 cases. Required primary
 repository/contents lookups now return 404 for missing repositories, 429 with
 nullable rate metadata and Retry-After for rate limits, and fixed 502 messages

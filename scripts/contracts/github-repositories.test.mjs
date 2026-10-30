@@ -16,18 +16,33 @@ const handlers = Object.fromEntries(await Promise.all(Object.entries(routes).map
 const contract = JSON.parse(await readFile(new URL('../../contracts/github-repositories/cases.json', import.meta.url), 'utf8'));
 
 test('repository case ids are unique', () => {
-  assert.equal(contract.contract_version,5);
+  assert.equal(contract.contract_version,6);
   assert.equal(new Set(contract.cases.map(c => c.id)).size, contract.cases.length);
 });
 
 test('repository wire URLs match Node normalization', () => {
   for (const c of contract.cases) {
-    for (const call of c.calls) {
+    for (const call of [...c.calls, ...(c.go_calls ?? [])]) {
       const normalized = new URL(call.url);
       normalized.hash = '';
       assert.equal(call.wire_url, normalized.href, `${c.id}: ${call.url}`);
     }
   }
+});
+
+test('success shape cases distinguish invalid data from legitimate nulls (R-030)', () => {
+  const byId = id => contract.cases.find(c => c.id === id);
+  for (const id of ['summary-missing-fields','summary-null-owner','summary-text-id','contents-null-body','contents-boolean-success','detail-null-languages','detail-array-languages']) {
+    assert.equal(byId(id).expect.status,502,id);
+  }
+  const nullable = byId('summary-nullable-control').expect.body;
+  for (const field of ['description','language','license']) assert.equal(nullable[field],null,field);
+  const optional = byId('summary-invalid-optional').expect.body;
+  for (const field of ['description','language','license','stargazers_count','forks_count']) assert.equal(Object.hasOwn(optional,field),false,field);
+  assert.deepEqual(optional.topics,['go','web']);
+  assert.deepEqual(byId('detail-filter-language-counts').expect.body.languages,{Go:5,Python:0});
+  assert.deepEqual(byId('contents-filter-invalid-entries').expect.body.contents,[{type:'file',name:'main.go'},{type:'dir',name:'src'}]);
+  assert.equal(byId('summary-json-utf8-bom').expect.status,200);
 });
 
 test('required lookup failures pin rate metadata and fixed errors (R-029)', () => {

@@ -23,7 +23,7 @@ func hangingAfter(n int32, calls *atomic.Int32) *http.Client {
 			<-r.Context().Done()
 			return nil, r.Context().Err()
 		}
-		body := `{"languages_url":"https://api.github.com/repos/octo/demo/languages","id":1}`
+		body := `{"languages_url":"https://api.github.com/repos/octo/demo/languages","id":1,"name":"demo","full_name":"octo/demo","owner":{"login":"octo"},"html_url":"https://github.com/octo/demo"}`
 		return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
 	})}
 }

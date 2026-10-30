@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-047, R-030): repository summary/detail/contents validate
+minimum decoded success shapes in githubrepos/shapes.go. Unusable roots/core
+identities give fixed502; malformed known fields and list/map entries are
+omitted. Legitimate nulls and empty lists/maps remain. Contract v6 preserves
+rollback answers and original calls alongside early-stopping go_calls.
+API isolation/wiring mocks now supply valid repository identities; their
+credential assertions remain intact. No browser/live/deployment check here.
+
 Update 2026-10-30 (BUG-046, R-029): Go repository summary/detail/contents use a
 shared required-lookup classifier:404for missing,429for rate limits with wait
 metadata,502for other HTTP/transport failures. Optional languages/README HTTP

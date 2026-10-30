@@ -70,7 +70,7 @@ func TestPrivateRepositoryIsolation(t *testing.T) {
 				t.Error("resource used the wrong user's credential")
 			}
 			w.WriteHeader(current.ResourceStatus)
-			fmt.Fprintf(w, `{"id":%d}`, current.ResourceID)
+			fmt.Fprintf(w, `{"id":%d,"name":"private","full_name":"org/private","owner":{"login":"org"},"html_url":"https://github.com/org/private"}`, current.ResourceID)
 		}
 	}))
 	defer upstream.Close()

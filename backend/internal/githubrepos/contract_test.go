@@ -29,6 +29,7 @@ type fixture struct {
 	Request string        `json:"request"`
 	Token   string        `json:"github_token"`
 	Calls   []fixtureCall `json:"calls"`
+	GoCalls []fixtureCall `json:"go_calls"`
 	Expect  struct {
 		Status     int             `json:"status"`
 		Body       json.RawMessage `json:"body"`
@@ -70,8 +71,13 @@ func loadFixtures(t *testing.T) []fixture {
 	if err = json.Unmarshal(b, &data); err != nil {
 		t.Fatal(err)
 	}
-	if data.Version != 5 || len(data.Cases) == 0 {
+	if data.Version != 6 || len(data.Cases) == 0 {
 		t.Fatal("no fixtures")
+	}
+	for index := range data.Cases {
+		if data.Cases[index].GoCalls != nil {
+			data.Cases[index].Calls = data.Cases[index].GoCalls
+		}
 	}
 	return data.Cases
 }

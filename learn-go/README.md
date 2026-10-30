@@ -59,7 +59,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [07 Calling GitHub](07-calling-github/README.md) | Making a request, timeouts, `defer` | The upstream call in `ServeHTTP`, and `isRateLimited` |
 | [08 Testing](08-testing/README.md) | Table-driven tests, and how the contract fixtures work | `backend/internal/githubsearch/contract_test.go` |
 | [09 Path parameters](09-path-parameters/README.md) | Named URL segments, router tests, URL compatibility | `backend/internal/githubrepos/handler.go`, `backend/internal/jscompat/fetchurl.go` |
-| [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels, background refresh and required-lookup failure classification (BUG-046) | `backend/internal/githubrepos/cache.go`, `handler.go` |
+| [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels, background refresh, required-lookup failures (BUG-046), decoded JSON assertions and filtering (BUG-047) | `backend/internal/githubrepos/cache.go`, `handler.go`, `shapes.go` |
 | [11 Shared results](11-shared-results/README.md) | Waiting with `select`, cancellation, and preserving errors | `cacheFlight` in `cache.go`, upstream errors in `handler.go` |
 | [12 Embedded data](12-embedded-data/README.md) | `go:embed`, blank imports, serving static JSON and a private catalog lookup set (BUG-040) | `backend/internal/githublanguages/handler.go` |
 | [13 Time and clocks](13-time-and-clocks/README.md) | Moments and time zones, moving by days, formatting dates, and passing the clock in so date logic can be tested | `dateRange` in `backend/internal/githubcontributions/dates.go`, and `Handler` in `handler.go` beside it |

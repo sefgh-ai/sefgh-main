@@ -226,19 +226,18 @@ func (h *Handler) summary(w http.ResponseWriter, r *http.Request) {
 	}
 	repo, err := decode(up.body)
 	if err != nil {
-		h.fail(w, 500, err.Error())
+		h.fail(w, 502, "Failed to fetch repository")
 		return
 	}
-	if repo == nil {
-		h.fail(w, 500, "Failed to fetch repository")
+	fields, ok := repositoryShape(repo)
+	if !ok {
+		h.fail(w, 502, "Failed to fetch repository")
 		return
 	}
 	result := map[string]any{}
-	if fields, ok := repo.(map[string]any); ok {
-		for _, key := range summaryFields {
-			if value, present := fields[key]; present {
-				result[key] = value
-			}
+	for _, key := range summaryFields {
+		if value, present := fields[key]; present {
+			result[key] = value
 		}
 	}
 	replyJSON(w, 200, result)
@@ -262,17 +261,17 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	}
 	repo, err := decode(up.body)
 	if err != nil {
-		h.fail(w, 500, message)
+		h.fail(w, 502, message)
 		return
 	}
-	fields, ok := repo.(map[string]any)
+	fields, ok := repositoryShape(repo)
 	if !ok {
-		h.fail(w, 500, message)
+		h.fail(w, 502, message)
 		return
 	}
 	languagesURL, ok := fields["languages_url"].(string)
-	if !ok {
-		h.fail(w, 500, message)
+	if !ok || languagesURL == "" {
+		h.fail(w, 502, message)
 		return
 	}
 	languagesReply, err := h.fetch(ctx, languagesURL, "application/vnd.github.v3+json", true)
@@ -284,7 +283,12 @@ func (h *Handler) detail(w http.ResponseWriter, r *http.Request) {
 	if languagesReply.ok() {
 		languages, err = decode(languagesReply.body)
 		if err != nil {
-			h.fail(w, 500, message)
+			h.fail(w, 502, message)
+			return
+		}
+		languages, ok = languageShape(languages)
+		if !ok {
+			h.fail(w, 502, message)
 			return
 		}
 	}
@@ -318,7 +322,12 @@ func (h *Handler) contents(w http.ResponseWriter, r *http.Request) {
 	}
 	contents, err := decode(up.body)
 	if err != nil {
-		h.fail(w, 500, message)
+		h.fail(w, 502, message)
+		return
+	}
+	contents, ok = contentsShape(contents)
+	if !ok {
+		h.fail(w, 502, message)
 		return
 	}
 	replyJSON(w, 200, map[string]any{"contents": contents, "rate_limit": rateLimit(up.header)})

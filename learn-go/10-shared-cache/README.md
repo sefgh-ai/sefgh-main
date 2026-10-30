@@ -1,5 +1,31 @@
 # Lesson 10: Sharing a cache safely
 
+## Check decoded JSON before using it (BUG-047)
+
+`shapes.go` checks what `encoding/json` decoded before a successful response is
+sent. A JSON object becomes `map[string]any`, an array becomes `[]any`, and a
+number becomes `float64` with this decoder. `fields, ok := value.(map[string]any)`
+returns false for a list, Boolean or null instead of panicking. Core repository
+identity fields must be present and usable; otherwise the route returns502.
+
+Optional fields need different treatment. A null description or licence is
+legitimate, so the validator keeps it. A description that is an object is not
+text, so that field is omitted. A topics list keeps only its string entries.
+Language counts use `math.Trunc(n) == n` and a nonnegative bound, so a floating
+fraction or the string `"5"` cannot masquerade as a byte count.
+
+The map cleanup uses `delete` while ranging over a map, which Go permits. The
+decoded map belongs to this request; the shared cache stores the raw bytes and
+each request decodes its own map. Validation does not mutate a shared cache map.
+For directory arrays, the code appends valid objects to a new slice. It starts
+with `make([]any, 0, len(list))`, ensuring an empty result is JSON `[]`, not null.
+This resembles JavaScript's `list.filter(validEntry)` with explicit type checks.
+
+The fixtures keep `next_expect` and original calls for the old handler. When Go
+rejects a bad language reply before asking for a README, `go_calls` records that
+shorter request sequence. The socket test verifies both the error and absence
+of the extra request. Existing exercises are left for you to finish.
+
 ## Classify the failure after a required lookup (BUG-046)
 
 The repository handlers now call `requiredFailure` after a required fetch. Its
