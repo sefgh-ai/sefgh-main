@@ -1,5 +1,18 @@
 # Trending developers contract (GO-007a)
 
+**Version 5** (BUG-044, R-025, 2026-10-30): 71 cases. A failed HTTP/network
+repository lookup, invalid JSON, non-array reply or non-object array entry now
+produces a fixed `Repository unavailable` card for that developer. Successful
+siblings retain their values, search order and ranks. Only a successful empty
+array gives the distinct `No repositories` card. Initial user-search policy,
+four-worker limit, credential isolation and full-request cancellation remain.
+One warning summarizes unavailable lookups without their raw errors or URLs.
+Twelve existing cases revised, three mixed-result cases added; other 56 prior
+cases unchanged. All revised/new cases keep real unchanged Next.js answers in
+`next_expect`. Malformed user/login handling remains R-027. The existing React
+card already renders these API labels; its placeholder navigation is separately
+recorded as R-206 and is not changed by this API fix.
+
 **Version 4** (BUG-042, R-023, 2026-10-30): 68 cases. The initial user search
 reports GitHub rate limits as 429 with nullable remaining/reset metadata and
 Retry-After when supplied, matching search's policy. Ordinary 403 stays 500.

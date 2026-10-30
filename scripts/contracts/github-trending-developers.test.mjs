@@ -22,7 +22,7 @@ const asSentByNext = (c) => c.next_expect ?? {
 };
 
 test('developer fixture integrity and credential boundaries', () => {
-  assert.equal(contract.contract_version,4);
+  assert.equal(contract.contract_version,5);
   assert.equal(new Set(contract.cases.map(c=>c.id)).size,contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve','defect'].includes(c.disposition), c.id);
@@ -39,6 +39,18 @@ test('developer fixture integrity and credential boundaries', () => {
     if (c.expect.status===400) assert.equal(c.expect.calls.length,0,c.id);
   }
 });
+test('failed repository lookups are unavailable and keep successful siblings (R-025)', () => {
+  for (const c of contract.cases.filter(c => c.reason.startsWith('R-025:'))) {
+    assert.equal(c.expect.status, 200, c.id);
+    assert.equal(c.expect.body.length, c.upstream[0].body.items.length, c.id);
+    assert.equal(c.expect.body[0].popularRepo.name, 'Repository unavailable', c.id);
+    assert.ok(!JSON.stringify(c.expect.body).includes('private-upstream-detail'), c.id);
+    if (c.expect.body.length > 1) assert.equal(c.expect.body[1].popularRepo.name, 'still-running', c.id);
+  }
+  const empty = contract.cases.find(c => c.id === 'empty-repositories');
+  assert.equal(empty.expect.body[0].popularRepo.name, 'No repositories');
+});
+
 test('developer cutoffs are fixed UTC durations (R-022)', () => {
   for (const c of contract.cases) {
     const since = new URL('https://fixture.invalid' + c.request).searchParams.get('since') || 'daily';

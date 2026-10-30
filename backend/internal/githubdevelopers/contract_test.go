@@ -57,7 +57,7 @@ func TestContracts(t *testing.T) {
 	if err = json.Unmarshal(bytes, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 4 || len(contract.Cases) == 0 {
+	if contract.Version != 5 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	for _, f := range contract.Cases {

@@ -112,23 +112,33 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Wait before reading per-index results. Workers never mutate the same slot.
 	// Unlike the old Promise.all, no background request outlives this response.
 	workers.Wait()
+	if ctx.Err() != nil {
+		h.fail(w, "deadline", ctx.Err())
+		return
+	}
 	failed := 0
 	var first error
-	for _, err := range errs {
+	fatal := false
+	for index, err := range errs {
 		if err != nil {
 			failed++
+			fatal = fatal || results[index] == nil
 			if first == nil {
 				first = err
 			}
 		}
 	}
-	if failed > 0 {
+	if fatal {
 		h.fail(w, "enrichment", fmt.Errorf("%d of %d developers failed, first: %v", failed, len(items), cause(first)))
 		return
 	}
-	if ctx.Err() != nil {
-		h.fail(w, "deadline", ctx.Err())
-		return
+	if failed > 0 {
+		logger := h.Logger
+		if logger == nil {
+			logger = slog.Default()
+		}
+		// One fixed summary, without upstream replies or request addresses.
+		logger.Warn("github developers repository lookup unavailable", "stage", "enrichment", "failed", failed)
 	}
 	write(w, 200, results)
 }
@@ -146,45 +156,48 @@ func (h *Handler) developer(ctx context.Context, base string, index int, item an
 	if login, present := user["login"]; present {
 		name = jsString(login)
 	}
+	// R-025: retain the user even when its repository lookup fails. Only a
+	// successful empty array establishes that it has no public repositories.
+	result := map[string]any{"rank": index + 1, "popularRepo": map[string]any{
+		"name": "Repository unavailable", "description": "This developer’s repositories could not be loaded",
+	}, "following": false}
+	for target, source := range map[string]string{"id": "id", "name": "login", "username": "login", "avatar": "avatar_url", "url": "html_url"} {
+		copyField(result, target, user, source)
+	}
 	// GitHub's user repositories endpoint cannot sort by stars (sort=stars
 	// was ignored), so one page of up to 100 is read and the most-starred
 	// chosen (R-026, contract version 2).
 	status, _, repos, err := h.fetch(ctx, base+"/users/"+name+"/repos?per_page=100")
 	if err != nil {
-		return nil, err
+		return result, err
 	}
-	popular := map[string]any{"name": "No repositories", "description": "This developer has no public repositories"}
-	if status >= 200 && status < 300 {
-		switch list := repos.(type) {
-		case nil:
-			return nil, errors.New("repository reply is null")
-		case []any:
-			if len(list) > 0 {
-				if list[0] == nil {
-					return nil, errors.New("first repository is null")
-				}
-				// The first stays unless a later one has more stars, so a tie
-				// keeps the earlier repository.
-				best, _ := list[0].(map[string]any)
-				for _, item := range list[1:] {
-					if repo, isObject := item.(map[string]any); isObject && stars(repo) > stars(best) {
-						best = repo
-					}
-				}
-				popular = map[string]any{"description": description(best["description"])}
-				copyField(popular, "name", best, "name")
-			}
-		case string:
-			// A string has a length too, and its first character has no fields.
-			if list != "" {
-				popular = map[string]any{"description": description(nil)}
-			}
+	if status < 200 || status >= 300 {
+		return result, fmt.Errorf("GitHub answered %d", status)
+	}
+	list, valid := repos.([]any)
+	if !valid {
+		return result, errors.New("repository reply is not a list")
+	}
+	for _, item := range list {
+		if _, valid := item.(map[string]any); !valid {
+			return result, errors.New("repository list contains a non-object")
 		}
 	}
-	result := map[string]any{"rank": index + 1, "popularRepo": popular, "following": false}
-	for target, source := range map[string]string{"id": "id", "name": "login", "username": "login", "avatar": "avatar_url", "url": "html_url"} {
-		copyField(result, target, user, source)
+	popular := map[string]any{"name": "No repositories", "description": "This developer has no public repositories"}
+	if len(list) > 0 {
+		// The first stays unless a later one has more stars, so a tie
+		// keeps the earlier repository.
+		best := list[0].(map[string]any)
+		for _, item := range list[1:] {
+			repo := item.(map[string]any)
+			if stars(repo) > stars(best) {
+				best = repo
+			}
+		}
+		popular = map[string]any{"description": description(best["description"])}
+		copyField(popular, "name", best, "name")
 	}
+	result["popularRepo"] = popular
 	return result, nil
 }
 

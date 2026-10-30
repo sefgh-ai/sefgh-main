@@ -1,5 +1,27 @@
 # 18. Run work concurrently without losing order
 
+## Keep a useful result when one lookup fails (BUG-044)
+
+`developer` can now return both a result and an error. The result keeps the
+developer's identity/rank and a fixed `Repository unavailable` card. The error
+lets the caller count the failed lookup. In JavaScript you could catch each
+mapped promise and return a fallback object before passing them to `Promise.all`.
+Go's separate return values let the caller retain the result and the diagnostic.
+
+After `Wait`, a non-nil result with an error is usable. A nil result still means
+that entry could not be built; the handler keeps its existing whole-request
+failure for that case until R-027 changes malformed-user handling. A cancelled
+request still fails after all workers join. One warning counts incomplete
+lookups; it includes no upstream body, login or URL.
+
+The repository reply must be a slice (`[]any`), and every entry must be a map
+before the most-starred selection uses it. This validation is why the later
+single-value type assertions are safe. A successful empty slice means no
+repositories. A failed fetch or invalid reply cannot establish that fact.
+
+The paragraph below describes the original port's all-or-nothing behavior;
+this section and contract version 5 supersede that enrichment-error policy.
+
 `backend/internal/githubdevelopers/handler.go` searches for users, then asks
 GitHub about each user's repositories. Waiting for each request in sequence can
 leave the process idle. Starting every possible request at once can overload

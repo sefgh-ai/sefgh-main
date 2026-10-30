@@ -35,9 +35,9 @@ func serve(t *testing.T, h *Handler, searchBody, reposBody string) (*httptest.Re
 	return rec, asked
 }
 
-// These two are where Go answers differently from the Next.js handler on
-// purpose. They are listed in docs/adr/0002-go-backend.md. GitHub sends
-// neither shape; the tests keep the Go behaviour from changing unnoticed.
+// These malformed shapes exercise intentional differences from Next.js.
+// R-025 now labels an object repository reply unavailable; numeric login
+// handling still awaits R-027. Neither shape is a normal GitHub response.
 func TestRecordedDifferencesFromNextJS(t *testing.T) {
 	t.Run("a numeric login keeps the digits GitHub sent", func(t *testing.T) {
 		// JavaScript would ask for /users/1/repos.
@@ -46,7 +46,7 @@ func TestRecordedDifferencesFromNextJS(t *testing.T) {
 			t.Errorf("status %d, asked %q", rec.Code, asked)
 		}
 	})
-	t.Run("an object reply has no repositories even with a length field", func(t *testing.T) {
+	t.Run("an object reply is unavailable even with a length field", func(t *testing.T) {
 		// JavaScript would read length 1, find no first element and answer 500.
 		rec, _ := serve(t, &Handler{}, `{"items":[{"login":"a"}]}`, `{"length":1}`)
 		var body []map[string]any
@@ -54,7 +54,7 @@ func TestRecordedDifferencesFromNextJS(t *testing.T) {
 			t.Fatalf("status %d, body %s", rec.Code, rec.Body)
 		}
 		popular, _ := body[0]["popularRepo"].(map[string]any)
-		if popular["name"] != "No repositories" {
+		if popular["name"] != "Repository unavailable" {
 			t.Errorf("popularRepo = %v", popular)
 		}
 	})
@@ -87,8 +87,8 @@ func TestJSString(t *testing.T) {
 	}
 }
 
-// A request that fails writes exactly one log record: the stage, the cause,
-// and not the address that was called.
+// Failed searches log one error; incomplete repository enrichment logs one
+// fixed warning count. Neither names the address that was called.
 func TestFailureIsLoggedOnceWithoutTheURL(t *testing.T) {
 	record := func(transport roundTrip) (int, string) {
 		var out bytes.Buffer
@@ -104,14 +104,16 @@ func TestFailureIsLoggedOnceWithoutTheURL(t *testing.T) {
 	tests := []struct {
 		name      string
 		transport roundTrip
+		status    int
+		level     string
 		want      []string
 	}{
 		{"search cannot be reached", func(*http.Request) (*http.Response, error) { return nil, errors.New("offline") },
-			[]string{"stage=search", "offline"}},
+			500, "ERROR", []string{"stage=search", "offline"}},
 		{"search is refused", func(*http.Request) (*http.Response, error) { return reply(403, `{}`) },
-			[]string{"stage=search", "GitHub answered 403"}},
+			500, "ERROR", []string{"stage=search", "GitHub answered 403"}},
 		{"search reply is not the expected shape", func(*http.Request) (*http.Response, error) { return reply(200, `[]`) },
-			[]string{"stage=search", "no list of items"}},
+			500, "ERROR", []string{"stage=search", "no list of items"}},
 		{"two of three lookups fail", func(r *http.Request) (*http.Response, error) {
 			if isSearch(r) {
 				return reply(200, `{"items":[{"login":"a"},{"login":"b"},{"login":"c"}]}`)
@@ -120,15 +122,15 @@ func TestFailureIsLoggedOnceWithoutTheURL(t *testing.T) {
 				return reply(200, `[]`)
 			}
 			return nil, errors.New("offline")
-		}, []string{"stage=enrichment", "2 of 3 developers failed", "offline"}},
+		}, 200, "WARN", []string{"stage=enrichment", "failed=2"}},
 	}
 	for _, tt := range tests {
 		status, logged := record(tt.transport)
-		if status != 500 {
-			t.Errorf("%s: status %d, want 500", tt.name, status)
+		if status != tt.status {
+			t.Errorf("%s: status %d, want %d", tt.name, status, tt.status)
 		}
-		if strings.Count(logged, "level=ERROR") != 1 {
-			t.Errorf("%s: want one error record, got:\n%s", tt.name, logged)
+		if strings.Count(logged, "level=") != 1 || !strings.Contains(logged, "level="+tt.level) {
+			t.Errorf("%s: want one %s record, got:\n%s", tt.name, tt.level, logged)
 		}
 		for _, want := range tt.want {
 			if !strings.Contains(logged, want) {

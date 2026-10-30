@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-044, R-025): developer repository HTTP/network/JSON/shape
+failures now retain the developer with a fixed unavailable card and retain
+successful siblings. Successful empty lists alone report no repositories.
+Developer contract v5 keeps rollback answers; request cancellation, initial
+search policy, order/ranks and four-worker bound remain. One fixed warning
+counts incomplete lookups. Source review found placeholder repository labels
+are clickable as if real names (new open UI R-206); that behavior remains.
+
 Update 2026-10-30 (BUG-043, R-024): Go trending's shared item formatter reads
 only its real language-colour map and returns the fallback string for unknown
 names, including JavaScript inherited-property names. Trending contract v8

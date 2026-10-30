@@ -1,5 +1,5 @@
 {
-  "contract_version": 4,
+  "contract_version": 5,
   "route": "GET /api/github/trending-developers",
   "recorded_from": "086a6dca2e1ca369a223ce9cdc2ce2b2fe735ee3",
   "cases": [
@@ -3396,8 +3396,8 @@
     },
     {
       "id": "repo-http-401",
-      "disposition": "defect",
-      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3429,16 +3429,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -3506,8 +3506,8 @@
     },
     {
       "id": "repo-http-403",
-      "disposition": "defect",
-      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3539,16 +3539,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -3616,8 +3616,8 @@
     },
     {
       "id": "repo-http-404",
-      "disposition": "defect",
-      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3649,16 +3649,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -3726,8 +3726,8 @@
     },
     {
       "id": "repo-http-429",
-      "disposition": "defect",
-      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3759,16 +3759,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -3836,8 +3836,8 @@
     },
     {
       "id": "repo-http-500",
-      "disposition": "defect",
-      "reason": "Enrichment HTTP errors become a no-public-repositories card, including rate limits and server failures.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3869,16 +3869,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -3946,8 +3946,8 @@
     },
     {
       "id": "one-network-failure",
-      "disposition": "defect",
-      "reason": "One failed enrichment rejects the whole route while siblings are not cancelled.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -3986,10 +3986,35 @@
         }
       ],
       "expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending developers"
-        },
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          },
+          {
+            "rank": 2,
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "id": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "url": "https://github.com/bob"
+          }
+        ],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -4058,8 +4083,8 @@
     },
     {
       "id": "repo-malformed-json",
-      "disposition": "defect",
-      "reason": "One malformed enrichment JSON reply fails the whole route.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4083,10 +4108,22 @@
         }
       ],
       "expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending developers"
-        },
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          }
+        ],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -4139,8 +4176,8 @@
     },
     {
       "id": "repo-null-body",
-      "disposition": "defect",
-      "reason": "Null enrichment body throws instead of using a fallback.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4164,10 +4201,22 @@
         }
       ],
       "expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending developers"
-        },
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          }
+        ],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -4221,7 +4270,7 @@
     {
       "id": "repo-object-body",
       "disposition": "preserve",
-      "reason": "Preserve existing status, output and upstream requests.",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4250,16 +4299,16 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
             "name": "alice",
             "username": "alice",
             "avatar": "https://example.test/alice",
-            "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
-            },
-            "following": false,
             "url": "https://github.com/alice"
           }
         ],
@@ -4328,7 +4377,7 @@
     {
       "id": "repo-null-first",
       "disposition": "preserve",
-      "reason": "Preserve existing status, output and upstream requests.",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -4354,10 +4403,22 @@
         }
       ],
       "expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending developers"
-        },
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          }
+        ],
         "content_type": "application/json",
         "cache_control": null,
         "retry_after": null,
@@ -5876,8 +5937,8 @@
     },
     {
       "id": "repository-reply-is-text",
-      "disposition": "defect",
-      "reason": "A string reply has a length, so its first character is read as a repository with no fields.",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5902,14 +5963,15 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
-            "name": "a",
-            "username": "a",
             "popularRepo": {
-              "description": "No description provided"
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
             },
-            "following": false
+            "following": false,
+            "id": 1,
+            "name": "a",
+            "username": "a"
           }
         ],
         "content_type": "application/json",
@@ -5974,7 +6036,7 @@
     {
       "id": "repository-reply-is-empty-text",
       "disposition": "preserve",
-      "reason": "An empty string has length zero, so it is answered like an empty list.",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
       "request": "/api/github/trending-developers",
       "now": "2026-10-13T12:00:00Z",
       "timezone": "UTC",
@@ -5999,15 +6061,15 @@
         "status": 200,
         "body": [
           {
-            "id": 1,
             "rank": 1,
-            "name": "a",
-            "username": "a",
             "popularRepo": {
-              "name": "No repositories",
-              "description": "This developer has no public repositories"
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
             },
-            "following": false
+            "following": false,
+            "id": 1,
+            "name": "a",
+            "username": "a"
           }
         ],
         "content_type": "application/json",
@@ -6509,6 +6571,505 @@
           {
             "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
             "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "one-http-failure",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              },
+              {
+                "id": 2,
+                "login": "bob",
+                "avatar_url": "https://example.test/bob",
+                "html_url": "https://github.com/bob"
+              }
+            ]
+          }
+        },
+        {
+          "status": 503,
+          "body": {
+            "message": "private-upstream-detail"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "still-running",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 5
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          },
+          {
+            "rank": 2,
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "id": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "one-malformed-reply",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              },
+              {
+                "id": 2,
+                "login": "bob",
+                "avatar_url": "https://example.test/bob",
+                "html_url": "https://github.com/bob"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "unexpected": "private-upstream-detail"
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "still-running",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 5
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          },
+          {
+            "rank": 2,
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "id": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "No repositories",
+              "description": "This developer has no public repositories"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo-malformed-later-entry",
+      "disposition": "preserve",
+      "reason": "R-025: failed or malformed repository enrichment gets a fixed unavailable card; successful developers and rank order remain. Empty lists stay distinct. Rollback Next.js answer recorded separately.",
+      "request": "/api/github/trending-developers",
+      "now": "2026-10-13T12:00:00Z",
+      "timezone": "UTC",
+      "upstream": [
+        {
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": 1,
+                "login": "alice",
+                "avatar_url": "https://example.test/alice",
+                "html_url": "https://github.com/alice"
+              },
+              {
+                "id": 2,
+                "login": "bob",
+                "avatar_url": "https://example.test/bob",
+                "html_url": "https://github.com/bob"
+              }
+            ]
+          }
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "valid",
+              "description": "ok"
+            },
+            null
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "name": "still-running",
+              "description": "A project"
+            }
+          ],
+          "delay_ms": 5
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": [
+          {
+            "rank": 1,
+            "popularRepo": {
+              "name": "Repository unavailable",
+              "description": "This developer’s repositories could not be loaded"
+            },
+            "following": false,
+            "id": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "url": "https://github.com/alice"
+          },
+          {
+            "rank": 2,
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "id": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12T12:00:00Z&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/alice/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?per_page=100",
+            "wire_url": "https://api.github.com/users/bob/repos?per_page=100",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "rank": 1,
+            "name": "alice",
+            "username": "alice",
+            "avatar": "https://example.test/alice",
+            "popularRepo": {
+              "name": "valid",
+              "description": "ok"
+            },
+            "following": false,
+            "url": "https://github.com/alice"
+          },
+          {
+            "id": 2,
+            "rank": 2,
+            "name": "bob",
+            "username": "bob",
+            "avatar": "https://example.test/bob",
+            "popularRepo": {
+              "name": "still-running",
+              "description": "A project"
+            },
+            "following": false,
+            "url": "https://github.com/bob"
+          }
+        ],
+        "content_type": "application/json",
+        "cache_control": null,
+        "retry_after": null,
+        "calls": [
+          {
+            "url": "https://api.github.com/search/users?q=followers:>100+created:>2026-10-12&sort=followers&order=desc&per_page=30",
+            "wire_url": "https://api.github.com/search/users?q=followers:%3E100+created:%3E2026-10-12&sort=followers&order=desc&per_page=30",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/alice/repos?sort=stars&per_page=1",
+            "headers": {
+              "accept": "application/vnd.github.v3+json",
+              "user-agent": "SEFGH-AI-App"
+            }
+          },
+          {
+            "url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
+            "wire_url": "https://api.github.com/users/bob/repos?sort=stars&per_page=1",
             "headers": {
               "accept": "application/vnd.github.v3+json",
               "user-agent": "SEFGH-AI-App"

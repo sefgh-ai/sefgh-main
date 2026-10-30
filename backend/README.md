@@ -1,5 +1,10 @@
 # SEFGH Go backend
 
+BUG-044 (R-025, 2026-10-30): developer contract v5 keeps the list when a
+repository lookup fails and displays a fixed unavailable card for that user.
+Empty lists remain distinct. Full-request cancellation and credential isolation
+remain; initial-search rate limits still follow R-023. Deployment pending.
+
 BUG-043 (R-024, 2026-10-30): trending contract v8 returns only known colour-map values or the fallback string. Shared topics items use the same formatter. C++ query encoding was already correct after R-068 and is now explicitly pinned. Rollback Next.js answers remain characterized; deployment pending.
 
 KEYS-WIRING-001 (2026-10-30) connects the reviewed hashed-key adapters to the
