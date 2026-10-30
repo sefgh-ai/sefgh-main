@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized TREND-001c and BUG-043 (commit `bed362d`) on main and go-backend.
+Last updated: 2026-10-30 (Asia/Calcutta), by Git Agent: synchronized BUG-044 (commit `d725f53`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-044, R-025 retain developers when repository lookups fail (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main; base/current bed362d; resulting change explicitly uncommitted. Git Agent committed prior TREND-001c and BUG-043 at bed362d, verified clean before this claim; no push/deployment verification inferred. Six of27pack fixes now complete locally,21remain starting R-027; separate open UI R-205/R-206. Hosted key acceptance remains under its independent checkpoint.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch `main`, base `43d88f9`. Resulting commit: `d725f53` (synchronized by Git Agent on `main` and `go-backend`). Six of27pack fixes now complete locally,21remain starting R-027; separate open UI R-205/R-206. Hosted key acceptance remains under its independent checkpoint.
 
 Go developer enrichment now returns a usable developer result plus an error when a repository lookup fails. HTTP/network/JSON/non-array/non-object-entry failures produce a fixed Repository unavailable card; genuine successful empty lists alone show No repositories. Successful siblings, ordering/ranks, four-worker bound and credential separation retained. Whole-request cancellation still joins workers and fails; initial search policy unchanged. One fixed warning counts unavailable lookups without upstream text/URLs. Malformed user/login entries await R-027. Existing React card renders the API labels without source changes; source review found placeholder repository names are clickable (new R-206, open and browser-unverified).
 
@@ -33,11 +33,11 @@ Writer released: yes.
 
 ## Historical checkpoint: BUG-044, R-025 isolate developer repository failures (Codex, 2026-10-30)
 
-Status: **in progress / incomplete**. Writer Codex; reviewer unassigned. Branch main, base/current bed362d. Git Agent committed TREND-001c and BUG-043 at bed362d and tree was clean before claim; prior full handoff passed b1867ac16ff5 and lease cleared. All-A pack approval applies. Scope: per-developer fixed unavailable card for HTTP/network/malformed repository replies, preserve successful siblings/order and genuine-empty card, retain full-request cancellation/initial-search policy; v5 fixtures/rollback answers, deliberate break, lesson/docs. Existing source card renders API labels already; no UI source change planned. Source review also found its placeholder repository labels are clickable as repository names; record this separate UI bug without broadening this API fix. Next: revise fixtures and reproduce old failures. No task checks yet, no owned processes.
+Status: **in progress / incomplete**. Writer Codex; reviewer unassigned. Branch main, base/current 43d88f9. Git Agent committed TREND-001c and BUG-043 at 43d88f9 and tree was clean before claim; prior full handoff passed b1867ac16ff5 and lease cleared. All-A pack approval applies. Scope: per-developer fixed unavailable card for HTTP/network/malformed repository replies, preserve successful siblings/order and genuine-empty card, retain full-request cancellation/initial-search policy; v5 fixtures/rollback answers, deliberate break, lesson/docs. Existing source card renders API labels already; no UI source change planned. Source review also found its placeholder repository labels are clickable as repository names; record this separate UI bug without broadening this API fix. Next: revise fixtures and reproduce old failures. No task checks yet, no owned processes.
 
 ## Handoff: BUG-043, R-024 safe language colours and C++ query guard (Codex, 2026-10-30)
 
-Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `fb34d4e`. Resulting commit: `bed362d` (batch synchronized by Git Agent on `main` and `go-backend`). Prior verified TREND-001c ten-file diff preserved. Owner resumed the all-A decision pack; five of27fixes now complete locally,22remain starting R-025, plus separate open UI R-205. Hosted key acceptance remains under its independent checkpoint below.
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex; reviewer unassigned; branch `main`, base `fb34d4e`. Resulting commit: `43d88f9` (batch synchronized by Git Agent on `main` and `go-backend`). Prior verified TREND-001c ten-file diff preserved. Owner resumed the all-A decision pack; five of27fixes now complete locally,22remain starting R-025, plus separate open UI R-205. Hosted key acceptance remains under its independent checkpoint below.
 
 Removed deliberate JavaScript prototype emulation from shared githubtrending.Item colour lookup. languageColor now returns string: only real map entries or fallback #8b949e, including __proto__ and inherited method names. Topics uses this same formatter. C++ was already correctly percent-encoded by R-068; no second query fix. Contract v8 has60cases: prototype case revised, eleven inherited-method names covered in one new case, C++ reclassified preserved and explicitly checked after query decoding. Actual unchanged Next.js replies saved in next_expect for two revised/one new cases; other57prior cases asserted identical. Lesson17/index updated, existing exercises untouched.
 
@@ -53,7 +53,7 @@ Status: **in progress / incomplete**. Writer Codex; reviewer unassigned; branch 
 
 ## Handoff: TREND-001c, narrow refresh route retirement (Codex, 2026-10-30)
 
-Status: **implementation complete; prepared patch independently reviewed; not deployed**. Writer Codex; prior read-only reviewer review_keys_wiring (REVIEW-029 reviewed the exact deletion/caller scope, not live execution). Branch `main`, base `fb34d4e`. Resulting commit: `bed362d` (batch synchronized by Git Agent on `main` and `go-backend`). Parent ROUTE-CLOSE-001 remains open under the checkpoint below; this handoff signals only completed source retirement and its approval records.
+Status: **implementation complete; prepared patch independently reviewed; not deployed**. Writer Codex; prior read-only reviewer review_keys_wiring (REVIEW-029 reviewed the exact deletion/caller scope, not live execution). Branch `main`, base `fb34d4e`. Resulting commit: `43d88f9` (batch synchronized by Git Agent on `main` and `go-backend`). Parent ROUTE-CLOSE-001 remains open under the checkpoint below; this handoff signals only completed source retirement and its approval records.
 
 Owner approved applying the reviewed retirement patch now as a narrow Phase 6 gate exception. Deleted only src/app/api/trending/refresh/route.js (153 lines). Pre-delete SHA-256 ed02d832fb37ef891a9f68a19db700229fb75ab74b900f458867d51f15559593 matched, apply-check passed, and reverse apply-check confirms the exact patch is applied. Existing Go topics replacement and page integration are retained. No helper/table/data cleanup or general Phase 7 retirement. Repository caller audit found no caller outside the old handler's own comments; external schedulers/live traffic remain unverified.
 
