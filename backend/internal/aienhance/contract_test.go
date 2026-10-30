@@ -56,7 +56,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 2 || len(contract.Cases) == 0 {
+	if contract.Version != 4 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -181,11 +181,11 @@ func TestFailuresAreLoggedWithoutTheQueryOrTheProvidersWords(t *testing.T) {
 		Client: &http.Client{Transport: provider(401, `{"error":{"message":"Incorrect API key provided: fixture-openai-key"}}`)}}
 	rec := post(h, `{"query":"my private project name"}`)
 	logged := out.String()
-	if rec.Code != 500 || strings.Count(logged, "level=ERROR") != 1 || !strings.Contains(logged, "stage=provider") || !strings.Contains(logged, "401") {
+	if rec.Code != 200 || strings.Count(logged, "level=ERROR") != 1 || !strings.Contains(logged, "stage=provider") || !strings.Contains(logged, "401") {
 		t.Errorf("status %d, log:\n%s", rec.Code, logged)
 	}
 	for _, secret := range []string{"private", "Incorrect API key", "fixture-openai-key"} {
-		if strings.Contains(logged, secret) || strings.Contains(rec.Body.String(), secret) {
+		if strings.Contains(logged, secret) || (secret != "private" && strings.Contains(rec.Body.String(), secret)) {
 			t.Errorf("%q appears in the log or the reply:\n%s\n%s", secret, logged, rec.Body)
 		}
 	}
@@ -208,8 +208,8 @@ func TestOversizedBodies(t *testing.T) {
 	}
 	for name, big := range replies {
 		h = &Handler{OpenAIKey: "fixture-openai-key", Logger: quiet, Client: &http.Client{Transport: provider(200, big)}}
-		if rec := post(h, `{"query":"charts"}`); rec.Code != 500 {
-			t.Errorf("oversized provider reply, %s: status %d, want 500", name, rec.Code)
+		if rec := post(h, `{"query":"charts"}`); rec.Code != 200 || !strings.Contains(rec.Body.String(), `"enhancedQuery":"charts"`) || !strings.Contains(rec.Body.String(), `"source":"basic-enhancement"`) {
+			t.Errorf("oversized provider reply, %s: status %d, want basic fallback200", name, rec.Code)
 		}
 	}
 }

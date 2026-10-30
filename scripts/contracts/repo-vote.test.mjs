@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/repo/vote/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-vote/cases.json', import.meta.url), 'utf8'));
 
 test('vote fixture integrity', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -35,7 +35,7 @@ test('vote fixture integrity', () => {
       }
       if (request.method === 'DELETE') assert.ok(request.path.includes(`?user_id=eq.${c.user.id}&`), c.id);
     }
-    if (c.next_expect) {
+    if (c.go_database) {
       assert.equal(c.go_database.length, c.expect.database.length, c.id);
       assert.ok(c.next_expect.database.some((request) => request.path === '/rest/v1/rpc/get_repo_vote_stats'), c.id);
       assert.equal(c.expect.database.length, 2, c.id);

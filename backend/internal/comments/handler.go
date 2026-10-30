@@ -280,6 +280,10 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, email, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized. Please login to comment."}`))
 		return
@@ -353,6 +357,10 @@ func (h *Handler) patch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, _, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized"}`))
 		return
@@ -376,8 +384,12 @@ func (h *Handler) patch(w http.ResponseWriter, r *http.Request) {
 	changes := `{"comment_text":` + string(trimmed) + `,"is_edited":true,"updated_at":` + string(updated) + `}`
 	query := supabaserest.Param("id", "eq."+jscompat.String(parse(commentID))) + "&" + supabaserest.Param("user_id", "eq."+userID)
 	upstream, raw, err := db.Update(r.Context(), session, "repo_comments", query, []byte(changes), true)
+	if err == nil && supabaserest.NoRows(upstream, raw) {
+		write(w, 404, []byte(`{"error":"Comment not found or unauthorized"}`))
+		return
+	}
 	if failed(upstream, raw, err) {
-		// Someone else's comment, or none, is a 406 here, so a 500 (R-087).
+		// Non-absence failures retain a fixed server error.
 		h.fail(w, "update", upstream, err, 500, "Failed to update comment")
 		return
 	}
@@ -390,8 +402,7 @@ func (h *Handler) patch(w http.ResponseWriter, r *http.Request) {
 }
 
 // delete marks the caller's own comment deleted: DELETE in the Next.js
-// handler. Someone else's comment matches no row, which is not an error, so
-// the answer is success (R-087).
+// handler. Its returned row distinguishes a deletion from zero visible matches.
 func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	db := h.db()
 	if !db.Configured() {
@@ -399,6 +410,10 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, _, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized"}`))
 		return
@@ -411,9 +426,17 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	updated, _ := json.Marshal(jscompat.ISOString(h.now()))
 	changes := `{"is_deleted":true,"comment_text":"[deleted]","updated_at":` + string(updated) + `}`
 	query := supabaserest.Param("id", "eq."+commentID) + "&" + supabaserest.Param("user_id", "eq."+userID)
-	upstream, raw, err := db.Update(r.Context(), session, "repo_comments", query, []byte(changes), false)
+	upstream, raw, err := db.Update(r.Context(), session, "repo_comments", query, []byte(changes), true)
+	if err == nil && supabaserest.NoRows(upstream, raw) {
+		write(w, 404, []byte(`{"error":"Comment not found or unauthorized"}`))
+		return
+	}
 	if failed(upstream, raw, err) {
 		h.fail(w, "update", upstream, err, 500, "Failed to delete comment")
+		return
+	}
+	if data, _ := supabaserest.ReadResult(upstream, raw); !jscompat.Truthy(data) {
+		write(w, 404, []byte(`{"error":"Comment not found or unauthorized"}`))
 		return
 	}
 	write(w, 200, []byte(`{"success":true}`))

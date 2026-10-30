@@ -1,5 +1,8 @@
 # Conversation share contract
 
+Update BUG-055 (R-089,2026-10-30): contract v2. Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors. Rollback Next.js answers remain in next_expect.
+
+
 **Version 1** (SHARE-002, 2026-10-17): 45 cases, 14 marked `defect`, over the two methods of `/api/conversations/[id]/share`:
 
 - `POST` creates or renews the share link of one's own conversation;
@@ -47,3 +50,6 @@ Where it differs, outside these cases (see `backend/README.md`, "Shares (SHARE-0
 - the link starts with `NEXT_PUBLIC_SITE_URL` from the Go server's environment; without it, with the forwarded host and scheme (`X-Forwarded-Host`, `X-Forwarded-Proto`) or the request's own;
 - bodies are limited to 1 MiB;
 - it reads a bearer, not the session cookie.
+
+
+BUG-068/R-090 (2026-10-31): contract v3. R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound. Original Next.js replies/database calls remain in next_expect/database; Go replies use go_database.

@@ -106,3 +106,6 @@ deployment and the owner's signed-in walkthrough remain separate evidence.
 The historical 23/25 route count is not a claim that this work makes 25/25 live.
 Local key replacement wiring is ready behind gates; refresh deletion is a
 locally applied retirement under the owner's explicit narrow exception.
+
+
+Verification update2026-10-31 (BUG-069): BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at the website. GET /api/trending/topics returns200 from Go with6 populated topics/30 repository entries; GET /api/trending/refresh returns404. No deployment was performed by this task. Helpers/table/data retained; external scheduler inventory and general Phase7 cleanup remain separate gates. Receipt ../verification/trending-retirement-2026-10-31.json. This closes the public endpoint observation gap only; the keys development browser prerequisite and exact approval remain unchanged.

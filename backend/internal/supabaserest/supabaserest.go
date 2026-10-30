@@ -340,3 +340,19 @@ func Describe(err error) string {
 	}
 	return err.Error()
 }
+
+// NoRows recognizes only PostgREST's zero-row single-object result.
+// The same code for multiple rows is an error, not absence.
+func NoRows(status int, raw []byte) bool {
+	var result struct {
+		Code    string
+		Details string
+	}
+	return status == 406 && json.Unmarshal(raw, &result) == nil && result.Code == "PGRST116" && result.Details == "The result contains 0 rows"
+}
+
+// DeleteReturning performs one owner-scoped delete and returns its row.
+// No separate existence read is needed.
+func (c Client) DeleteReturning(ctx context.Context, session, table, query string) (int, []byte, error) {
+	return c.do(ctx, http.MethodDelete, session, table+"?"+query+"&select=*", "application/vnd.pgrst.object+json", "return=representation", nil)
+}

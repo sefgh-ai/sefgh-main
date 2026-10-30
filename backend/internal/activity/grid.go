@@ -49,14 +49,14 @@ func (n number) MarshalJSON() ([]byte, error) {
 	return json.Marshal(f)
 }
 
-// dateRange is the reply's first and last day: from the Monday on or
+// dateRange is the reply's first and last day: from the Sunday on or
 // before 365 days ago, to today. Every step uses the UTC calendar, the one
 // the dates are written in (bug register R-057). Both keep now's time of
 // day, as the JavaScript dates do.
 func dateRange(now time.Time) (from, to time.Time) {
 	to = now.UTC()
 	from = to.AddDate(0, 0, -365)
-	sinceMonday := (int(from.Weekday()) + 6) % 7 // Sunday is 0 in Go too
+	sinceMonday := int(from.Weekday()) // Sunday is 0 in Go too
 	return from.AddDate(0, 0, -sinceMonday), to
 }
 
@@ -80,12 +80,7 @@ func colorFor(count float64) string {
 	return "#39d353"
 }
 
-// buildReply lays the days from..to out in weeks and works out the
-// statistics, as the Next.js handler does, its two recorded defects
-// included (contracts/activity, bug register R-059): the first week starts
-// on Monday and has six days, and totalDays counts the padding squares.
-// counts holds each date's total; total is every row's count added up,
-// rows whose date is not on the grid included.
+// buildReply uses Sunday-to-Saturday weeks; statistics exclude padding.
 func buildReply(from, to time.Time, counts map[string]float64, total float64) Reply {
 	reply := Reply{Grid: [][]Day{}}
 	var week []Day
@@ -121,9 +116,13 @@ func buildReply(from, to time.Time, counts map[string]float64, total float64) Re
 	reply.Stats.MaxCount = number(maxCount)
 	reply.Stats.TotalContributions = number(total)
 	reply.Stats.CurrentStreak = streak(reply.Grid)
-	// grid.flat().length: the short first week has six squares.
+	// Count real dated days, not the padding squares.
 	for _, week := range reply.Grid {
-		reply.Stats.TotalDays += len(week)
+		for _, d := range week {
+			if d.Date != "" {
+				reply.Stats.TotalDays++
+			}
+		}
 	}
 	// parseFloat((total / totalDays).toFixed(1)). totalDays is never 0.
 	average, _ := strconv.ParseFloat(jscompat.ToFixed(total/float64(reply.Stats.TotalDays), 1), 64)
@@ -131,14 +130,7 @@ func buildReply(from, to time.Time, counts map[string]float64, total float64) Re
 	return reply
 }
 
-// streak counts the days with activity back from today.
-//
-// The Next.js handler sorts every square newest first and counts from the
-// top while the count is above 0. The padding squares have no date, so
-// each comparison with one is NaN, which sort treats as "equal", and V8's
-// sort (a TimSort) then leaves them after every real day. Counting back
-// from the last real day is therefore the same count. TestStreakMatchesNode
-// checks it against Node.
+// streak starts today, or yesterday while today is inactive.
 func streak(grid [][]Day) int {
 	days := []Day{}
 	for _, week := range grid {
@@ -149,7 +141,11 @@ func streak(grid [][]Day) int {
 		}
 	}
 	n := 0
-	for i := len(days) - 1; i >= 0 && days[i].Count > 0; i-- {
+	i := len(days) - 1
+	if i >= 0 && !(days[i].Count > 0) {
+		i--
+	}
+	for ; i >= 0 && days[i].Count > 0; i-- {
 		n++
 	}
 	return n

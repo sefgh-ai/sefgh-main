@@ -94,3 +94,28 @@ go test -tags solution ./24-optional-sign-in
 - A route can serve signed-in and signed-out visitors, and leave the database's rules to decide what each may read.
 - Two URL encoders can produce different bytes with the same meaning. When a contract pins the bytes, copy the browser's rule.
 - A `switch` with no value is a tidy chain of conditions.
+
+
+## BUG-050: R-084
+
+Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+
+## BUG-053: R-081
+
+Public share settings failures return fixed Internal server error text with500. Library configuration messages no longer reach visitors; sanitized stage logging remains.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+The settings guard returns a constant JSON body as []byte rather than encoding the library error. A literal is appropriate here because it contains no user-supplied value to escape. The log records only a stage and status; the caller receives a stable public message.
+
+
+## BUG-054: R-082
+
+Public share reads return404 only for a zero-row result or empty/null success. Network, HTTP, parse and invalid non-object results return503 with fixed Share could not be loaded text. Explicit private links retain403, public replies and caller credentials remain unchanged.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+An HTTP failure, a JSON decoding failure, and a missing row are three different results. Go checks err first, then the zero-row PostgREST result, then status and decoded data. A nil decoded value is absence; a false value, zero, or array is invalid for a single-row lookup. The type assertion row, isObject := data.(map[string]any) lets the handler distinguish those without panicking.

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-31",
+  "timezone": "Asia/Calcutta",
+  "task": "BUG-068",
+  "method": "OPTIONS",
+  "url": "https://sefgh-main.vercel.app/api/conversations/00000000-0000-0000-0000-000000000000/share",
+  "status": 405,
+  "allow": "DELETE, POST",
+  "backend": "go",
+  "authorization": "none",
+  "effect": "read-only method routing observation; no share read or mutation",
+  "limits": "does not verify new local code, authentication/RLS, real deletion, overall migration or deployment of this fix"
+}

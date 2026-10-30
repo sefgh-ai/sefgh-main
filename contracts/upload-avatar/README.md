@@ -1,5 +1,8 @@
 # Avatar upload contract
 
+Update BUG-056 (R-094,2026-10-30): contract v3. Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check. Rollback Next.js answers remain in next_expect.
+
+
 Version 1, AVATAR-001a/b (2026-10-18), extended in REVIEW-028 (2026-10-24): **47 cases, 25 marked defect**,
 recorded from `POST /api/upload-avatar` at base `4f8c815`. The Next.js handler
 is unchanged; `AvatarUpload.jsx` now sends its session bearer for either backend.
@@ -63,3 +66,12 @@ These differences are in ADR-0002. The existing five-MiB file limit stays.
 Switch: `upload-avatar`, default off. Rollback: remove that name and rebuild
 Next.js. Live Storage/RLS, concurrent replacement and deployment limits still
 need verification before cutover. Tests use controlled stand-ins, not accounts.
+
+
+BUG-057/R-096, 2026-10-30: contract v4. A failed Auth metadata or profile write returns500 and attempts to delete exactly the newly uploaded object with the caller token. Compensation has a separate three-second bound and still runs after request cancellation. Rollback refusal stays a failure and is logged without details. These separate services are not made atomic; cleanup success is not promised when Storage refuses it. Unchanged Next.js replies remain in next_expect.
+
+
+BUG-058/R-097, 2026-10-30: contract v5. Avatar500 responses carry only their fixed public error field; Storage/Auth/database/library and runtime diagnostic details are omitted. Sanitized stage logging and status codes stay unchanged. Next rollback replies retain their original details. Unchanged Next.js replies remain in next_expect.
+
+
+BUG-059/R-095, 2026-10-30: contract v6. Avatar replacement uses an exclusive own-folder Storage insert across participating Go instances, unique random filenames and non-overwriting uploads. Cleanup snapshots all pages before deleting in batches, traverses explicit legacy folders, and preserves the current file, lock and newer timestamps. A failed page causes no partial-snapshot deletion. Lock release is bounded. Crash/uncertain-acquisition recovery is intentionally manual (R-209); hosted acceptance and all-writers protocol are rollout gates. Unchanged Next.js replies remain in next_expect.

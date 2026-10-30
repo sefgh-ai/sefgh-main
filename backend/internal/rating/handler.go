@@ -3,12 +3,8 @@
 // reading every rating with the average. Every case in contracts/repo-rating
 // is answered as the Next.js handlers answer it, defects included.
 //
-// The Next.js handler checks and averages with JavaScript's loose rules: a
-// rating is compared with 1 and 5 after being turned into a number, so the
-// text "5", " 5 " or "0x5" passes, and "great" (NaN) passes every
-// comparison. The average adds with +, so a rating stored as text joins the
-// sum as text. The port follows the same rules through jscompat (Number,
-// Add, MathRound) so the two can be compared (bug register R-085).
+// POST accepts only numeric whole ratings 1 through 5 (BUG-051/R-085).
+// Existing stored ratings retain their recorded summary behavior.
 //
 // Every database request goes as the visitor, through internal/supabaserest:
 // with the request's bearer when it has one, and with the project's public
@@ -23,6 +19,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -74,6 +71,10 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized. Please login to rate."}`))
 		return
@@ -94,9 +95,9 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		write(w, 400, []byte(`{"error":"Repository name is required"}`))
 		return
 	}
-	// if (!rating || rating < 1 || rating > 5): each comparison turns the
-	// rating into a number first, and any comparison with NaN is false.
-	if n := jscompat.Number(parse(rating)); !jscompat.TruthyJSON(rating) || n < 1 || n > 5 {
+	// Decode into a number without JavaScript coercion, then require a whole value.
+	var n float64
+	if err := json.Unmarshal(rating, &n); err != nil || n < 1 || n > 5 || math.Trunc(n) != n {
 		write(w, 400, []byte(`{"error":"Rating must be between 1 and 5"}`))
 		return
 	}
@@ -135,10 +136,13 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "settings", 0, nil, 500, "Internal server error")
 		return
 	}
-	// getUser() reports a refused session and an unreachable Supabase alike,
-	// and GET reads either as signed out. The database is still asked with
-	// the visitor's bearer, as the cookie client sends the session it has.
+	// Refused sessions follow the existing signed-out policy. Auth outages
+	// return503 before any database read. Otherwise keep the visitor bearer.
 	userID, _, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	session := h.SupabaseKey
 	if token, ok := githubaccess.SessionToken(r); ok {
 		session = token
@@ -193,6 +197,10 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized"}`))
 		return

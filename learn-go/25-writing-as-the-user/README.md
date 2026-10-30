@@ -132,3 +132,12 @@ go test -tags solution ./25-writing-as-the-user
 - JavaScript's `||` falls back on any falsy value, and Go must spell that out.
 - A type switch handles each kind of value in its own `case`.
 - Copying `.some()` means stopping at the first match, and failing where JavaScript would throw.
+
+
+## BUG-052: R-087
+
+Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+The new NoRows helper decodes a small named struct from JSON. It checks both PGRST116 and the exact zero-row details: the same code can describe multiple rows, which must stay an error. DeleteReturning asks PostgREST for the affected object using return=representation, so Go can inspect the mutation result without a separate existence read. The user filter and bearer remain in that one request.

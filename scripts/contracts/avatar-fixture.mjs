@@ -15,7 +15,9 @@ export function avatarBody(f) {
   for (const entry of f.fields ?? (f.file ? [{ name: 'avatar', file: f.file }] : [])) {
     if (entry.file) {
       const v = entry.file;
-      body.append(entry.name, new Blob([Buffer.alloc(v.size ?? 3, v.byte ?? 65)], { type: v.type ?? 'image/png' }), v.name ?? 'photo.png');
+      const bytes = Buffer.alloc(v.size ?? 3, v.byte ?? 65);
+      if (v.prefix_base64) Buffer.from(v.prefix_base64, 'base64').copy(bytes);
+      body.append(entry.name, new Blob([bytes], { type: v.type ?? 'image/png' }), v.name ?? 'photo.png');
     } else body.append(entry.name, entry.value ?? '');
   }
   return { body };

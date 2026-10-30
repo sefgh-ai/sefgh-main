@@ -55,6 +55,7 @@ type fixture struct {
 	User         json.RawMessage `json:"user"`
 	ClientThrows bool            `json:"client_throws"`
 	Database     []answer        `json:"database"`
+	GoDatabase   *[]answer       `json:"go_database"`
 	Routes       []answer        `json:"routes"`
 	Expect       struct {
 		Status      int             `json:"status"`
@@ -78,7 +79,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 3 || len(contract.Cases) == 0 {
+	if contract.Version != 5 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -109,6 +110,9 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 		s.t.Errorf("%s: a request outside Supabase or without the public key: %s", s.f.ID, r.URL)
 	}
 	if r.URL.Path == "/auth/v1/user" {
+		if strings.Contains(string(s.f.User), "\"unreachable\"") {
+			return reply(503, `{}`, nil)
+		}
 		accepted := s.f.Session != nil && r.Header.Get("Authorization") == "Bearer "+*s.f.Session
 		if !accepted || !strings.HasPrefix(string(s.f.User), "{") || strings.Contains(string(s.f.User), `"error"`) {
 			return reply(401, `{"msg":"invalid JWT"}`, nil)
@@ -132,6 +136,10 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 	n := len(s.calls)
 	s.mu.Unlock()
 
+	answers := s.f.Database
+	if s.f.GoDatabase != nil {
+		answers = *s.f.GoDatabase
+	}
 	next := answer{Status: 200, Body: json.RawMessage(`[]`)}
 	if s.f.Routes != nil {
 		asked := r.Method + " " + r.URL.RequestURI()
@@ -141,8 +149,8 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 				break
 			}
 		}
-	} else if n <= len(s.f.Database) {
-		next = s.f.Database[n-1]
+	} else if n <= len(answers) {
+		next = answers[n-1]
 	}
 	if next.NetworkError {
 		return nil, errors.New("fetch failed")

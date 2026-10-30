@@ -35,7 +35,7 @@ func TestLongBodyIsRefused(t *testing.T) {
 	body := `{"title":"` + strings.Repeat("x", MaxBodyBytes) + `"}`
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, httptest.NewRequest("POST", "/api/conversations/c1/share", strings.NewReader(body)))
-	if w.Code != 500 || w.Body.String() != `{"error":"Request body is too large"}` || asked {
+	if w.Code != 500 || w.Body.String() != `{"error":"Internal server error"}` || asked {
 		t.Errorf("%d %s, database asked: %v", w.Code, w.Body, asked)
 	}
 }

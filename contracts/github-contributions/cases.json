@@ -1,6 +1,6 @@
 {
   "contract": "GET /api/github/contributions",
-  "contract_version": 2,
+  "contract_version": 4,
   "source": "src/app/api/github/contributions/route.js",
   "graphql_url": "https://api.github.com/graphql",
   "query": "\n      query($username: String!, $from: DateTime!, $to: DateTime!) {\n        user(login: $username) {\n          contributionsCollection(from: $from, to: $to) {\n            contributionCalendar {\n              totalContributions\n              weeks {\n                contributionDays {\n                  date\n                  contributionCount\n                  color\n                }\n              }\n            }\n          }\n        }\n      }\n    ",
@@ -1198,8 +1198,8 @@
     },
     {
       "id": "dates-zone-ahead-of-utc-local-date-differs",
-      "disposition": "defect",
-      "note": "The range depends on the server's time zone. Here it is already 13 October locally, which changes the Monday chosen.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-10-12T20:00:00.000Z",
@@ -1214,7 +1214,7 @@
           },
           "variables": {
             "username": "octocat",
-            "from": "2025-10-12T20:00:00.000Z",
+            "from": "2025-10-06T20:00:00.000Z",
             "to": "2026-10-12T20:00:00.000Z"
           },
           "status": 200,
@@ -1245,12 +1245,54 @@
             "totalDays": 0
           }
         }
-      }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-12T20:00:00.000Z",
+            "to": "2026-10-12T20:00:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dates-zone-behind-utc-local-date-differs",
-      "disposition": "defect",
-      "note": "Still 12 October locally.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-10-13T02:00:00.000Z",
@@ -1265,7 +1307,7 @@
           },
           "variables": {
             "username": "octocat",
-            "from": "2025-10-07T02:00:00.000Z",
+            "from": "2025-10-13T02:00:00.000Z",
             "to": "2026-10-13T02:00:00.000Z"
           },
           "status": 200,
@@ -1296,12 +1338,54 @@
             "totalDays": 0
           }
         }
-      }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-07T02:00:00.000Z",
+            "to": "2026-10-13T02:00:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dates-daylight-saving-offset-changes",
-      "disposition": "defect",
-      "note": "Noon local time is kept, so 'from' is 17:00 UTC in winter time while 'to' is 16:00 UTC in summer time.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-03-09T16:00:00.000Z",
@@ -1316,7 +1400,7 @@
           },
           "variables": {
             "username": "octocat",
-            "from": "2025-03-03T17:00:00.000Z",
+            "from": "2025-03-03T16:00:00.000Z",
             "to": "2026-03-09T16:00:00.000Z"
           },
           "status": 200,
@@ -1347,12 +1431,54 @@
             "totalDays": 0
           }
         }
-      }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-03-03T17:00:00.000Z",
+            "to": "2026-03-09T16:00:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dates-daylight-saving-skipped-hour",
-      "disposition": "defect",
-      "note": "02:30 local did not exist on 2025-03-09, the day 365 days back. JavaScript moves it to 03:30, and that hour is kept for the Monday.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-03-09T06:30:00.000Z",
@@ -1367,7 +1493,7 @@
           },
           "variables": {
             "username": "octocat",
-            "from": "2025-03-03T08:30:00.000Z",
+            "from": "2025-03-03T06:30:00.000Z",
             "to": "2026-03-09T06:30:00.000Z"
           },
           "status": 200,
@@ -1398,12 +1524,54 @@
             "totalDays": 0
           }
         }
-      }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-03-03T08:30:00.000Z",
+            "to": "2026-03-09T06:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dates-daylight-saving-repeated-hour",
-      "disposition": "defect",
-      "note": "01:30 local happened twice on 2025-11-02. The Monday chosen is unaffected.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-11-02T06:30:00.000Z",
@@ -1418,7 +1586,7 @@
           },
           "variables": {
             "username": "octocat",
-            "from": "2025-10-27T05:30:00.000Z",
+            "from": "2025-10-27T06:30:00.000Z",
             "to": "2026-11-02T06:30:00.000Z"
           },
           "status": 200,
@@ -1449,7 +1617,49 @@
             "totalDays": 0
           }
         }
-      }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-27T05:30:00.000Z",
+            "to": "2026-11-02T06:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "upstream-network-error",
@@ -1813,8 +2023,8 @@
     },
     {
       "id": "graphql-user-does-not-exist",
-      "disposition": "defect",
-      "note": "GitHub reports an unknown login as an error, so the caller gets 400 'GraphQL query failed', never the 404 below. Reply shape follows GitHub's documented behaviour; not observed live.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=no-such-user",
       "github_token": "test-token",
       "now": "2026-10-12T09:30:15.123Z",
@@ -1850,11 +2060,47 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "User not found"
+        }
+      },
+      "next_expect": {
         "status": 400,
         "body": {
           "error": "GraphQL query failed"
         }
-      }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "user"
+                ],
+                "message": "Could not resolve to a User with the login of 'no-such-user'."
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "graphql-errors-empty-list",
@@ -3024,8 +3270,8 @@
     },
     {
       "id": "streak-zero-when-newest-day-is-empty",
-      "disposition": "defect",
-      "note": "A day with no contributions yet ends the streak, even early in that day.",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
       "request": "/api/github/contributions?username=octocat",
       "github_token": "test-token",
       "now": "2026-10-12T09:30:15.123Z",
@@ -3109,13 +3355,99 @@
           "stats": {
             "maxCount": 3,
             "totalContributions": 6,
+            "currentStreak": 2,
+            "averagePerDay": 2,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 6,
             "currentStreak": 0,
             "averagePerDay": 2,
             "activeDays": 2,
             "totalDays": 3
           }
         }
-      }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 6,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "streak-covers-every-day",
@@ -5713,6 +6045,1733 @@
           }
         }
       }
+    },
+    {
+      "id": "streak-gap-break",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 1,
+            "averagePerDay": 2.5,
+            "activeDays": 2,
+            "totalDays": 2
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 2,
+            "averagePerDay": 2.5,
+            "activeDays": 2,
+            "totalDays": 2
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-stale-calendar",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 3,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-05",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-05",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 3,
+            "currentStreak": 0,
+            "averagePerDay": 3,
+            "activeDays": 1,
+            "totalDays": 1
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-05",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 3,
+            "currentStreak": 1,
+            "averagePerDay": 3,
+            "activeDays": 1,
+            "totalDays": 1
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 3,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-05",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-future-ignored",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 7,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-13",
+                            "contributionCount": 5,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-13",
+                "count": 5,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 5,
+            "totalContributions": 7,
+            "currentStreak": 1,
+            "averagePerDay": 2.3,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-13",
+                "count": 5,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 5,
+            "totalContributions": 7,
+            "currentStreak": 1,
+            "averagePerDay": 2.3,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 7,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-13",
+                            "contributionCount": 5,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-no-today",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 2,
+            "averagePerDay": 2.5,
+            "activeDays": 2,
+            "totalDays": 2
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 2,
+            "averagePerDay": 2.5,
+            "activeDays": 2,
+            "totalDays": 2
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-yesterday-empty",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 3,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 3,
+            "currentStreak": 0,
+            "averagePerDay": 1,
+            "activeDays": 1,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 3,
+            "currentStreak": 0,
+            "averagePerDay": 1,
+            "activeDays": 1,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 3,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-utc-midnight-india",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T00:30:00.000Z",
+      "time_zone": "Asia/Kolkata",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T00:30:00.000Z",
+            "to": "2026-10-12T00:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 2,
+            "averagePerDay": 1.7,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 0,
+            "averagePerDay": 1.7,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T00:30:00.000Z",
+            "to": "2026-10-12T00:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "streak-utc-midnight-pacific",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=octocat",
+      "github_token": "test-token",
+      "now": "2026-10-12T00:30:00.000Z",
+      "time_zone": "America/Los_Angeles",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-06T00:30:00.000Z",
+            "to": "2026-10-12T00:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 2,
+            "averagePerDay": 1.7,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [
+            [
+              {
+                "date": "2026-10-12",
+                "count": 0,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 0
+              },
+              {
+                "date": "2026-10-11",
+                "count": 2,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 1
+              },
+              {
+                "date": "2026-10-10",
+                "count": 3,
+                "color": "#ebedf0",
+                "weekIndex": 0,
+                "dayOfWeekIndex": 2
+              }
+            ]
+          ],
+          "stats": {
+            "maxCount": 3,
+            "totalContributions": 5,
+            "currentStreak": 0,
+            "averagePerDay": 1.7,
+            "activeDays": 2,
+            "totalDays": 3
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "octocat",
+            "from": "2025-10-07T00:30:00.000Z",
+            "to": "2026-10-12T00:30:00.000Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 5,
+                    "weeks": [
+                      {
+                        "contributionDays": [
+                          {
+                            "date": "2026-10-12",
+                            "contributionCount": 0,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-11",
+                            "contributionCount": 2,
+                            "color": "#ebedf0"
+                          },
+                          {
+                            "date": "2026-10-10",
+                            "contributionCount": 3,
+                            "color": "#ebedf0"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "graphql-mixed-notfound-errors",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=no-such-user",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "user"
+                ]
+              },
+              {
+                "type": "FORBIDDEN",
+                "path": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "user"
+                ]
+              },
+              {
+                "type": "FORBIDDEN",
+                "path": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "graphql-notfound-other-path",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=no-such-user",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "repository"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "repository"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "graphql-notfound-without-path",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=no-such-user",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND"
+              }
+            ]
+          }
+        }
+      ],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "graphql-notfound-nested-user-path",
+      "disposition": "preserve",
+      "note": "R-033: UTC range/current-day anchored streak; only user NOT_FOUND errors become404. Next.js response and local-calendar variables retained.",
+      "request": "/api/github/contributions?username=no-such-user",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "user",
+                  "calendar"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_expect": {
+        "status": 400,
+        "body": {
+          "error": "GraphQL query failed"
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "no-such-user",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": null
+            },
+            "errors": [
+              {
+                "type": "NOT_FOUND",
+                "path": [
+                  "user",
+                  "calendar"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "valid-hyphenated-39",
+      "disposition": "preserve",
+      "request": "/api/github/contributions?username=a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "reason": "R-207: enforce the already documented39-character maximum before credentials or upstream calls; preserve the Next rollback reply."
+    },
+    {
+      "id": "invalid-hyphenated-40",
+      "disposition": "preserve",
+      "request": "/api/github/contributions?username=a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-aa",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid GitHub username format"
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-aa",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "reason": "R-207: enforce the already documented39-character maximum before credentials or upstream calls; preserve the Next rollback reply."
+    },
+    {
+      "id": "invalid-hyphenated-77",
+      "disposition": "preserve",
+      "request": "/api/github/contributions?username=a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+      "github_token": "test-token",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid GitHub username format"
+        }
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "grid": [],
+          "stats": {
+            "maxCount": 0,
+            "totalContributions": 0,
+            "currentStreak": 0,
+            "averagePerDay": 0,
+            "activeDays": 0,
+            "totalDays": 0
+          }
+        }
+      },
+      "next_calls": [
+        {
+          "url": "https://api.github.com/graphql",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer test-token",
+            "Content-Type": "application/json"
+          },
+          "variables": {
+            "username": "a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a",
+            "from": "2025-10-06T09:30:15.123Z",
+            "to": "2026-10-12T09:30:15.123Z"
+          },
+          "status": 200,
+          "body": {
+            "data": {
+              "user": {
+                "contributionsCollection": {
+                  "contributionCalendar": {
+                    "totalContributions": 0,
+                    "weeks": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "reason": "R-207: enforce the already documented39-character maximum before credentials or upstream calls; preserve the Next rollback reply."
+    },
+    {
+      "id": "invalid-hyphenated-before-token",
+      "disposition": "preserve",
+      "request": "/api/github/contributions?username=a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-aa",
+      "github_token": "",
+      "now": "2026-10-12T09:30:15.123Z",
+      "time_zone": "UTC",
+      "calls": [],
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Invalid GitHub username format"
+        }
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "GitHub token not configured"
+        }
+      },
+      "next_calls": [],
+      "reason": "R-207: enforce the already documented39-character maximum before credentials or upstream calls; preserve the Next rollback reply."
     }
   ],
   "authorization_contract": "../github-access/cases.json",

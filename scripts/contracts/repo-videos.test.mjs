@@ -16,7 +16,7 @@ const handlers = await import('../../src/app/api/repo/videos/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-videos/cases.json', import.meta.url), 'utf8'));
 
 test('videos fixture integrity', () => {
-  assert.equal(contract.contract_version, 3);
+  assert.equal(contract.contract_version, 5);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -57,7 +57,7 @@ test('videos fixture integrity', () => {
       assert.equal(request.authorization, `Bearer ${c.session ?? SUPABASE_KEY}`, c.id);
       // A write names the signed-in user, and only that user.
       if (request.method === 'POST') assert.equal(request.body.uploaded_by, c.user.id, c.id);
-      if (request.method === 'DELETE') assert.ok(request.path.endsWith(`&uploaded_by=eq.${c.user.id}`), c.id);
+      if (request.method === 'DELETE') assert.equal(new URLSearchParams(request.path.split("?")[1]).get("uploaded_by"), `eq.${c.user.id}`, c.id);
     }
   }
 });

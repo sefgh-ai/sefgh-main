@@ -70,7 +70,14 @@ func TestAIProviderRedirectsNeverReceiveCredentialsOrBodies(t *testing.T) {
 			}
 			h := newHandler(slog.New(slog.NewTextHandler(io.Discard, nil)))
 			response := postJSON(h, path, body, map[string]string{"Authorization": "Bearer session-a"})
-			if response.Code != 500 || leaked.Load() != 0 {
+			wantStatus := 500
+			if provider != "models" {
+				wantStatus = 200
+				if !strings.Contains(response.Body.String(), `"enhancedQuery":"xylophonic quasar"`) || !strings.Contains(response.Body.String(), `"source":"basic-enhancement"`) {
+					t.Error("redirect did not use the basic fallback")
+				}
+			}
+			if response.Code != wantStatus || leaked.Load() != 0 {
 				t.Fatalf("status %d, destination calls %d", response.Code, leaked.Load())
 			}
 		})

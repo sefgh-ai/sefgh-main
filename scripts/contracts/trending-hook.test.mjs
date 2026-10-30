@@ -112,3 +112,8 @@ test('developer refresh does not request or overwrite repositories', async () =>
   assert.deepEqual(globalThis.__trendingToasts.map(([kind]) => kind), ['success']);
   app.unmount();
 });
+
+
+test('rate-limit wait time reaches the visible hook error for both lists',async()=>{
+ for(const tab of ['repositories','developers']){const app=mount(async path=>path==='/api/trending/topics'?new Response('',{status:404}):Response.json({error:'provider detail',rate_limit:{reset:null}},{status:429,headers:{'Retry-After':'30'}}),[tab,'any','english','daily']);await flush();await flush();assert.match(app.render().loadError,/rate limit/i);assert.match(app.render().loadError,/30 seconds/);app.unmount();}
+});

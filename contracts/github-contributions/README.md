@@ -1,6 +1,18 @@
 # GitHub contributions contract
 
-AUTH-001 (2026-10-13): current contract version **2**. The shared
+Version **3** (BUG-048, R-033, 2026-10-30):106cases. Go uses one UTC clock
+reading for the existing365day/Monday-aligned query window and current streak.
+The streak starts today or, while today is empty, yesterday; missing/inactive
+days stop it, stale calendars and future days cannot invent an active streak.
+Only nonempty GraphQL error lists entirely consisting of NOT_FOUND at exactly
+`["user"]`, with no user data, become404. Mixed, nested or unstructured errors
+retain their existing response. Seven prior cases revised,11added,88unchanged.
+Real unchanged Next.js responses and local-calendar request variables remain
+in `next_expect`/`next_calls`. Go's injected clock can carry any location; the
+range is still UTC. Other shape/token/status policies and R-207 remain unchanged.
+The existing retirement decision for this route also remains unchanged.
+
+AUTH-001 (2026-10-13) introduced contract version **2**. The shared
 [access contract](../github-access/README.md) now governs credentials and
 private response caching. In fixtures, github_token is a verified per-user
 credential, never an environment-token fallback. Anonymous reads use no token.
@@ -130,3 +142,6 @@ The 18 open `defect` cases fall into seven groups:
 - "Truthy" for `errors` means anything but `null`, `false`, `0`, `""` or a missing key.
 
 Both pieces of arithmetic were also compared with JavaScript on 24,000 random instants across 12 time zones and 200,000 random divisions, with no difference.
+
+
+Contract v4, BUG-067/R-207 enforces the existing39-character contributions login limit with an explicit length guard before the handler token check or GraphQL request. Interleaved hyphens cannot admit40/77-character names; valid39-character names still pass. Invalid400 text is unchanged, and Next rollback replies/calls are preserved.

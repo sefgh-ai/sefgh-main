@@ -94,3 +94,14 @@ test('pre-commit stamp never rewrites older handoffs', () => {
   assert.match(stamped, /synchronization pending/);
   assert.ok(stamped.endsWith(older));
 });
+
+
+test('fingerprint reads a tracked diff larger than the default child-process buffer', (t) => {
+ const {root} = repository(t);
+ const file=join(root,'tracked.txt');
+ writeFileSync(file,'a'.repeat(2 * 1024 * 1024)+'\n');
+ const before=computeTreeHash(root);
+ assert.equal(computeTreeHash(root),before);
+ writeFileSync(file,'a'.repeat(2 * 1024 * 1024)+'changed\n');
+ assert.notEqual(computeTreeHash(root),before);
+});

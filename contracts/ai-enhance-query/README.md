@@ -120,3 +120,9 @@ a JSON body of `null` is answered 500, where every other body without a query
 is 400. The handler reads a field of `null` and fails. Go reproduces it.
 A third added case pins that 250 emoji, which are 500 characters and 1,000
 bytes, are inside the length limit.
+
+
+BUG-063/R-035, 2026-10-30: contract v3. Enhance-query falls back to its built-in enhancement after provider errors or blank replies, including refused redirects and bounded oversized replies. JSON null is400 Query is required, with no provider call. Query/key isolation, provider read bounds and allowance behavior remain. Unchanged Next.js replies remain in next_expect.
+
+
+BUG-064/R-036, 2026-10-30: contract v4. Built-in enhancement matches whole Unicode words, adds only words not already present, and trims surrounding whitespace. Operator/quoted queries retain their contents after trimming. Anthropic query text is JSON-escaped inside the prompt. Repeated basic enhancement is idempotent. Unchanged Next.js replies remain in next_expect.

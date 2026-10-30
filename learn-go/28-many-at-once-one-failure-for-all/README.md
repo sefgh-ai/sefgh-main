@@ -90,3 +90,12 @@ go test -tags solution ./28-many-at-once-one-failure-for-all
 - `parseInt` and `Number` read text differently.
 - Every comparison with `NaN` is false; `math.IsNaN` is the way to test for it.
 - To compare lists whose order is not fixed, sort copies of both.
+
+
+## BUG-052: R-087
+
+Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+The new NoRows helper decodes a small named struct from JSON. It checks both PGRST116 and the exact zero-row details: the same code can describe multiple rows, which must stay an error. DeleteReturning asks PostgREST for the affected object using return=representation, so Go can inspect the mutation result without a separate existence read. The user filter and bearer remain in that one request.

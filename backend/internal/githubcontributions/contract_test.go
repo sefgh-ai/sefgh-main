@@ -20,6 +20,7 @@ import (
 // Next.js handler. Each case fixes GitHub's reply, the clock and the zone.
 
 type contract struct {
+	Version    int            `json:"contract_version"`
 	GraphQLURL string         `json:"graphql_url"`
 	Query      string         `json:"query"`
 	Cases      []contractCase `json:"cases"`
@@ -67,7 +68,7 @@ func loadContract(t *testing.T) contract {
 	if err := json.Unmarshal(data, &c); err != nil {
 		t.Fatalf("decoding contract: %v", err)
 	}
-	if len(c.Cases) == 0 {
+	if c.Version != 4 || len(c.Cases) == 0 {
 		t.Fatal("contract has no cases")
 	}
 	return c
@@ -87,12 +88,11 @@ func handlerFor(t *testing.T, tc contractCase, client *http.Client, baseURL stri
 		t.Fatalf("case time zone: %v", err)
 	}
 	return &Handler{
-		Client:   client,
-		BaseURL:  baseURL,
-		Token:    tc.GitHubToken,
-		Logger:   quietLogger,
-		Now:      func() time.Time { return now },
-		Location: loc,
+		Client:  client,
+		BaseURL: baseURL,
+		Token:   tc.GitHubToken,
+		Logger:  quietLogger,
+		Now:     func() time.Time { return now.In(loc) },
 	}
 }
 

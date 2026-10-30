@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "route": "GET and POST /api/repo/comments/vote",
   "recorded_from": "the Next.js handlers at 88bea3d, by scripts/contracts/record-comment-vote.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API (scripts/contracts/route-db-fixture.mjs); only auth.getUser() is replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
@@ -1010,6 +1010,87 @@
         "status": 500,
         "body": {
           "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "POST",
+      "body": "{\"commentId\":\"6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\",\"voteType\":\"upvote\"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": {
+            "upvotes": 3,
+            "downvotes": 1
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to vote."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "GET",
+      "query": "commentId=6b1f2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "vote_type": "downvote"
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "userVote": null
         },
         "content_type": "application/json",
         "cache_control": null,

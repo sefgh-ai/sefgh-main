@@ -76,6 +76,10 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized. Please login to vote."}`))
 		return
@@ -161,10 +165,13 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "settings", 0, nil, 500, "Internal server error")
 		return
 	}
-	// getUser() reports a refused session and an unreachable Supabase alike,
-	// and GET reads either as signed out. The database is still asked with
-	// the visitor's bearer, as the cookie client sends the session it has.
+	// Refused sessions follow the existing signed-out policy. Auth outages
+	// return503 before any database read. Otherwise keep the visitor bearer.
 	userID, _, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	session := h.SupabaseKey
 	if token, ok := githubaccess.SessionToken(r); ok {
 		session = token

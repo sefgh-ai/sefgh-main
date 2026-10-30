@@ -1,5 +1,5 @@
 {
-  "contract_version": 3,
+  "contract_version": 5,
   "route": "GET, POST and DELETE /api/repo/videos",
   "recorded_from": "the Next.js handlers at 7c894a0, by scripts/contracts/record-repo-videos.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-video requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
@@ -5182,7 +5182,7 @@
     {
       "id": "delete-removes",
       "disposition": "preserve",
-      "reason": "The uploader deletes a video, as the user (only their own): 200.",
+      "reason": "The uploader deletes a video, as the user (only their own): 200. R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=v1",
       "session": "session-a",
@@ -5207,6 +5207,26 @@
         "database": [
           {
             "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
             "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": null,
@@ -5216,12 +5236,20 @@
             "body": null
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "row-1"
+          }
+        }
+      ]
     },
     {
       "id": "delete-not-yours",
       "disposition": "defect",
-      "reason": "Someone else's video matches no row, which is not an error: success, although nothing changed (R-087).",
+      "reason": "Someone else's video matches no row, which is not an error: success, although nothing changed (R-087). R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=v2",
       "session": "session-a",
@@ -5237,6 +5265,26 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "Video not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true
@@ -5255,7 +5303,17 @@
             "body": null
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
     },
     {
       "id": "delete-signed-out",
@@ -5302,7 +5360,7 @@
     {
       "id": "delete-fails",
       "disposition": "preserve",
-      "reason": "The delete fails: 500 \"Failed to delete video\".",
+      "reason": "The delete fails: 500 \"Failed to delete video\". R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=v1",
       "session": "session-a",
@@ -5332,6 +5390,26 @@
         "database": [
           {
             "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete video"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
             "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": null,
@@ -5341,7 +5419,18 @@
             "body": null
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ]
     },
     {
       "id": "settings-missing-get",
@@ -5435,6 +5524,302 @@
         "cache_control": null,
         "database": []
       }
+    },
+    {
+      "id": "post-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"videoUrl\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\"title\":\"Demo\",\"description\":\"Walkthrough\"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "v9",
+            "repo_full_name": "octo/demo",
+            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "video_type": "youtube",
+            "title": "Demo",
+            "description": null,
+            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "duration": null,
+            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "is_featured": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to add videos."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "DELETE",
+      "query": "id=v1",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-missing",
+      "disposition": "defect",
+      "reason": "Someone else's video matches no row, which is not an error: success, although nothing changed (R-087). R-087: mutation returns its row so zero matches cannot report success.",
+      "method": "DELETE",
+      "query": "id=missing",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Video not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.missing&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.missing&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "delete-multiple-row-error",
+      "disposition": "defect",
+      "reason": "Someone else's video matches no row, which is not an error: success, although nothing changed (R-087). R-087: mutation returns its row so zero matches cannot report success.",
+      "method": "DELETE",
+      "query": "id=v2",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete video"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 2 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "delete-empty-success",
+      "disposition": "defect",
+      "reason": "R-087: no returned row cannot report a successful deletion.",
+      "method": "DELETE",
+      "query": "id=v2",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Video not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "DELETE",
+            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 200,
+          "raw": "null"
+        }
+      ]
     }
   ]
 }

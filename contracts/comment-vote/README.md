@@ -1,5 +1,8 @@
 # Comment vote contract
 
+Update BUG-050 (R-084,2026-10-30): contract v2. Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Rollback Next.js answers remain in next_expect.
+
+
 **Version 1** (CVOTE-001, 2026-10-17): 25 cases, none marked `defect`, over `GET` and `POST /api/repo/comments/vote`. `POST` records an upvote or downvote on a comment, or removes it. `GET` answers the caller's own vote. The arrows beside each comment (`src/components/repo-details/RepoCommentsSection.jsx`) call `POST`; nothing in the browser calls `GET`.
 
 ```text

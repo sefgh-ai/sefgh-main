@@ -79,3 +79,12 @@ go test -tags solution ./27-when-text-meets-numbers
 - Any comparison with NaN is false, so a check written as "refuse if too small or too large" lets NaN through.
 - `+` joins text as soon as one side is text.
 - `Math.round`, Go's `math.Round` and `Floor(x + 0.5)` are three different roundings.
+
+
+## BUG-051: R-085
+
+Rating writes accept only JSON numbers that are whole values 1 through 5. Text, booleans, lists, objects and fractions return 400 before any database write. Existing stored-rating summaries remain characterized.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+The POST boundary now uses json.Unmarshal(raw, &n) with a float64 variable. Unlike Number(value) in JavaScript, decoding a JSON string or boolean into float64 returns an error. The range check rejects null (decoded as zero); math.Trunc(n) != n rejects fractions. The older coercion examples describe stored data and the retired rollback handler, not permission to store new coerced ratings.

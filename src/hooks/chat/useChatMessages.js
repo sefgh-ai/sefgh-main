@@ -11,6 +11,7 @@ import {
 } from "@/lib/supabase/conversations";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
 import { postChat } from "@/lib/ai/chat-request";
+import { assistantResponse, EmptyAssistantReplyError } from "@/lib/ai/chat-response";
 
 export function useChatMessages(
   user,
@@ -102,7 +103,7 @@ export function useChatMessages(
         throw new Error("Failed to get AI response");
       }
 
-      const { response } = await aiResponse.json();
+      const response = assistantResponse(await aiResponse.json());
 
       const aiMsg = createMessage("assistant", response, {
         model: "gpt-4o",
@@ -119,7 +120,7 @@ export function useChatMessages(
       await refreshConversations();
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message", {
+      toast.error(error instanceof EmptyAssistantReplyError ? error.message : "Failed to send message", {
         description: error.message,
       });
       setIsSending(false);
@@ -189,7 +190,7 @@ export function useChatMessages(
             throw new Error("Failed to get AI response");
           }
 
-          const { response } = await aiResponse.json();
+          const response = assistantResponse(await aiResponse.json());
 
           const aiMsg = createMessage("assistant", response, {
             model: "gpt-4o",
@@ -200,7 +201,7 @@ export function useChatMessages(
           setMessages((prev) => [...prev, aiMsg]);
         } catch (error) {
           console.error("Error getting AI response:", error);
-          toast.error("Failed to get AI response");
+          toast.error(error instanceof EmptyAssistantReplyError ? error.message : "Failed to get AI response");
         } finally {
           setIsSending(false);
         }
@@ -238,7 +239,7 @@ export function useChatMessages(
         throw new Error("Failed to regenerate response");
       }
 
-      const { response } = await aiResponse.json();
+      const response = assistantResponse(await aiResponse.json());
 
       await updateMessage(currentConversation.id, user.id, messageId, response);
       setMessages((prev) =>
@@ -250,7 +251,7 @@ export function useChatMessages(
       toast.success("Response regenerated!");
     } catch (error) {
       console.error("Error regenerating:", error);
-      toast.error("Failed to regenerate", { description: error.message });
+      toast.error(error instanceof EmptyAssistantReplyError ? error.message : "Failed to regenerate", { description: error.message });
     } finally {
       setRegeneratingMessageId(null);
     }

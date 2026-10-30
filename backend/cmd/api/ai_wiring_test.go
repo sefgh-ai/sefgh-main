@@ -136,7 +136,7 @@ func TestEnhanceUsesAnthropicWithoutAnOpenAIKeyAndNobodyWithoutEither(t *testing
 	handler, upstream = aiServer(t, nil)
 	rec = postJSON(handler, "/api/ai/enhance-query", `{"query":"web charts"}`, nil)
 	var reply map[string]string
-	if err := json.Unmarshal(rec.Body.Bytes(), &reply); err != nil || rec.Code != 200 || reply["source"] != "basic-enhancement" || reply["enhancedQuery"] != "web charts web application" {
+	if err := json.Unmarshal(rec.Body.Bytes(), &reply); err != nil || rec.Code != 200 || reply["source"] != "basic-enhancement" || reply["enhancedQuery"] != "web charts application" {
 		t.Errorf("with no key: %d %s", rec.Code, rec.Body)
 	}
 	if got := upstream.take(); len(got) != 0 {

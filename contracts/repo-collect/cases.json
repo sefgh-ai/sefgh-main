@@ -1,5 +1,5 @@
 {
-  "contract_version": 2,
+  "contract_version": 3,
   "route": "GET, POST and DELETE /api/repo/collect",
   "recorded_from": "the Next.js handlers at 7625677, by scripts/contracts/record-repo-collect.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API; only auth.getUser() is replaced. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
@@ -2718,6 +2718,149 @@
         "status": 500,
         "body": {
           "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"collectionName\":\"default\"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 1
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to save repositories."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "user_id": "user-a"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "total_saves": 42
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "saved": false,
+          "totalSaves": 1
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "DELETE",
+      "query": "repo=octo%2Fdemo",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": []
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,

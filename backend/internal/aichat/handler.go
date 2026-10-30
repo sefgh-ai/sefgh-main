@@ -129,7 +129,11 @@ func (h *Handler) title(w http.ResponseWriter, r *http.Request, messages []aipro
 		write(w, 200, map[string]any{"title": fallbackTitle(first.Content)})
 		return
 	}
-	write(w, 200, map[string]any{"title": cleanTitle(title)})
+	cleaned := cleanTitle(title)
+	if cleaned == "" {
+		cleaned = fallbackTitle(first.Content)
+	}
+	write(w, 200, map[string]any{"title": cleaned})
 }
 
 func (h *Handler) log(stage string, err error) {

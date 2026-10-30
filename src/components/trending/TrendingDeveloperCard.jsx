@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { popularRepositoryPath } from "@/lib/utils/trending/feedback";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,6 +11,7 @@ import { Flame, Code } from "lucide-react";
  * Developer card component (memoized for performance)
  */
 export const TrendingDeveloperCard = React.memo(function TrendingDeveloperCard({ dev, onNavigate }) {
+  const repositoryPath = popularRepositoryPath(dev);
   return (
     <Card className="glass-premium border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl backdrop-blur-sm">
       <CardContent className="p-6">
@@ -46,14 +48,13 @@ export const TrendingDeveloperCard = React.memo(function TrendingDeveloperCard({
               </div>
               <div className="flex items-center gap-2">
                 <Code className="w-4 h-4 text-muted-foreground" />
-                <span
-                  className="text-sm text-primary hover:text-primary/80 cursor-pointer font-medium"
-                  onClick={() =>
-                    onNavigate(`/repo/${dev.username}/${dev.popularRepo.name}`)
-                  }
-                >
-                  {dev.popularRepo.name}
-                </span>
+                  {repositoryPath ? (
+                    <button type="button" className="text-sm text-primary hover:text-primary/80 cursor-pointer font-medium" onClick={() => onNavigate(repositoryPath)}>
+                      {dev.popularRepo.name}
+                    </button>
+                  ) : (
+                    <span className="text-sm text-muted-foreground font-medium">{dev.popularRepo.name}</span>
+                  )}
               </div>
               <p className="text-sm text-muted-foreground pl-6">
                 {dev.popularRepo.description}

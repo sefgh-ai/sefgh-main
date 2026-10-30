@@ -46,3 +46,6 @@ var (
 	dottedCapitalI = string(rune(0x0130))
 	smallIWithDot  = "i" + string(rune(0x0307))
 )
+
+// Words splits on ECMAScript whitespace, omitting empty words.
+func Words(s string) []string { return strings.FieldsFunc(s, isJSSpace) }

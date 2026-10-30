@@ -28,7 +28,7 @@ const asSentByNext = (c) => {
 };
 
 test('comments fixture integrity', () => {
-  assert.equal(contract.contract_version, 3);
+  assert.equal(contract.contract_version, 5);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);

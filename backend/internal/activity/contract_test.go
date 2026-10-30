@@ -60,7 +60,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 3 || len(contract.Cases) == 0 {
+	if contract.Version != 4 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases

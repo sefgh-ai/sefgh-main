@@ -1,6 +1,5 @@
-// Package aienhance ports POST /api/ai/enhance-query at contract version 2.
-// Every case in contracts/ai-enhance-query is answered as the Next.js handler
-// answers it, including the cases still marked defect.
+// Package aienhance answers enhance-query under contract v4.
+// Approved Go fixes are pinned separately from unchanged Next rollback replies.
 package aienhance
 
 import (
@@ -14,6 +13,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/ailimit"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/aiprovider"
@@ -58,9 +58,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if decoded == nil {
-		// A body of JSON null: the Next.js handler fails reading a field of
-		// null and answers the same 500.
-		h.fail(w, "decode_body", errors.New("body is null"))
+		write(w, 400, map[string]any{"error": "Query is required"})
 		return
 	}
 	// A body that is not an object has no query. A query that is not text
@@ -97,18 +95,18 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else {
 		enhanced, err = h.withAnthropic(ctx, query)
 	}
-	if err != nil {
-		// Recorded defect: a provider failure is a 500. The basic
-		// enhancement, which needs no provider, is not used here.
-		h.fail(w, "provider", err)
+	if err != nil || jscompat.Trim(enhanced) == "" {
+		if err != nil {
+			h.log("provider", err)
+		}
+		write(w, 200, map[string]any{"enhancedQuery": enhanceBasic(query), "source": "basic-enhancement"})
 		return
 	}
 	write(w, 200, map[string]any{"enhancedQuery": enhanced, "source": "ai-powered"})
 }
 
 // The five word lists, in the order their additions appear in the reply.
-// Matching is on the trimmed, lower-cased query; the lists are lower-case
-// too, so a plain substring test gives what the JavaScript patterns give.
+// Matching uses whole Unicode words in the trimmed, lower-cased query.
 var wordLists = []struct {
 	words    []string
 	addition string
@@ -121,27 +119,44 @@ var wordLists = []struct {
 }
 
 // enhanceBasic adds fixed words to a query without asking anyone. A query
-// that already uses a search operator or a quotation mark is left alone.
+// that uses operators or quotation marks is only trimmed.
 func enhanceBasic(query string) string {
-	trimmed := jscompat.ToLowerCase(jscompat.Trim(query))
+	trimmed := jscompat.Trim(query)
 	if strings.Contains(trimmed, ":") || strings.Contains(trimmed, `"`) {
-		return query
+		return trimmed
 	}
-	var additions []string
+	words := strings.FieldsFunc(jscompat.ToLowerCase(trimmed), func(r rune) bool {
+		return !(unicode.IsLetter(r) || unicode.IsNumber(r) || unicode.IsMark(r) || r == '_')
+	})
+	original, seen := map[string]bool{}, map[string]bool{}
+	for _, word := range words {
+		original[word] = true
+		seen[word] = true
+	}
+	additions := []string{}
 	for _, list := range wordLists {
+		matches := false
 		for _, word := range list.words {
-			// Recorded defect: a word matches inside an unrelated one.
-			if strings.Contains(trimmed, word) {
-				additions = append(additions, list.addition)
+			if original[word] {
+				matches = true
 				break
+			}
+		}
+		if !matches {
+			continue
+		}
+		for _, word := range strings.Fields(list.addition) {
+			key := jscompat.ToLowerCase(word)
+			if !seen[key] {
+				additions = append(additions, word)
+				seen[key] = true
 			}
 		}
 	}
 	if len(additions) == 0 {
-		return query
+		return trimmed
 	}
-	// Recorded defect: the reply keeps the spaces around the query.
-	return query + " " + strings.Join(additions, " ")
+	return trimmed + " " + strings.Join(additions, " ")
 }
 
 func (h *Handler) withOpenAI(ctx context.Context, query string) (string, error) {
@@ -175,12 +190,14 @@ func (h *Handler) withAnthropic(ctx context.Context, query string) (string, erro
 	if url == "" {
 		url = DefaultAnthropicURL
 	}
+	quoted, _ := jscompat.ToUTF16(query).MarshalJSON()
+	escaped := string(quoted[1 : len(quoted)-1])
 	data, err := h.post(ctx, url, map[string]string{"x-api-key": h.AnthropicKey, "anthropic-version": "2023-06-01"}, map[string]any{
 		"model":      anthropicModel,
 		"max_tokens": 100,
 		"messages": []map[string]string{
-			// Recorded defect: the query goes between quotation marks unescaped.
-			{"role": "user", "content": anthropicPromptBefore + query + anthropicPromptAfter},
+			// Keep user text JSON-escaped inside the quoted prompt boundary.
+			{"role": "user", "content": anthropicPromptBefore + escaped + anthropicPromptAfter},
 		},
 	})
 	if err != nil {
@@ -243,12 +260,16 @@ func (h *Handler) post(ctx context.Context, url string, headers map[string]strin
 // fail answers the one fixed sentence the contract allows and tells the
 // operator why. The cause never goes to the caller.
 func (h *Handler) fail(w http.ResponseWriter, stage string, err error) {
+	h.log(stage, err)
+	write(w, 500, map[string]any{"error": "Failed to enhance query"})
+}
+
+func (h *Handler) log(stage string, err error) {
 	logger := h.Logger
 	if logger == nil {
 		logger = slog.Default()
 	}
 	logger.Error("ai enhance-query request failed", "stage", stage, "error", err)
-	write(w, 500, map[string]any{"error": "Failed to enhance query"})
 }
 
 func write(w http.ResponseWriter, status int, body any) {

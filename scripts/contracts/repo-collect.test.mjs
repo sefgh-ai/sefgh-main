@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/repo/collect/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-collect/cases.json', import.meta.url), 'utf8'));
 
 test('collect fixture integrity', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);

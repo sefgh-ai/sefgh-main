@@ -106,3 +106,10 @@ One test calls `allow` from 64 goroutines at once, each with callers of its own.
 - Pass the clock in, and a test can stand anywhere in time.
 - A Go map has no order; keep a list beside it when order matters.
 - Cap a request body with `http.MaxBytesReader` before reading it.
+
+
+## BUG-065: normalize before taking an allowance
+
+Suggestions reject present non-text queries with400, trim before every length check and provider prompt, filter blank/non-text items and deduplicate before taking three AI results. Built-in results are suppressed only by selected AI items; final output remains capped atfive. Missing queries retain the empty-list response.
+
+The comma-ok map lookup distinguishes a missing query from an explicitly provided null, false or zero. A string type assertion validates the value before trimming it. map[string]bool acts like a JavaScript Set for selected suggestions; filtering before the three-item cap lets valid later items survive invalid early items. Padded short queries return before the limiter and provider. Existing exercises are unchanged.

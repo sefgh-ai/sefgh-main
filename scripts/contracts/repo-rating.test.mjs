@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/repo/rating/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-rating/cases.json', import.meta.url), 'utf8'));
 
 test('rating fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -40,6 +40,6 @@ test('rating fixture integrity', () => {
 
 for (const c of contract.cases) {
   test(`rating: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/rating', c), c.expect);
+    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/rating', c), c.next_expect ?? c.expect);
   });
 }

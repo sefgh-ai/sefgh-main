@@ -8,7 +8,7 @@ register('./ai-suggestions-loader.mjs',import.meta.url);
 const {POST}=await import('../../src/app/api/ai/suggestions/route.js');
 const contract=JSON.parse(await readFile(new URL('../../contracts/ai-suggestions/cases.json',import.meta.url)));
 test('AI suggestions fixture integrity',()=>{
-  assert.equal(contract.contract_version,2);
+  assert.equal(contract.contract_version,3);
   assert.equal(new Set(contract.cases.map(c=>c.id)).size,contract.cases.length);
   for(const c of contract.cases){
     assert.ok(c.reason);assert.ok(['preserve','defect'].includes(c.disposition));assert.ok(c.expect.calls.length<=1);
@@ -18,5 +18,5 @@ test('AI suggestions fixture integrity',()=>{
   }
 });
 for(const c of contract.cases)test(`suggestions: ${c.id} [${c.disposition}]`,async()=>{
-  assert.deepEqual(await runSuggestionsFixture(POST,c),expand(c.expect));
+  assert.deepEqual(await runSuggestionsFixture(POST,c),expand(c.next_expect ?? c.expect));
 });

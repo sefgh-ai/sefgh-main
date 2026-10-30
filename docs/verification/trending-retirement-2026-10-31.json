@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-31",
+  "timezone": "Asia/Calcutta",
+  "task": "BUG-069",
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/trending/topics",
+      "status": 200,
+      "backend": "go",
+      "topicsArray": true,
+      "topicCount": 6,
+      "repositoryArraysValid": true,
+      "repositoryEntries": 30,
+      "nonemptyTopics": 6,
+      "generatedAtPresent": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/trending/refresh",
+      "status": 404,
+      "matchedPath": "/404"
+    },
+    {
+      "method": "OPTIONS",
+      "url": "https://sefgh-main.vercel.app/api/trending/refresh",
+      "status": 204,
+      "matchedPath": "/404",
+      "meaning": "global preflight; not independent evidence of a route"
+    }
+  ],
+  "authorization": "none",
+  "effect": "public read-only observations; no refresh, SQL, scheduling or deployment mutation",
+  "limits": [
+    "does not identify deployed commit or verify new local fixes",
+    "does not verify external scheduler inventory",
+    "does not close the broader Phase6/7 gate",
+    "does not prove data freshness or performance"
+  ]
+}

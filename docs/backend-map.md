@@ -1,5 +1,12 @@
 # SEFGH backend map
 
+Update 2026-10-30 (BUG-048, R-033): Go contributions derives query dates and
+streak from one UTC clock reading. Yesterday can carry an unfinished today's
+streak; gaps/stale/future dates cannot extend it. Structured user-only GraphQL
+NOT_FOUND errors map404; mixed/nested/other errors retain existing behavior.
+Contract v3 keeps rollback Next.js responses and local-calendar variables.
+No UI, token, R-207 length-check or retirement/deployment change.
+
 Update 2026-10-30 (BUG-047, R-030): repository summary/detail/contents validate
 minimum decoded success shapes in githubrepos/shapes.go. Unusable roots/core
 identities give fixed502; malformed known fields and list/map entries are
@@ -681,3 +688,45 @@ no Go switch: `playground/keys` (KEYS-001, gated) and `trending/refresh`
 dialog's GitHub read (`src/lib/github-api.js`) is made by the visitor's
 browser against the visitor's own GitHub allowance; it is not server logic and
 stays in the browser.
+
+BUG-049 (R-059,2026-10-30): Sunday-to-Saturday weeks, averages/totalDays count only dated squares, yesterday carries an empty today’s streak. Go loops over UTC days; padding is display-only. Independent JavaScript reference covers400generated inputs, including leap years and numeric edge cases. Source behavior only, no live change.
+
+BUG-050 (R-084,2026-10-30): Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Source behavior only, no live change.
+
+BUG-051 (R-085,2026-10-30): Rating writes accept only JSON numbers that are whole values 1 through 5. Text, booleans, lists, objects and fractions return 400 before any database write. Existing stored-rating summaries remain characterized. Source behavior only, no live change.
+
+BUG-052 (R-087,2026-10-30): Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses. Source behavior only, no live change.
+
+BUG-053 (R-081,2026-10-30): Public share settings failures return fixed Internal server error text with500. Library configuration messages no longer reach visitors; sanitized stage logging remains. Source behavior only, no live change.
+
+BUG-054 (R-082,2026-10-30): Public share reads return404 only for a zero-row result or empty/null success. Network, HTTP, parse and invalid non-object results return503 with fixed Share could not be loaded text. Explicit private links retain403, public replies and caller credentials remain unchanged. Source behavior only, no live change.
+
+BUG-055 (R-089,2026-10-30): Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors. Source behavior only, no live change.
+
+BUG-056 (R-094,2026-10-30): Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check. Source behavior only, no live change.
+
+BUG-057/R-096: A failed Auth metadata or profile write returns500 and attempts to delete exactly the newly uploaded object with the caller token. Compensation has a separate three-second bound and still runs after request cancellation. Rollback refusal stays a failure and is logged without details. These separate services are not made atomic; cleanup success is not promised when Storage refuses it. Locally verified source; no live state inferred.
+
+BUG-058/R-097: Avatar500 responses carry only their fixed public error field; Storage/Auth/database/library and runtime diagnostic details are omitted. Sanitized stage logging and status codes stay unchanged. Next rollback replies retain their original details. Locally verified source; no live state inferred.
+
+BUG-059/R-095: Avatar replacement uses an exclusive own-folder Storage insert across participating Go instances, unique random filenames and non-overwriting uploads. Cleanup snapshots all pages before deleting in batches, traverses explicit legacy folders, and preserves the current file, lock and newer timestamps. A failed page causes no partial-snapshot deletion. Lock release is bounded. Crash/uncertain-acquisition recovery is intentionally manual (R-209); hosted acceptance and all-writers protocol are rollout gates. Locally verified source; no live state inferred.
+
+BUG-060/R-010: The React chat hook guards assistant replies for send, edit and regeneration. Non-text or blank responses show The assistant sent an empty answer and are never stored as assistant text; the conversation/user message stays, and regeneration preserves the prior answer. API non-text replies remain characterized unchanged. Locally verified source; no live state inferred.
+
+BUG-061/R-012: Fallback chat titles cap the first four words at30 Unicode code points and append dots only when longer. Emoji scalar values remain intact; existing UTF-16 helper behavior elsewhere and rollback Next titles remain pinned. Locally verified source; no live state inferred.
+
+BUG-062/R-013: Fallback titles collapse ECMAScript whitespace before selecting four words. A title emptied by quote stripping uses that fallback. The first message is JSON-escaped inside the title prompt, including quotes, backslashes and controls. The30-code-point cap remains. Locally verified source; no live state inferred.
+
+BUG-063/R-035: Enhance-query falls back to its built-in enhancement after provider errors or blank replies, including refused redirects and bounded oversized replies. JSON null is400 Query is required, with no provider call. Query/key isolation, provider read bounds and allowance behavior remain. Locally verified source; no live state inferred.
+
+BUG-064/R-036: Built-in enhancement matches whole Unicode words, adds only words not already present, and trims surrounding whitespace. Operator/quoted queries retain their contents after trimming. Anthropic query text is JSON-escaped inside the prompt. Repeated basic enhancement is idempotent. Locally verified source; no live state inferred.
+
+BUG-065/R-037: Suggestions reject present non-text queries with400, trim before every length check and provider prompt, filter blank/non-text items and deduplicate before taking three AI results. Built-in results are suppressed only by selected AI items; final output remains capped atfive. Missing queries retain the empty-list response. Contract v3; rollout not inferred.
+
+BUG-066 closes R-205/R-206 in React: trending errors show available wait seconds from Retry-After or reset metadata, and placeholder popular-repository labels have no navigation handler. Real repository names use keyboard-accessible buttons with validated paths. API contracts stay unchanged.
+
+BUG-067/R-207 enforces the existing39-character contributions login limit with an explicit length guard before the handler token check or GraphQL request. Interleaved hyphens cannot admit40/77-character names; valid39-character names still pass. Invalid400 text is unchanged, and Next rollback replies/calls are preserved.
+
+Update2026-10-31 BUG-068/R-090: non-mutating website OPTIONS returned405/Allow DELETE, POST/X-Sefgh-Backend go for the conversation share path; receipt docs/verification/share-go-cutover-2026-10-31.json. This proves route forwarding, not fresh authenticated/RLS deletion or deployment of the local fix. R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound.
+
+BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at the website. GET /api/trending/topics returns200 from Go with6 populated topics/30 repository entries; GET /api/trending/refresh returns404. No deployment was performed by this task. Helpers/table/data retained; external scheduler inventory and general Phase7 cleanup remain separate gates. Receipt: docs/verification/trending-retirement-2026-10-31.json.

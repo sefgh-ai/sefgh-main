@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 3,
   "route": "GET /api/share/[token]",
   "recorded_from": "the Next.js handler at 64c9bc0, by scripts/contracts/record-share-token.mjs",
   "boundary": "The real handler runs with a client built by the real supabase-js 2.78 around a stand-in Data API, so the query and the reading of each reply are supabase-js's own. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead.",
@@ -178,7 +178,7 @@
     {
       "id": "refused-session",
       "disposition": "preserve",
-      "reason": "The Data API refuses the visitor's token (here an expired one): an error, so 404. Neither backend asks Supabase Auth first.",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": "session-expired",
       "database": {
@@ -191,6 +191,22 @@
         }
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer session-expired",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 404,
         "body": {
           "error": "Not found"
@@ -210,7 +226,7 @@
     {
       "id": "database-error",
       "disposition": "defect",
-      "reason": "A database failure reads as a missing link: 404 \"Not found\" (bug register R-082). Recorded so the Go port can be compared; the fix lands in Go after cutover.",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "database": {
@@ -223,6 +239,22 @@
         }
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 404,
         "body": {
           "error": "Not found"
@@ -242,13 +274,29 @@
     {
       "id": "database-unreachable",
       "disposition": "defect",
-      "reason": "The Data API cannot be reached: supabase-js reports an error, and the handler answers 404 as for a missing link (R-082).",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "database": {
         "network_error": true
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 404,
         "body": {
           "error": "Not found"
@@ -268,7 +316,7 @@
     {
       "id": "gateway-text",
       "disposition": "defect",
-      "reason": "An error reply that is not JSON (a gateway's page): supabase-js keeps the text as the error, and the handler answers 404 (R-082).",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "database": {
@@ -276,6 +324,22 @@
         "raw": "Bad Gateway"
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 404,
         "body": {
           "error": "Not found"
@@ -295,7 +359,7 @@
     {
       "id": "unreadable-success",
       "disposition": "defect",
-      "reason": "A success reply whose body is not JSON: supabase-js fails to read it and reports an error, so 404 (R-082).",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "database": {
@@ -303,6 +367,22 @@
         "raw": "<html>maintenance</html>"
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 404,
         "body": {
           "error": "Not found"
@@ -376,7 +456,7 @@
     {
       "id": "list-on-404",
       "disposition": "preserve",
-      "reason": "supabase-js reads a 404 whose body is a list as no rows and no error, with data []. An empty list is truthy and has no is_public, so the handler answers 403 \"Private link\". PostgREST does not send this for a table, but supabase-js's rule is shared with the other database routes.",
+      "reason": "R-082: an unavailable or invalid database answer is503, not a missing share.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "database": {
@@ -384,6 +464,22 @@
         "body": []
       },
       "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
         "status": 403,
         "body": {
           "error": "Private link"
@@ -553,11 +649,20 @@
     {
       "id": "settings-missing",
       "disposition": "defect",
-      "reason": "Without the project's address and key, createServerClient throws, and the handler sends the error's own text to the browser: 500 (R-081). The database is not asked.",
+      "reason": "R-081: fixed public error, no configuration or library text.",
       "token": "9c1e5d2a7b3f4e6d8a0b1c2d",
       "session": null,
       "client_throws": true,
       "expect": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Your project's URL and Key are required to create a Supabase client!\n\nCheck your Supabase project's API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api"
@@ -565,6 +670,183 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
+      }
+    },
+    {
+      "id": "multiple-rows-is-not-absence",
+      "disposition": "preserve",
+      "reason": "R-082: only zero rows is absence; multiple rows is an invalid database result.",
+      "token": "0000000000000000deadbeef",
+      "session": null,
+      "database": {
+        "status": 406,
+        "body": {
+          "code": "PGRST116",
+          "details": "The result contains 2 rows",
+          "hint": null,
+          "message": "Cannot coerce the result to a single JSON object"
+        }
+      },
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "malformed-result-false",
+      "disposition": "preserve",
+      "reason": "R-082: a non-object result is invalid, not proof that a share is absent.",
+      "token": "0000000000000000deadbeef",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": false
+      },
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "malformed-result-zero",
+      "disposition": "preserve",
+      "reason": "R-082: a non-object result is invalid, not proof that a share is absent.",
+      "token": "0000000000000000deadbeef",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": 0
+      },
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 404,
+        "body": {
+          "error": "Not found"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      }
+    },
+    {
+      "id": "malformed-result-list",
+      "disposition": "preserve",
+      "reason": "R-082: a non-object result is invalid, not proof that a share is absent.",
+      "token": "0000000000000000deadbeef",
+      "session": null,
+      "database": {
+        "status": 200,
+        "body": []
+      },
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Share could not be loaded"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 403,
+        "body": {
+          "error": "Private link"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
+            "accept": "application/vnd.pgrst.object+json",
+            "authorization": "Bearer public-fixture-key",
+            "apikey": "public-fixture-key"
+          }
+        ]
       }
     }
   ]

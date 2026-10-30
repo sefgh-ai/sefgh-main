@@ -13,9 +13,845 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released BUG-047 / R-030 (2026-10-30). Next pack fix BUG-048 / R-033; hosted key acceptance remains under its separate checkpoint. No live actions.
+- **Active writer:** none. Codex released CLOSEOUT-001 owner-decision documentation; overall migration remains gated.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
-- **Stage:** Of the original 25 API route entries, 23 are ported and one is retired locally (TREND-001c); playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); deployment is unverified. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. One is switched on in production: trending, on `sefgh-main` since 2026-10-15 (SEC-001b); the rest are off by default. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 207 entries (R-001 through R-207; R-207 records contributions login-length guard, open; R-206 records clickable placeholder repository labels, open; R-205 records browser rate-limit metadata discarded, open; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** Of the original 25 API route entries, 23 are ported and one is retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069); playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: CLOSEOUT-001 recovery decision and current pickup (Codex, 2026-10-31)
+
+Status: **bounded documentation complete**. Owner Codex; reviewer unassigned. Main base/current f5c5640, explicitly uncommitted. Prior 131-file tree c1ab4576a0d3 passed full handoff; no lease or writer at claim. Prior dirty work preserved. Overall migration gates are recorded separately below.
+
+Owner decision 2026-10-31 (CLOSEOUT-001): accept manual crash-lock recovery and defer R-209 automatic recovery until after Phase 7. An operator must verify the owning request/process stopped and remove only the exact user lock after inspecting the current profile. Never remove by age or steal a potentially active lock. Hosted lock permissions, insert atomicity, signed-in replacement and participation by all active upload writers remain rollout gates. This decision authorizes no activation or deployment.
+
+Owner cannot reconnect Browser. Explained its use for authenticated Supabase dashboard signing and private-form checks; no browser is required for local checks. Exact existing development approval remains valid and unexecuted; no repeated reconnection request is pending. No key, user, token, SQL, production setting or deployment was created/changed.
+
+Changed files: docs/coordination.md, docs/bug-register.md, docs/adr/0002-go-backend.md, docs/plans/avatar-cleanup-r095.md, docs/plans/migration-closeout-2026-10-30.md, docs/next-agent-briefing.md. Corrected the briefing current pickup, next IDs and unsupported blanket production claim. Register census: 209 entries, 160 fixed-prefixed, 12 deferred-prefixed, 37 other/open/partial/gated; labels are not live verification.
+
+Checks: documentation references, census and git diff --check passed. First handoff passed contracts and Go test/vet/gofmt, then refused its completion signal because the status line included the overall migration's incomplete state. The completed documentation status is now separate from the overall gates; normal handoff follows for final fingerprint, lessons skipped by policy. No application changes or new browser build required. BUG-069 full handoff passed c1ab4576a0d3 (contracts, Go test/vet/gofmt). No new independent review, commit/push or deployment claimed. Writer released; no owned application processes. Overall migration remains incomplete at keys hosted acceptance/production approval, avatar hosted/all-writers checks, worker/schema gates, independent review and signed-in desktop/375px walk-through. Next: inspect final matching verification status; Git Agent synchronization and independent review of accumulated uncommitted source; resume exact hosted acceptance only when required browser capability returns. Do not broaden the narrow retirement exception or auto-expire locks.
+
+## Handoff: BUG-069/R-077 public replacement/retirement verification (Codex, 2026-10-31)
+
+Status: **bounded verification complete; no code change**. Owner Codex, reviewer unassigned; main base/current f5c5640, resulting documentation explicitly uncommitted. Previous BUG-068 full handoff8a5ba4c1500a passed; prior work preserved.
+
+BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at the website. GET /api/trending/topics returns200 from Go with6 populated topics/30 repository entries; GET /api/trending/refresh returns404. No deployment was performed by this task. Helpers/table/data retained; external scheduler inventory and general Phase7 cleanup remain separate gates.
+
+Changed files: docs/verification/trending-retirement-2026-10-31.json, docs/bug-register.md, docs/backend-map.md, backend/README.md, docs/plans/route-completion-review.md, docs/plans/migration-closeout-2026-10-30.md, docs/next-agent-briefing.md and docs/coordination.md. Checks: public curl GET topics and refresh with20s bounds succeeded; parsed only schema/counts, no private data/auth or writes. OPTIONS preflight ambiguity was resolved with the read-only GET supported by the old route. JSON parse, retained path/reference and git diff --check follow. Existing implementation/retirement regression guards remain; no API/Go/lesson/exercise changes. Full normal handoff follows for the documentation fingerprint; lesson checks skipped by policy. No new review, commit/push, deployment, SQL, signing, keys or scheduling operation.
+
+Overall migration remains blocked/incomplete: required browser host unavailable; existing exact dev acceptance approval/hash persists and no resources consumed. Reconnection and R-209 manual-recovery/deferral question are pending; no answer is assumed. Independent review/hosted acceptance, other owner/schema/worker and walk-through gates remain. Writer released, no owned servers/processes; verifier owns its lease while running. Next: inspect final status/Git, obtain the pending connection/owner inputs, resume exact approved preflight and prepare remaining rollout work without starting broad Phase7 cleanup.
+
+## Historical checkpoint: BUG-069/R-077 (2026-10-31)
+
+Status: **in progress / incomplete**. Codex owner, reviewer unassigned; main base/current f5c5640. BUG-068 full handoff8a5ba4c1500a passed and no lease/writer at claim. Scope: record actual non-mutating public observations for existing owner-approved TREND-001 replacement/retirement, update gate state and closeout. No code, SQL, scheduler configuration or deployment change. GET topics200/Go/six populated topics30 entries; GET refresh404. OPTIONS refresh204 is global preflight, not route-presence proof; GET is the retirement proof. Next: receipt/docs/reference checks and normal handoff.
+
+## Handoff: BUG-068/R-090 share-removal privacy fix (Codex, 2026-10-31)
+
+Status: **implementation complete for this bounded fix; unreviewed; not deployed**. Owner Codex, reviewer unassigned; main base/current f5c5640, explicitly uncommitted. Prior127-file verified treeadb80bb12895 preserved; no other writer or verification lease at claim.
+
+Recorded owner2026-10-18 decision authorized fixing R-090 in Go after cutover. The website OPTIONS request returned405, Allow DELETE/POST, X-Sefgh-Backend go; public non-mutating receipt docs/verification/share-go-cutover-2026-10-31.json records limits. No live shares were read or modified. Required browser host remains unavailable on fresh check; existing exact dev signing approval persists, no material/users/passwords/tokens/run created.
+
+R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound.
+
+Changed files: backend/internal/shares/handler.go, contract_test.go, unshare_test.go; contracts/conversation-share/cases.json and README.md; scripts/contracts/conversation-share.test.mjs; lesson30/index; backend README; docs/backend-map.md, bug-register.md, coordination.md, next-agent-briefing.md, plans/migration-closeout-2026-10-30.md and verification/share-go-cutover-2026-10-31.json. Next handlers untouched. No schema/privilege changes; new predicates reuse the existing lookup columns. Snapshot RLS documentation is not fresh hosted proof.
+
+Checks: initial contract regression failed; go test -count=1 ./internal/shares, go vet ./internal/shares and focused API share/conversation/fork wiring tests passed; Node73/73 passed. Stateful test verifies both active own rows are removed, other user/conversation/deleted rows preserved, silent no-update and failed/malformed verification cannot succeed. Separate deliberate breaks detected incorrect caller predicate and skipped nonempty verification; exact source restored f53cf3cb866b73bf16882d6f623b2c1ba0b570668319afcd9587a55fd8be8033. Full npm run handoff follows; consult matching signal/status. Final browser lint/build passed in BUG-066, unchanged since. Lessons skipped by policy; existing exercise.go untouched. No new peer review or deployment claimed.
+
+Writer released: yes. No owned servers/processes at release; verifier tracks its own lease. Overall migration remains blocked/incomplete at the closeout report's browser/owner/schema/worker/walk-through/retirement gates. Next: inspect final handoff/status/Git; independent review and hosted acceptance before deploying R-090; restore required browser connection for existing approved development acceptance. Do not auto-expire avatar locks or generalize the narrow retirement exception.
+
+## Historical checkpoint: BUG-068/R-090 (2026-10-31)
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned; main base/current f5c5640. Previous writer released; READY_VERIFIED treeadb80bb12895 and clear lease confirmed, prior127-file work preserved. Owner decision2026-10-18 explicitly fixes R-090 in Go after cutover. Non-mutating OPTIONS on the website share route now returned405, Allow DELETE/POST and X-Sefgh-Backend go, satisfying that prerequisite. No shares, SQL or settings were changed. Scope: owner-scoped bulk unshare and post-write empty verification; fixture/rollback regression, deliberate break, lesson/docs, handoff. Browser host still unavailable; no signing actions. Next: contract v3 and initial regression.
+
+## Handoff: BUG-067/R-207 and local migration wrap-up (Codex, 2026-10-30)
+
+Status: **implementation complete for the bounded local work; unreviewed; not deployed**. Codex owner, reviewer unassigned; main base/current f5c5640, explicitly uncommitted. Prior BUG-065 full handoff e6fe2d411b44 and BUG-066 full handoff0a85bf3acd6f passed; all prior work preserved.
+
+BUG-067/R-207 enforces the existing39-character contributions login limit with an explicit length guard before the handler token check or GraphQL request. Interleaved hyphens cannot admit40/77-character names; valid39-character names still pass. Invalid400 text is unchanged, and Next rollback replies/calls are preserved.
+
+Checks: initial compiled contract regression failed40/77/pre-token cases in memory/socket suites. go test -count=1 ./internal/githubcontributions and go vet ./internal/githubcontributions passed; Node112/112 passed. Deliberately removing the guard failed the same cases; exact source restored 3a768c67718440def8912e2eb82186bddc3b188375b03ca95eee7ee5ec5aedbb. Contract v4/lesson13/index/readmes updated; existing exercises unchanged and lesson checks skipped by policy. Final browser production source passed lint/build in BUG-066 with existing stale browser-data advisories; no later browser production edits. Full npm run handoff follows.
+
+Overall migration: **blocked / incomplete**. All27 approved pack fixes and React follow-ups R-205/R-206 plus documented guard R-207 are implemented locally. The closeout report records209 register rows: 158 fixed-prefixed statuses, 11 deferred-prefixed, 40 other/open/partial/gated. These are literal labels, not production receipts. Phase6/7 gates remain; no broad retirement exception, production/key activation, SQL, deployment, commit/push or peer review is claimed. Required browser host is still unavailable; reconnection request pending, exact development-plan hash/approval preserved. No private material/users/passwords/tokens/run created. Avatar R-209 and all-writers/hosted acceptance remain rollout gates; never auto-steal a lock.
+
+Actual checkout file list, including preserved earlier tasks:
+
+- `backend/README.md`
+- `backend/cmd/api/ai_safety_test.go`
+- `backend/cmd/api/ai_wiring_test.go`
+- `backend/cmd/api/avatar_wiring_test.go`
+- `backend/cmd/api/videos_wiring_test.go`
+- `backend/internal/activity/contract_test.go`
+- `backend/internal/activity/grid.go`
+- `backend/internal/activity/node_test.go`
+- `backend/internal/aichat/contract_test.go`
+- `backend/internal/aichat/handler.go`
+- `backend/internal/aichat/title.go`
+- `backend/internal/aichat/title_test.go`
+- `backend/internal/aienhance/contract_test.go`
+- `backend/internal/aienhance/handler.go`
+- `backend/internal/aiprovider/title.go`
+- `backend/internal/aisuggestions/contract_test.go`
+- `backend/internal/aisuggestions/handler.go`
+- `backend/internal/avatar/contract_test.go`
+- `backend/internal/avatar/handler.go`
+- `backend/internal/avatar/handler_test.go`
+- `backend/internal/collect/contract_test.go`
+- `backend/internal/collect/handler.go`
+- `backend/internal/comments/contract_test.go`
+- `backend/internal/comments/handler.go`
+- `backend/internal/commentvote/contract_test.go`
+- `backend/internal/commentvote/handler.go`
+- `backend/internal/githubcontributions/contract_test.go`
+- `backend/internal/githubcontributions/dates.go`
+- `backend/internal/githubcontributions/dates_test.go`
+- `backend/internal/githubcontributions/handler.go`
+- `backend/internal/jscompat/text.go`
+- `backend/internal/rating/contract_test.go`
+- `backend/internal/rating/handler.go`
+- `backend/internal/shares/contract_test.go`
+- `backend/internal/shares/handler.go`
+- `backend/internal/shares/handler_test.go`
+- `backend/internal/sharetoken/contract_test.go`
+- `backend/internal/sharetoken/handler.go`
+- `backend/internal/sharetoken/handler_test.go`
+- `backend/internal/supabaserest/supabaserest.go`
+- `backend/internal/videos/contract_test.go`
+- `backend/internal/videos/handler.go`
+- `backend/internal/vote/contract_test.go`
+- `backend/internal/vote/handler.go`
+- `contracts/activity/README.md`
+- `contracts/activity/cases.json`
+- `contracts/ai-chat/README.md`
+- `contracts/ai-chat/cases.json`
+- `contracts/ai-enhance-query/README.md`
+- `contracts/ai-enhance-query/cases.json`
+- `contracts/ai-suggestions/README.md`
+- `contracts/ai-suggestions/cases.json`
+- `contracts/comment-vote/README.md`
+- `contracts/comment-vote/cases.json`
+- `contracts/conversation-share/README.md`
+- `contracts/conversation-share/cases.json`
+- `contracts/github-contributions/README.md`
+- `contracts/github-contributions/cases.json`
+- `contracts/repo-collect/README.md`
+- `contracts/repo-collect/cases.json`
+- `contracts/repo-comments/README.md`
+- `contracts/repo-comments/cases.json`
+- `contracts/repo-rating/README.md`
+- `contracts/repo-rating/cases.json`
+- `contracts/repo-videos/README.md`
+- `contracts/repo-videos/cases.json`
+- `contracts/repo-vote/README.md`
+- `contracts/repo-vote/cases.json`
+- `contracts/share-fork/README.md`
+- `contracts/share-fork/cases.json`
+- `contracts/share-token/README.md`
+- `contracts/share-token/cases.json`
+- `contracts/upload-avatar/README.md`
+- `contracts/upload-avatar/cases.json`
+- `docs/backend-map.md`
+- `docs/bug-register.md`
+- `docs/coordination.md`
+- `docs/next-agent-briefing.md`
+- `docs/plans/phase6-decision-pack-2.md`
+- `learn-go/13-time-and-clocks/README.md`
+- `learn-go/19-counting-requests/README.md`
+- `learn-go/20-text-as-javascript-counts-it/README.md`
+- `learn-go/22-reading-rows-as-the-user/README.md`
+- `learn-go/24-optional-sign-in/README.md`
+- `learn-go/25-writing-as-the-user/README.md`
+- `learn-go/27-when-text-meets-numbers/README.md`
+- `learn-go/28-many-at-once-one-failure-for-all/README.md`
+- `learn-go/29-a-javascript-pattern-in-go/README.md`
+- `learn-go/30-defaults-and-missing-values/README.md`
+- `learn-go/31-bounded-file-streams/README.md`
+- `learn-go/32-request-budgets-and-redirects/README.md`
+- `learn-go/45-copying-javascript-string-rules/README.md`
+- `learn-go/README.md`
+- `scripts/contracts/activity-run.mjs`
+- `scripts/contracts/activity.test.mjs`
+- `scripts/contracts/ai-chat.test.mjs`
+- `scripts/contracts/ai-enhance-query.test.mjs`
+- `scripts/contracts/ai-suggestions.test.mjs`
+- `scripts/contracts/avatar-fixture.mjs`
+- `scripts/contracts/comment-vote.test.mjs`
+- `scripts/contracts/conversation-share.test.mjs`
+- `scripts/contracts/github-contributions.test.mjs`
+- `scripts/contracts/handoff-state.test.mjs`
+- `scripts/contracts/repo-collect.test.mjs`
+- `scripts/contracts/repo-comments.test.mjs`
+- `scripts/contracts/repo-rating.test.mjs`
+- `scripts/contracts/repo-videos.test.mjs`
+- `scripts/contracts/repo-vote.test.mjs`
+- `scripts/contracts/share-fork.test.mjs`
+- `scripts/contracts/share-token.test.mjs`
+- `scripts/contracts/trending-hook.test.mjs`
+- `scripts/contracts/upload-avatar.test.mjs`
+- `scripts/handoff-state.mjs`
+- `src/components/trending/TrendingDeveloperCard.jsx`
+- `src/hooks/chat/useChatMessages.js`
+- `src/hooks/trending/useTrendingData.js`
+- `backend/internal/aienhance/basic_test.go`
+- `backend/internal/avatar/replacement_test.go`
+- `docs/plans/avatar-cleanup-r095.md`
+- `docs/plans/migration-closeout-2026-10-30.md`
+- `scripts/contracts/activity-model.mjs`
+- `scripts/contracts/chat-empty-reply.test.mjs`
+- `scripts/contracts/contributions-fixture.mjs`
+- `scripts/contracts/trending-card-navigation.test.mjs`
+- `scripts/contracts/trending-feedback.test.mjs`
+- `src/lib/ai/chat-response.js`
+- `src/lib/utils/trending/feedback.js`
+
+Writer released: yes. No owned servers/processes at release; verifier tracks its own lease while checking. Next: inspect final status/Git; restore required browser access to resume the already-approved development acceptance from fresh preflight; review the remaining owner/schema/worker/walk-through gates in docs/plans/migration-closeout-2026-10-30.md. Do not mark the whole migration complete.
+
+## Historical checkpoint: BUG-067/R-207
+
+Status: **in progress / incomplete**. Codex owner, reviewer unassigned; main base/current f5c5640. Prior BUG-066 full handoff verified and lease clear before claim. Scope: standing owner approval to fix recorded bugs and wrap migration; enforce the existing documented39-character login maximum, with unchanged400 invalid-username reply. No new product policy, Next rollback fix or live action. Prior work preserved. Next: contract v4, boundary regression, Go guard, deliberate break, lesson/docs and handoff.
+
+## Handoff: BUG-066/R-205/R-206 browser closeout (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Codex owner, reviewer unassigned; main base/current f5c5640, explicitly uncommitted. Prior BUG-065 handoff e6fe2d411b44 passed and all prior work preserved.
+
+BUG-066 closes R-205/R-206 in React: trending errors show available wait seconds from Retry-After or reset metadata, and placeholder popular-repository labels have no navigation handler. Real repository names use keyboard-accessible buttons with validated paths. API contracts stay unchanged.
+
+Changed files: src/lib/utils/trending/feedback.js, src/hooks/trending/useTrendingData.js, src/components/trending/TrendingDeveloperCard.jsx, scripts/contracts/trending-hook.test.mjs, scripts/contracts/trending-card-navigation.test.mjs, scripts/contracts/trending-feedback.test.mjs, docs/bug-register.md, docs/backend-map.md, docs/next-agent-briefing.md, docs/plans/migration-closeout-2026-10-30.md and docs/coordination.md. No Go/API contract or lesson/exercise changes.
+
+Checks: actual hook rate-limit regression and three compiled card regressions failed first. Next SWC harness needed explicit loadBindings; two draft JSX span markers failed before any card write and were corrected. Focused Node18/18 passed, npm run lint passed, npm run build passed with existing stale browser-data advisories. Separate deliberate breaks detected lost rate feedback and placeholder navigation; exact helper restored dba4b35acfaa5febd8026170ec84b4eafb084fccea66f78e1896208a61cf0d98. Stale/unmount hook cases remain passing. These are hook/compiled element checks, not a DOM/live-browser walk-through. Full npm run handoff follows.
+
+No live services, signing, SQL or deployment. Browser host remains unavailable and reconnection request pending; existing approval preserved. Writer released, no owned servers/processes; verifier records its own lease while checking. Next: inspect status/Git, then remaining documented guard R-207 and external closeout gates.
+
+## Historical checkpoint: BUG-066 trending browser closeout
+
+Milestone: 18 focused checks passed after behavioral regressions for hook wait text and actual compiled card handlers. Changed src/lib/utils/trending/feedback.js, src/hooks/trending/useTrendingData.js, src/components/trending/TrendingDeveloperCard.jsx, scripts/contracts/trending-hook.test.mjs and new trending-card-navigation/trending-feedback tests. Initial card harness needed SWC loadBindings; then all three card behavior regressions failed as intended. Fixed two draft span markers before any card write; hook/helper partial edits were preserved and validated. Lint/build running in exec session79217; no verifier lease. Next inspect results, deliberate breaks, docs and full handoff.
+
+Status: **in progress / incomplete**. Codex owner, reviewer unassigned; main base/current f5c5640, prior BUG-065 full handoff e6fe2d411b44 passed and lease clear. Preserve all prior work. Scope: the two recorded unblocked React trending follow-ups R-205/R-206, regression checks, lint/build and docs/handoff. No API behavior change, Go changes, signing or deployment. Browser host remains unavailable; request pending.
+
+## Handoff: BUG-065/R-037 and migration closeout (Codex, 2026-10-30)
+
+Status: **implementation complete for BUG-065 and local closeout report; unreviewed; not deployed; overall migration remains gated**. Codex owner, reviewer unassigned. Main base/current f5c5640, explicitly uncommitted; prior114-file verified tree996732d7b225 preserved. All27 approved pack fixes implemented locally.
+
+Suggestions reject present non-text queries with400, trim before every length check and provider prompt, filter blank/non-text items and deduplicate before taking three AI results. Built-in results are suppressed only by selected AI items; final output remains capped atfive. Missing queries retain the empty-list response.
+
+Checks: initial contract regressions failed in memory/socket suites; go test -count=1 ./internal/aisuggestions passed, focused API wiring/AI/quota tests passed, go vet ./internal/aisuggestions passed, Node54/54 passed. Three deliberate breaks produced behavioral failures and source restored exactly (4b3216a03f7531c9382a8a9a07d37317705c2fa5a5922f2d45b48c4999371940). UI lint/build passed in BUG-060; no later production browser source change. Lessons updated; existing exercises untouched, lesson tests skipped by policy. Full npm run handoff follows; matching status/signal is required for proof. No peer review claimed.
+
+Closeout audit: docs/plans/migration-closeout-2026-10-30.md records actual register census and remaining keys, avatar, worker, signed-in walk-through and Phase7 gates. Approved development-plan hash reverified exactly. Fresh cua_repl getState returned no browsers and browser access host unavailable. No signing material, users, passwords, tokens or acceptance run created. Browser reconnection request is pending; existing approval is not requested again. No live SQL/activation/deployment, commit or push. Overall migration is incomplete; Phase7 remains gated.
+
+Changed checkout files (includes preserved earlier tasks):
+
+- `backend/README.md`
+- `backend/cmd/api/ai_safety_test.go`
+- `backend/cmd/api/ai_wiring_test.go`
+- `backend/cmd/api/avatar_wiring_test.go`
+- `backend/cmd/api/videos_wiring_test.go`
+- `backend/internal/activity/contract_test.go`
+- `backend/internal/activity/grid.go`
+- `backend/internal/activity/node_test.go`
+- `backend/internal/aichat/contract_test.go`
+- `backend/internal/aichat/handler.go`
+- `backend/internal/aichat/title.go`
+- `backend/internal/aichat/title_test.go`
+- `backend/internal/aienhance/contract_test.go`
+- `backend/internal/aienhance/handler.go`
+- `backend/internal/aiprovider/title.go`
+- `backend/internal/aisuggestions/contract_test.go`
+- `backend/internal/aisuggestions/handler.go`
+- `backend/internal/avatar/contract_test.go`
+- `backend/internal/avatar/handler.go`
+- `backend/internal/avatar/handler_test.go`
+- `backend/internal/collect/contract_test.go`
+- `backend/internal/collect/handler.go`
+- `backend/internal/comments/contract_test.go`
+- `backend/internal/comments/handler.go`
+- `backend/internal/commentvote/contract_test.go`
+- `backend/internal/commentvote/handler.go`
+- `backend/internal/githubcontributions/contract_test.go`
+- `backend/internal/githubcontributions/dates.go`
+- `backend/internal/githubcontributions/dates_test.go`
+- `backend/internal/githubcontributions/handler.go`
+- `backend/internal/jscompat/text.go`
+- `backend/internal/rating/contract_test.go`
+- `backend/internal/rating/handler.go`
+- `backend/internal/shares/contract_test.go`
+- `backend/internal/shares/handler.go`
+- `backend/internal/shares/handler_test.go`
+- `backend/internal/sharetoken/contract_test.go`
+- `backend/internal/sharetoken/handler.go`
+- `backend/internal/sharetoken/handler_test.go`
+- `backend/internal/supabaserest/supabaserest.go`
+- `backend/internal/videos/contract_test.go`
+- `backend/internal/videos/handler.go`
+- `backend/internal/vote/contract_test.go`
+- `backend/internal/vote/handler.go`
+- `contracts/activity/README.md`
+- `contracts/activity/cases.json`
+- `contracts/ai-chat/README.md`
+- `contracts/ai-chat/cases.json`
+- `contracts/ai-enhance-query/README.md`
+- `contracts/ai-enhance-query/cases.json`
+- `contracts/ai-suggestions/README.md`
+- `contracts/ai-suggestions/cases.json`
+- `contracts/comment-vote/README.md`
+- `contracts/comment-vote/cases.json`
+- `contracts/conversation-share/README.md`
+- `contracts/conversation-share/cases.json`
+- `contracts/github-contributions/README.md`
+- `contracts/github-contributions/cases.json`
+- `contracts/repo-collect/README.md`
+- `contracts/repo-collect/cases.json`
+- `contracts/repo-comments/README.md`
+- `contracts/repo-comments/cases.json`
+- `contracts/repo-rating/README.md`
+- `contracts/repo-rating/cases.json`
+- `contracts/repo-videos/README.md`
+- `contracts/repo-videos/cases.json`
+- `contracts/repo-vote/README.md`
+- `contracts/repo-vote/cases.json`
+- `contracts/share-fork/README.md`
+- `contracts/share-fork/cases.json`
+- `contracts/share-token/README.md`
+- `contracts/share-token/cases.json`
+- `contracts/upload-avatar/README.md`
+- `contracts/upload-avatar/cases.json`
+- `docs/backend-map.md`
+- `docs/bug-register.md`
+- `docs/coordination.md`
+- `docs/next-agent-briefing.md`
+- `docs/plans/phase6-decision-pack-2.md`
+- `learn-go/13-time-and-clocks/README.md`
+- `learn-go/19-counting-requests/README.md`
+- `learn-go/20-text-as-javascript-counts-it/README.md`
+- `learn-go/22-reading-rows-as-the-user/README.md`
+- `learn-go/24-optional-sign-in/README.md`
+- `learn-go/25-writing-as-the-user/README.md`
+- `learn-go/27-when-text-meets-numbers/README.md`
+- `learn-go/28-many-at-once-one-failure-for-all/README.md`
+- `learn-go/29-a-javascript-pattern-in-go/README.md`
+- `learn-go/30-defaults-and-missing-values/README.md`
+- `learn-go/31-bounded-file-streams/README.md`
+- `learn-go/32-request-budgets-and-redirects/README.md`
+- `learn-go/45-copying-javascript-string-rules/README.md`
+- `learn-go/README.md`
+- `scripts/contracts/activity-run.mjs`
+- `scripts/contracts/activity.test.mjs`
+- `scripts/contracts/ai-chat.test.mjs`
+- `scripts/contracts/ai-enhance-query.test.mjs`
+- `scripts/contracts/ai-suggestions.test.mjs`
+- `scripts/contracts/avatar-fixture.mjs`
+- `scripts/contracts/comment-vote.test.mjs`
+- `scripts/contracts/conversation-share.test.mjs`
+- `scripts/contracts/github-contributions.test.mjs`
+- `scripts/contracts/handoff-state.test.mjs`
+- `scripts/contracts/repo-collect.test.mjs`
+- `scripts/contracts/repo-comments.test.mjs`
+- `scripts/contracts/repo-rating.test.mjs`
+- `scripts/contracts/repo-videos.test.mjs`
+- `scripts/contracts/repo-vote.test.mjs`
+- `scripts/contracts/share-fork.test.mjs`
+- `scripts/contracts/share-token.test.mjs`
+- `scripts/contracts/upload-avatar.test.mjs`
+- `scripts/handoff-state.mjs`
+- `src/hooks/chat/useChatMessages.js`
+- `backend/internal/aienhance/basic_test.go`
+- `backend/internal/avatar/replacement_test.go`
+- `docs/plans/avatar-cleanup-r095.md`
+- `docs/plans/migration-closeout-2026-10-30.md`
+- `scripts/contracts/activity-model.mjs`
+- `scripts/contracts/chat-empty-reply.test.mjs`
+- `scripts/contracts/contributions-fixture.mjs`
+- `src/lib/ai/chat-response.js`
+
+Writer released: yes. No owned servers/processes at release; verifier owns its lease while checking. Next: inspect full handoff/status/Git, restore browser access for approved dev acceptance, and use the closeout report for remaining gate decisions. Do not resume signing without fresh preflight or generalize the narrow retirement exception.
+
+## Historical checkpoint: BUG-065/R-037
+
+Status: **in progress / incomplete**. Codex owner, reviewer unassigned. Main base/current f5c5640; prior114-file tree996732d7b225 verified and preserved uncommitted. Writer release and clear lease confirmed. Finish last approved pack fix, then audit remaining migration gates; no Phase7, live SQL, signing, activation or deployment inferred. Next: suggestions fixtures, regression, Go fix, lesson/docs and full handoff. No owned servers.
+
+## Handoff: BUG-064/R-036 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 8/8; pack 26/27.
+
+Built-in enhancement matches whole Unicode words, adds only words not already present, and trims surrounding whitespace. Operator/quoted queries retain their contents after trimming. Anthropic query text is JSON-escaped inside the prompt. Repeated basic enhancement is idempotent.
+
+Changed files: backend/internal/aienhance/{handler.go,contract_test.go,basic_test.go}, backend/cmd/api/ai_wiring_test.go, contracts/ai-enhance-query/cases.json, scripts/contracts/ai-enhance-query.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Whole-word/dedup/trim/prompt contract regressions failed first in memory/socket suites. Aienhance tests/vet and API wiring/isolation checks passed; Node84/84 passed. An old API wiring duplicate-word expectation was corrected without weakening the no-provider-call assertion. Idempotence property passed. Four deliberate breaks detected the four behaviors. UI lint/build already passed in BUG-060; no later browser production changes. Deliberate break: behavioral failure detected; exact source restored (3a1be6ae006538531bc3c753e5b0e262d4fff4ca22b30373213bd64fa1b36790). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-037 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+Second eight-fix batch checkpoint: BUG-057/R-096, BUG-058/R-097, BUG-059/R-095, BUG-060/R-010, BUG-061/R-012, BUG-062/R-013, BUG-063/R-035 and BUG-064/R-036 implemented. Pack26/27; next BUG-065/R-037. Owner Codex, reviewer unassigned; base/current main f5c5640, explicitly uncommitted. Prior BUG-048 and first batch preserved. Full handoffs passed: BUG-057 b14acefa3cfd; BUG-058 51ef207d4f4d; BUG-059 c4efd2a4d752; BUG-060 722a3ac935a1; BUG-061 3b924e371f1a; BUG-062 9400190d7d40; BUG-063 e8ba24ab6868. Fresh final handoff follows.
+
+Checks: npm run lint and npm run build passed for final browser production source in BUG-060, with pre-existing stale browser-data advisories only. Node focused suites passed55 avatar compensation,55 fixed avatar errors,61 serialized avatar replacement,109 chat hook/API/browser guards,92 Unicode title,94 whitespace/quote title,77 provider fallback and84 word/prompt checks. Backend focused commands used go test -count=1 and go vet; final npm run handoff runs go test -count=1 -p2 ./..., go vet ./... and gofmt inspection. Existing exercises untouched; lesson checks skipped by policy. Hook stand-ins are not DOM/live-browser proof. No live SQL, Storage objects, signing, credentials, activation, deployment, commit or push. No owned processes at writer release; verifier owns its lease/process while checking.
+
+Remaining gates: unreviewed source and deployment pending. R-095 rollout requires hosted same-key non-overwrite/permissions and signed-in acceptance, all upload writers honoring the protocol, and operator recovery review. R-209 intentionally remains open: crashes/uncertain lock acquisitions can require manual release after proof the owner stopped; no automatic expiry/steal. See [the storage replacement design](plans/avatar-cleanup-r095.md). Separate hosted-key checkpoint and prior approvals preserved. Next command: inspect Git and handoff status, claim BUG-065/R-037 before editing suggestions input normalization/deduplication.
+
+Actual checkout file list (includes preserved prior work and shared documents):
+
+- `backend/README.md`
+- `backend/cmd/api/ai_safety_test.go`
+- `backend/cmd/api/ai_wiring_test.go`
+- `backend/cmd/api/avatar_wiring_test.go`
+- `backend/cmd/api/videos_wiring_test.go`
+- `backend/internal/activity/contract_test.go`
+- `backend/internal/activity/grid.go`
+- `backend/internal/activity/node_test.go`
+- `backend/internal/aichat/contract_test.go`
+- `backend/internal/aichat/handler.go`
+- `backend/internal/aichat/title.go`
+- `backend/internal/aichat/title_test.go`
+- `backend/internal/aienhance/contract_test.go`
+- `backend/internal/aienhance/handler.go`
+- `backend/internal/aiprovider/title.go`
+- `backend/internal/avatar/contract_test.go`
+- `backend/internal/avatar/handler.go`
+- `backend/internal/avatar/handler_test.go`
+- `backend/internal/collect/contract_test.go`
+- `backend/internal/collect/handler.go`
+- `backend/internal/comments/contract_test.go`
+- `backend/internal/comments/handler.go`
+- `backend/internal/commentvote/contract_test.go`
+- `backend/internal/commentvote/handler.go`
+- `backend/internal/githubcontributions/contract_test.go`
+- `backend/internal/githubcontributions/dates.go`
+- `backend/internal/githubcontributions/dates_test.go`
+- `backend/internal/githubcontributions/handler.go`
+- `backend/internal/jscompat/text.go`
+- `backend/internal/rating/contract_test.go`
+- `backend/internal/rating/handler.go`
+- `backend/internal/shares/contract_test.go`
+- `backend/internal/shares/handler.go`
+- `backend/internal/shares/handler_test.go`
+- `backend/internal/sharetoken/contract_test.go`
+- `backend/internal/sharetoken/handler.go`
+- `backend/internal/sharetoken/handler_test.go`
+- `backend/internal/supabaserest/supabaserest.go`
+- `backend/internal/videos/contract_test.go`
+- `backend/internal/videos/handler.go`
+- `backend/internal/vote/contract_test.go`
+- `backend/internal/vote/handler.go`
+- `contracts/activity/README.md`
+- `contracts/activity/cases.json`
+- `contracts/ai-chat/README.md`
+- `contracts/ai-chat/cases.json`
+- `contracts/ai-enhance-query/README.md`
+- `contracts/ai-enhance-query/cases.json`
+- `contracts/comment-vote/README.md`
+- `contracts/comment-vote/cases.json`
+- `contracts/conversation-share/README.md`
+- `contracts/conversation-share/cases.json`
+- `contracts/github-contributions/README.md`
+- `contracts/github-contributions/cases.json`
+- `contracts/repo-collect/README.md`
+- `contracts/repo-collect/cases.json`
+- `contracts/repo-comments/README.md`
+- `contracts/repo-comments/cases.json`
+- `contracts/repo-rating/README.md`
+- `contracts/repo-rating/cases.json`
+- `contracts/repo-videos/README.md`
+- `contracts/repo-videos/cases.json`
+- `contracts/repo-vote/README.md`
+- `contracts/repo-vote/cases.json`
+- `contracts/share-fork/README.md`
+- `contracts/share-fork/cases.json`
+- `contracts/share-token/README.md`
+- `contracts/share-token/cases.json`
+- `contracts/upload-avatar/README.md`
+- `contracts/upload-avatar/cases.json`
+- `docs/backend-map.md`
+- `docs/bug-register.md`
+- `docs/coordination.md`
+- `docs/next-agent-briefing.md`
+- `docs/plans/phase6-decision-pack-2.md`
+- `learn-go/13-time-and-clocks/README.md`
+- `learn-go/20-text-as-javascript-counts-it/README.md`
+- `learn-go/22-reading-rows-as-the-user/README.md`
+- `learn-go/24-optional-sign-in/README.md`
+- `learn-go/25-writing-as-the-user/README.md`
+- `learn-go/27-when-text-meets-numbers/README.md`
+- `learn-go/28-many-at-once-one-failure-for-all/README.md`
+- `learn-go/29-a-javascript-pattern-in-go/README.md`
+- `learn-go/30-defaults-and-missing-values/README.md`
+- `learn-go/31-bounded-file-streams/README.md`
+- `learn-go/32-request-budgets-and-redirects/README.md`
+- `learn-go/45-copying-javascript-string-rules/README.md`
+- `learn-go/README.md`
+- `scripts/contracts/activity-run.mjs`
+- `scripts/contracts/activity.test.mjs`
+- `scripts/contracts/ai-chat.test.mjs`
+- `scripts/contracts/ai-enhance-query.test.mjs`
+- `scripts/contracts/avatar-fixture.mjs`
+- `scripts/contracts/comment-vote.test.mjs`
+- `scripts/contracts/conversation-share.test.mjs`
+- `scripts/contracts/github-contributions.test.mjs`
+- `scripts/contracts/handoff-state.test.mjs`
+- `scripts/contracts/repo-collect.test.mjs`
+- `scripts/contracts/repo-comments.test.mjs`
+- `scripts/contracts/repo-rating.test.mjs`
+- `scripts/contracts/repo-videos.test.mjs`
+- `scripts/contracts/repo-vote.test.mjs`
+- `scripts/contracts/share-fork.test.mjs`
+- `scripts/contracts/share-token.test.mjs`
+- `scripts/contracts/upload-avatar.test.mjs`
+- `scripts/handoff-state.mjs`
+- `src/hooks/chat/useChatMessages.js`
+- `backend/internal/aienhance/basic_test.go`
+- `backend/internal/avatar/replacement_test.go`
+- `docs/plans/avatar-cleanup-r095.md`
+- `scripts/contracts/activity-model.mjs`
+- `scripts/contracts/chat-empty-reply.test.mjs`
+- `scripts/contracts/contributions-fixture.mjs`
+- `src/lib/ai/chat-response.js`
+
+## Historical checkpoint: BUG-064/R-036
+
+Milestone: contract v4 updated and initial whole-word/dedup/trim/prompt regressions failed. Implementation passes aienhance contract tests; API wiring TestEnhanceUsesAnthropicWithoutAnOpenAIKeyAndNobodyWithoutEither retains old duplicated web expectation and is being corrected. Node rerun, deliberate breaks, lessons/docs and full handoff remain. Writer Codex; no verifier lease or owned servers. All earlier task handoffs passed through BUG-063 e8ba24ab6868.
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-063/R-035 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 7/8; pack 25/27.
+
+Enhance-query falls back to its built-in enhancement after provider errors or blank replies, including refused redirects and bounded oversized replies. JSON null is400 Query is required, with no provider call. Query/key isolation, provider read bounds and allowance behavior remain.
+
+Changed files: backend/internal/aienhance/{handler.go,contract_test.go}, backend/cmd/api/ai_safety_test.go, contracts/ai-enhance-query/cases.json, scripts/contracts/ai-enhance-query.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Provider/null contract regressions failed first. Aienhance/API focused tests and vet passed; Node77/77 passed. Old redirect/oversize/privacy status assertions were updated to check the exact basic fallback while retaining zero destination calls and sanitized logging. Deliberate break: behavioral failure detected; exact source restored (8c5be47b45ae29221258396dd8fb2cc4c3ab7b0da4d05e787a0d2fc01130168c). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-036 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-063/R-035
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-062/R-013 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 6/8; pack 24/27.
+
+Fallback titles collapse ECMAScript whitespace before selecting four words. A title emptied by quote stripping uses that fallback. The first message is JSON-escaped inside the title prompt, including quotes, backslashes and controls. The30-code-point cap remains.
+
+Changed files: backend/internal/aichat/{handler.go,title.go,title_test.go,contract_test.go}, backend/internal/aiprovider/title.go, backend/internal/jscompat/text.go, contracts/ai-chat/cases.json, scripts/contracts/ai-chat.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Whitespace, quote-only title and quoted-prompt regressions failed first in memory/socket suites. Aichat/aiprovider/jscompat tests/vet and Node94/94 passed. Three separate deliberate breaks detected each approved behavior. Deliberate break: behavioral failure detected; exact source restored (9fee02e3c82344ae6a24d02b24ddd70f3790461e996936aba615ddcca11598ab). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-035 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-062/R-013
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-061/R-012 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 5/8; pack 23/27.
+
+Fallback chat titles cap the first four words at30 Unicode code points and append dots only when longer. Emoji scalar values remain intact; existing UTF-16 helper behavior elsewhere and rollback Next titles remain pinned.
+
+Changed files: backend/internal/aichat/{title.go,title_test.go,contract_test.go}, contracts/ai-chat/cases.json, scripts/contracts/ai-chat.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Emoji boundary contract regression failed first in memory/socket suites. Aichat tests/vet and Node92/92 passed, including30/31 emoji and an emoji at the limit. Deliberate break: behavioral failure detected; exact source restored (19ac956bce869e1a06fa7a30abb07db2488e501ceda01b9326fc3833496a77e7). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-013 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-061/R-012
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-060/R-010 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 4/8; pack 22/27.
+
+The React chat hook guards assistant replies for send, edit and regeneration. Non-text or blank responses show The assistant sent an empty answer and are never stored as assistant text; the conversation/user message stays, and regeneration preserves the prior answer. API non-text replies remain characterized unchanged.
+
+Changed files: src/lib/ai/chat-response.js, src/hooks/chat/useChatMessages.js, scripts/contracts/chat-empty-reply.test.mjs, contracts/ai-chat/cases.json, backend/internal/aichat/contract_test.go, scripts/contracts/ai-chat.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Twelve real-hook scenarios failed before implementation. Node109/109, aichat tests/vet, npm run lint and npm run build passed. Build emitted existing stale baseline-browser-mapping/caniuse advisories; dependencies unchanged. Hook stand-ins are not DOM or live-browser evidence. Deliberate break: behavioral failure detected; exact source restored (4249cc4261229f5663990e5374d45c536f2d8bd6db92661bf2849680695d890c). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-012 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-060/R-010
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-059/R-095 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 3/8; pack 21/27.
+
+Avatar replacement uses an exclusive own-folder Storage insert across participating Go instances, unique random filenames and non-overwriting uploads. Cleanup snapshots all pages before deleting in batches, traverses explicit legacy folders, and preserves the current file, lock and newer timestamps. A failed page causes no partial-snapshot deletion. Lock release is bounded. Crash/uncertain-acquisition recovery is intentionally manual (R-209); hosted acceptance and all-writers protocol are rollout gates.
+
+Changed files: backend/internal/avatar/{handler.go,contract_test.go,handler_test.go,replacement_test.go}, backend/cmd/api/avatar_wiring_test.go, contracts/upload-avatar/cases.json, scripts/contracts/upload-avatar.test.mjs, docs/plans/avatar-cleanup-r095.md; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Initial compiled fixtures failed. Avatar tests/vet, API wiring and Node61/61 passed. Two independent handlers prove conflict refusal makes no avatar write or foreign unlock; later upload succeeds with a distinct filename even at the same millisecond. Snapshot/pagination and safety-name checks passed. Initial concurrency stand-in used URL.Path, empty for jscompat Opaque URLs; corrected to RequestURI, matching the real wire target. Deliberate break: behavioral failure detected; exact source restored (1d5217b1c42b552783175b6941daff3879c493d665fd610dbf3520fdb7b05d3b). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-010 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-059/R-095
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Milestone: avatar contract v6 and cleanup/lock implementation now pass contract cases and Node61/61; initial regression failed first. Added paginated205-file, partial-page failure, nested-file, current/lock/newer-protection and lock-refusal cases. Files additionally docs/plans/avatar-cleanup-r095.md, backend/internal/avatar/replacement_test.go and API wiring test. Current writer Codex; independent two-handler and full focused checks next. No hosted proof. Next: concurrency/privacy checks, deliberate break, lesson/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-058/R-097 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 2/8; pack 20/27.
+
+Avatar500 responses carry only their fixed public error field; Storage/Auth/database/library and runtime diagnostic details are omitted. Sanitized stage logging and status codes stay unchanged. Next rollback replies retain their original details.
+
+Changed files: backend/internal/avatar/{handler.go,contract_test.go}, contracts/upload-avatar/cases.json, scripts/contracts/upload-avatar.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Detailed-error fixtures failed first; avatar tests/vet and Node55/55 passed, including caller/log privacy checks. Deliberate break: behavioral failure detected; exact source restored (2a2c6ca8acd89cf6f68689dc659b112e3e0d58dcd654b1a6327fb38a4e6d774c). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-095 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-058/R-097
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-057/R-096 (Codex, 2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Owner Codex, reviewer unassigned; branch main, base/current f5c5640, resulting change explicitly uncommitted. Second batch 1/8; pack 19/27.
+
+A failed Auth metadata or profile write returns500 and attempts to delete exactly the newly uploaded object with the caller token. Compensation has a separate three-second bound and still runs after request cancellation. Rollback refusal stays a failure and is logged without details. These separate services are not made atomic; cleanup success is not promised when Storage refuses it.
+
+Changed files: backend/internal/avatar/{handler.go,handler_test.go,contract_test.go}, contracts/upload-avatar/cases.json, scripts/contracts/upload-avatar.test.mjs; contract readmes, listed lessons/index, backend/map/register/pack/briefing and coordination as applicable. Prior work preserved. Checks: Six compensation regressions failed first. Avatar tests/vet passed, cancellation rollback test passed, Node55/55 passed. Deliberate break: behavioral failure detected; exact source restored (f2d76aeece4786808cd149eac5054b2fd4d678024d6eea785de8f72185c886ab). Full npm run handoff follows. Lessons skipped by owner policy. No live SQL/signing/activation/deployment. No owned processes at writer release; the verifier records its PID in its lease. Next: R-097 after handoff/status/Git inspection.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-057/R-096
+
+Status: **in progress / incomplete**. Owner Codex, reviewer unassigned. Branch main, base/current f5c5640; prior 90-file verified tree73611e4258db preserved uncommitted. Scope: next approved pack fix; no existing exercise.go edits, live SQL, signing, activation or deployment. Writer release and lease absence confirmed before claim. Next: regression fixtures, implementation, deliberate break, lessons/docs and full handoff. Second batch queue: R-096, R-097, R-095, R-010, R-012, R-013, R-035, R-036. No owned servers.
+
+## Handoff: BUG-056, R-094 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch8/8, overall18/27.
+
+Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check.
+
+Changed task files: backend/internal/avatar/{handler.go,contract_test.go,handler_test.go}, backend/cmd/api/avatar_wiring_test.go, scripts/contracts/{avatar-fixture.mjs,upload-avatar.test.mjs}; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: New/revised contract cases failed before the Go fix. Avatar full package tests, API avatar wiring and vet passed; wiring payload and assertion now use the PNG signature. Node54/54 passed over53 fixtures, including all formats, both GIF signatures, misleading/absent labels, unsafe filenames, empty/fake/truncated files and 5MiB boundaries. Deliberate break produced behavioral test failures and source restored exactly (226f4750c879c27e3b55d9ecde7e5ff3d1f6103ca2f28f8b1399361aa52c065c). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: batch complete; next pack entry R-096.
+
+Writer released: yes.
+
+Batch checkpoint: all eight approved fixes implemented; 18/27 pack fixes complete locally, nine remain. Prior BUG-048 work preserved. All task authors Codex; no peer review claimed. Base/current main f5c5640; changes remain uncommitted. Full handoffs passed for BUG-049, BUG-050 (7cb85690f697), BUG-051 plus R-208 (9d9412152968), BUG-052 (831798e3f69d), BUG-053 (2c413d5e1369), BUG-054 (3f082e0d6a12), BUG-055 (baa770378b99). Final BUG-056/batch full handoff follows. No lint/build (browser production code untouched); lessons skipped by owner policy. No live tests, SQL, signing, activation, deployment, commit or push. No owned processes at release; the forthcoming verifier tracks its own PID in the lease. Next bounded task: BUG-057/R-096 avatar rollback on failed metadata/profile writes; then R-097 and R-095.
+
+Recovery detail correction: second premature verifier was stopped after process-tree inspection; the exact root lease was already absent when removal was attempted. Status confirmed lease absent before edits. Fresh normal full verification superseded interrupted runs; no interrupted run is counted as passed.
+
+Actual checkout file list (includes preserved BUG-048 and shared documents; no secrets):
+
+- `backend/README.md`
+- `backend/cmd/api/avatar_wiring_test.go`
+- `backend/cmd/api/videos_wiring_test.go`
+- `backend/internal/activity/contract_test.go`
+- `backend/internal/activity/grid.go`
+- `backend/internal/activity/node_test.go`
+- `backend/internal/avatar/contract_test.go`
+- `backend/internal/avatar/handler.go`
+- `backend/internal/avatar/handler_test.go`
+- `backend/internal/collect/contract_test.go`
+- `backend/internal/collect/handler.go`
+- `backend/internal/comments/contract_test.go`
+- `backend/internal/comments/handler.go`
+- `backend/internal/commentvote/contract_test.go`
+- `backend/internal/commentvote/handler.go`
+- `backend/internal/githubcontributions/contract_test.go`
+- `backend/internal/githubcontributions/dates.go`
+- `backend/internal/githubcontributions/dates_test.go`
+- `backend/internal/githubcontributions/handler.go`
+- `backend/internal/rating/contract_test.go`
+- `backend/internal/rating/handler.go`
+- `backend/internal/shares/contract_test.go`
+- `backend/internal/shares/handler.go`
+- `backend/internal/shares/handler_test.go`
+- `backend/internal/sharetoken/contract_test.go`
+- `backend/internal/sharetoken/handler.go`
+- `backend/internal/sharetoken/handler_test.go`
+- `backend/internal/supabaserest/supabaserest.go`
+- `backend/internal/videos/contract_test.go`
+- `backend/internal/videos/handler.go`
+- `backend/internal/vote/contract_test.go`
+- `backend/internal/vote/handler.go`
+- `contracts/activity/README.md`
+- `contracts/activity/cases.json`
+- `contracts/comment-vote/README.md`
+- `contracts/comment-vote/cases.json`
+- `contracts/conversation-share/README.md`
+- `contracts/conversation-share/cases.json`
+- `contracts/github-contributions/README.md`
+- `contracts/github-contributions/cases.json`
+- `contracts/repo-collect/README.md`
+- `contracts/repo-collect/cases.json`
+- `contracts/repo-comments/README.md`
+- `contracts/repo-comments/cases.json`
+- `contracts/repo-rating/README.md`
+- `contracts/repo-rating/cases.json`
+- `contracts/repo-videos/README.md`
+- `contracts/repo-videos/cases.json`
+- `contracts/repo-vote/README.md`
+- `contracts/repo-vote/cases.json`
+- `contracts/share-fork/README.md`
+- `contracts/share-fork/cases.json`
+- `contracts/share-token/README.md`
+- `contracts/share-token/cases.json`
+- `contracts/upload-avatar/README.md`
+- `contracts/upload-avatar/cases.json`
+- `docs/backend-map.md`
+- `docs/bug-register.md`
+- `docs/coordination.md`
+- `docs/next-agent-briefing.md`
+- `docs/plans/phase6-decision-pack-2.md`
+- `learn-go/13-time-and-clocks/README.md`
+- `learn-go/22-reading-rows-as-the-user/README.md`
+- `learn-go/24-optional-sign-in/README.md`
+- `learn-go/25-writing-as-the-user/README.md`
+- `learn-go/27-when-text-meets-numbers/README.md`
+- `learn-go/28-many-at-once-one-failure-for-all/README.md`
+- `learn-go/29-a-javascript-pattern-in-go/README.md`
+- `learn-go/30-defaults-and-missing-values/README.md`
+- `learn-go/31-bounded-file-streams/README.md`
+- `learn-go/45-copying-javascript-string-rules/README.md`
+- `learn-go/README.md`
+- `scripts/contracts/activity-run.mjs`
+- `scripts/contracts/activity.test.mjs`
+- `scripts/contracts/avatar-fixture.mjs`
+- `scripts/contracts/comment-vote.test.mjs`
+- `scripts/contracts/conversation-share.test.mjs`
+- `scripts/contracts/github-contributions.test.mjs`
+- `scripts/contracts/handoff-state.test.mjs`
+- `scripts/contracts/repo-collect.test.mjs`
+- `scripts/contracts/repo-comments.test.mjs`
+- `scripts/contracts/repo-rating.test.mjs`
+- `scripts/contracts/repo-videos.test.mjs`
+- `scripts/contracts/repo-vote.test.mjs`
+- `scripts/contracts/share-fork.test.mjs`
+- `scripts/contracts/share-token.test.mjs`
+- `scripts/contracts/upload-avatar.test.mjs`
+- `scripts/handoff-state.mjs`
+- `scripts/contracts/activity-model.mjs`
+- `scripts/contracts/contributions-fixture.mjs`
+
+## Handoff: BUG-055, R-089 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch7/8, overall17/27.
+
+Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors.
+
+Changed task files: backend/internal/shares/{handler.go,contract_test.go}, scripts/contracts/{conversation-share,share-fork}.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: Focused full shares suite found oversized-body test still expecting the old detailed text; updated to fixed text while keeping the no-database assertion. Changed file also backend/internal/shares/handler_test.go. Own premature handoff PID47732 and descendants stopped, absence verified and exact root lease removed before correction; full fresh rerun required. Initial TestContract selector matched no tests; corrected Contract selector against exact baseline source reproduced all changed failure fixtures. Current focused shares/API tests and vet passed; Node70/70 passed. Deliberate break produced behavioral test failures and source restored exactly (4add15e0811a46d70cf1dbf05d2d85deab5b6ac05f7a3d9c1ae50d2839996c23). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Handoff: BUG-054, R-082 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch6/8, overall16/27.
+
+Public share reads return404 only for a zero-row result or empty/null success. Network, HTTP, parse and invalid non-object results return503 with fixed Share could not be loaded text. Explicit private links retain403, public replies and caller credentials remain unchanged.
+
+Changed task files: backend/internal/sharetoken/{handler.go,contract_test.go,handler_test.go}, scripts/contracts/share-token.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: Ten changed/new outage-result cases failed before implementation. Focused sharetoken/API regression and log-privacy tests plus vet passed; old log test status updated404 to503. Node22/22 passed. Deliberate break produced behavioral test failures and source restored exactly (c0af5cf114e2bc8dec4bffb4bc138356b4e69acdb36fb62f7df3b548825c9b06). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Handoff: BUG-053, R-081 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch5/8, overall15/27.
+
+Public share settings failures return fixed Internal server error text with500. Library configuration messages no longer reach visitors; sanitized stage logging remains.
+
+Changed task files: backend/internal/sharetoken/{handler.go,contract_test.go}, scripts/contracts/share-token.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: The settings-missing fixture failed before implementation. Focused sharetoken tests/vet and Node18/18 passed. Deliberate break produced behavioral test failures and source restored exactly (609c8a9c8bb2b8debe539e67ac9aa723530205e9fcfadf2a1cb5b8dfcba30583). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Handoff: BUG-052, R-087 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch4/8, overall14/27.
+
+Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses.
+
+Changed task files: backend/internal/{comments,videos}/{handler.go,contract_test.go}, backend/internal/supabaserest/supabaserest.go, scripts/contracts/{repo-comments,repo-videos}.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: Full handoff first exposed old video wiring query expectation; test updated to return the affected row and expect select=*. Empty-success deletion regression added. Changed file also backend/cmd/api/videos_wiring_test.go. Initial regression failed zero-match responses and returned-row query expectations. Focused comments/videos/supabaserest tests and vet passed. Node rerun follows corrected owner-filter integrity assertion. Deliberate break produced behavioral test failures and source restored exactly (023e2534346ff55d11947cb899a7fe4980360b0c377cf9346d2051cdbf9272ab). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Handoff: R-208 approved recovery
+
+Status: **implementation complete; unreviewed; not deployed**. Codex owner, reviewer unassigned; branch main, base/current f5c5640, explicitly uncommitted. Changed files scripts/handoff-state.mjs, scripts/contracts/handoff-state.test.mjs, docs/bug-register.md and docs/coordination.md. Focused verifier tests17/17 passed, including >2MiB regression. Full handoff follows; lesson checks skipped by policy. Writer released; no owned processes.
+
+Owner explicitly approved the exact external review plan on 2026-10-30, including exception to STATUS_ERROR mutation gate. Only verifier maxBuffer64MiB, its >2MiB regression and recovery docs are in scope. Prior batch work preserved. External regression failed ENOBUFS before fix; all9 fingerprint tests passed on fixed copy. BUG051 focused Go/vet and Node56 passed; full handoff failed before checks due ENOBUFS. Earlier premature own verifier PID36372 and descendants were stopped and exact stale lease removed after confirming all stopped. No lease now. Next: focused verifier checks and full handoff; then BUG052/R087.
+
+## Handoff: BUG-051, R-085 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch3/8, overall13/27.
+
+Rating writes accept only JSON numbers that are whole values 1 through 5. Text, booleans, lists, objects and fractions return 400 before any database write. Existing stored-rating summaries remain characterized.
+
+Changed task files: backend/internal/rating/handler.go, backend/internal/rating/contract_test.go, scripts/contracts/repo-rating.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: Eight revised invalid-input fixtures failed before implementation; focused rating tests and vet passed. Node rollback suite passed (see local log). Deliberate break produced behavioral test failures and source restored exactly (7cca541f8fcaa8686ecca93931e344a14a3303d057a1e41964280bcf2aa3392b). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Handoff: BUG-049, R-059 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch1/8, overall11/27.
+
+Initial full handoff reached the Go formatting gate and identified grid.go; gofmt applied before the fresh full rerun. Owner approved compact-fixture recovery after ENOBUFS/STATUS_ERROR. Parsed deep equality verified before replacing only contracts/activity/cases.json; status restored READY_NEEDS_VERIFY. No verifier changes or fixture-value changes. New R-208 records the output-buffer limitation, open.
+
+Sunday-to-Saturday weeks, averages/totalDays count only dated squares, yesterday carries an empty today�s streak. Go loops over UTC days; padding is display-only. Independent JavaScript reference covers400generated inputs, including leap years and numeric edge cases.
+
+Changed task files: backend/internal/activity/grid.go, backend/internal/activity/contract_test.go, scripts/contracts/activity.test.mjs, scripts/contracts/activity-run.mjs, scripts/contracts/activity-model.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: Initial contract regression failed; focused activity Go tests/vet passed including400generated comparisons; Node19/19 passed. Deliberate break produced behavioral test failures and source restored exactly (24721483ff7b374fe8bb235313f453a39a9d0d6e77e656b2254f99c1c2edf48b). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Checkpoint: BUG-049 / R-059 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-049 / R-059 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-050 / R-084 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Handoff: BUG-050, R-084 (Codex,2026-10-30)
+
+Status: **implementation complete; unreviewed; not deployed**. Writer Codex, reviewer unassigned; branch main, current f5c5640; resulting change explicitly uncommitted. Eight-fix batch2/8, overall12/27.
+
+Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy.
+
+Changed task files: backend/internal/{collect,vote,rating,commentvote,comments,videos}/{handler.go,contract_test.go}, scripts/contracts/{repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos}.test.mjs; contracts/readmes, lessons/index, backend README, map/register/pack/briefing and coordination. Prior work preserved. Checks: All 15 new outage cases failed before the fix. Focused tests and vet for all six packages passed; Node rerun follows after narrowing the older vote-specific fixture invariant. Deliberate break produced behavioral test failures and source restored exactly (306221fd420a6f37c99be48ffb7fa8091fd354f16c2f0b216fb0cbfb180de61b). Full npm run handoff follows; consult matching signal/status for final result. Lessons skipped by policy. No lint/build repeated unless browser production code changed. No live SQL, credentials, signing, runtime activation or deployment. No owned processes at release. Next: claim next bounded batch entry after handoff/lease/Git inspection.
+
+Writer released: yes.
+
+## Checkpoint: BUG-051 / R-085 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-052 / R-087 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-052 / R-087 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-053 / R-081 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-054 / R-082 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-055 / R-089 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-055 / R-089 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: BUG-056 / R-094 active
+
+Status: **in progress / incomplete**. Codex writer, reviewer unassigned; branch main, base/current f5c5640. Continue the owner-approved eight-fix batch. Prior completed handoffs preserved; lease absent before claim. Next: contracts, implementation, focused regression/vet, deliberate break, lesson/docs and handoff. No live actions or existing exercise edits.
+
+## Checkpoint: eight-fix batch BUG-049..056 (Codex, 2026-10-30)
+
+Status: **in progress / incomplete**. Owner explicitly requested eight fixes per batch. Writer Codex, reviewer unassigned; branch main, base/current f5c5640. Previous writer released and verification lease absent; prior16-file BUG-048 change verified b7739c519d2b and preserved uncommitted. Queue in pack order: BUG-049/R-059,050/R-084,051/R-085,052/R-087,053/R-081,054/R-082,055/R-089,056/R-094. Each is bounded with fixtures/rollback, deliberate-break, lessons/docs and handoff. Production SQL, secrets, runtime activation, deployment and signing excluded. Existing exercises untouched. Batch progress8/8; next: activity grid contract/implementation. No running processes or batch checks yet. Preserve the independent hosted-key checkpoint and all owner decisions.
+
+## Handoff: BUG-048, R-033 UTC contribution window and current streak (Codex, 2026-10-30)
+
+Status: **implementation complete for approved pack scope; unreviewed; not deployed**. Writer Codex; reviewer unassigned. Branch main, base/current f5c5640; resulting change explicitly uncommitted. Prior BUG-047 committed83cd859. Ten of27pack fixes complete locally,17remain starting R-059. Hosted key acceptance remains under its separate checkpoint; no live actions.
+
+One UTC clock reading now drives the existing365day/Monday-aligned query window and current streak. Removed the production Location override and local wallClock parity helper. Streak starts today or yesterday while today inactive, walks exact UTC days and stops at missing/inactive dates; stale/future entries cannot invent an active streak. Only a nonempty list of user NOT_FOUND errors at exact path[user], without user data, becomes404. Mixed/nested/other errors preserve policy. Other R-033 reply-shape, bare-reply and token-status behaviors remain open; R-207 length guard is unchanged. No route retirement or activation.
+
+Contribution contract v3:106cases,7prior revised,11added,88prior cases asserted unchanged. Real Next.js responses/local-calendar variables retained in next_expect/next_calls through new reusable contributions-fixture runner; Go uses its UTC variables. Boundary cases cover gaps, stale/future days, absent today, yesterday empty, UTC midnight in two zones and mixed/nested errors. Go date tests pin UTC expectations across17zone/instant examples; rounding/credential behavior retained. Lesson13/index explain UTC clock/maps and mark existing exercise as original local-calendar behavior; existing exercise files untouched.
+
+Checks (Codex): initial TestContract/TestContractOverHTTP failed dates-zone-ahead/behind, graphql-user-does-not-exist, streak-zero-when-newest-day-is-empty and streak-gap-break. After fix go test -count=1 and go vet for githubcontributions/cmd/api passed; Node contributions108/108 passed. Deliberately shifting the UTC range failed both zone cases in memory/socket suites; disabling user-not-found classification failed its case in both; disabling yesterday fallback failed streak-zero and streak-no-today in both. Restored byte-for-byte hashes: handler.go ba318b3ce644d9a482d513e82cb75bfe8f6a6888ac64006d17500178d625da73; dates.go9d58ab88dd5fa3f1347cfe320338cc5663600333192c0c31e078ff0469f86883. git diff --check passed after removing a trailing blank line. Full npm run handoff follows; matching signal/status records final result. Lint/build not repeated (no browser/Next production source change); lessons skipped by policy. No live GitHub, browser, SQL, signing or deployment checks.
+
+Changed files: backend/internal/githubcontributions/{handler.go,dates.go,dates_test.go,contract_test.go}; contracts/github-contributions/{cases.json,README.md}; scripts/contracts/{github-contributions.test.mjs,contributions-fixture.mjs}; learn-go/{13-time-and-clocks/README.md,README.md}; backend/README.md; docs/{backend-map.md,bug-register.md,coordination.md,next-agent-briefing.md,plans/phase6-decision-pack-2.md}. No unrelated edits observed. No owned processes at release. Next: full handoff, inspect actual Git/status/lease and preserve approval/checkpoints, then claim BUG-049 / R-059. Pack remains open; this handoff signals only approved BUG-048 scope.
+
+Writer released: yes.
+
+## Historical checkpoint: BUG-048, R-033 UTC contribution dates and current streak (Codex, 2026-10-30)
+
+Status: **in progress / incomplete**. Writer Codex; reviewer unassigned. Branch main, base/current f5c5640; clean at claim; prior BUG-047 committed83cd859. Owner all-A approval applies. Scope: one UTC clock for query range and streak, narrow user NOT_FOUND GraphQL404, yesterday-based current streak while today empty; contract/rollback answers, deliberate break, lesson/docs. Other error/shape policies and separate R-207 length guard remain unchanged. No existing exercise edits, runtime/SQL/signing/deployment work. Next: revise fixture expectations and add timezone/streak/not-found cases before Go fix. No task checks yet; no owned processes.
 
 ## Handoff: BUG-047, R-030 validate repository success shapes (Codex, 2026-10-30)
 

@@ -13,7 +13,7 @@ const contract = JSON.parse(await readFile(new URL('../../contracts/share-token/
 const COLUMNS = 'select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at';
 
 test('share fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 3);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -40,6 +40,6 @@ test('share fixture integrity', () => {
 
 for (const c of contract.cases) {
   test(`share: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runShareFixture(GET, c), c.expect);
+    assert.deepEqual(await runShareFixture(GET, c), c.next_expect ?? c.expect);
   });
 }

@@ -3,6 +3,7 @@ package avatar
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -23,10 +24,11 @@ import (
 )
 
 type fileSpec struct {
-	Name string  `json:"name"`
-	Type *string `json:"type"`
-	Size *int    `json:"size"`
-	Byte *byte   `json:"byte"`
+	PrefixBase64 string  `json:"prefix_base64"`
+	Name         string  `json:"name"`
+	Type         *string `json:"type"`
+	Size         *int    `json:"size"`
+	Byte         *byte   `json:"byte"`
 }
 type fieldSpec struct {
 	Name  string    `json:"name"`
@@ -50,6 +52,7 @@ type fixture struct {
 	ContentType   string          `json:"content_type"`
 	ClientThrows  bool            `json:"client_throws"`
 	EngineMessage bool            `json:"engine_message"`
+	GoDatabase    *[]answer       `json:"go_database"`
 	Database      []answer        `json:"database"`
 	Expect        struct {
 		Status      int              `json:"status"`
@@ -115,7 +118,15 @@ func fixtureBody(t *testing.T, f fixture) ([]byte, string) {
 		if v.Byte != nil {
 			b = *v.Byte
 		}
-		_, _ = part.Write(bytes.Repeat([]byte{b}, size))
+		data := bytes.Repeat([]byte{b}, size)
+		if v.PrefixBase64 != "" {
+			prefix, err := base64.StdEncoding.DecodeString(v.PrefixBase64)
+			if err != nil {
+				t.Fatal(err)
+			}
+			copy(data, prefix)
+		}
+		_, _ = part.Write(data)
 	}
 	_ = w.Close()
 	return buf.Bytes(), w.FormDataContentType()
@@ -133,7 +144,7 @@ func TestContract(t *testing.T) {
 	if e = json.Unmarshal(raw, &contract); e != nil {
 		t.Fatal(e)
 	}
-	if contract.Version != 2 {
+	if contract.Version != 6 {
 		t.Fatal(contract.Version)
 	}
 	for _, f := range contract.Cases {
@@ -173,8 +184,12 @@ func TestContract(t *testing.T) {
 				}
 				calls = append(calls, map[string]any{"method": r.Method, "path": r.URL.RequestURI(), "authorization": header("Authorization"), "apikey": header("apikey"), "content_type": header("Content-Type"), "cache_control": header("Cache-Control"), "x_upsert": header("X-Upsert"), "body": body})
 				a := answer{Status: 200, Body: json.RawMessage(`[]`)}
-				if len(calls) <= len(f.Database) {
-					a = f.Database[len(calls)-1]
+				answers := f.Database
+				if f.GoDatabase != nil {
+					answers = *f.GoDatabase
+				}
+				if len(calls) <= len(answers) {
+					a = answers[len(calls)-1]
 				}
 				if a.NetworkError {
 					return nil, errors.New("sensitive upstream URL and token")
@@ -189,7 +204,7 @@ func TestContract(t *testing.T) {
 				return reply(a.Status, bodyText), nil
 			})}
 			verifier := githubaccess.Verifier{SupabaseURL: fixtureURL, SupabaseKey: fixtureKey, Client: client}
-			h := &Handler{User: verifier.User, HTTP: client, SupabaseURL: fixtureURL, SupabaseKey: fixtureKey, Now: func() time.Time { return time.UnixMilli(1792229400000) }, Logger: quiet}
+			h := &Handler{User: verifier.User, HTTP: client, SupabaseURL: fixtureURL, SupabaseKey: fixtureKey, Now: func() time.Time { return time.UnixMilli(1792229400000) }, Random: bytes.NewReader(make([]byte, 16)), Logger: quiet}
 			if f.ClientThrows {
 				h.SupabaseURL = ""
 			}

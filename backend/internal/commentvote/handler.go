@@ -60,6 +60,10 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized. Please login to vote."}`))
 		return
@@ -144,6 +148,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 200, []byte(`{"userVote":null}`))
 		return

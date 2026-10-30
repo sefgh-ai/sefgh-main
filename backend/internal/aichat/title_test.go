@@ -16,9 +16,9 @@ func TestFallbackTitle(t *testing.T) {
 		{"four words", "please help me find a good charting library", `"please help me find"`},
 		{"thirty units, no dots", "abcdefg abcdefg abcdefg abcdef and more", `"abcdefg abcdefg abcdefg abcdef"`},
 		{"thirty-one units, cut", "abcdefg abcdefg abcdefg abcdefg and more", `"abcdefg abcdefg abcdefg abcdef..."`},
-		{"repeated spaces are empty words", "a  b   c d e", `"a  b "`},
-		{"an emoji cut in two", "I love " + strings.Repeat(emoji, 12) + " and more", `"I love ` + strings.Repeat(emoji, 11) + `\ud83d..."`},
-		{"an emoji that fits whole", strings.Repeat(emoji, 15) + " x", `"` + strings.Repeat(emoji, 15) + `..."`},
+		{"repeated spaces collapse", "a  b   c d e", `"a b c d"`},
+		{"emoji stays whole", "I love " + strings.Repeat(emoji, 12) + " and more", `"I love ` + strings.Repeat(emoji, 12) + ` and"`},
+		{"emoji counts once", strings.Repeat(emoji, 15) + " x", `"` + strings.Repeat(emoji, 15) + ` x"`},
 		{"empty", "", `""`},
 	}
 	for _, tt := range tests {

@@ -10,28 +10,21 @@ import (
 var quotes = strings.NewReplacer("'", "", `"`, "")
 
 // cleanTitle tidies the title the AI wrote: quotation marks removed, then
-// trimmed as JavaScript trims. What is left may be empty; the fallback is
-// not used for that.
+// trimmed as JavaScript trims. The caller falls back if nothing remains.
 func cleanTitle(title string) string {
 	return jscompat.Trim(quotes.Replace(title))
 }
 
-// fallbackTitle is the title used when the AI gives none: the first four
-// words of the message, cut to 30 characters with three dots when longer.
-//
-// It copies src/lib/ai/github.js exactly, including two recorded defects.
-// Words are split at every single space, so repeated spaces make empty
-// words. And the cut counts UTF-16 units, as JavaScript does, so it can fall
-// in the middle of an emoji and keep only half of it. That is why the result
-// is jscompat.UTF16: a Go string cannot hold half an emoji.
-func fallbackTitle(message string) jscompat.UTF16 {
-	words := strings.Split(message, " ")
+// fallbackTitle keeps the first four whitespace-delimited words, capped at30
+// Unicode code points. A rune slice cannot retain half a surrogate pair.
+func fallbackTitle(message string) string {
+	words := jscompat.Words(message)
 	if len(words) > 4 {
 		words = words[:4]
 	}
-	title := jscompat.ToUTF16(strings.Join(words, " "))
+	title := []rune(strings.Join(words, " "))
 	if len(title) > 30 {
-		title = append(title[:30:30], '.', '.', '.')
+		return string(title[:30]) + "..."
 	}
-	return title
+	return string(title)
 }

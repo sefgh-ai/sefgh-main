@@ -11,65 +11,13 @@ import (
 // holds.
 const isoMillis = "2006-01-02T15:04:05.000Z"
 
-// dateRange returns the "from" and "to" instants sent to GitHub, written as
-// JavaScript's toISOString writes them.
-//
-// "to" is now. "from" is 365 calendar days earlier, moved back to a Monday,
-// keeping the time of day shown by a clock in loc. Because a clock in loc is
-// used, the same instant gives different ranges in different time zones. The
-// contract records that as a defect; this function reproduces it.
-func dateRange(now time.Time, loc *time.Location) (from, to string) {
-	local := now.In(loc)
-
-	// Date.setDate(getDate() - 365): same clock time, 365 days earlier.
-	start := wallClock(local.Year(), local.Month(), local.Day()-365, local, loc)
-
-	// Back to Monday. Sunday is 0 in both languages, so Sunday goes back 6.
-	daysSinceMonday := (int(start.Weekday()) + 6) % 7
-	start = wallClock(start.Year(), start.Month(), start.Day()-daysSinceMonday, start, loc)
-
-	return start.UTC().Format(isoMillis), now.UTC().Format(isoMillis)
-}
-
-// wallClock returns the instant at which a clock in loc shows the given date
-// together with the time of day that clock shows.
-//
-// Around a daylight-saving change a clock reading can occur twice or not at
-// all. JavaScript settles both cases by applying the UTC offset that was in
-// force before the change. Go's time.Date leaves the choice unspecified, so
-// it is made explicitly here.
-func wallClock(year int, month time.Month, day int, clock time.Time, loc *time.Location) time.Time {
-	// The requested reading, written as if it were UTC. Day may be zero or
-	// negative; time.Date normalises it.
-	reading := time.Date(year, month, day, clock.Hour(), clock.Minute(), clock.Second(), clock.Nanosecond(), time.UTC)
-
-	// The offsets in force a day either side. They differ only when a
-	// change falls in between.
-	_, before := reading.Add(-24 * time.Hour).In(loc).Zone()
-	_, after := reading.Add(24 * time.Hour).In(loc).Zone()
-	early := reading.Add(-time.Duration(before) * time.Second)
-	late := reading.Add(-time.Duration(after) * time.Second)
-
-	// The result is returned in loc, so that the caller reads its date,
-	// weekday and time of day as that clock shows them.
-	switch {
-	case shows(early, reading, loc):
-		// The usual case, and the first of two occurrences.
-		return early.In(loc)
-	case shows(late, reading, loc):
-		return late.In(loc)
-	default:
-		// The reading was skipped. The earlier offset carries it past the gap.
-		return early.In(loc)
-	}
-}
-
-// shows reports whether a clock in loc reads the same as reading at instant.
-func shows(instant, reading time.Time, loc *time.Location) bool {
-	local := instant.In(loc)
-	return local.Year() == reading.Year() && local.YearDay() == reading.YearDay() &&
-		local.Hour() == reading.Hour() && local.Minute() == reading.Minute() &&
-		local.Second() == reading.Second() && local.Nanosecond() == reading.Nanosecond()
+// dateRange retains the existing 365-day/Monday-aligned window in UTC,
+// independent of the host clock's location. Millisecond formatting is unchanged.
+func dateRange(now time.Time) (from, to string) {
+	utc := now.UTC()
+	start := utc.AddDate(0, 0, -365)
+	start = start.AddDate(0, 0, -(int(start.Weekday())+6)%7)
+	return start.Format(isoMillis), utc.Format(isoMillis)
 }
 
 // toFixed1 rounds x to one decimal place exactly as JavaScript's

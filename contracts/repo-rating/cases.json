@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 3,
   "route": "GET, POST and DELETE /api/repo/rating",
   "recorded_from": "the Next.js handlers at e223449, by scripts/contracts/record-repo-rating.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Data API (scripts/contracts/route-db-fixture.mjs); only auth.getUser() is replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. Request bodies are compared as JSON.",
@@ -372,7 +372,7 @@
     {
       "id": "post-rating-fraction",
       "disposition": "preserve",
-      "reason": "4.5 is between 1 and 5, so it passes and is stored as sent.",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4.5}",
       "session": "session-a",
@@ -396,6 +396,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -439,7 +448,7 @@
     {
       "id": "post-rating-text-number",
       "disposition": "defect",
-      "reason": "The text \"5\" compares as the number 5, so it passes and is stored as text. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"5\"}",
       "session": "session-a",
@@ -463,6 +472,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -506,7 +524,7 @@
     {
       "id": "post-rating-text-words",
       "disposition": "defect",
-      "reason": "The text \"great\" is NaN, and every comparison with NaN is false, so it passes the check; the database then refuses it for an integer column: 500. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"great\"}",
       "session": "session-a",
@@ -527,6 +545,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to save rating"
@@ -579,7 +606,7 @@
     {
       "id": "post-rating-padded",
       "disposition": "defect",
-      "reason": "The text \" 5 \" compares as 5 (white space is ignored), so it passes. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\" 5 \"}",
       "session": "session-a",
@@ -603,6 +630,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -646,7 +682,7 @@
     {
       "id": "post-rating-hex",
       "disposition": "defect",
-      "reason": "The text \"0x5\" compares as 5, so it passes. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":\"0x5\"}",
       "session": "session-a",
@@ -670,6 +706,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -713,7 +758,7 @@
     {
       "id": "post-rating-list",
       "disposition": "defect",
-      "reason": "The list [3] compares as 3, so it passes. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":[3]}",
       "session": "session-a",
@@ -737,6 +782,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -805,7 +859,7 @@
     {
       "id": "post-rating-object",
       "disposition": "defect",
-      "reason": "An object is NaN, so it passes the check. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":{\"stars\":4}}",
       "session": "session-a",
@@ -829,6 +883,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -874,7 +937,7 @@
     {
       "id": "post-rating-true",
       "disposition": "defect",
-      "reason": "true compares as 1, so it passes. (bug register R-085)",
+      "reason": "R-085: only JSON whole numbers 1 through 5 may be stored.",
       "method": "POST",
       "body": "{\"repoFullName\":\"octo/demo\",\"rating\":true}",
       "session": "session-a",
@@ -898,6 +961,15 @@
         }
       ],
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Rating must be between 1 and 5"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true,
@@ -2563,6 +2635,191 @@
         "status": 500,
         "body": {
           "error": "Internal server error"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "post-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"rating\":4,\"reviewText\":\"Solid\"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 201,
+          "raw": ""
+        },
+        {
+          "status": 200,
+          "body": [
+            {
+              "rating": 4
+            },
+            {
+              "rating": 5
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to rate."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "get-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "GET",
+      "query": "repo=octo/demo",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "body": {
+            "id": "r1",
+            "user_id": "user-a",
+            "repo_full_name": "octo/demo",
+            "rating": 4,
+            "review_text": "Solid",
+            "created_at": "2026-10-10T08:00:00+00:00",
+            "updated_at": "2026-10-10T08:00:00+00:00"
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "ratings": {
+            "total": 2,
+            "average": 4.5
+          },
+          "userRating": null,
+          "allRatings": [
+            {
+              "id": "r1",
+              "user_id": "user-a",
+              "repo_full_name": "octo/demo",
+              "rating": 4,
+              "review_text": "Solid",
+              "created_at": "2026-10-10T08:00:00+00:00",
+              "updated_at": "2026-10-10T08:00:00+00:00"
+            },
+            {
+              "id": "r2",
+              "user_id": "user-b",
+              "repo_full_name": "octo/demo",
+              "rating": 5,
+              "review_text": null,
+              "created_at": "2026-10-11T08:00:00+00:00",
+              "updated_at": "2026-10-11T08:00:00+00:00"
+            }
+          ]
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
+            "prefer": null,
+            "accept": null,
+            "content_type": null,
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "delete-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "DELETE",
+      "query": "repo=octo%2Fdemo",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,

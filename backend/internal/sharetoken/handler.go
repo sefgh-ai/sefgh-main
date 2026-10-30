@@ -17,7 +17,6 @@ package sharetoken
 
 import (
 	"bytes"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -43,12 +42,10 @@ type Handler struct {
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	db := supabaserest.Client{HTTP: h.Database, URL: h.SupabaseURL, Key: h.SupabaseKey}
-	// Without the project's settings createServerClient throws, and the
-	// handler's catch answers the error's own message.
+	// Missing settings are an internal failure with fixed public text.
 	if !db.Configured() {
 		h.log("settings", 0, nil)
-		body, _ := json.Marshal(map[string]string{"error": supabaserest.MissingSettings})
-		write(w, 500, body)
+		write(w, 500, []byte(`{"error":"Internal server error"}`))
 		return
 	}
 	// The bearer is read by the rules every route of this server uses. A
@@ -67,22 +64,30 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status, raw, err := db.SelectObject(r.Context(), session, "shared_conversations", query)
 	if err != nil {
 		h.log("database", status, err)
+		write(w, 503, []byte(`{"error":"Share could not be loaded"}`))
+		return
+	}
+	if supabaserest.NoRows(status, raw) {
 		write(w, 404, []byte(`{"error":"Not found"}`))
 		return
 	}
-	// if (error || !data): every failure, and no row, read as "Not found"
-	// (R-082).
 	data, failed := supabaserest.ReadResult(status, raw)
-	if failed || !supabaserest.Truthy(data) {
-		if status >= 500 {
-			h.log("database", status, nil)
-		}
+	if status < 200 || status > 299 || failed {
+		h.log("database", status, nil)
+		write(w, 503, []byte(`{"error":"Share could not be loaded"}`))
+		return
+	}
+	if data == nil {
 		write(w, 404, []byte(`{"error":"Not found"}`))
 		return
 	}
-	// if (!data.is_public): anything but an object has no is_public.
+	// A single-row lookup must return an object before applying visibility.
 	row, isObject := data.(map[string]any)
-	if !isObject || !supabaserest.Truthy(row["is_public"]) {
+	if !isObject {
+		write(w, 503, []byte(`{"error":"Share could not be loaded"}`))
+		return
+	}
+	if !supabaserest.Truthy(row["is_public"]) {
 		write(w, 403, []byte(`{"error":"Private link"}`))
 		return
 	}

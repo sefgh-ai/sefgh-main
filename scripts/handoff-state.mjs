@@ -6,7 +6,7 @@ import { lstatSync, readFileSync, readlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 export function computeTreeHash(root) {
-  const git = (...args) => execFileSync('git', args, { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+  const git = (...args) => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
   const hash = createHash('sha256');
   // Length framing keeps filenames, contents, and adjacent records distinct.
   const add = (value) => {

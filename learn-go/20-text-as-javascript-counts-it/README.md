@@ -119,3 +119,28 @@ Repeated spaces are not a mistake in the tests: `split(' ')` makes empty words o
 - A type with a `MarshalJSON` method decides how it is written as JSON.
 - `value.Method` without brackets is a function that remembers `value`.
 - A private type with one exported value makes a marker nothing else can equal.
+
+
+## BUG-060: R-010
+
+The React chat hook guards assistant replies for send, edit and regeneration. Non-text or blank responses show The assistant sent an empty answer and are never stored as assistant text; the conversation/user message stays, and regeneration preserves the prior answer. API non-text replies remain characterized unchanged.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+
+## BUG-061: R-012
+
+Fallback chat titles cap the first four words at30 Unicode code points and append dots only when longer. Emoji scalar values remain intact; existing UTF-16 helper behavior elsewhere and rollback Next titles remain pinned.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+BUG-061 changes the current fallbackTitle to []rune, a slice of Unicode code points. len(string) counts bytes; len([]rune(string)) counts code points; JavaScript length counts UTF-16 units. Only the latter can cut between an emoji�s surrogate halves. The existing exercises still teach the original UTF-16 port; do not rewrite them. This cap preserves code points, not every multi-code-point grapheme cluster.
+
+
+## BUG-062: R-013
+
+Fallback titles collapse ECMAScript whitespace before selecting four words. A title emptied by quote stripping uses that fallback. The first message is JSON-escaped inside the title prompt, including quotes, backslashes and controls. The30-code-point cap remains.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+Words uses strings.FieldsFunc with the existing JavaScript whitespace predicate: repeated spaces, tabs and line breaks do not create empty words; ECMAScript includes BOM and excludes U+0085. TitleMessages reuses UTF16.MarshalJSON to escape string contents before placing them between the prompt�s quotes. Its first/last bytes are always the JSON quotation marks, so the interior slice is safe even for an empty string. This preserves the prompt structure; it does not make claims about model compliance.

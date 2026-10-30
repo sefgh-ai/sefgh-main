@@ -65,8 +65,8 @@ func TestLogsKeepTokensOut(t *testing.T) {
 	r.Header.Set("Authorization", "Bearer visitor-secret-456")
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, r)
-	if w.Code != 404 {
-		t.Errorf("status %d, want 404", w.Code)
+	if w.Code != 503 {
+		t.Errorf("status %d, want 503", w.Code)
 	}
 	text := logs.String()
 	if !strings.Contains(text, "stage=database") {

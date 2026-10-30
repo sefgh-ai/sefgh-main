@@ -12,7 +12,7 @@ const handlers = await import('../../src/app/api/share/[token]/fork/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/share-fork/cases.json', import.meta.url), 'utf8'));
 
 test('share fork fixture integrity', () => {
-  assert.equal(contract.contract_version, 1);
+  assert.equal(contract.contract_version, 2);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -35,6 +35,6 @@ test('share fork fixture integrity', () => {
 
 for (const c of contract.cases) {
   test(`share fork: ${c.id} [${c.disposition}]`, async () => {
-    sameAnswer(await runRouteFixture(handlers, '/api/share/[token]/fork', c), c);
+    sameAnswer(await runRouteFixture(handlers, '/api/share/[token]/fork', c), { ...c, expect: c.next_expect ?? c.expect, engine_message: c.next_engine_message ?? c.engine_message });
   });
 }

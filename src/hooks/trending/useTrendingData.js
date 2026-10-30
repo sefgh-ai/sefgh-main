@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { fetchTrendingTopics } from "@/lib/trending-topics";
 import { trendingEntries } from "@/lib/utils/trending/entries";
+import { trendingFailure } from "@/lib/utils/trending/feedback";
 
 export function useTrendingData(activeTab, programmingLanguage, spokenLanguage, dateRange) {
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ export function useTrendingData(activeTab, programmingLanguage, spokenLanguage, 
         if (spokenLanguage !== "any") params.set("spokenLanguage", spokenLanguage);
       }
       const response = await fetch(`${path}?${params}`, { signal: controller.signal });
-      if (!response.ok) throw new Error(`status ${response.status}`);
+      if (!response.ok) throw await trendingFailure(response);
       const rows = trendingEntries(await response.json(), activeTab);
       if (rows === null) {
         throw new Error("the reply is not a list of entries");
@@ -58,11 +59,13 @@ export function useTrendingData(activeTab, programmingLanguage, spokenLanguage, 
       else setDevelopers(rows);
       setLoadError(null);
       return true;
-    } catch {
+    } catch (error) {
       if (!current()) return null;
       if (activeTab === "repositories") setRepositories([]);
       else setDevelopers([]);
-      setLoadError(`Trending ${activeTab === "repositories" ? "repositories" : "developers"} could not be loaded right now. Please try again in a moment.`);
+      setLoadError(error?.rateLimited
+        ? `GitHub rate limit reached. ${error.retryAfterSeconds === null ? "Please try again shortly." : `Try again in ${error.retryAfterSeconds} seconds.`}`
+        : `Trending ${activeTab === "repositories" ? "repositories" : "developers"} could not be loaded right now. Please try again in a moment.`);
       return false;
     } finally {
       if (current()) setLoading(false);

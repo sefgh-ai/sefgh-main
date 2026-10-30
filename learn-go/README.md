@@ -62,7 +62,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels, background refresh, required-lookup failures (BUG-046), decoded JSON assertions and filtering (BUG-047) | `backend/internal/githubrepos/cache.go`, `handler.go`, `shapes.go` |
 | [11 Shared results](11-shared-results/README.md) | Waiting with `select`, cancellation, and preserving errors | `cacheFlight` in `cache.go`, upstream errors in `handler.go` |
 | [12 Embedded data](12-embedded-data/README.md) | `go:embed`, blank imports, serving static JSON and a private catalog lookup set (BUG-040) | `backend/internal/githublanguages/handler.go` |
-| [13 Time and clocks](13-time-and-clocks/README.md) | Moments and time zones, moving by days, formatting dates, and passing the clock in so date logic can be tested | `dateRange` in `backend/internal/githubcontributions/dates.go`, and `Handler` in `handler.go` beside it |
+| [13 Time and clocks](13-time-and-clocks/README.md) | Moments/time zones, UTC ranges and day-anchored streaks (BUG-048), date formatting and an injected clock | `dateRange` in `backend/internal/githubcontributions/dates.go`, and `Handler`/`currentStreak` in `handler.go` beside it |
 | [14 Checking input](14-checking-input/README.md) | Regular expressions, allowlists against blocklists, and putting outside text into a URL safely | `backend/internal/githubrepos/identifiers.go` |
 | [15 Settings from the environment](15-settings-from-the-environment/README.md) | Environment variables, handing a function to a function, and refusing a bad setting at start-up | `listenAddr` in `backend/cmd/api/main.go` |
 | [16 Verifying access](16-verifying-access/README.md) | Middleware, online identity verification, deadlines and private cache isolation | `backend/internal/githubaccess/access.go` and `backend/cmd/api/main.go` |
@@ -131,3 +131,41 @@ Your `exercise.go` files are yours. The agents are told not to change them.
 - An exercise must compile as shipped and fail its tests without panicking.
 - Point at real code by file and function name, not line number. Line numbers go stale.
 - Keep each lesson to one idea and about ten minutes of reading.
+
+BUG-049 (R-059): updated 22-reading-rows-as-the-user alongside this backend change.
+
+BUG-050 (R-084): updated 24-optional-sign-in alongside this backend change.
+
+BUG-051 (R-085): updated 27-when-text-meets-numbers alongside this backend change.
+
+BUG-052 (R-087): updated 28-many-at-once-one-failure-for-all, 29-a-javascript-pattern-in-go, 25-writing-as-the-user alongside this backend change.
+
+BUG-053 (R-081): updated 24-optional-sign-in alongside this backend change.
+
+BUG-054 (R-082): updated 24-optional-sign-in alongside this backend change.
+
+BUG-055 (R-089): updated 30-defaults-and-missing-values alongside this backend change.
+
+BUG-056 (R-094): updated 31-bounded-file-streams, 45-copying-javascript-string-rules alongside this backend change.
+
+BUG-057/R-096: updated 31-bounded-file-streams.
+
+BUG-058/R-097: updated 31-bounded-file-streams.
+
+BUG-059/R-095: updated 31-bounded-file-streams, 45-copying-javascript-string-rules.
+
+BUG-060/R-010: updated 20-text-as-javascript-counts-it.
+
+BUG-061/R-012: updated 20-text-as-javascript-counts-it.
+
+BUG-062/R-013: updated 20-text-as-javascript-counts-it, 32-request-budgets-and-redirects.
+
+BUG-063/R-035: updated 32-request-budgets-and-redirects.
+
+BUG-064/R-036: updated 32-request-budgets-and-redirects.
+
+BUG-065/R-037: lesson19 updated for query validation, trimming and selected-result deduplication.
+
+BUG-067/R-207 updates lesson13 with the handler username guard; date/streak behavior is unchanged.
+
+BUG-068/R-090 updates lesson30 for owner-scoped bulk unshare and post-write verification.

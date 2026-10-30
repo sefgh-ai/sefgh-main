@@ -1,5 +1,11 @@
 # Repository rating contract
 
+Update BUG-051 (R-085,2026-10-30): contract v3. Rating writes accept only JSON numbers that are whole values 1 through 5. Text, booleans, lists, objects and fractions return 400 before any database write. Existing stored-rating summaries remain characterized. Rollback Next.js answers remain in next_expect.
+
+
+Update BUG-050 (R-084,2026-10-30): contract v2. Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Rollback Next.js answers remain in next_expect.
+
+
 **Version 1** (RATING-001, 2026-10-17): 52 cases, 8 marked `defect`, over `GET`, `POST` and `DELETE /api/repo/rating`:
 
 - `POST` rates a repository from 1 to 5, with an optional review;

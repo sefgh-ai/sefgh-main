@@ -32,7 +32,7 @@ func (s *videosUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(201)
 		io.WriteString(w, `{"id":"v9","video_type":"youtube"}`)
 	case r.URL.Path == "/rest/v1/repo_videos" && r.Method == "DELETE":
-		w.WriteHeader(204)
+		io.WriteString(w, `{"id":"v1"}`)
 	default:
 		w.WriteHeader(403)
 		io.WriteString(w, `{}`)
@@ -106,7 +106,7 @@ func TestVideosDeleteAsTheCaller(t *testing.T) {
 	if rec.Code != 200 || rec.Body.String() != `{"success":true}` {
 		t.Fatalf("%d %s", rec.Code, rec.Body)
 	}
-	if got := stand.seen[1]; got != "DELETE /rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b|Bearer session-a|public-key|" {
+	if got := stand.seen[1]; got != "DELETE /rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*|Bearer session-a|public-key|" {
 		t.Errorf("the delete went as %q", got)
 	}
 	rec = httptest.NewRecorder()

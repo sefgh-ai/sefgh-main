@@ -64,3 +64,28 @@ go test -tags solution ./32-request-budgets-and-redirects
 
 The unfinished exercise fails cleanly. The test's transport is a local fake:
 even the deliberately unsafe exercise never sends a real request or API key.
+
+
+## BUG-062: R-013
+
+Fallback titles collapse ECMAScript whitespace before selecting four words. A title emptied by quote stripping uses that fallback. The first message is JSON-escaped inside the title prompt, including quotes, backslashes and controls. The30-code-point cap remains.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+
+## BUG-063: R-035
+
+Enhance-query falls back to its built-in enhancement after provider errors or blank replies, including refused redirects and bounded oversized replies. JSON null is400 Query is required, with no provider call. Query/key isolation, provider read bounds and allowance behavior remain.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+BUG-063 separates logging an upstream failure from answering the request: log records the sanitized cause, while ServeHTTP can still return a useful basic enhancement. Refusing a redirect remains mandatory; the fallback does not send credentials or the body to that destination. Reply limits are checked before parsing, and an oversized reply takes the same fallback path. Null input is rejected before any allowance or provider work.
+
+
+## BUG-064: R-036
+
+Built-in enhancement matches whole Unicode words, adds only words not already present, and trims surrounding whitespace. Operator/quoted queries retain their contents after trimming. Anthropic query text is JSON-escaped inside the prompt. Repeated basic enhancement is idempotent.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
+
+BUG-064 tokenizes with strings.FieldsFunc and Unicode letter/number/mark categories plus underscore. The original map decides which keyword groups match, while seen also records words added later: this prevents both repeated additions and accidental cascades between groups. In JavaScript these maps play the role of Set. Prompt contents use the existing UTF16 JSON writer to escape quote, backslash and control characters. An idempotence test verifies pressing enhance repeatedly does not keep growing the basic query.

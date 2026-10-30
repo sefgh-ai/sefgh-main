@@ -782,3 +782,7 @@ refresh route, whose prior source SHA-256 was
 No helper, SQL, table or stored data is removed. The repository caller audit and
 independent review accepted this scope; external schedulers/live traffic remain
 unverified. This is not authorization to begin general Phase 7 retirement.
+
+### Avatar crash-lock recovery decision (2026-10-31)
+
+Owner decision 2026-10-31 (CLOSEOUT-001): accept manual crash-lock recovery and defer R-209 automatic recovery until after Phase 7. An operator must verify the owning request/process stopped and remove only the exact user lock after inspecting the current profile. Never remove by age or steal a potentially active lock. Hosted lock permissions, insert atomicity, signed-in replacement and participation by all active upload writers remain rollout gates. This decision authorizes no activation or deployment.

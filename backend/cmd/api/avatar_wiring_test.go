@@ -28,9 +28,13 @@ func TestAvatarUsesTheCallerForStorageAuthAndProfile(t *testing.T) {
 		switch {
 		case r.Method == "GET" && r.URL.Path == "/auth/v1/user":
 			io.WriteString(w, `{"id":"`+id+`"}`)
+		case r.Method == "POST" && strings.HasSuffix(r.URL.Path, "/.avatar-upload-lock.png"):
+			io.WriteString(w, `{}`)
+		case r.Method == "DELETE" && r.URL.Path == "/storage/v1/object/avatars":
+			io.WriteString(w, `[]`)
 		case r.Method == "POST" && strings.HasPrefix(r.URL.Path, "/storage/v1/object/avatars/"+id+"/avatar-"):
 			data, _ := io.ReadAll(r.Body)
-			if string(data) != "PNG" || r.Header.Get("Content-Type") != "image/png" || r.Header.Get("X-Upsert") != "true" {
+			if !bytes.Equal(data, []byte{137, 80, 78, 71, 13, 10, 26, 10}) || r.Header.Get("Content-Type") != "image/png" || r.Header.Get("X-Upsert") != "false" {
 				t.Error("upload changed")
 			}
 			io.WriteString(w, `{"Key":"x"}`)
@@ -58,7 +62,7 @@ func TestAvatarUsesTheCallerForStorageAuthAndProfile(t *testing.T) {
 	header.Set("Content-Disposition", `form-data; name="avatar"; filename="photo.png"`)
 	header.Set("Content-Type", "image/png")
 	part, _ := form.CreatePart(header)
-	_, _ = io.WriteString(part, "PNG")
+	_, _ = part.Write([]byte{137, 80, 78, 71, 13, 10, 26, 10})
 	_ = form.Close()
 	r := httptest.NewRequest("POST", "/api/upload-avatar", &body)
 	r.Header.Set("Content-Type", form.FormDataContentType())
@@ -72,7 +76,7 @@ func TestAvatarUsesTheCallerForStorageAuthAndProfile(t *testing.T) {
 	mu.Lock()
 	before := len(seen)
 	mu.Unlock()
-	if before != 5 {
+	if before != 7 {
 		t.Fatalf("calls %v", seen)
 	}
 	for _, method := range []string{"POST", "GET"} {

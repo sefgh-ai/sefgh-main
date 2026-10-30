@@ -61,3 +61,19 @@ go test -tags solution ./45-copying-javascript-string-rules
 ```
 
 The exercise is intentionally unfinished. The solution shows one way to do it.
+
+
+## BUG-056: R-094
+
+Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+imageType returns two strings: detected MIME and a canonical extension. A switch without an expression checks byte prefixes with bytes.HasPrefix. The WebP branch checks length before slicing body[:4] and body[8:12], so a short upload cannot panic. An empty result means reject the upload. This checks signatures, not a full image decode. JavaScript similarly uses byte arrays and subarray; a file.type or filename string is only caller-provided metadata. Existing filename-copying exercises describe the original port; the current upload no longer derives its filename from the caller.
+
+
+## BUG-059: R-095
+
+Avatar replacement uses an exclusive own-folder Storage insert across participating Go instances, unique random filenames and non-overwriting uploads. Cleanup snapshots all pages before deleting in batches, traverses explicit legacy folders, and preserves the current file, lock and newer timestamps. A failed page causes no partial-snapshot deletion. Lock release is bounded. Crash/uncertain-acquisition recovery is intentionally manual (R-209); hosted acceptance and all-writers protocol are rollout gates.
+
+See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.

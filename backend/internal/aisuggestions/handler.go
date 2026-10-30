@@ -53,18 +53,17 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// A body that is not an object has no query, so it is answered like an
 	// empty one.
 	object, _ := decoded.(map[string]any)
-	value := object["query"]
-	if !truthy(value) {
+	value, present := object["query"]
+	if !present {
 		write(w, 200, map[string]any{"suggestions": []any{}})
 		return
 	}
 	query, isText := value.(string)
 	if !isText {
-		// Recorded defect: the Next.js handler calls trim() on a number, a
-		// list or an object, which throws, and answers 500.
-		h.fail(w, "query_type", errors.New("query is not text"))
+		write(w, 400, map[string]any{"error": "Query must be text"})
 		return
 	}
+	query = jscompat.Trim(query)
 	if jscompat.UTF16Len(jscompat.Trim(query)) < 2 {
 		write(w, 200, map[string]any{"suggestions": []any{}})
 		return
@@ -84,7 +83,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	// Recorded defect: this length is of the query as typed, spaces included.
+	// The query was trimmed before every length check and provider prompt.
 	if len(matches) >= 3 || jscompat.UTF16Len(query) < 5 {
 		write(w, 200, map[string]any{"suggestions": matches, "source": "predefined"})
 		return
@@ -120,14 +119,27 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// AI suggestions first, then the built-in matches the AI did not give.
 	combined := []any{}
-	for i := 0; i < len(suggestions) && i < 3; i++ {
-		combined = append(combined, suggestions[i])
+	seen := map[string]bool{}
+	for _, item := range suggestions {
+		text, ok := item.(string)
+		if !ok {
+			continue
+		}
+		text = jscompat.Trim(text)
+		if text == "" || seen[text] {
+			continue
+		}
+		seen[text] = true
+		combined = append(combined, text)
+		if len(combined) == 3 {
+			break
+		}
 	}
 	for _, match := range matches {
-		// Recorded defect: the whole AI list is searched, so a fourth
-		// suggestion that was not used still hides a built-in match.
-		if !contains(suggestions, match) {
-			combined = append(combined, match)
+		text := match.(string)
+		if !seen[text] {
+			combined = append(combined, text)
+			seen[text] = true
 		}
 	}
 	if len(combined) > 5 {

@@ -5,6 +5,8 @@ package avatar
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -32,6 +34,7 @@ type Handler struct {
 	User                     User
 	HTTP                     *http.Client
 	SupabaseURL, SupabaseKey string
+	Random                   io.Reader
 	Now                      func() time.Time
 	Logger                   *slog.Logger
 }
@@ -56,7 +59,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		write(w, 401, map[string]any{"error": "Unauthorized"})
 		return
 	}
-	name, kind, body, present, err := readAvatar(w, r)
+	_, _, body, present, err := readAvatar(w, r)
 	if err != nil {
 		h.fail(w, "form", "Internal server error", "Could not parse multipart form data")
 		return
@@ -65,7 +68,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		write(w, 400, map[string]any{"error": "No file provided"})
 		return
 	}
-	if kind != "image/jpeg" && kind != "image/png" && kind != "image/gif" && kind != "image/webp" {
+	kind, extension := imageType(body)
+	if kind == "" {
 		write(w, 400, map[string]any{"error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."})
 		return
 	}
@@ -73,6 +77,15 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		write(w, 400, map[string]any{"error": "File size exceeds 5MB limit"})
 		return
 	}
+	if status := h.acquire(r.Context(), session, id); status != 200 {
+		message := "Avatar upload could not be started"
+		if status == 409 {
+			message = "Another avatar upload is in progress"
+		}
+		write(w, status, map[string]any{"error": message})
+		return
+	}
+	defer h.release(r.Context(), session, id)
 	stamp := func() string {
 		now := time.Now()
 		if h.Now != nil {
@@ -80,8 +93,16 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		return strconv.FormatInt(now.UnixMilli(), 10)
 	}
-	parts := strings.Split(name, ".")
-	fileName := id + "/avatar-" + stamp() + "." + parts[len(parts)-1]
+	random := h.Random
+	if random == nil {
+		random = rand.Reader
+	}
+	token := make([]byte, 16)
+	if _, err := io.ReadFull(random, token); err != nil {
+		h.fail(w, "random", "Failed to upload avatar", "")
+		return
+	}
+	fileName := id + "/avatar-" + stamp() + "-" + hex.EncodeToString(token) + "." + extension
 	uploadPath := cleanPath(fileName)
 	_, raw, upstreamErr := h.call(ctx, session, "POST", "/storage/v1/object/avatars/"+uploadPath, kind, body, true)
 	if upstreamErr == nil && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
@@ -96,6 +117,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.fail(w, "upload", "Failed to upload avatar", errorText(raw, upstreamErr, false))
 		return
 	}
+	committed := false
+	defer func() {
+		if !committed {
+			h.rollback(ctx, session, uploadPath)
+		}
+	}()
 	publicURL := encodeURI(strings.TrimRight(h.SupabaseURL, "/")+"/storage/v1/object/public/avatars/"+fileName) + "?t=" + stamp()
 	metadata, _ := json.Marshal(map[string]any{"data": map[string]string{"avatar_url": publicURL}, "code_challenge": nil, "code_challenge_method": nil})
 	_, raw, upstreamErr = h.call(ctx, session, "PUT", "/auth/v1/user", "application/json;charset=UTF-8", metadata, false)
@@ -110,8 +137,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	changes, _ := json.Marshal(map[string]string{"avatar_url": publicURL})
 	_, _, profileErr := h.call(ctx, session, "PATCH", "/rest/v1/profiles?"+supabaserest.Param("id", "eq."+id), "application/json", changes, false)
 	if profileErr != nil {
-		h.log("profile")
+		h.fail(w, "profile", "Failed to update user profile", "Profile update failed")
+		return
 	}
+	committed = true
 	// Next starts detached cleanup. Go finishes bounded best-effort cleanup
 	// before returning, so a serverless response cannot strand its goroutine.
 	cleanupCtx, stop := context.WithTimeout(ctx, CleanupBudget)
@@ -176,33 +205,105 @@ func cleanPath(p string) string {
 	return p
 }
 
+const uploadLockName = ".avatar-upload-lock.png"
+
+// acquire uses a non-overwriting Storage insert, shared by all Go instances.
+func (h *Handler) acquire(ctx context.Context, session, id string) int {
+	status, raw, err := h.call(ctx, session, "POST", "/storage/v1/object/avatars/"+id+"/"+uploadLockName, "image/png", []byte{137, 80, 78, 71, 13, 10, 26, 10}, true)
+	if err == nil {
+		return 200
+	}
+	h.log("upload_lock")
+	var body struct {
+		Error string
+		Code  string
+	}
+	_ = json.Unmarshal(raw, &body)
+	if status == 409 || (status == 400 && (body.Error == "Duplicate" || body.Code == "ResourceAlreadyExists" || body.Error == "ResourceAlreadyExists")) {
+		return 409
+	}
+	return 503
+}
+
+// Never release an unacknowledged/foreign lock or steal a lock by age.
+func (h *Handler) release(ctx context.Context, session, id string) {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), time.Second)
+	defer cancel()
+	body, _ := json.Marshal(map[string]any{"prefixes": []string{id + "/" + uploadLockName}})
+	if _, _, err := h.call(ctx, session, "DELETE", "/storage/v1/object/avatars", "application/json", body, false); err != nil {
+		h.log("upload_unlock")
+	}
+}
+
+func safeName(name string) bool {
+	return name != "" && name != "." && name != ".." && !strings.ContainsAny(name, "/\\\x00")
+}
+
+func avatarStamp(name string) (int64, bool) {
+	rest, ok := strings.CutPrefix(name, "avatar-")
+	if !ok {
+		return 0, false
+	}
+	end := strings.IndexAny(rest, ".-")
+	if end < 1 {
+		return 0, false
+	}
+	stamp, err := strconv.ParseInt(rest[:end], 10, 64)
+	return stamp, err == nil
+}
+
 func (h *Handler) cleanup(ctx context.Context, session, id, current string) {
-	query, _ := json.Marshal(map[string]any{"limit": 100, "offset": 0, "sortBy": map[string]string{"column": "name", "order": "asc"}, "prefix": id})
-	_, raw, err := h.call(ctx, session, "POST", "/storage/v1/object/list/avatars", "application/json", query, false)
-	if err != nil {
-		h.log("cleanup_list")
-		return
-	}
-	var files []map[string]any
-	if json.Unmarshal(raw, &files) != nil || len(files) <= 1 {
-		return
-	}
 	_, currentOnly, _ := strings.Cut(current, "/")
+	cutoff, _ := avatarStamp(currentOnly)
+	pending := []string{id}
 	prefixes := []string{}
-	for _, file := range files {
-		if file["name"] != currentOnly {
-			name := "undefined"
-			if v, ok := file["name"]; ok {
-				name = jscompat.String(v)
+	// Finish the whole snapshot before deleting, so offsets cannot shift.
+	for len(pending) > 0 {
+		folder := pending[0]
+		pending = pending[1:]
+		for offset := 0; ; offset += 100 {
+			if ctx.Err() != nil {
+				h.log("cleanup_list")
+				return
 			}
-			prefixes = append(prefixes, id+"/"+name)
+			query, _ := json.Marshal(map[string]any{"limit": 100, "offset": offset, "sortBy": map[string]string{"column": "name", "order": "asc"}, "prefix": folder})
+			_, raw, err := h.call(ctx, session, "POST", "/storage/v1/object/list/avatars", "application/json", query, false)
+			var files []map[string]any
+			if err != nil || json.Unmarshal(raw, &files) != nil {
+				h.log("cleanup_list")
+				return
+			}
+			for _, file := range files {
+				name, ok := file["name"].(string)
+				if !ok || !safeName(name) || name == uploadLockName {
+					continue
+				}
+				path := folder + "/" + name
+				if path == current {
+					continue
+				}
+				if stamp, known := avatarStamp(name); known && stamp > cutoff {
+					continue
+				}
+				if value, present := file["id"]; present && value == nil {
+					pending = append(pending, path)
+				} else {
+					prefixes = append(prefixes, path)
+				}
+			}
+			if len(files) < 100 {
+				break
+			}
 		}
 	}
-	if len(prefixes) > 0 {
-		data, _ := json.Marshal(map[string]any{"prefixes": prefixes})
-		if _, _, err = h.call(ctx, session, "DELETE", "/storage/v1/object/avatars", "application/json", data, false); err != nil {
+	for len(prefixes) > 0 {
+		count := min(100, len(prefixes))
+		data, _ := json.Marshal(map[string]any{"prefixes": prefixes[:count]})
+		if _, _, err := h.call(ctx, session, "DELETE", "/storage/v1/object/avatars", "application/json", data, false); err != nil {
 			h.log("cleanup_remove")
+			return
 		}
+		prefixes = prefixes[count:]
 	}
 }
 
@@ -231,7 +332,7 @@ func (h *Handler) call(ctx context.Context, session, method, path, contentType s
 	}
 	if upload {
 		req.Header.Set("Cache-Control", "max-age=3600")
-		req.Header.Set("X-Upsert", "true")
+		req.Header.Set("X-Upsert", "false")
 	}
 	if strings.HasPrefix(path, "/rest/v1/") {
 		req.Header.Set("Content-Profile", "public")
@@ -309,10 +410,38 @@ func (h *Handler) log(stage string) {
 }
 func (h *Handler) fail(w http.ResponseWriter, stage, message, details string) {
 	h.log(stage)
-	write(w, 500, map[string]any{"error": message, "details": details})
+	write(w, 500, map[string]any{"error": message})
 }
 func write(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
+}
+
+// imageType checks the supported file signatures, not user-supplied labels.
+// It identifies a format; it does not decode or validate the entire image.
+func imageType(body []byte) (kind, extension string) {
+	switch {
+	case bytes.HasPrefix(body, []byte{137, 80, 78, 71, 13, 10, 26, 10}):
+		return "image/png", "png"
+	case bytes.HasPrefix(body, []byte{255, 216, 255}):
+		return "image/jpeg", "jpg"
+	case bytes.HasPrefix(body, []byte("GIF87a")) || bytes.HasPrefix(body, []byte("GIF89a")):
+		return "image/gif", "gif"
+	case len(body) >= 12 && string(body[:4]) == "RIFF" && string(body[8:12]) == "WEBP":
+		return "image/webp", "webp"
+	default:
+		return "", ""
+	}
+}
+
+// rollback removes only this request's uploaded object. Cancellation of the
+// original request does not suppress the bounded compensation attempt.
+func (h *Handler) rollback(ctx context.Context, session, path string) {
+	cleanup, cancel := context.WithTimeout(context.WithoutCancel(ctx), CleanupBudget)
+	defer cancel()
+	body, _ := json.Marshal(map[string]any{"prefixes": []string{path}})
+	if _, _, err := h.call(cleanup, session, "DELETE", "/storage/v1/object/avatars", "application/json", body, false); err != nil {
+		h.log("rollback")
+	}
 }

@@ -7,7 +7,7 @@ register('./route-db-loader.mjs', import.meta.url);
 const handlers = await import('../../src/app/api/upload-avatar/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/upload-avatar/cases.json', import.meta.url), 'utf8'));
 test('avatar fixture integrity', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 6);
   assert.equal(new Set(contract.cases.map(c => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(c.reason); assert.ok(['preserve', 'defect'].includes(c.disposition));
@@ -27,7 +27,7 @@ for (const c of contract.cases) test(`avatar: ${c.id} [${c.disposition}]`, async
   // until it is retired, so where it differs the case keeps its answer as
   // next_expect.
   const expected = structuredClone(c.next_expect ?? c.expect);
-  if (c.engine_message) {
+  if (c.next_engine_message ?? c.engine_message) {
     assert.equal(typeof actual.body.details, 'string'); assert.ok(actual.body.details.length);
     actual.body.details = expected.body.details = '<engine message>';
   }

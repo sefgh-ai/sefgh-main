@@ -6,12 +6,8 @@
 // contracts/share-fork is answered as the Next.js handlers answer it,
 // defects included.
 //
-// Both routes send error text to the browser as it is: the database's own
-// message, supabase-js's, a thrown TypeError's, and the client library's
-// when the project's settings are missing (bug register R-089). The port
-// copies that, except for text the JavaScript engine writes when JSON
-// cannot be parsed, which differs between Node versions; see
-// jscompat.JSONParseMessage.
+// BUG-055/R-089: failure replies use fixed public messages.
+// Upstream details are never sent to the visitor.
 //
 // Only a signed-in user reaches the database, always with their own token,
 // through internal/supabaserest. The planned difference, as for activity:
@@ -205,8 +201,7 @@ func (h *Conversation) origin(r *http.Request) string {
 }
 
 // unshare marks the user's share deleted: DELETE in the Next.js handler.
-// A lookup that fails for any reason answers success and removes nothing
-// (R-090).
+// Remove all active owner/conversation matches, then verify an empty result.
 func (h *Conversation) unshare(w http.ResponseWriter, r *http.Request) {
 	db := supabaserest.Client{HTTP: h.Database, URL: h.SupabaseURL, Key: h.SupabaseKey}
 	if !db.Configured() {
@@ -218,29 +213,25 @@ func (h *Conversation) unshare(w http.ResponseWriter, r *http.Request) {
 		write(w, 401, []byte(`{"error":"Unauthorized"}`))
 		return
 	}
-	query := strings.Join([]string{
-		supabaserest.Param("select", "id,created_by,conversation_id"),
+	filters := strings.Join([]string{
 		supabaserest.Param("conversation_id", "eq."+r.PathValue("id")),
 		supabaserest.Param("created_by", "eq."+userID),
 		supabaserest.Param("deleted_at", "is.null"),
 	}, "&")
-	upstream, raw, err := db.SelectObject(r.Context(), session, "shared_conversations", query)
-	if data, bad := supabaserest.ReadResult(upstream, raw); err != nil || bad || !jscompat.Truthy(data) {
-		if err != nil || upstream >= 500 || (bad && upstream != 406) {
-			logFailure(h.Logger, "lookup", upstream, err)
-		}
-		write(w, 200, []byte(`{"ok":true}`))
+	changes := []byte(`{"deleted_at":` + string(jsString(jscompat.ISOString(h.now()))) + `}`)
+	upstream, raw, err := db.Update(r.Context(), session, "shared_conversations", filters, changes, false)
+	if message, bad := supabaserest.ErrorMessage(upstream, raw, err); err != nil || upstream < 200 || upstream > 299 || bad {
+		fail(w, h.Logger, "update", upstream, err, 400, message)
 		return
 	}
-	shareID := "undefined"
-	if value := property(supabaserest.DataJSON(upstream, raw), "id"); value != nil {
-		shareID = jscompat.String(parse(value))
-	}
-	deletedAt := jsString(jscompat.ISOString(h.now()))
-	changes := append(append([]byte(`{"deleted_at":`), deletedAt...), '}')
-	upstream, raw, err = db.Update(r.Context(), session, "shared_conversations", supabaserest.Param("id", "eq."+shareID), changes, false)
-	if message, bad := supabaserest.ErrorMessage(upstream, raw, err); bad {
-		fail(w, h.Logger, "update", upstream, err, 400, message)
+	// Verify the mutation: a silent zero-row update or concurrent active share
+	// must not be presented to the user as a successful removal.
+	query := supabaserest.Param("select", "id") + "&" + filters + "&" + supabaserest.Param("limit", "1")
+	upstream, raw, err = db.Select(r.Context(), session, "shared_conversations", query)
+	data, bad := supabaserest.ReadResult(upstream, raw)
+	rows, ok := data.([]any)
+	if err != nil || upstream < 200 || upstream > 299 || bad || !ok || len(rows) != 0 {
+		fail(w, h.Logger, "verify", upstream, err, 500, nil)
 		return
 	}
 	write(w, 200, []byte(`{"ok":true}`))
@@ -366,23 +357,21 @@ func jsString(text string) json.RawMessage {
 	return out
 }
 
-// missingSettings answers as the handlers' catch does when the client cannot
-// be built: 500 with the library's message (R-089).
+// missingSettings returns a fixed public error without library diagnostics.
 func missingSettings(w http.ResponseWriter, logger *slog.Logger) {
 	logFailure(logger, "settings", 0, nil)
-	write(w, 500, append(append([]byte(`{"error":`), jsString(supabaserest.MissingSettings)...), '}'))
+	write(w, 500, []byte(`{"error":"Internal server error"}`))
 }
 
-// fail logs the stage and answers status with {"error": message}, or {}
-// when the message is undefined. The message is sent as Next.js sends it;
-// the log holds only the stage and the database's status.
+// fail logs only sanitized stage/status and returns fixed public text.
+// The legacy message parameter is never written to the response.
 func fail(w http.ResponseWriter, logger *slog.Logger, stage string, upstream int, err error, status int, message json.RawMessage) {
 	logFailure(logger, stage, upstream, err)
-	if message == nil {
-		write(w, status, []byte(`{}`))
+	if status == 400 {
+		write(w, status, []byte(`{"error":"Share operation failed"}`))
 		return
 	}
-	write(w, status, append(append([]byte(`{"error":`), message...), '}'))
+	write(w, status, []byte(`{"error":"Internal server error"}`))
 }
 
 // logFailure records a stage and the database's status, never the user,

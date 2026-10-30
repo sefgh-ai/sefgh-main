@@ -11,9 +11,8 @@ import (
 	"time"
 )
 
-// TestMatchesNodeOnGeneratedInput runs the Next.js handler, through
-// scripts/contracts/activity-run.mjs, and this one on the same generated
-// inputs, and compares every answer. The inputs cover what the twelve
+// TestMatchesNodeOnGeneratedInput compares Go with an independent JavaScript
+// reference for the approved R-059 behavior, through activity-run.mjs. The inputs cover what the twelve
 // fixtures cannot list one by one: every weekday and both leap years, server
 // time zones far from UTC, duplicate and out-of-range dates, counts that
 // are null, missing, negative, fractional or too large for a double, streaks

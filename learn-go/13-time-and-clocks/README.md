@@ -2,7 +2,29 @@
 
 **You will learn:** how Go holds a moment in time, why the time zone changes the answer to "what day is it?", and how to test code that depends on today's date.
 
-**Real code:** `dateRange` in `backend/internal/githubcontributions/dates.go`, and the `Now` and `Location` fields of `Handler` in `handler.go` beside it.
+**Real code:** `dateRange` in `backend/internal/githubcontributions/dates.go`, and the `Now` field and `currentStreak` function in `handler.go` beside it.
+
+## Production now uses UTC (BUG-048)
+
+The handler reads `Now` once, converts the result to UTC and uses that same
+moment for its query window and streak. `dateRange` subtracts365calendar days
+and moves back to Monday in UTC; there is no host-zone override or special
+daylight-saving helper. The old JavaScript handler below remains the rollback
+characterization. The existing exercise also retains its original local-calendar
+behavior; your exercise files have not been changed.
+
+`currentStreak` builds a `map[time.Time]bool` of active dates, starts from
+midnight UTC today (or yesterday if today is inactive), and walks backward one
+date at a time while the map says true. Missing dates stop the loop; future
+dates cannot start it. Reading a missing map key returns false, so it naturally
+ends at a gap. This is the Go equivalent of a JavaScript `Map` keyed by date
+strings, but Go can use comparable `time.Time` values directly. Parsed calendar
+dates and the starting midnight use UTC consistently.
+
+Unknown users are recognized from structured GraphQL errors. Only a nonempty
+list whose every error is `NOT_FOUND` at exactly `path: ["user"]`, with no user
+data, becomes404. A mixed or nested error remains under the existing policy.
+The fixture checks both the status and preservation of the other failures.
 
 ## The problem in the app
 
@@ -51,7 +73,11 @@ These usually agree. They differ when a daylight-saving change falls in between,
 
 `t.Weekday()` counts the same way as `getDay()`: Sunday is 0, Monday is 1, Saturday is 6.
 
-The real `dateRange` does not use `AddDate`. It has its own helper, `wallClock`, for one rare case: a clock time that was skipped on the target day, such as 02:30 on the night the clocks go forward. JavaScript has a fixed rule for that, Go's standard function leaves it open, and the two have to agree. You do not need that for the exercise.
+The production `dateRange` now uses `AddDate` after converting to UTC, where
+daylight-saving gaps do not occur. The original parity port needed `wallClock`
+to reproduce JavaScript's handling of a skipped local time; BUG-048 removed
+that helper when the owner approved UTC behavior. This leaves the exercise's
+local-calendar examples intact while the production route has one date policy.
 
 ## Writing a time as text
 
@@ -80,8 +106,6 @@ The fix is to hand the clock in from outside. In Go a function is a value like a
 type Handler struct {
 	// Now returns the current time. Nil means time.Now.
 	Now func() time.Time
-	// Location is the time zone the date range is worked out in.
-	Location *time.Location
 	// ...
 }
 ```
@@ -92,7 +116,10 @@ The real server leaves `Now` empty and gets the real clock. A test sets it to a 
 Now: func() time.Time { return fixedMoment },
 ```
 
-That is how the contract test can check 95 cases, each with its own date and time zone, in a few seconds. The Node version of the same test has to replace JavaScript's global `Date` to get the same effect.
+The106contract cases pass time values viewed in different zones through the
+injected clock; Go must still produce the same UTC window. The Node runner
+replaces JavaScript's global `Date` and retains the unchanged handler's local
+calendar requests separately as `next_calls`.
 
 ## Your turn
 
@@ -107,7 +134,10 @@ go test ./13-time-and-clocks
 go test -tags solution ./13-time-and-clocks
 ```
 
-The first command fails until you finish. One test gives `weekStart` the same moment in two zones and expects two different Mondays. That is the app's time-zone defect, small enough to hold in your hand.
+The first command fails until you finish. One exercise test gives `weekStart`
+the same moment in two zones and expects two different Mondays. It preserves
+the original port's local-calendar example, so do not change your exercise to
+UTC just because the production route now uses UTC. Lesson checks are optional.
 
 ## You now know
 
@@ -115,3 +145,10 @@ The first command fails until you finish. One test gives `weekStart` the same mo
 - `AddDate` moves by calendar days; `Add` moves by an exact duration.
 - Go formats dates by example, using the reference moment `Jan 2 15:04:05 2006`.
 - Passing the clock in as a function makes date logic testable.
+
+
+## BUG-067: a regex structure check also needs its documented bound
+
+BUG-067/R-207 enforces the existing39-character contributions login limit with an explicit length guard before the handler token check or GraphQL request. Interleaved hyphens cannot admit40/77-character names; valid39-character names still pass. Invalid400 text is unchanged, and Next rollback replies/calls are preserved.
+
+len(string) counts bytes in Go. That is appropriate for a username constrained to ASCII by the adjacent pattern; non-ASCII input is refused by that pattern. Optional hyphens can add extra characters per regex repetition, so a repetition count is not a total string-length limit. The boundary fixtures distinguish39,40 and77 characters. Existing exercise.go is unchanged.

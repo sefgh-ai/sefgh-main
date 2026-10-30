@@ -1,5 +1,8 @@
 # Share fork contract
 
+Update BUG-055 (R-089,2026-10-30): contract v2. Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors. Rollback Next.js answers remain in next_expect.
+
+
 **Version 1** (SHARE-002, 2026-10-17): 23 cases, 7 marked `defect`, for `POST /api/share/[token]/fork`, which copies a public shared conversation into the signed-in user's own conversations. The shared page's "continue" button (`src/app/s/[token]/page.js`) calls it.
 
 ```text

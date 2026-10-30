@@ -1,5 +1,11 @@
 # Repository comments contract
 
+Update BUG-052 (R-087,2026-10-30): contract v5. Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses. Rollback Next.js answers remain in next_expect.
+
+
+Update BUG-050 (R-084,2026-10-30): contract v4. Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Rollback Next.js answers remain in next_expect.
+
+
 **Version 3** (BUG-028a, 2026-10-28): 52 cases. Authors come from their public profile (R-040, R-075, the owner's option A): the profile read asks for `full_name,avatar_url`, `user_name` is `full_name`, there is no admin lookup, and `user_email` is `null` for every listed comment (a new comment still carries the poster's own email). So an author id that is not a UUID no longer fails the list (`get-user-id-not-uuid` answers 200). In `get-profile-present` and `post-profile-present` the stand-in profile now holds `full_name`. Fourteen cases changed; each keeps the Next.js handler's answer as `next_expect` (recorded by running it for the two profile cases) until that handler is retired.
 
 **Version 2** (BUG-026, 2026-10-28): 52 cases. A page holds at most 50 comments (R-086, the owner's option A): `get-limit-capped` and `get-limit-capped-with-offset` send `limit=50` for 51 and 1000. Text that is not a number and numbers below one are unchanged. Go only: the Next.js handler sends the limit as given until it is retired, and `scripts/contracts/repo-comments.test.mjs` converts those two cases for it.

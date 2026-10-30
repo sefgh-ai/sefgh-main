@@ -1,5 +1,8 @@
 # Repository vote contract
 
+Update BUG-050 (R-084,2026-10-30): contract v3. Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Rollback Next.js answers remain in next_expect.
+
+
 **Version 2** (BUG-037, 2026-10-29): R-076 is fixed in Go. After a successful write Go reads and counts votes directly, without calling the missing `get_repo_vote_stats`. All 37 cases remain: 15 have `go_database` replies and Go request expectations without the RPC, while their original inputs and Next.js answers remain in `database` and `next_expect`. The three hypothetical successful-RPC cases now supply rows for Go to count; their old object/list/null RPC answers remain checked against Next.js. Failed counts still return zeros. No Next.js handler changed.
 
 **Version 1** (VOTE-001, 2026-10-17): 37 cases, 5 marked `defect`, over `GET` and `POST /api/repo/vote`. `POST` records an upvote or downvote, or removes the vote; `GET` answers the counts and the visitor's own vote. The vote arrows (`src/components/repo-details/RepoVoteSection.jsx`) call `POST`. Nothing in the browser calls `GET`.

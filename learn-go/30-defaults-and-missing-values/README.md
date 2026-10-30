@@ -93,3 +93,19 @@ go test -tags solution ./30-defaults-and-missing-values
 - `||` fires for every falsy value; in Go, check `jscompat.TruthyJSON`.
 - `undefined` fields vanish from JSON, so leave them out rather than writing `null`.
 - Go has no negative indexes: work out the start, and keep it inside the slice.
+
+
+## BUG-055: R-089
+
+Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.
+
+BUG-055 changes the error response boundary: ErrorMessage still decodes an upstream result for internal control flow, while fail chooses a constant public message from the status. A missing upstream message no longer causes the response field to vanish. Earlier examples about a disappearing error field characterize the rollback handler; other optional fields still follow the rules above.
+
+
+## BUG-068: removal needs a verified result
+
+R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound.
+
+A single filtered UPDATE handles multiple active rows without the old select-single ambiguity. The later bounded SELECT asks for at most one surviving id. The Go type assertion data.([]any) distinguishes a JSON list from null or an object; only an empty list permits success. Verification is conservative: another share created before that read may cause a failure rather than a false success. These calls do not make the service transactional. Existing exercises are untouched.

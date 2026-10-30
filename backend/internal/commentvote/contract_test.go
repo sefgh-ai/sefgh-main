@@ -73,7 +73,7 @@ func loadContract(t *testing.T) []fixture {
 	if err = json.Unmarshal(raw, &contract); err != nil {
 		t.Fatal(err)
 	}
-	if contract.Version != 1 || len(contract.Cases) == 0 {
+	if contract.Version != 2 || len(contract.Cases) == 0 {
 		t.Fatalf("contract version %d with %d cases", contract.Version, len(contract.Cases))
 	}
 	return contract.Cases
@@ -98,6 +98,9 @@ func (s *standIn) RoundTrip(r *http.Request) (*http.Response, error) {
 		s.t.Errorf("%s: a Supabase request without the public key: %s", s.f.ID, r.URL)
 	}
 	if r.URL.Path == "/auth/v1/user" {
+		if strings.Contains(string(s.f.User), "\"unreachable\"") {
+			return reply(503, `{}`)
+		}
 		// Auth answers the fixture's user for the fixture's own session.
 		accepted := s.f.Session != nil && r.Header.Get("Authorization") == "Bearer "+*s.f.Session
 		if !accepted || !strings.HasPrefix(string(s.f.User), "{") || strings.Contains(string(s.f.User), `"error"`) {

@@ -1,5 +1,5 @@
 {
-  "contract_version": 3,
+  "contract_version": 5,
   "route": "GET, POST, PATCH and DELETE /api/repo/comments",
   "recorded_from": "the Next.js handlers at fead0d9, by scripts/contracts/record-repo-comments.mjs",
   "boundary": "The real handlers run with a client built by the real supabase-js 2.78 around a stand-in Supabase (scripts/contracts/route-db-fixture.mjs); only auth.getUser() and auth.getSession() are replaced, and the clock is fixed at 2026-10-17T09:30:00.000Z. `session` is the visitor's access token (the cookie session for Next.js, the bearer for Go); signed out, the project's public key is sent instead. GET makes its per-comment requests at the same time: its cases answer by `routes`, and its requests are compared in any order. Request bodies are compared as JSON.",
@@ -3448,7 +3448,7 @@
     {
       "id": "patch-not-yours",
       "disposition": "defect",
-      "reason": "Someone else's comment, or none: the update matches no row, the single read answers 406, and the handler answers 500 \"Failed to update comment\", not 404 (bug register R-087).",
+      "reason": "R-087: zero visible rows means404 for absent or unowned comments.",
       "method": "PATCH",
       "body": "{\"commentId\":\"c2\",\"commentText\":\"Edited\"}",
       "session": "session-a",
@@ -3469,6 +3469,30 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "Comment not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "comment_text": "Edited",
+              "is_edited": true,
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to update comment"
@@ -3652,7 +3676,7 @@
     {
       "id": "delete-soft",
       "disposition": "preserve",
-      "reason": "The author deletes a comment: it is marked deleted and its text replaced, as the user (only their own).",
+      "reason": "The author deletes a comment: it is marked deleted and its text replaced, as the user (only their own). R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=c1",
       "session": "session-a",
@@ -3677,6 +3701,30 @@
         "database": [
           {
             "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
             "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": null,
@@ -3690,12 +3738,20 @@
             }
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "row-1"
+          }
+        }
+      ]
     },
     {
       "id": "delete-not-yours",
       "disposition": "defect",
-      "reason": "Someone else's comment: the update matches no row and is not an error, so the handler answers success (R-087).",
+      "reason": "Someone else's comment: the update matches no row and is not an error, so the handler answers success (R-087). R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=c2",
       "session": "session-a",
@@ -3711,6 +3767,30 @@
         }
       ],
       "expect": {
+        "status": 404,
+        "body": {
+          "error": "Comment not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "success": true
@@ -3733,7 +3813,17 @@
             }
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
     },
     {
       "id": "delete-signed-out",
@@ -3780,7 +3870,7 @@
     {
       "id": "delete-fails",
       "disposition": "preserve",
-      "reason": "The update fails: 500 \"Failed to delete comment\".",
+      "reason": "The update fails: 500 \"Failed to delete comment\". R-087: mutation returns its row so zero matches cannot report success.",
       "method": "DELETE",
       "query": "id=c1",
       "session": "session-a",
@@ -3810,6 +3900,30 @@
         "database": [
           {
             "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
             "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": null,
@@ -3823,7 +3937,18 @@
             }
           }
         ]
-      }
+      },
+      "go_database": [
+        {
+          "status": 500,
+          "body": {
+            "code": "XX000",
+            "details": null,
+            "hint": null,
+            "message": "internal error"
+          }
+        }
+      ]
     },
     {
       "id": "settings-missing-get",
@@ -3941,6 +4066,374 @@
         "cache_control": null,
         "database": []
       }
+    },
+    {
+      "id": "post-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "POST",
+      "body": "{\"repoFullName\":\"octo/demo\",\"commentText\":\"  Nice work  \"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 201,
+          "body": {
+            "id": "c9",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Nice work",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": false,
+            "is_deleted": false
+          }
+        },
+        {
+          "status": 400,
+          "body": {
+            "code": "42703",
+            "details": null,
+            "hint": null,
+            "message": "column profiles.username does not exist"
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized. Please login to comment."
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "patch-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "PATCH",
+      "body": "{\"commentId\":\"c1\",\"commentText\":\" Edited \"}",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 200,
+          "body": {
+            "id": "c1",
+            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "repo_full_name": "octo/demo",
+            "parent_id": null,
+            "comment_text": "Edited",
+            "upvotes": 2,
+            "downvotes": 0,
+            "created_at": "2026-10-16T08:00:00+00:00",
+            "updated_at": "2026-10-16T08:00:00+00:00",
+            "is_edited": true,
+            "is_deleted": false
+          }
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-auth-unreachable",
+      "disposition": "preserve",
+      "reason": "R-084: unavailable Auth is503, no database request; refused sessions retain existing policy.",
+      "method": "DELETE",
+      "query": "id=c1",
+      "session": "session-a",
+      "user": {
+        "error": "Auth unavailable",
+        "unreachable": true
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 503,
+        "body": {
+          "error": "Sign-in could not be verified"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      },
+      "next_expect": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": []
+      }
+    },
+    {
+      "id": "delete-missing",
+      "disposition": "defect",
+      "reason": "Someone else's comment: the update matches no row and is not an error, so the handler answers success (R-087). R-087: mutation returns its row so zero matches cannot report success.",
+      "method": "DELETE",
+      "query": "id=missing",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Comment not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.missing&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.missing&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 0 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "delete-multiple-row-error",
+      "disposition": "defect",
+      "reason": "Someone else's comment: the update matches no row and is not an error, so the handler answers success (R-087). R-087: mutation returns its row so zero matches cannot report success.",
+      "method": "DELETE",
+      "query": "id=c2",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to delete comment"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 406,
+          "body": {
+            "code": "PGRST116",
+            "details": "The result contains 2 rows",
+            "message": "Cannot coerce the result to a single JSON object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "delete-empty-success",
+      "disposition": "defect",
+      "reason": "R-087: no returned row cannot report a successful deletion.",
+      "method": "DELETE",
+      "query": "id=c2",
+      "session": "session-a",
+      "user": {
+        "id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+        "email": "a@example.test",
+        "is_anonymous": false
+      },
+      "database": [
+        {
+          "status": 204,
+          "raw": ""
+        }
+      ],
+      "expect": {
+        "status": 404,
+        "body": {
+          "error": "Comment not found or unauthorized"
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
+            "prefer": "return=representation",
+            "accept": "application/vnd.pgrst.object+json",
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "success": true
+        },
+        "content_type": "application/json",
+        "cache_control": null,
+        "database": [
+          {
+            "method": "PATCH",
+            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
+            "prefer": null,
+            "accept": null,
+            "content_type": "application/json",
+            "authorization": "Bearer session-a",
+            "apikey": "public-fixture-key",
+            "body": {
+              "is_deleted": true,
+              "comment_text": "[deleted]",
+              "updated_at": "2026-10-17T09:30:00.000Z"
+            }
+          }
+        ]
+      },
+      "go_database": [
+        {
+          "status": 200,
+          "raw": "null"
+        }
+      ]
     }
   ]
 }

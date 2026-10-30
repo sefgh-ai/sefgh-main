@@ -74,7 +74,7 @@ func TestCancellationStopsCleanupAndKeepsSuccess(t *testing.T) {
 		}
 		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body)), Header: http.Header{}, Request: r}, nil
 	})}
-	data, kind := fixtureBody(t, fixture{File: &fileSpec{Name: "photo.png"}})
+	data, kind := fixtureBody(t, fixture{File: validPNGFile("photo.png")})
 	r := httptest.NewRequest("POST", "/api/upload-avatar", bytes.NewReader(data)).WithContext(ctx)
 	r.Header.Set("Content-Type", kind)
 	w := httptest.NewRecorder()
@@ -88,11 +88,11 @@ func TestLogsNeverContainVisitorOrUpstreamData(t *testing.T) {
 	var logs bytes.Buffer
 	h := &Handler{HTTP: &http.Client{Transport: transport(func(*http.Request) (*http.Response, error) { return nil, errors.New("secret-token private-url") })}, SupabaseURL: fixtureURL, SupabaseKey: fixtureKey, Logger: slog.New(slog.NewTextHandler(&logs, nil))}
 	h.User = func(*http.Request) (string, string, int) { return "private-user", "private-session", 200 }
-	data, kind := fixtureBody(t, fixture{File: &fileSpec{Name: "secret-photo.png"}})
+	data, kind := fixtureBody(t, fixture{File: validPNGFile("secret-photo.png")})
 	r := httptest.NewRequest("POST", "/api/upload-avatar", bytes.NewReader(data))
 	r.Header.Set("Content-Type", kind)
 	h.ServeHTTP(httptest.NewRecorder(), r)
-	if !strings.Contains(logs.String(), "stage=upload") {
+	if !strings.Contains(logs.String(), "stage=upload_lock") {
 		t.Fatal("failure not logged")
 	}
 	for _, secret := range []string{"secret-token", "private-url", "private-user", "private-session", "secret-photo"} {
@@ -135,5 +135,47 @@ func TestPublicURLURIEncoding(t *testing.T) {
 		if got := encodeURI(tt.in); got != tt.want {
 			t.Errorf("%q want %q", got, tt.want)
 		}
+	}
+}
+
+// Operational tests reach Storage with a signature-valid PNG.
+func validPNGFile(name string) *fileSpec {
+	size := 8
+	return &fileSpec{Name: name, Size: &size, PrefixBase64: "iVBORw0KGgo="}
+}
+
+func TestCanceledMetadataStillAttemptsBoundedRollback(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	removed := false
+	h := &Handler{User: func(*http.Request) (string, string, int) { return "user", "session", 200 }, SupabaseURL: fixtureURL, SupabaseKey: fixtureKey, Logger: quiet}
+	h.HTTP = &http.Client{Transport: transport(func(r *http.Request) (*http.Response, error) {
+		if r.Method == "PUT" {
+			cancel()
+			return nil, context.Canceled
+		}
+		if r.Method == "DELETE" {
+			data, _ := io.ReadAll(r.Body)
+			removed = removed || !bytes.Contains(data, []byte(uploadLockName))
+			if r.Context().Err() != nil {
+				t.Error("rollback inherited cancellation")
+			}
+			deadline, ok := r.Context().Deadline()
+			if !ok || time.Until(deadline) > CleanupBudget {
+				t.Error("rollback has no short bound")
+			}
+			if r.Header.Get("Authorization") != "Bearer session" {
+				t.Error("rollback changed caller")
+			}
+		}
+		return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{}`)), Request: r}, nil
+	})}
+	data, kind := fixtureBody(t, fixture{File: validPNGFile("photo.png")})
+	r := httptest.NewRequest("POST", "/api/upload-avatar", bytes.NewReader(data)).WithContext(ctx)
+	r.Header.Set("Content-Type", kind)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if !removed || w.Code != 500 {
+		t.Fatalf("rollback %v response %d", removed, w.Code)
 	}
 }

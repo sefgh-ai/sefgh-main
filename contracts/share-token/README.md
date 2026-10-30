@@ -1,5 +1,11 @@
 # Shared conversation contract
 
+Update BUG-054 (R-082,2026-10-30): contract v3. Public share reads return404 only for a zero-row result or empty/null success. Network, HTTP, parse and invalid non-object results return503 with fixed Share could not be loaded text. Explicit private links retain403, public replies and caller credentials remain unchanged. Rollback Next.js answers remain in next_expect.
+
+
+Update BUG-053 (R-081,2026-10-30): contract v2. Public share settings failures return fixed Internal server error text with500. Library configuration messages no longer reach visitors; sanitized stage logging remains. Rollback Next.js answers remain in next_expect.
+
+
 **Version 1** (SHARE-001, 2026-10-16): 17 cases, 5 marked `defect`. `GET /api/share/[token]` answers one shared conversation by the token in its link. The shared-chat page (`src/app/s/[token]/page.js`) reads it, and treats any answer that is not 200 the same way: "This shared chat is unavailable", then the home page.
 
 ```text

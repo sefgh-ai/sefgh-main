@@ -178,3 +178,12 @@ The Go runner (`backend/internal/aichat/contract_test.go`) compares replies
 with a decoder that keeps a lone surrogate escape visible
 (`aitest.Decode`), because Go's own JSON decoder would turn `\ud83d` into
 U+FFFD on both sides and hide the difference.
+
+
+BUG-060/R-010, 2026-10-30: contract v3. The React chat hook guards assistant replies for send, edit and regeneration. Non-text or blank responses show The assistant sent an empty answer and are never stored as assistant text; the conversation/user message stays, and regeneration preserves the prior answer. API non-text replies remain characterized unchanged. Unchanged Next.js replies remain in next_expect.
+
+
+BUG-061/R-012, 2026-10-30: contract v4. Fallback chat titles cap the first four words at30 Unicode code points and append dots only when longer. Emoji scalar values remain intact; existing UTF-16 helper behavior elsewhere and rollback Next titles remain pinned. Unchanged Next.js replies remain in next_expect.
+
+
+BUG-062/R-013, 2026-10-30: contract v5. Fallback titles collapse ECMAScript whitespace before selecting four words. A title emptied by quote stripping uses that fallback. The first message is JSON-escaped inside the title prompt, including quotes, backslashes and controls. The30-code-point cap remains. Unchanged Next.js replies remain in next_expect.

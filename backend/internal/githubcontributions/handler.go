@@ -18,7 +18,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
@@ -71,9 +70,6 @@ type Handler struct {
 	// Now returns the current time. Nil means time.Now. Tests set it, so
 	// that a date range can be checked without waiting for a real date.
 	Now func() time.Time
-	// Location is the time zone the date range is worked out in. Nil means
-	// the zone of the machine the server runs on, as in the Next.js handler.
-	Location *time.Location
 }
 
 type graphQLRequest struct {
@@ -93,7 +89,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, msgUsernameRequired)
 		return
 	}
-	if !usernamePattern.MatchString(username) {
+	if len(username) > 39 || !usernamePattern.MatchString(username) {
 		writeError(w, http.StatusBadRequest, msgUsernameInvalid)
 		return
 	}
@@ -103,7 +99,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	from, to := dateRange(h.now(), h.location())
+	// One clock reading keeps the query window and streak on the same UTC day.
+	now := h.now().UTC()
+	from, to := dateRange(now)
 	status, body, err := h.askGitHub(r, graphQLVariables{Username: username, From: from, To: to})
 	if err != nil {
 		h.fail(w, r, err)
@@ -134,6 +132,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// From here the checks follow the JavaScript expression by expression.
 	// property() answers what `value.name` would give there.
 	if errs, _ := property(reply, "errors"); truthy(errs) {
+		data, _ := property(reply, "data")
+		user, _ := property(data, "user")
+		if !truthy(user) && userNotFoundErrors(errs) {
+			writeError(w, http.StatusNotFound, msgUserNotFound)
+			return
+		}
 		h.logger().Warn("github contributions: GraphQL errors received")
 		writeError(w, http.StatusBadRequest, msgGraphQLFailed)
 		return
@@ -145,7 +149,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := summarize(user)
+	result, err := summarize(user, now)
 	if err != nil {
 		h.fail(w, r, err)
 		return
@@ -198,7 +202,7 @@ type dayRecord struct {
 }
 
 // summarize turns GitHub's calendar for one user into the grid and statistics.
-func summarize(user any) (map[string]any, error) {
+func summarize(user any, now time.Time) (map[string]any, error) {
 	collection, ok := property(user, "contributionsCollection")
 	if !ok || collection == nil {
 		return nil, errShape
@@ -256,7 +260,7 @@ func summarize(user any) (map[string]any, error) {
 
 	stats := map[string]any{
 		"maxCount":      maxCount,
-		"currentStreak": currentStreak(days),
+		"currentStreak": currentStreak(days, now),
 		"averagePerDay": average(total, hasTotal, len(days)),
 		"activeDays":    activeDays,
 		"totalDays":     len(days),
@@ -267,24 +271,44 @@ func summarize(user any) (map[string]any, error) {
 	return map[string]any{"grid": grid, "stats": stats}, nil
 }
 
-// currentStreak counts days with contributions, from the newest day
-// backwards, stopping at the first day without any. A newest day that is
-// still empty therefore gives 0, which the contract records as a defect.
-func currentStreak(days []dayRecord) int {
-	sorted := append([]dayRecord(nil), days...)
-	// Newest first. Days with equal dates keep their order, as in JavaScript.
-	sort.SliceStable(sorted, func(i, j int) bool {
-		return sorted[i].hasDate && sorted[j].hasDate && sorted[i].when.After(sorted[j].when)
-	})
-	streak := 0
-	for _, day := range sorted {
-		n, isNumber := day.count.(float64)
-		if !isNumber || n <= 0 {
-			break
+// currentStreak starts today, or yesterday while today is empty. Walking
+// exact UTC dates ignores future days and stops at missing/inactive days.
+func currentStreak(days []dayRecord, now time.Time) int {
+	active := make(map[time.Time]bool, len(days))
+	for _, day := range days {
+		if day.hasDate {
+			n, number := day.count.(float64)
+			active[day.when] = number && n > 0
 		}
+	}
+	utc := now.UTC()
+	today := time.Date(utc.Year(), utc.Month(), utc.Day(), 0, 0, 0, 0, time.UTC)
+	if !active[today] {
+		today = today.AddDate(0, 0, -1)
+	}
+	streak := 0
+	for active[today] {
 		streak++
+		today = today.AddDate(0, 0, -1)
 	}
 	return streak
+}
+
+// Only errors about the user itself establish an unknown account. Mixed,
+// nested or unstructured GraphQL failures keep the existing error policy.
+func userNotFoundErrors(value any) bool {
+	errors, ok := value.([]any)
+	if !ok || len(errors) == 0 {
+		return false
+	}
+	for _, value := range errors {
+		entry, _ := value.(map[string]any)
+		path, _ := entry["path"].([]any)
+		if entry["type"] != "NOT_FOUND" || len(path) != 1 || path[0] != "user" {
+			return false
+		}
+	}
+	return true
 }
 
 // average is totalContributions divided by the number of days, to one
@@ -398,11 +422,4 @@ func (h *Handler) now() time.Time {
 		return h.Now()
 	}
 	return time.Now()
-}
-
-func (h *Handler) location() *time.Location {
-	if h.Location != nil {
-		return h.Location
-	}
-	return time.Local
 }

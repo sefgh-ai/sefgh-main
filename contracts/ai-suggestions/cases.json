@@ -1,5 +1,5 @@
 {
-  "contract_version": 2,
+  "contract_version": 3,
   "route": "POST /api/ai/suggestions",
   "recorded_from": "9480ef9f407571fe333bae48eb824181acfdba5e plus the uncommitted AI-002a change",
   "boundary": "generateAIResponse is stubbed; provider integration/auth/quota are not implemented or verified",
@@ -77,12 +77,21 @@
     {
       "id": "null-query",
       "disposition": "preserve",
-      "reason": "Preserve existing response, source label and AI invocation.",
+      "reason": "Preserve existing response, source label and AI invocation. R-037 approved input/output normalization.",
       "body": {
         "query": null
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": []
@@ -95,12 +104,21 @@
     {
       "id": "false-query",
       "disposition": "preserve",
-      "reason": "Preserve existing response, source label and AI invocation.",
+      "reason": "Preserve existing response, source label and AI invocation. R-037 approved input/output normalization.",
       "body": {
         "query": false
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": []
@@ -113,12 +131,21 @@
     {
       "id": "zero-query",
       "disposition": "preserve",
-      "reason": "Preserve existing response, source label and AI invocation.",
+      "reason": "Preserve existing response, source label and AI invocation. R-037 approved input/output normalization.",
       "body": {
         "query": 0
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": []
@@ -131,12 +158,21 @@
     {
       "id": "numeric-query",
       "disposition": "defect",
-      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake. R-037 approved input/output normalization.",
       "body": {
         "query": 42
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to generate suggestions"
@@ -149,7 +185,7 @@
     {
       "id": "array-query",
       "disposition": "defect",
-      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake. R-037 approved input/output normalization.",
       "body": {
         "query": [
           "react"
@@ -157,6 +193,15 @@
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to generate suggestions"
@@ -169,12 +214,21 @@
     {
       "id": "object-query",
       "disposition": "defect",
-      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake.",
+      "reason": "Fixed in version 2: the caller gets a fixed sentence, and the cause goes to the server log. The status is still 500 for what is the caller's mistake. R-037 approved input/output normalization.",
       "body": {
         "query": {}
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 500,
         "body": {
           "error": "Failed to generate suggestions"
@@ -392,12 +446,38 @@
     {
       "id": "trimmed-search-original-prompt",
       "disposition": "preserve",
-      "reason": "Preserve existing response, source label and AI invocation.",
+      "reason": "Preserve existing response, source label and AI invocation. R-037 approved input/output normalization.",
       "body": {
         "query": " python "
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": [
@@ -427,12 +507,25 @@
     {
       "id": "padded-short-triggers-ai",
       "disposition": "defect",
-      "reason": "Original query length chooses AI even when trimmed query is short.",
+      "reason": "Original query length chooses AI even when trimmed query is short. R-037 approved input/output normalization.",
       "body": {
         "query": " go  "
       },
       "ai_response": "[\"first\",\"second\",\"third\"]",
       "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "go microservices",
+            "django applications"
+          ],
+          "source": "predefined"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": [
@@ -691,12 +784,36 @@
     {
       "id": "duplicates",
       "disposition": "defect",
-      "reason": "Duplicates inside AI output are retained.",
+      "reason": "Duplicates inside AI output are retained. R-037 approved input/output normalization.",
       "body": {
         "query": "python"
       },
       "ai_response": "[\"same\",\"same\",\"same\"]",
       "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "same",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": [
@@ -726,12 +843,35 @@
     {
       "id": "nonstring-elements",
       "disposition": "defect",
-      "reason": "No string/schema validation; arbitrary JSON elements reach the UI.",
+      "reason": "No string/schema validation; arbitrary JSON elements reach the UI. R-037 approved input/output normalization.",
       "body": {
         "query": "python"
       },
       "ai_response": "[null,42,{\"unexpected\":true}]",
       "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": [
@@ -796,12 +936,38 @@
     {
       "id": "discarded-fourth-suppresses-predefined",
       "disposition": "defect",
-      "reason": "An AI item discarded by the three-item cap can suppress a predefined match.",
+      "reason": "An AI item discarded by the three-item cap can suppress a predefined match. R-037 approved input/output normalization.",
       "body": {
         "query": "python"
       },
       "ai_response": "[\"one\",\"two\",\"three\",\"python machine learning\"]",
       "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "one",
+            "two",
+            "three",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
         "status": 200,
         "body": {
           "suggestions": [
@@ -1273,6 +1439,198 @@
           "suggestions": [
             "one",
             "two",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "true-query",
+      "disposition": "preserve",
+      "reason": "R-037: validate/trim before limits; filter and deduplicate before selecting results. R-037 approved input/output normalization.",
+      "body": {
+        "query": true
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 400,
+        "body": {
+          "error": "Query must be text"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
+        "status": 500,
+        "body": {
+          "error": "Failed to generate suggestions"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "padded-at-limit",
+      "disposition": "preserve",
+      "reason": "R-037: validate/trim before limits; filter and deduplicate before selecting results. R-037 approved input/output normalization.",
+      "body": {
+        "query": " kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk "
+      },
+      "ai_response": "[\"first\",\"second\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "first",
+            "second",
+            "third"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
+        "status": 400,
+        "body": {
+          "error": "Query is too long"
+        },
+        "calls": [],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "valid-items-after-invalid",
+      "disposition": "preserve",
+      "reason": "R-037: validate/trim before limits; filter and deduplicate before selecting results. R-037 approved input/output normalization.",
+      "body": {
+        "query": "python"
+      },
+      "ai_response": "[null,42,{},\"same\",\"same \",\"other\",\"third\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "same",
+            "other",
+            "third",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            null,
+            42,
+            {},
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      }
+    },
+    {
+      "id": "blank-ai-items",
+      "disposition": "preserve",
+      "reason": "R-037: validate/trim before limits; filter and deduplicate before selecting results. R-037 approved input/output normalization.",
+      "body": {
+        "query": "python"
+      },
+      "ai_response": "[\" \",\"one \",\"one\",\" two\",\"\", \"three\"]",
+      "expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            "one",
+            "two",
+            "three",
+            "python machine learning"
+          ],
+          "source": "ai-powered"
+        },
+        "calls": [
+          [
+            {
+              "role": "system",
+              "content": "You are a helpful GitHub search assistant that completes user queries."
+            },
+            {
+              "role": "user",
+              "content": "You are a GitHub search assistant. The user is typing: \"python\"\n\nGenerate 3-5 relevant search query completions that would help them find repositories on GitHub. Focus on:\n- Completing their thought/sentence\n- Adding relevant technologies or keywords\n- Suggesting popular search patterns\n- Making queries more specific and useful\n\nReturn ONLY a JSON array of suggestion strings, nothing else. Example format:\n[\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"]\n\nSuggestions:"
+            }
+          ]
+        ],
+        "content_type": "application/json",
+        "cache_control": null
+      },
+      "next_expect": {
+        "status": 200,
+        "body": {
+          "suggestions": [
+            " ",
+            "one ",
+            "one",
             "python machine learning"
           ],
           "source": "ai-powered"

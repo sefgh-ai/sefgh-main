@@ -109,3 +109,6 @@ fifth pins that the AI's reply is trimmed as JavaScript trims, which removes a
 no-break space that JSON would refuse. The Go runner sends `{broken` for a case with `json_error`, and stands
 in for the AI at the same place the Node runner does: the function that takes
 the messages and returns the content.
+
+
+BUG-065/R-037: contract v3. Suggestions reject present non-text queries with400, trim before every length check and provider prompt, filter blank/non-text items and deduplicate before taking three AI results. Built-in results are suppressed only by selected AI items; final output remains capped atfive. Missing queries retain the empty-list response. Original Next.js replies remain in next_expect.

@@ -1,4 +1,4 @@
-import { fixtureRequest } from './access-fixture.mjs';
+import { runContributionsFixture } from './contributions-fixture.mjs';
 // Replays contracts/github-contributions/cases.json against the real Next.js
 // handler. Each case fixes GitHub's reply, the clock and the server time zone,
 // because the handler derives its date range from all three.
@@ -13,6 +13,7 @@ const contract = JSON.parse(await readFile(new URL('../../contracts/github-contr
 const RealDate = Date;
 
 test('contribution cases are well formed', () => {
+  assert.equal(contract.contract_version,4);
   assert.ok(contract.cases.length > 0);
   assert.equal(new Set(contract.cases.map(c => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
@@ -22,50 +23,35 @@ test('contribution cases are well formed', () => {
   }
 });
 
+test('UTC dates, current-day streak and user-not-found controls are pinned (R-033)', () => {
+  for (const c of contract.cases) for (const call of c.calls) {
+    const start = new RealDate(c.now);
+    start.setUTCDate(start.getUTCDate()-365);
+    start.setUTCDate(start.getUTCDate()-(start.getUTCDay()+6)%7);
+    assert.equal(call.variables.from,start.toISOString(),c.id);
+    assert.equal(call.variables.to,new RealDate(c.now).toISOString(),c.id);
+  }
+  const byId = id => contract.cases.find(c => c.id===id);
+  for (const [id,count] of Object.entries({'streak-zero-when-newest-day-is-empty':2,'streak-gap-break':1,
+    'streak-stale-calendar':0,'streak-future-ignored':1,'streak-no-today':2,'streak-yesterday-empty':0,
+    'streak-utc-midnight-india':2,'streak-utc-midnight-pacific':2})) {
+    assert.equal(byId(id).expect.body.stats.currentStreak,count,id);
+  }
+  assert.equal(byId('graphql-user-does-not-exist').expect.status,404);
+  for (const id of ['graphql-mixed-notfound-errors','graphql-notfound-other-path','graphql-notfound-without-path']) assert.equal(byId(id).expect.status,400,id);
+});
+
 for (const c of contract.cases) {
-  test(`contributions: ${c.id} [${c.disposition}]`, async () => {
-    const saved = {
-      fetch: globalThis.fetch, error: console.error, log: console.log,
-      token: process.env.GITHUB_TOKEN, zone: process.env.TZ,
-    };
-    const fixedNow = RealDate.parse(c.now);
-    // Only "now" is replaced. Dates built from a value behave normally.
-    globalThis.Date = class extends RealDate {
-      constructor(...args) { if (args.length === 0) super(fixedNow); else super(...args); }
-      static now() { return fixedNow; }
-    };
-    process.env.TZ = c.time_zone;
-    if (c.github_token) process.env.GITHUB_TOKEN = c.github_token;
-    else delete process.env.GITHUB_TOKEN;
-    console.error = console.log = () => {};
-    const calls = [];
-    globalThis.fetch = async (url, init) => {
-      const reply = c.calls[calls.length];
-      calls.push({ url, method: init?.method, headers: init?.headers, body: JSON.parse(init.body) });
-      if (!reply) throw new Error('unexpected upstream request');
-      if (reply.network_error) throw new TypeError('fetch failed');
-      return new Response(reply.raw_body ?? JSON.stringify(reply.body), { status: reply.status });
-    };
-    try {
-      const response = await GET(fixtureRequest(`http://localhost${c.request}`, c.github_token));
-      assert.equal(response.status, c.expect.status);
-      assert.deepEqual(await response.json(), c.expect.body);
-      assert.equal(response.headers.get('content-type'), 'application/json');
-      assert.equal(response.headers.get('cache-control'), c.github_token ? 'private, no-store' : null);
-      assert.equal(response.headers.get('retry-after'), null);
-      assert.deepEqual(calls, c.calls.map(call => ({
-        url: call.url, method: call.method, headers: call.headers,
-        body: { query: contract.query, variables: call.variables },
-      })));
-    } finally {
-      globalThis.Date = RealDate;
-      globalThis.fetch = saved.fetch;
-      console.error = saved.error;
-      console.log = saved.log;
-      if (saved.token === undefined) delete process.env.GITHUB_TOKEN;
-      else process.env.GITHUB_TOKEN = saved.token;
-      if (saved.zone === undefined) delete process.env.TZ;
-      else process.env.TZ = saved.zone;
-    }
+  test(`contributions: ${c.id} [${c.disposition}]`,async () => {
+    const actual = await runContributionsFixture(GET,c);
+    const expect = c.next_expect ?? c.expect;
+    assert.equal(actual.status,expect.status);
+    assert.deepEqual(actual.body,expect.body);
+    assert.equal(actual.content_type,'application/json');
+    assert.equal(actual.cache_control,c.github_token ? 'private, no-store' : null);
+    assert.equal(actual.retry_after,null);
+    assert.deepEqual(actual.calls,(c.next_calls ?? c.calls).map(call => ({
+      url:call.url,method:call.method,headers:call.headers,body:{query:contract.query,variables:call.variables},
+    })));
   });
 }

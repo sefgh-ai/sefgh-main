@@ -227,6 +227,10 @@ func (h *Handler) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, email, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized. Please login to add videos."}`))
 		return
@@ -353,6 +357,10 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID, session, _, status := h.User(r)
+	if status >= 500 {
+		write(w, 503, []byte(`{"error":"Sign-in could not be verified"}`))
+		return
+	}
 	if status != 200 {
 		write(w, 401, []byte(`{"error":"Unauthorized"}`))
 		return
@@ -363,9 +371,17 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filters := supabaserest.Param("id", "eq."+videoID) + "&" + supabaserest.Param("uploaded_by", "eq."+userID)
-	upstream, raw, err := db.Delete(r.Context(), session, "repo_videos", filters)
+	upstream, raw, err := db.DeleteReturning(r.Context(), session, "repo_videos", filters)
+	if err == nil && supabaserest.NoRows(upstream, raw) {
+		write(w, 404, []byte(`{"error":"Video not found or unauthorized"}`))
+		return
+	}
 	if failed(upstream, raw, err) {
 		h.fail(w, "delete", upstream, err, 500, "Failed to delete video")
+		return
+	}
+	if data, _ := supabaserest.ReadResult(upstream, raw); !jscompat.Truthy(data) {
+		write(w, 404, []byte(`{"error":"Video not found or unauthorized"}`))
 		return
 	}
 	write(w, 200, []byte(`{"success":true}`))

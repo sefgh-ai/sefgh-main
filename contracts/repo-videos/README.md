@@ -1,5 +1,11 @@
 # Repository videos contract
 
+Update BUG-052 (R-087,2026-10-30): contract v5. Comment edits/deletions and video deletions return404 for zero visible matches, covering missing and unowned items without revealing ownership. Deletes request their row in the same owner-filtered mutation. Other database errors, including multiple-row single-object errors, retain fixed500 responses. Rollback Next.js answers remain in next_expect.
+
+
+Update BUG-050 (R-084,2026-10-30): contract v4. Auth outages now return 503 with fixed text Sign-in could not be verified before any database request in collect, vote, rating, comment votes, comment writes and video writes. Refused sessions retain their existing policy. Rollback Next.js answers remain in next_expect.
+
+
 **Version 3** (BUG-028b, 2026-10-28): 57 cases. Uploaders come from their public profile (R-040, R-075, the owner's option A): the profile read asks for `full_name,avatar_url`, `uploader_name` is `full_name`, there is no admin lookup, and `uploader_email` is `null` for every listed video (a new video still carries the poster's own email). `get-admin-null` and `get-uploader-not-uuid` no longer fail the list (200). The stand-in profiles in `post-profile-present`, `get-profile-with-username` (`Octo Cat`) and `get-profile-without-username` (no name) now hold `full_name`. 24 cases changed; those without an earlier `next_expect` keep the Next.js handler's answer there (recorded by running it for the three profile cases).
 
 **Version 2** (BUG-027, 2026-10-28): 57 cases. A video address must be text that parses as an `https` address with no user name or port, whose host is exactly `youtube.com`, `www.youtube.com`, `m.youtube.com`, `youtu.be`, `github.com` or `www.github.com` (R-088, the owner's option A); anything else is 400 `{"error":"Video URL must be an https link to YouTube or GitHub"}` before any database request. The host alone gives the type. Six version 1 cases now answer 400 (`post-direct`, `post-falsy-title`, the two lists, the number, the vertical tab); ten new cases pin the rule. Go only: the Next.js handler keeps accepting any text until it is retired, so where it answers differently a case carries `next_expect`, its recorded answer (for new cases, recorded by running the real handler through the shared runner), and `scripts/contracts/repo-videos.test.mjs` uses it.

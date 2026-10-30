@@ -151,3 +151,10 @@ go test -tags solution ./22-reading-rows-as-the-user
 - Encoding a value keeps it from changing the meaning of a URL.
 - Go rounds a tie to even, JavaScript's `toFixed` rounds it up; `math/big` lets you round on the exact value.
 - A Go test can run the JavaScript it replaces with `os/exec`, and a fixed random seed makes many generated cases repeatable.
+
+
+## BUG-049: R-059
+
+Sunday-to-Saturday weeks, averages/totalDays count only dated squares, yesterday carries an empty today’s streak. Go loops over UTC days; padding is display-only. Independent JavaScript reference covers400generated inputs, including leap years and numeric edge cases.
+
+The real backend and fixtures pin this change. Go returns early for errors and keeps the user's request scope. The regression was shown failing before the fix and under a deliberate break. Existing exercise.go files are untouched; lesson checks remain optional.

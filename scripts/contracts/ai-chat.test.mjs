@@ -13,7 +13,7 @@ const { chatLimiter } = await import('../../src/lib/ai/guard.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/ai-chat/cases.json', import.meta.url)));
 
 test('chat fixture integrity and provider boundary', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 5);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -45,7 +45,7 @@ test('chat fixture integrity and provider boundary', () => {
 
 for (const c of contract.cases) {
   test(`chat: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runChatFixture(POST, c), expand(c.expect));
+    assert.deepEqual(await runChatFixture(POST, c), expand(c.next_expect ?? c.expect));
   });
 }
 

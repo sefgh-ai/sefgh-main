@@ -9,7 +9,7 @@ const { POST } = await import('../../src/app/api/ai/enhance-query/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/ai-enhance-query/cases.json', import.meta.url)));
 
 test('enhance-query fixture integrity and key boundaries', () => {
-  assert.equal(contract.contract_version, 2);
+  assert.equal(contract.contract_version, 4);
   assert.equal(new Set(contract.cases.map((c) => c.id)).size, contract.cases.length);
   for (const c of contract.cases) {
     assert.ok(['preserve', 'defect'].includes(c.disposition), c.id);
@@ -38,6 +38,6 @@ test('enhance-query fixture integrity and key boundaries', () => {
 
 for (const c of contract.cases) {
   test(`enhance-query: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runEnhanceFixture(POST, c), expand(c.expect));
+    assert.deepEqual(await runEnhanceFixture(POST, c), expand(c.next_expect ?? c.expect));
   });
 }
