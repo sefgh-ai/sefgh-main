@@ -1,0 +1,3632 @@
+{
+  "task": "DB-CONSOLIDATE-002",
+  "client_date": "2026-11-01",
+  "organization": {
+    "id": "hithuduntbsajjhmnntm",
+    "name": "sefgh-ai's",
+    "plan": "free",
+    "verified_via": "list_organizations/get_organization"
+  },
+  "destination": {
+    "id": "kohwfuxqbllsmvmsfqci",
+    "name": "User-DB",
+    "status": "ACTIVE_HEALTHY",
+    "verified_via": "list_projects/get_project"
+  },
+  "source": {
+    "id": "kiadrbqkkmncoblpcobo",
+    "name": "Repo-DB",
+    "status": "INACTIVE",
+    "verified_via": "list_projects",
+    "restore": {
+      "owner_approved": true,
+      "attempted": true,
+      "succeeded": false,
+      "error": "ForbiddenException: organization administrator/owner at two active free projects; no other project paused/deleted/upgraded",
+      "next_decision": "Owner-approved pause/resume completed; source now healthy, subsequent metadata/count read succeeded; see separate source receipt"
+    },
+    "latest_status": "ACTIVE_HEALTHY",
+    "inventory_attempt": {
+      "succeeded": false,
+      "error": "BadRequestException: Database is possibly not accessible at the moment",
+      "attempts": 1,
+      "followup_succeeded": true
+    }
+  },
+  "inventory_script": "supabase/checks/db_consolidation_001_inventory.sql",
+  "inventory_sha256": "37f9ad6fdbf78973e041b139825d0fe6fe4e3db64e738e32605e0c2b5bffd48a",
+  "inventory": {
+    "limits": "Relations cover public/corpus only; review schema_names for additional application schemas. Platform schemas are not transfer candidates. Metadata only; estimates are not row counts. No function, policy, trigger or grant equivalence established.",
+    "purpose": "source/destination consolidation preflight",
+    "relations": [
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "activity_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "activity_date",
+            "type": "date",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "activity_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "metadata",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "activity_logs",
+        "estimated_rows": 24,
+        "policy_names_only": [
+          {
+            "name": "Users can insert own activity logs",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own activity logs",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view own activity logs",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "update_activity_logs_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "activity_logs_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "activity_logs_user_id_activity_type_activity_date_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "activity_logs_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "key",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "is_active",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "api_keys",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own API keys",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own API keys",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own API keys",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own API keys",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "set_updated_at_api_keys",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "u",
+            "name": "api_keys_key_key",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "api_keys_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "api_keys_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "rate_limit_per_minute",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "rate_limit_per_hour",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "rate_limit_per_day",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "max_request_size",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "enable_rate_limiting",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "enable_ip_whitelist",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "enable_cors",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "ip_whitelist",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "api_limits",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can insert their own API limits",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own API limits",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own API limits",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "set_updated_at_api_limits",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "api_limits_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "api_limits_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "api_limits_user_id_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "method",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "endpoint",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "status_code",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "response_time",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "request_body",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "cost",
+            "type": "numeric(10,4)",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "api_logs",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can insert their own API logs",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own API logs",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "api_logs_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "api_logs_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "icon",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "usage_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_by",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_active",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "categories",
+        "estimated_rows": 40,
+        "policy_names_only": [
+          {
+            "name": "Active categories are viewable by everyone",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Authenticated users can create categories",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can deactivate their own categories",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own categories",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "update_categories_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "categories_created_by_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "categories_name_key",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "categories_pkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "comment_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "vote_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "comment_votes",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own comment votes",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own comment votes",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own comment votes",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all comment votes",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trigger_update_comment_vote_count",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "comment_votes_comment_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "comment_votes_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "comment_votes_user_id_comment_id_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "comment_votes_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "comment_votes_vote_type_check",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "message",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "is_read",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "link",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "read_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "notifications",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own notifications",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own notifications",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own notifications",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own notifications",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "set_read_at_notifications",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "notifications_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "notifications_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "role",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "experience_level",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "tech_stack",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "primary_language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "goals",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "github_connected",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "github_username",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "notification_preference",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "preferred_language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "completed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "completed_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "skipped",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "skipped_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "current_step",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "onboarding_data",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete own onboarding data",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own onboarding data",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can read own onboarding data",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own onboarding data",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "update_onboarding_timestamp",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "c",
+            "name": "onboarding_data_current_step_check",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "onboarding_data_experience_level_check",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "onboarding_data_notification_preference_check",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "onboarding_data_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "onboarding_data_role_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "onboarding_data_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "onboarding_data_user_id_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "stat_key",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "stat_value",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "display_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "platform_stats",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Anyone can read platform stats",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Service role can insert stats",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Service role can update stats",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "platform_stats_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "platform_stats_stat_key_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "email",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "avatar_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "bio",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "website",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "profiles",
+        "estimated_rows": 25,
+        "policy_names_only": [
+          {
+            "name": "Public profiles are viewable by everyone",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Users can delete own profile",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own profile",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own profile",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own profile",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own profile",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own profile",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "profiles_updated_at",
+            "enabled": "O"
+          },
+          {
+            "name": "update_profiles_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "profiles_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "profiles_pkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "author",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "avatar",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "views",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "stars",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "comments",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "category",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "tags",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "trending",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "github_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "projects",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Public projects are viewable by everyone",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Users can delete their own projects",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own projects",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own projects",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "update_projects_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "projects_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "projects_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "github_username",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "claim_status",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "verification_method",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "verification_data",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "claimed_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "verified_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "verified_by",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "rejection_reason",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_claims",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can insert their own claims",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own claims",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Users can view verified claims",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "c",
+            "name": "repo_claims_claim_status_check",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repo_claims_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_claims_repo_full_name_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_claims_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_claims_verified_by_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_saves",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "v",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_collection_stats",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": []
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "collection_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "notes",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_collections",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own collections",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own collections",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own collections",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own collections",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_collections_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_collections_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_collections_user_id_repo_full_name_collection_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_comments",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "v",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_comment_stats",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": []
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "parent_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "comment_text",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "upvotes",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "downvotes",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_edited",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_deleted",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_comments",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own comments",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own comments",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own comments",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all non-deleted comments",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "repo_comments_parent_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repo_comments_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_comments_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "d",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "html_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "clone_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "license",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "stargazers_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "forks_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "indexed_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "embedding",
+            "type": "public.vector(1536)",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_embeddings",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Allow read access",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_embeddings_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_embeddings_repo_full_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_ratings",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "average_rating",
+            "type": "numeric",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "v",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_rating_stats",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": []
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "review_text",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_ratings",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own ratings",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own ratings",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own ratings",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all ratings",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_ratings_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repo_ratings_rating_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_ratings_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_ratings_user_id_repo_full_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "url",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "tags",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "submitted_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_submissions",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can create submissions",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can view own submissions",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_submissions_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_submissions_url_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_submissions_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "video_url",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "video_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "thumbnail_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "duration",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "uploaded_by",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_featured",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_videos",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Anyone can view videos",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Authenticated users can insert videos",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can delete their own videos",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own videos",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_videos_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_videos_uploaded_by_fkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repo_videos_video_type_check",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "upvotes",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "downvotes",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "net_votes",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "v",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_vote_stats",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": []
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "vote_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repo_votes",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete their own votes",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert their own votes",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update their own votes",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all votes",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repo_votes_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_votes_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_votes_user_id_repo_full_name_key",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repo_votes_vote_type_check",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "data",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "last_fetched",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "fetch_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repository_cache",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Anyone can view cache",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Service can manage cache",
+            "command": "*",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trigger_cache_update",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repository_cache_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repository_cache_repo_full_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "comment_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repository_comment_votes",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete own comment votes",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own comment votes",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all comment votes",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "repository_comment_votes_comment_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repository_comment_votes_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repository_comment_votes_user_id_comment_id_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repository_comment_votes_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "comment_text",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "usage_status",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "parent_comment_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repository_comments",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete own comments",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own comments",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own comments",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all comments",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trigger_reply_notification",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "repository_comments_parent_comment_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repository_comments_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repository_comments_usage_status_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repository_comments_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "comment_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "from_user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "read",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repository_notifications",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can update own notifications",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view own notifications",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "repository_notifications_comment_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repository_notifications_from_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repository_notifications_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repository_notifications_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "repository_votes",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete own votes",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own votes",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own votes",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view all votes",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repository_votes_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repository_votes_rating_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repository_votes_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repository_votes_user_id_repo_full_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "query",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "source",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "filters",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "results_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "search_history",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can delete own search history",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can insert own search history",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can view own search history",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "search_history_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "search_history_source_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "search_history_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "conversation_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_by",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "share_token",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "is_public",
+            "type": "boolean",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "summary",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "snapshot",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "shared_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "deleted_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "shared_conversations",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Owners can manage their shares",
+            "command": "*",
+            "permissive": true
+          },
+          {
+            "name": "Public can view public shared chats",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trg_update_shared_conversation_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "shared_conversations_conversation_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "shared_conversations_created_by_fkey",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "shared_conversations_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "shared_conversations_share_token_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "topic",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_data",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "rank",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "stars_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at_github",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "fetched_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "trending_repos",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Public read access for trending repos",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Service role can delete trending repos",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Service role can insert trending repos",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Service role can update trending repos",
+            "command": "w",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "update_trending_timestamp",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "trending_repos_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "trending_repos_topic_repo_full_name_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "messages",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_tokens",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_messages",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "status",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_pinned",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "last_message_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "user_conversations",
+        "estimated_rows": 10,
+        "policy_names_only": [
+          {
+            "name": "Users can create own conversations",
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Users can delete own conversations",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Users can update own conversations",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Users can view own conversations",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trigger_update_conversation_updated_at",
+            "enabled": "O"
+          },
+          {
+            "name": "trigger_update_message_count",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "user_conversations_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "user_conversations_status_check",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "user_conversations_user_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "level",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "xp",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "xp_to_next_level",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "contributions",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "contributions_max",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "followers",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "following",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "projects",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "user_stats",
+        "estimated_rows": null,
+        "policy_names_only": [
+          {
+            "name": "Users can view other users public stats",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Users can view their own stats",
+            "command": "r",
+            "permissive": true
+          }
+        ],
+        "trigger_names_only": [
+          {
+            "name": "trigger_update_user_stats_updated_at",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "c",
+            "name": "user_stats_level_check",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "user_stats_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "user_stats_user_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "user_stats_user_id_key",
+            "validated": true
+          }
+        ]
+      }
+    ],
+    "extensions": [
+      {
+        "name": "vector",
+        "version": "0.8.0"
+      }
+    ],
+    "observed_at": "2026-10-31T23:27:18.102942+00:00",
+    "schema_names": [
+      "auth",
+      "extensions",
+      "graphql",
+      "graphql_public",
+      "pgbouncer",
+      "public",
+      "r078_backup",
+      "realtime",
+      "storage",
+      "supabase_migrations",
+      "vault"
+    ],
+    "database_bytes": 19328147,
+    "project_identity": "MUST be recorded independently from dashboard; not inferred from SQL",
+    "inventory_version": 1,
+    "server_version_number": "170006",
+    "transaction_read_only": "on"
+  },
+  "dependencies": [
+    {
+      "section": "relations_outside_public",
+      "metadata": [
+        {
+          "kind": "r",
+          "name": "repository_bookmarks",
+          "schema": "r078_backup"
+        },
+        {
+          "kind": "r",
+          "name": "repository_shares",
+          "schema": "r078_backup"
+        },
+        {
+          "kind": "r",
+          "name": "user-data",
+          "schema": "r078_backup"
+        }
+      ]
+    },
+    {
+      "section": "profile_trigger_targets",
+      "metadata": [
+        {
+          "enabled": "O",
+          "trigger": "profiles_updated_at",
+          "function": "update_profiles_updated_at",
+          "function_schema": "public"
+        },
+        {
+          "enabled": "O",
+          "trigger": "update_profiles_updated_at",
+          "function": "update_updated_at_column",
+          "function_schema": "public"
+        }
+      ]
+    },
+    {
+      "section": "view_dependencies",
+      "metadata": [
+        {
+          "view": "repo_collection_stats",
+          "depends_on": "repo_collections",
+          "depends_on_schema": "public"
+        },
+        {
+          "view": "repo_comment_stats",
+          "depends_on": "repo_comments",
+          "depends_on_schema": "public"
+        },
+        {
+          "view": "repo_rating_stats",
+          "depends_on": "repo_ratings",
+          "depends_on_schema": "public"
+        },
+        {
+          "view": "repo_vote_stats",
+          "depends_on": "repo_votes",
+          "depends_on_schema": "public"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Metadata only, no application rows or credentials read",
+    "No DDL/DML/data transfer/role change",
+    "Policy/trigger names are not executable-definition or grant equivalence",
+    "Source corpus remains unknown",
+    "Database bytes are not free-tier billing/remaining quota proof",
+    "No new signing actions"
+  ],
+  "changes_performed": [],
+  "resource_operations": [
+    {
+      "project_id": "mraglhrenqwadegvwxts",
+      "operation": "pause",
+      "owner_approved": true,
+      "accepted": true,
+      "latest_status": "INACTIVE"
+    },
+    {
+      "project_id": "kiadrbqkkmncoblpcobo",
+      "operation": "restore second attempt after approved resource-state change",
+      "owner_approved": true,
+      "accepted": true,
+      "latest_status": "ACTIVE_HEALTHY"
+    }
+  ]
+}

@@ -1,5 +1,12 @@
 # KEYS-STAGE-001: isolated test target and acceptance sequence
 
+Operational update2026-11-01 (DB-CONSOLIDATE-002): owner explicitly approved
+temporarily pausing this exact development project mraglhrenqwadegvwxts to free
+the second active free-project slot for Repo-DB inventory. Pause succeeded;
+latest project check is INACTIVE. Key/signing hosted development acceptance
+cannot run during this pause. No key, user, policy or signing material changed.
+The creation/SQL receipts below remain historical evidence, not current uptime.
+
 Status: project created; owner-approved additive key SQL **applied in development only**;
 post-apply catalog/definition checks pass. A separately approved test policy was
 applied on 2026-10-22; its readback matches and lifecycle tables are empty. No

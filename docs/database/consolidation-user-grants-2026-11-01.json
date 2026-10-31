@@ -1,0 +1,439 @@
+{
+  "task": "DB-CONSOLIDATE-002",
+  "project_id": "kohwfuxqbllsmvmsfqci",
+  "purpose": "current destination table/column read-grant metadata; no application rows",
+  "query_file": "supabase/checks/db_consolidation_003_read_grants.sql",
+  "grants": [
+    {
+      "schema_name": "public",
+      "relation_name": "profiles",
+      "relkind": "r",
+      "anon_table_select": false,
+      "authenticated_table_select": false,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "email",
+          "anon_select": false,
+          "authenticated_select": false
+        },
+        {
+          "column": "full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "avatar_url",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "bio",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "website",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repo_comments",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "parent_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "comment_text",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "upvotes",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "downvotes",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "is_edited",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "is_deleted",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repo_embeddings",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "description",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "html_url",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "clone_url",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "language",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "topics",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "license",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "stargazers_count",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "forks_count",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "indexed_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "embedding",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repo_ratings",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "rating",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "review_text",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repo_votes",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "vote_type",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repository_cache",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "data",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "last_fetched",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "fetch_count",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repository_comment_votes",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "comment_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repository_comments",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "comment_text",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "usage_status",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "parent_comment_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "relation_name": "repository_votes",
+      "relkind": "r",
+      "anon_table_select": true,
+      "authenticated_table_select": true,
+      "column_read_grants": [
+        {
+          "column": "id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "user_id",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "repo_full_name",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "rating",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "created_at",
+          "anon_select": true,
+          "authenticated_select": true
+        },
+        {
+          "column": "updated_at",
+          "anon_select": true,
+          "authenticated_select": true
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Not RLS evaluation or complete privilege/definer-function audit",
+    "No private profile values read; email SELECT denied to anon/authenticated in observed column grants",
+    "No schema/privilege mutation"
+  ]
+}

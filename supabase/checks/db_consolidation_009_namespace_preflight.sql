@@ -1,0 +1,5 @@
+BEGIN READ ONLY; SET LOCAL statement_timeout='10s'; SET LOCAL search_path=pg_catalog;
+SELECT 'connection' AS section,jsonb_build_object('current_user',current_user,'session_user',session_user,'corpus_exists',EXISTS(SELECT 1 FROM pg_namespace WHERE nspname='corpus'),'owner_role_exists',EXISTS(SELECT 1 FROM pg_roles WHERE rolname='sefgh_corpus_owner')) AS metadata
+UNION ALL SELECT 'role_metadata',COALESCE(jsonb_agg(jsonb_build_object('name',rolname,'login',rolcanlogin,'superuser',rolsuper,'inherit',rolinherit,'create_role',rolcreaterole,'create_db',rolcreatedb,'bypass_rls',rolbypassrls) ORDER BY rolname),'[]'::jsonb) FROM pg_roles WHERE rolname IN ('postgres','anon','authenticated','service_role')
+UNION ALL SELECT 'default_acl',COALESCE(jsonb_agg(jsonb_build_object('owner',pg_get_userbyid(d.defaclrole),'schema',n.nspname,'object_type',d.defaclobjtype,'acl',d.defaclacl::text) ORDER BY d.defaclrole,n.nspname,d.defaclobjtype),'[]'::jsonb) FROM pg_default_acl d LEFT JOIN pg_namespace n ON n.oid=d.defaclnamespace WHERE pg_get_userbyid(d.defaclrole) IN ('postgres','supabase_admin');
+ROLLBACK;

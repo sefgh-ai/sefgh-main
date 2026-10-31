@@ -1,0 +1,1113 @@
+{
+  "task": "DB-CONSOLIDATE-003/BUG-070",
+  "project_id": "kiadrbqkkmncoblpcobo",
+  "metadata": [
+    {
+      "section": "constraints",
+      "metadata": [
+        {
+          "name": "repositories_full_name_key",
+          "type": "u",
+          "table": "ReposMeta",
+          "columns": [
+            4
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repositories_pkey",
+          "type": "p",
+          "table": "ReposMeta",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repositories_repo_id_key",
+          "type": "u",
+          "table": "ReposMeta",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "ReposMeta-Research_graphql_id_key",
+          "type": "u",
+          "table": "ReposMeta-Research",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "ReposMeta-Research_pkey",
+          "type": "p",
+          "table": "ReposMeta-Research",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "ReposMeta-Research_repo_id_key",
+          "type": "u",
+          "table": "ReposMeta-Research",
+          "columns": [
+            3
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "api_key_usage_log_pkey",
+          "type": "p",
+          "table": "api_key_usage_log",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "error_events_pkey",
+          "type": "p",
+          "table": "error_events",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_analysis_analysis_status_check",
+          "type": "c",
+          "table": "repo_analysis",
+          "columns": [
+            9
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "33262cfb50a9a3091c7a72276a835866",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_analysis_pkey",
+          "type": "p",
+          "table": "repo_analysis",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_analysis_repo_id_fkey",
+          "type": "f",
+          "table": "repo_analysis",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": "c",
+          "update_action": "a",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": "ReposMeta",
+          "referenced_columns": [
+            1
+          ]
+        },
+        {
+          "name": "repo_analysis_repo_id_key",
+          "type": "u",
+          "table": "repo_analysis",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_chunks_analysis_id_fkey",
+          "type": "f",
+          "table": "repo_chunks",
+          "columns": [
+            3
+          ],
+          "validated": true,
+          "delete_action": "c",
+          "update_action": "a",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": "repo_analysis",
+          "referenced_columns": [
+            1
+          ]
+        },
+        {
+          "name": "repo_chunks_chunk_type_check",
+          "type": "c",
+          "table": "repo_chunks",
+          "columns": [
+            4
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "c4ed22f07395ab23d95b330a7e799c32",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_chunks_pkey",
+          "type": "p",
+          "table": "repo_chunks",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_chunks_repo_id_content_hash_key",
+          "type": "u",
+          "table": "repo_chunks",
+          "columns": [
+            2,
+            7
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repo_chunks_repo_id_fkey",
+          "type": "f",
+          "table": "repo_chunks",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": "c",
+          "update_action": "a",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": "ReposMeta",
+          "referenced_columns": [
+            1
+          ]
+        },
+        {
+          "name": "repositories_search_pkey",
+          "type": "p",
+          "table": "repositories_search",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "repositories_search_repo_id_fkey",
+          "type": "f",
+          "table": "repositories_search",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": "c",
+          "update_action": "a",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": "ReposMeta",
+          "referenced_columns": [
+            2
+          ]
+        },
+        {
+          "name": "session_snapshots_pkey",
+          "type": "p",
+          "table": "session_snapshots",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "topic_list_pkey",
+          "type": "p",
+          "table": "topic_list",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "topic_list_status_check",
+          "type": "c",
+          "table": "topic_list",
+          "columns": [
+            3
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "1f769efdf9b69667aa1d8300aff760cb",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "topic_list_topic_key",
+          "type": "u",
+          "table": "topic_list",
+          "columns": [
+            2
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        },
+        {
+          "name": "topic_processing_history_pkey",
+          "type": "p",
+          "table": "topic_processing_history",
+          "columns": [
+            1
+          ],
+          "validated": true,
+          "delete_action": " ",
+          "update_action": " ",
+          "expression_hash": "d41d8cd98f00b204e9800998ecf8427e",
+          "referenced_table": null,
+          "referenced_columns": null
+        }
+      ]
+    },
+    {
+      "section": "triggers",
+      "metadata": [
+        {
+          "table": "ReposMeta",
+          "enabled": "O",
+          "trigger": "trigger_unanalysed_repository",
+          "function": "notify_unanalysed_repository",
+          "type_bits": 21,
+          "argument_bytes": 0,
+          "function_schema": "public"
+        },
+        {
+          "table": "repositories_search",
+          "enabled": "O",
+          "trigger": "trigger_update_search_vector",
+          "function": "update_search_vector",
+          "type_bits": 23,
+          "argument_bytes": 0,
+          "function_schema": "public"
+        },
+        {
+          "table": "topic_list",
+          "enabled": "O",
+          "trigger": "NewTopicAlert",
+          "function": "http_request",
+          "type_bits": 21,
+          "argument_bytes": 164,
+          "function_schema": "supabase_functions"
+        }
+      ]
+    },
+    {
+      "section": "indexes",
+      "metadata": [
+        {
+          "index": "idx_repositories_full_name",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "4",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_funding_links",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "49",
+          "operator_classes": "10090",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_is_archived",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "25",
+          "operator_classes": "10003",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_is_fork",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "28",
+          "operator_classes": "10003",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_isanalysed",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "16",
+          "operator_classes": "10003",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_labels",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "78",
+          "operator_classes": "10090",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_languages",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "41",
+          "operator_classes": "10090",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_license_key",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "38",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_pushed_at",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "22",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_repo_id",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_stars",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "6",
+          "operator_classes": "1978",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_topics",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "14",
+          "operator_classes": "10064",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_topics_jsonb",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "44",
+          "operator_classes": "10090",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repositories_full_name_key",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "4",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repositories_pkey",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repositories_repo_id_key",
+          "ready": true,
+          "table": "ReposMeta",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "ReposMeta-Research_graphql_id_key",
+          "ready": true,
+          "table": "ReposMeta-Research",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "ReposMeta-Research_pkey",
+          "ready": true,
+          "table": "ReposMeta-Research",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "ReposMeta-Research_repo_id_key",
+          "ready": true,
+          "table": "ReposMeta-Research",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "api_key_usage_log_pkey",
+          "ready": true,
+          "table": "api_key_usage_log",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_api_usage_key",
+          "ready": true,
+          "table": "api_key_usage_log",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_api_usage_timestamp",
+          "ready": true,
+          "table": "api_key_usage_log",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_api_usage_topic",
+          "ready": true,
+          "table": "api_key_usage_log",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "5",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "error_events_pkey",
+          "ready": true,
+          "table": "error_events",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_error_events_timestamp",
+          "ready": true,
+          "table": "error_events",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_error_events_type",
+          "ready": true,
+          "table": "error_events",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_analysis_labels",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "5",
+          "operator_classes": "10090",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_analysis_quality",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "21",
+          "operator_classes": "1978",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_analysis_repo_id",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "1978",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_analysis_status",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "9",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repo_analysis_embedding_idx",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "23",
+          "operator_classes": "26981",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repo_analysis_pkey",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "10065",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repo_analysis_repo_id_key",
+          "ready": true,
+          "table": "repo_analysis",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "1978",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_chunks_embedding_hnsw",
+          "ready": true,
+          "table": "repo_chunks",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "8",
+          "operator_classes": "26996",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_chunks_repo_id",
+          "ready": true,
+          "table": "repo_chunks",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "1978",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repo_chunks_type",
+          "ready": true,
+          "table": "repo_chunks",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "4",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repo_chunks_pkey",
+          "ready": true,
+          "table": "repo_chunks",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repo_chunks_repo_id_content_hash_key",
+          "ready": true,
+          "table": "repo_chunks",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "2 7",
+          "operator_classes": "1978 3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_search_updated_at",
+          "ready": true,
+          "table": "repositories_search",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "8",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_repositories_search_vector",
+          "ready": true,
+          "table": "repositories_search",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "7",
+          "operator_classes": "10073",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "repositories_search_pkey",
+          "ready": true,
+          "table": "repositories_search",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_session_snapshots_session_start",
+          "ready": true,
+          "table": "session_snapshots",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_session_snapshots_timestamp",
+          "ready": true,
+          "table": "session_snapshots",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "session_snapshots_pkey",
+          "ready": true,
+          "table": "session_snapshots",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_topic_list_status",
+          "ready": true,
+          "table": "topic_list",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_topic_list_topic",
+          "ready": true,
+          "table": "topic_list",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "topic_list_pkey",
+          "ready": true,
+          "table": "topic_list",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "topic_list_topic_key",
+          "ready": true,
+          "table": "topic_list",
+          "valid": true,
+          "unique": true,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_topic_history_completed",
+          "ready": true,
+          "table": "topic_processing_history",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "5",
+          "operator_classes": "3127",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_topic_history_status",
+          "ready": true,
+          "table": "topic_processing_history",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "3",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "idx_topic_history_topic",
+          "ready": true,
+          "table": "topic_processing_history",
+          "valid": true,
+          "unique": false,
+          "primary": false,
+          "key_attributes": "2",
+          "operator_classes": "3126",
+          "predicate_present": false,
+          "expression_present": false
+        },
+        {
+          "index": "topic_processing_history_pkey",
+          "ready": true,
+          "table": "topic_processing_history",
+          "valid": true,
+          "unique": true,
+          "primary": true,
+          "key_attributes": "1",
+          "operator_classes": "3124",
+          "predicate_present": false,
+          "expression_present": false
+        }
+      ]
+    },
+    {
+      "section": "routines",
+      "metadata": [
+        {
+          "name": "is_trending_data_stale",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "match_repo_analysis",
+          "signature": "query_embedding extensions.vector, match_threshold double precision, match_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "match_repo_chunks",
+          "signature": "target_repo_id integer, query_embedding extensions.vector, match_threshold double precision, match_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "match_repos_cosine",
+          "signature": "query_embedding extensions.vector, match_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "match_repos_inner",
+          "signature": "query_embedding extensions.vector, match_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "match_repos_l2",
+          "signature": "query_embedding extensions.vector, match_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "notify_unanalysed_repository",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "populate_search_table",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "search_repositories",
+          "signature": "search_query text, limit_count integer, offset_count integer",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "update_search_vector",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "update_trending_updated_at",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        },
+        {
+          "name": "update_updated_at_column",
+          "signature": "",
+          "execute_acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": false,
+          "fixed_search_path": false
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "No routine bodies, webhook arguments, defaults, predicate literals or app rows returned",
+    "Constraint expression hash is not full migration definition",
+    "Column numbers refer to source inventory column order; preserve distinct primary/alternate keys",
+    "Three enabled triggers include a webhook; no webhook recreated or payload inspected",
+    "Metadata snapshot, not active worker/deployment lineage proof"
+  ]
+}

@@ -1,5 +1,8 @@
 # SEFGH backend map
 
+DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision. See docs/database/user-db-organization-2026-11-01.md and the namespace/source receipts.
+
+
 DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md.
 
 
@@ -736,3 +739,6 @@ BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at 
 
 
 REPOSYNC-002a/b (2026-11-01): accepted HLD discovery direction now has a pure offline Go search-slice planner. Counts above1000 split inclusive UTC date ranges, then bounded star ranges; incomplete/invalid counts fail, one-day unbounded stars request a verified bound, unsplittable crowded slices block. Enumerate means paging eligibility, never completion. No worker/network/runtime/legacy-contract changes. Metadata-only corpus preflight prepared, not executed. Code: backend/internal/discover; preflight: supabase/checks/corpus_001_inventory.sql; sequence: docs/plans/reposync-discover-readiness.md.
+
+
+BUG-070/R-210 (2026-11-01): exact owner-approved source Repo-DB write/admin grants revoked for PUBLIC/anon/authenticated on9non-RLS tables. All9effective table/column denial checks pass; current reads and service-roleCRUD preserved. Ten source counts and excluded researchACL unchanged. Migration20261031234604; receipt/verify/rollback versioned. No data copied/deleted or User-DB table changed; source read/RPC audit and transfer remain separate.

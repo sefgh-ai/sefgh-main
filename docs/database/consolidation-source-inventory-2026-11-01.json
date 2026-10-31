@@ -1,0 +1,2108 @@
+{
+  "task": "DB-CONSOLIDATE-002/003",
+  "client_date": "2026-11-01",
+  "project": {
+    "id": "kiadrbqkkmncoblpcobo",
+    "name": "Repo-DB",
+    "organization_id": "hithuduntbsajjhmnntm",
+    "status": "ACTIVE_HEALTHY",
+    "verified_via": "get_project"
+  },
+  "inventory_script": "supabase/checks/db_consolidation_001_inventory.sql",
+  "inventory": {
+    "limits": "Relations cover public/corpus only; review schema_names for additional application schemas. Platform schemas are not transfer candidates. Metadata only; estimates are not row counts. No function, policy, trigger or grant equivalence established.",
+    "purpose": "source/destination consolidation preflight",
+    "relations": [
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "full_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "stars",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "forks",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "url",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "owner",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "owner_type",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "fetched_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "isanalysed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "github_id",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "description_html",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "homepage_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "ssh_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "mirror_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "pushed_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "watcher_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "disk_usage",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_archived",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_disabled",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_empty",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_fork",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_locked",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_mirror",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_private",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "is_template",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "has_discussions_enabled",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "has_issues_enabled",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "has_projects_enabled",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "has_wiki_enabled",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "license_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "license_key",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "license_spdx_id",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "primary_language_color",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "languages",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "languages_total_size",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "languages_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics_jsonb",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "owner_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "owner_company",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "owner_location",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "funding_links",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "issues_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "issues_open_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "issues_closed_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "pull_requests_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "pull_requests_open_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "pull_requests_merged_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "pull_requests_closed_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "releases_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "latest_release_tag",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "latest_release_published_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "branches_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "default_branch_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "collaborators_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "mentionable_users_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "parent_name_with_owner",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "parent_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "parent_stars",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "template_name_with_owner",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "template_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "code_of_conduct_key",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "security_policy_url",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "vulnerability_alerts_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "discussions_total_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "projects_v2_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "packages_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "environments_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "deployments_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "milestones_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "labels",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "labels_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "commit_comments_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "auto_merge_allowed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "delete_branch_on_merge",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "merge_commit_allowed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "rebase_merge_allowed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "squash_merge_allowed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "visibility",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "lock_reason",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "archived_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "submodules_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "assignable_users_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "issue_templates_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "data_source",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "api_cost_points",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "ReposMeta",
+        "estimated_rows": 12030,
+        "policy_names_only": [],
+        "trigger_names_only": [
+          {
+            "name": "trigger_unanalysed_repository",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "u",
+            "name": "repositories_full_name_key",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repositories_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repositories_repo_id_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "d",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "graphql_id",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "nameWithOwner",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "stargazerCount",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "forkCount",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "createdAt",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updatedAt",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "isArchived",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "isFork",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "homepageUrl",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "license_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "languages",
+            "type": "text[]",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "open_issues_count",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "funding_links",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "owner_type",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "isanalysed",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "added_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "fetched_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": true,
+        "schema_name": "public",
+        "relation_name": "ReposMeta-Research",
+        "estimated_rows": 15763,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "u",
+            "name": "ReposMeta-Research_graphql_id_key",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "ReposMeta-Research_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "ReposMeta-Research_repo_id_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "timestamp",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "key_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "key_index",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "topic",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "request_type",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "cost_points",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "remaining_after",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "limit_value",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "reset_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "response_time_ms",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "success",
+            "type": "boolean",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "error_message",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "api_key_usage_log",
+        "estimated_rows": 120,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "api_key_usage_log_pkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "timestamp",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "event_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "topic",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "key_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "error_message",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "retry_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "backoff_seconds",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "details",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "error_events",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "error_events_pkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_id",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "readme",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "file_structure",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "labels",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repo2vec",
+            "type": "extensions.vector",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "llm_description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "analysis_status",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "error_message",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repomix_output",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repomix_version",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "embedding_model",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "token_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "description_embedding",
+            "type": "extensions.vector(768)",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "spoken_language",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "analysis_time_seconds",
+            "type": "double precision",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "quality_score",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "quality_breakdown",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "embedding",
+            "type": "extensions.vector(768)",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_analysis",
+        "estimated_rows": 165,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "c",
+            "name": "repo_analysis_analysis_status_check",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repo_analysis_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_analysis_repo_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_analysis_repo_id_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "a",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "repo_id",
+            "type": "integer",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "analysis_id",
+            "type": "uuid",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "chunk_type",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "file_path",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "content",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "content_hash",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "embedding",
+            "type": "extensions.vector(768)",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "token_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "chunk_index",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "metadata",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repo_chunks",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "f",
+            "name": "repo_chunks_analysis_id_fkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "repo_chunks_chunk_type_check",
+            "validated": true
+          },
+          {
+            "kind": "p",
+            "name": "repo_chunks_pkey",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "repo_chunks_repo_id_content_hash_key",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repo_chunks_repo_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "repo_id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "searchable_name",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "searchable_description",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "searchable_topics",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "searchable_owner",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "searchable_readme",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "search_vector",
+            "type": "tsvector",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "repositories_search",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [
+          {
+            "name": "trigger_update_search_vector",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "repositories_search_pkey",
+            "validated": true
+          },
+          {
+            "kind": "f",
+            "name": "repositories_search_repo_id_fkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "timestamp",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "session_start",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "status",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "current_topic",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "current_cycle",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "topics_processed",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repos_saved",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_repos_in_db",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "rate_limit",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "api_keys",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "api_stats",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "current_progress",
+            "type": "jsonb",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "uptime_seconds",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "session_snapshots",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "session_snapshots_pkey",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "topic",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "status",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_repos_fetched",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "last_fetched_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_repos_github",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_duplicate_repos",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "Ended_At",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "started_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_pages_fetched",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_api_calls_cost",
+            "type": "bigint",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_time_taken(in seconds)",
+            "type": "numeric",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "last_cursor",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "topic_list",
+        "estimated_rows": 35,
+        "policy_names_only": [],
+        "trigger_names_only": [
+          {
+            "name": "NewTopicAlert",
+            "enabled": "O"
+          }
+        ],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "topic_list_pkey",
+            "validated": true
+          },
+          {
+            "kind": "c",
+            "name": "topic_list_status_check",
+            "validated": true
+          },
+          {
+            "kind": "u",
+            "name": "topic_list_topic_key",
+            "validated": true
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "name": "id",
+            "type": "bigint",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "topic_name",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "status",
+            "type": "text",
+            "identity": "",
+            "not_null": true,
+            "generated": ""
+          },
+          {
+            "name": "started_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "completed_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "cycle_number",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repos_fetched",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "repos_saved",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "duplicates_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "github_total",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "requests_made",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_cost_points",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "avg_page_time_sec",
+            "type": "numeric",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "total_duration_sec",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "error_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "retry_count",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "backoff_events",
+            "type": "integer",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "final_error",
+            "type": "text",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          },
+          {
+            "name": "updated_at",
+            "type": "timestamp with time zone",
+            "identity": "",
+            "not_null": false,
+            "generated": ""
+          }
+        ],
+        "relkind": "r",
+        "rls_forced": false,
+        "rls_enabled": false,
+        "schema_name": "public",
+        "relation_name": "topic_processing_history",
+        "estimated_rows": null,
+        "policy_names_only": [],
+        "trigger_names_only": [],
+        "constraints_names_only": [
+          {
+            "kind": "p",
+            "name": "topic_processing_history_pkey",
+            "validated": true
+          }
+        ]
+      }
+    ],
+    "extensions": [
+      {
+        "name": "pg_net",
+        "version": "0.19.5"
+      },
+      {
+        "name": "vector",
+        "version": "0.8.0"
+      }
+    ],
+    "observed_at": "2026-10-31T23:37:23.978701+00:00",
+    "schema_names": [
+      "auth",
+      "extensions",
+      "graphql",
+      "graphql_public",
+      "net",
+      "pgbouncer",
+      "public",
+      "realtime",
+      "storage",
+      "supabase_functions",
+      "supabase_migrations",
+      "vault"
+    ],
+    "database_bytes": 42044563,
+    "project_identity": "MUST be recorded independently from dashboard; not inferred from SQL",
+    "inventory_version": 1,
+    "server_version_number": "170006",
+    "transaction_read_only": "on"
+  },
+  "table_grants": [
+    {
+      "table_name": "ReposMeta",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "ReposMeta-Research",
+      "rls_enabled": true,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "api_key_usage_log",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "error_events",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "repo_analysis",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "repo_chunks",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "repositories_search",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "session_snapshots",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "topic_list",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    },
+    {
+      "table_name": "topic_processing_history",
+      "rls_enabled": false,
+      "anon_select": true,
+      "anon_insert": true,
+      "anon_update": true,
+      "anon_delete": true,
+      "authenticated_select": true
+    }
+  ],
+  "table_acls": [
+    {
+      "relname": "ReposMeta",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "ReposMeta-Research",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "api_key_usage_log",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "error_events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repo_analysis",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repo_chunks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repositories_search",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "session_snapshots",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "topic_list",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "topic_processing_history",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    }
+  ],
+  "counts": [
+    {
+      "table_name": "ReposMeta",
+      "exact_rows": 12030,
+      "private_flag_count": 0
+    },
+    {
+      "table_name": "ReposMeta-Research",
+      "exact_rows": 15414,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "api_key_usage_log",
+      "exact_rows": 147,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "error_events",
+      "exact_rows": 14,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repo_analysis",
+      "exact_rows": 165,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repo_chunks",
+      "exact_rows": 0,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repositories_search",
+      "exact_rows": 0,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "session_snapshots",
+      "exact_rows": 33,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "topic_list",
+      "exact_rows": 37,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "topic_processing_history",
+      "exact_rows": 33,
+      "private_flag_count": null
+    }
+  ],
+  "limits": [
+    "Only catalog metadata and aggregate counts; no repository content, owner personal details, log payloads, session_snapshots.api_keys values or credential values read",
+    "RLS disabled and anon CRUD grants confirmed for9tables; no destructive HTTP proof attempted",
+    "No source DDL/DML; source intact",
+    "Source model/corpus lineage not established by dimensions alone",
+    "No public repositories table exists in this inventory, so legacy RepoSync target cannot be inferred"
+  ]
+}

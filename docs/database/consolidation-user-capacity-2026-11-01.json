@@ -1,0 +1,269 @@
+{
+  "task": "DB-CONSOLIDATE-002",
+  "project_id": "kohwfuxqbllsmvmsfqci",
+  "query_file": "supabase/checks/db_consolidation_004_capacity.sql",
+  "relations": [
+    {
+      "schema_name": "public",
+      "table_name": "activity_logs",
+      "total_bytes": 114688,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": 24
+    },
+    {
+      "schema_name": "public",
+      "table_name": "api_keys",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "api_limits",
+      "total_bytes": 32768,
+      "heap_bytes": 0,
+      "index_bytes": 24576,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "api_logs",
+      "total_bytes": 65536,
+      "heap_bytes": 8192,
+      "index_bytes": 49152,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "categories",
+      "total_bytes": 114688,
+      "heap_bytes": 8192,
+      "index_bytes": 98304,
+      "estimated_rows": 40
+    },
+    {
+      "schema_name": "public",
+      "table_name": "comment_votes",
+      "total_bytes": 65536,
+      "heap_bytes": 8192,
+      "index_bytes": 49152,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "notifications",
+      "total_bytes": 98304,
+      "heap_bytes": 8192,
+      "index_bytes": 81920,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "onboarding_data",
+      "total_bytes": 98304,
+      "heap_bytes": 8192,
+      "index_bytes": 81920,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "platform_stats",
+      "total_bytes": 49152,
+      "heap_bytes": 8192,
+      "index_bytes": 32768,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "profiles",
+      "total_bytes": 49152,
+      "heap_bytes": 8192,
+      "index_bytes": 32768,
+      "estimated_rows": 25
+    },
+    {
+      "schema_name": "public",
+      "table_name": "projects",
+      "total_bytes": 139264,
+      "heap_bytes": 8192,
+      "index_bytes": 122880,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_claims",
+      "total_bytes": 49152,
+      "heap_bytes": 0,
+      "index_bytes": 40960,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_collections",
+      "total_bytes": 65536,
+      "heap_bytes": 8192,
+      "index_bytes": 49152,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_comments",
+      "total_bytes": 98304,
+      "heap_bytes": 8192,
+      "index_bytes": 81920,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_embeddings",
+      "total_bytes": 1687552,
+      "heap_bytes": 0,
+      "index_bytes": 1679360,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_ratings",
+      "total_bytes": 40960,
+      "heap_bytes": 0,
+      "index_bytes": 32768,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_submissions",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_videos",
+      "total_bytes": 32768,
+      "heap_bytes": 8192,
+      "index_bytes": 16384,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repo_votes",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repository_cache",
+      "total_bytes": 32768,
+      "heap_bytes": 0,
+      "index_bytes": 24576,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repository_comment_votes",
+      "total_bytes": 24576,
+      "heap_bytes": 0,
+      "index_bytes": 24576,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repository_comments",
+      "total_bytes": 40960,
+      "heap_bytes": 0,
+      "index_bytes": 32768,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repository_notifications",
+      "total_bytes": 24576,
+      "heap_bytes": 0,
+      "index_bytes": 16384,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "repository_votes",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "search_history",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "shared_conversations",
+      "total_bytes": 98304,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "trending_repos",
+      "total_bytes": 49152,
+      "heap_bytes": 0,
+      "index_bytes": 40960,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "public",
+      "table_name": "user_conversations",
+      "total_bytes": 237568,
+      "heap_bytes": 24576,
+      "index_bytes": 155648,
+      "estimated_rows": 10
+    },
+    {
+      "schema_name": "public",
+      "table_name": "user_stats",
+      "total_bytes": 65536,
+      "heap_bytes": 8192,
+      "index_bytes": 49152,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "r078_backup",
+      "table_name": "repository_bookmarks",
+      "total_bytes": 81920,
+      "heap_bytes": 8192,
+      "index_bytes": 65536,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "r078_backup",
+      "table_name": "repository_shares",
+      "total_bytes": 16384,
+      "heap_bytes": 0,
+      "index_bytes": 8192,
+      "estimated_rows": null
+    },
+    {
+      "schema_name": "r078_backup",
+      "table_name": "user-data",
+      "total_bytes": 49152,
+      "heap_bytes": 8192,
+      "index_bytes": 32768,
+      "estimated_rows": null
+    }
+  ],
+  "limits": [
+    "Catalog allocation sizes, not logical export bytes or billing headroom",
+    "Estimated rows can be null/stale; no exact counts or application rows queried",
+    "Index space does not prove live row count",
+    "No reclaim/shrink/index/schema mutation"
+  ]
+}

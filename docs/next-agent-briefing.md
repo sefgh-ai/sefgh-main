@@ -1,5 +1,8 @@
 # Briefing for the next agent (written 2026-10-29)
 
+DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision. See docs/database/user-db-organization-2026-11-01.md and the namespace/source receipts.
+
+
 DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md.
 
 
@@ -85,7 +88,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-070**, register entry **R-210**. Never reuse or renumber; recheck the register before claiming.
+**Next free IDs:** task **BUG-071**, register entry **R-211**. Never reuse or renumber; recheck the register before claiming.
 
 ## 4. Your work queue, in order
 
@@ -234,3 +237,6 @@ BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at 
 
 
 Pickup2026-11-01: REPOSYNC-002a/b prepares the metadata-only corpus inventory and implements offline date/star partition planning; [readiness](plans/reposync-discover-readiness.md) is the next sequence. HLD splitting direction was already owner-accepted2026-10-28; R-193 awaits executor/cutover, not the same general product question. No worker execution, live SQL or deployment. Read latest coordination for final full verification and Git repair/synchronization state.
+
+
+BUG-070/R-210 (2026-11-01): exact owner-approved source Repo-DB write/admin grants revoked for PUBLIC/anon/authenticated on9non-RLS tables. All9effective table/column denial checks pass; current reads and service-roleCRUD preserved. Ten source counts and excluded researchACL unchanged. Migration20261031234604; receipt/verify/rollback versioned. No data copied/deleted or User-DB table changed; source read/RPC audit and transfer remain separate.

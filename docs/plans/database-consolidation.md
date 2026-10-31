@@ -1,5 +1,8 @@
 # Repo-DB into User-DB: consolidation and organization
 
+DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision. See docs/database/user-db-organization-2026-11-01.md and the namespace/source receipts.
+
+
 DB-CONSOLIDATE-001, 2026-11-01. Owner direction: shift Repo-DB into User-DB.
 Owner cleanup choice: organize corpus tables in a separate schema inside
 User-DB, preserving existing data and app behavior. This supersedes HLD D1's
@@ -104,3 +107,6 @@ The custom-schema documentation URL failed to load; no guessed API/configuration
 was implemented. Existing offline Discover code is unchanged; live execution
 remains disabled. The old separate-project/service-key assumptions in HLD/LLD
 are historical and must not be used for new implementation.
+
+
+BUG-070/R-210 (2026-11-01): exact owner-approved source Repo-DB write/admin grants revoked for PUBLIC/anon/authenticated on9non-RLS tables. All9effective table/column denial checks pass; current reads and service-roleCRUD preserved. Ten source counts and excluded researchACL unchanged. Migration20261031234604; receipt/verify/rollback versioned. No data copied/deleted or User-DB table changed; source read/RPC audit and transfer remain separate.

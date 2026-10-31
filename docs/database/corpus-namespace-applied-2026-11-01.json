@@ -1,0 +1,106 @@
+{
+  "task": "DB-CONSOLIDATE-003",
+  "project_id": "kohwfuxqbllsmvmsfqci",
+  "client_date": "2026-11-01",
+  "migration": {
+    "name": "corpus_001_restricted_namespace",
+    "version": "20261031233939",
+    "file": "supabase/proposals/corpus_001_namespace.sql",
+    "sha256": "6546e2cd923c839a48249f66cdf389b613024c85577d3ad1a057569522b79ad3",
+    "success": true
+  },
+  "review": {
+    "agent": "review_corpus_namespace",
+    "result": "independent static review, no material namespace blockers; PostgreSQL17 docs checked; not runtime proof"
+  },
+  "verification": [
+    {
+      "nspname": "corpus",
+      "owner": "postgres",
+      "description": "SEFGH repository corpus staging. No API or worker access until reviewed scoped grants and RLS. DB-CONSOLIDATE-003.",
+      "relation_count": 0,
+      "routine_count": 0,
+      "api_roles": [
+        {
+          "role": "anon",
+          "usage": false,
+          "create": false
+        },
+        {
+          "role": "authenticated",
+          "usage": false,
+          "create": false
+        },
+        {
+          "role": "service_role",
+          "usage": false,
+          "create": false
+        }
+      ]
+    }
+  ],
+  "application_catalog": {
+    "before": [
+      {
+        "section": "columns",
+        "metadata_fingerprint": "7ad58e8cfee9621c23cced8dcfb806cc"
+      },
+      {
+        "section": "default_privileges",
+        "metadata_fingerprint": "72b516cb073c226bf37be20116da6949"
+      },
+      {
+        "section": "policies",
+        "metadata_fingerprint": "f8659cea0a628c85a4fd5944413e8b9f"
+      },
+      {
+        "section": "relations",
+        "metadata_fingerprint": "c688ebf89f084c09cf47ab6fac775143"
+      },
+      {
+        "section": "routines",
+        "metadata_fingerprint": "b44d94a09a6024a5c41773abbb15060c"
+      },
+      {
+        "section": "triggers",
+        "metadata_fingerprint": "1dce939753a5d6e5ecea2b113738fe54"
+      }
+    ],
+    "after": [
+      {
+        "section": "columns",
+        "metadata_fingerprint": "7ad58e8cfee9621c23cced8dcfb806cc"
+      },
+      {
+        "section": "default_privileges",
+        "metadata_fingerprint": "72b516cb073c226bf37be20116da6949"
+      },
+      {
+        "section": "policies",
+        "metadata_fingerprint": "f8659cea0a628c85a4fd5944413e8b9f"
+      },
+      {
+        "section": "relations",
+        "metadata_fingerprint": "c688ebf89f084c09cf47ab6fac775143"
+      },
+      {
+        "section": "routines",
+        "metadata_fingerprint": "b44d94a09a6024a5c41773abbb15060c"
+      },
+      {
+        "section": "triggers",
+        "metadata_fingerprint": "1dce939753a5d6e5ecea2b113738fe54"
+      }
+    ],
+    "equal": true,
+    "scope": "public/r078_backup relations columns routines policies triggers; all default privileges; fingerprints only, no routine bodies returned"
+  },
+  "rollback": "supabase/checks/corpus_001_namespace_rollback.sql",
+  "limits": [
+    "Only empty namespace added; no application data/table/role/default-privilege modification",
+    "No API exposed-schema setting changed",
+    "No worker credential created or ingestion enabled",
+    "No source data copied",
+    "Not signed-in/browser end-to-end verification"
+  ]
+}

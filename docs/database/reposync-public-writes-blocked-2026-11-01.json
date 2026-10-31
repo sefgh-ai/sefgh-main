@@ -1,0 +1,200 @@
+{
+  "task": "BUG-070/R-210",
+  "client_date": "2026-11-01",
+  "project_id": "kiadrbqkkmncoblpcobo",
+  "organization_id": "hithuduntbsajjhmnntm",
+  "owner_approval": "Explicitly approved reviewed source-only write/admin-grant revocation; reads/worker CRUD preserved; no deletion",
+  "migration": {
+    "name": "reposync_002_block_public_writes",
+    "version": "20261031234604",
+    "file": "supabase/proposals/reposync_002_block_public_writes.sql",
+    "sha256": "2e72f0cb5b87f7896aa08fb313b6c3c35b81c0ab5c986058939d7261a0f3b29b",
+    "success": true
+  },
+  "review": {
+    "agent": "review_corpus_namespace",
+    "independent": true,
+    "initial_finding": "Inherited column privileges were not included in denial proof",
+    "correction": "Reject existing column ACLs for exact rollback and verify has_any_column_privilege for INSERT/UPDATE/REFERENCES",
+    "final": "No remaining material static blockers; runtime proof separate"
+  },
+  "verification": [
+    {
+      "relname": "ReposMeta",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "api_key_usage_log",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "error_events",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "repo_analysis",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "repo_chunks",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "repositories_search",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "session_snapshots",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "topic_list",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    },
+    {
+      "relname": "topic_processing_history",
+      "api_table_writes_denied": true,
+      "api_column_writes_denied": true,
+      "existing_reads_preserved": true,
+      "service_worker_crud_preserved": true
+    }
+  ],
+  "counts_before_after_equal": true,
+  "counts_after": [
+    {
+      "table_name": "ReposMeta",
+      "exact_rows": 12030,
+      "private_flag_count": 0
+    },
+    {
+      "table_name": "ReposMeta-Research",
+      "exact_rows": 15414,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "api_key_usage_log",
+      "exact_rows": 147,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "error_events",
+      "exact_rows": 14,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repo_analysis",
+      "exact_rows": 165,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repo_chunks",
+      "exact_rows": 0,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "repositories_search",
+      "exact_rows": 0,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "session_snapshots",
+      "exact_rows": 33,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "topic_list",
+      "exact_rows": 37,
+      "private_flag_count": null
+    },
+    {
+      "table_name": "topic_processing_history",
+      "exact_rows": 33,
+      "private_flag_count": null
+    }
+  ],
+  "excluded_research_acl_unchanged": true,
+  "after_acls": [
+    {
+      "relname": "ReposMeta",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "ReposMeta-Research",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "api_key_usage_log",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "error_events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repo_analysis",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repo_chunks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "repositories_search",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "session_snapshots",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "topic_list",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "relname": "topic_processing_history",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}"
+    }
+  ],
+  "limits": [
+    "No application rows/log payloads/key JSON values read or copied; aggregate counts/catalog only",
+    "No DML/delete/worker execution; source SELECT privileges intentionally preserved",
+    "Not full source read/RPC/security hardening",
+    "No destructive HTTP request or deliberate reopening of live write exposure",
+    "Rollback prepared to reopen prior grants, not executed",
+    "User-DB namespace handled in separate receipt"
+  ]
+}
