@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-01 (Asia/Calcutta), by Git Agent: synchronized REPOSYNC-002 and DB-CONSOLIDATE-001 (commit `734e36c`) on main and go-backend.
+Last updated: 2026-11-01 (Asia/Calcutta), by Git Agent: synchronized DB-CONSOLIDATE-002, DB-CONSOLIDATE-003, and BUG-070 (commit `37864ff`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: BUG-070/R-210 source direct-write containment (Codex, 2026-11-01)
 
-Status: **bounded fix applied and remotely verified**. Owner Codex, independent static reviewer review_corpus_namespace. Main base/current ec0d388, repository changes explicitly uncommitted. Prior DB-CONSOLIDATE-003 full handoff396359113edc passed; clear lease/released writer before claim; all priorwork preserved.
+Status: **bounded fix applied and remotely verified**. Owner Codex, independent static reviewer review_corpus_namespace. Main base `ec0d388`. Resulting commit: `37864ff` (batch synchronized by Git Agent on `main` and `go-backend`). Prior DB-CONSOLIDATE-003 full handoff396359113edc passed; clear lease/released writer before claim; all priorwork preserved.
 
 BUG-070/R-210 (2026-11-01): exact owner-approved source Repo-DB write/admin grants revoked for PUBLIC/anon/authenticated on9non-RLS tables. All9effective table/column denial checks pass; current reads and service-roleCRUD preserved. Ten source counts and excluded researchACL unchanged. Migration20261031234604; receipt/verify/rollback versioned. No data copied/deleted or User-DB table changed; source read/RPC audit and transfer remain separate.
 
@@ -37,7 +37,7 @@ Status: **in progress / incomplete**. Owner Codex, reviewer review_corpus_namesp
 
 ## Handoff: DB-CONSOLIDATE-003 User-DB restricted corpus foundation (Codex, 2026-11-01)
 
-Status: **bounded implementation and remote verification complete**. Owner Codex; namespace reviewer review_corpus_namespace independent/read-only. Main base/current ec0d388; resulting repository changes explicitly uncommitted. Prior DB-CONSOLIDATE-002 inventory work preserved and completed by successful source metadata/count read after health recovered. No writer/verifier displaced.
+Status: **bounded implementation and remote verification complete**. Owner Codex; namespace reviewer review_corpus_namespace independent/read-only. Main base `ec0d388`. Resulting commit: `37864ff` (batch synchronized by Git Agent on `main` and `go-backend`). Prior DB-CONSOLIDATE-002 inventory work preserved and completed by successful source metadata/count read after health recovered. No writer/verifier displaced.
 
 DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision.
 
