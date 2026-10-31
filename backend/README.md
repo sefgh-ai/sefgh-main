@@ -641,3 +641,15 @@ BUG-067/R-207 enforces the existing39-character contributions login limit with a
 BUG-068/R-090, 2026-10-31: R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound. Local fix, deployment pending.
 
 BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at the website. GET /api/trending/topics returns200 from Go with6 populated topics/30 repository entries; GET /api/trending/refresh returns404. No deployment was performed by this task. Helpers/table/data retained; external scheduler inventory and general Phase7 cleanup remain separate gates.
+
+
+## Discover foundation (REPOSYNC-002a/b)
+
+REPOSYNC-002a/b (2026-11-01): accepted HLD discovery direction now has a pure offline Go search-slice planner. Counts above1000 split inclusive UTC date ranges, then bounded star ranges; incomplete/invalid counts fail, one-day unbounded stars request a verified bound, unsplittable crowded slices block. Enumerate means paging eligibility, never completion. No worker/network/runtime/legacy-contract changes. Metadata-only corpus preflight prepared, not executed.
+
+`internal/discover.Plan` is not registered in the API or worker command. It accepts an observed count and inclusive date/star bounds; query construction, paging, durable state and fencing remain future work. See [readiness sequence](../docs/plans/reposync-discover-readiness.md), [inventory](../supabase/checks/corpus_001_inventory.sql), and [lesson48](../learn-go/48-splitting-search-ranges/README.md). Existing RepoSync v1 characterization stays intact.
+
+
+## Corpus target update2026-11-01
+
+DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md. The legacy reposync command remains gated; its historical separate worker key settings are not a deployment plan for the consolidated target.

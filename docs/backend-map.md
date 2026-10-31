@@ -1,5 +1,8 @@
 # SEFGH backend map
 
+DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md.
+
+
 Update 2026-10-30 (BUG-048, R-033): Go contributions derives query dates and
 streak from one UTC clock reading. Yesterday can carry an unfinished today's
 streak; gaps/stale/future dates cannot extend it. Structured user-only GraphQL
@@ -730,3 +733,6 @@ BUG-067/R-207 enforces the existing39-character contributions login limit with a
 Update2026-10-31 BUG-068/R-090: non-mutating website OPTIONS returned405/Allow DELETE, POST/X-Sefgh-Backend go for the conversation share path; receipt docs/verification/share-go-cutover-2026-10-31.json. This proves route forwarding, not fresh authenticated/RLS deletion or deployment of the local fix. R-090 now updates all active shares matching both caller and conversation, then verifies an empty active-share list before reporting ok. Failed writes return the existing fixed400 error; failed, malformed or nonempty verification returns fixed500. No lookup failure can silently report deletion. Zero existing shares remain idempotent. Credentials/RLS scope stay user-bound.
 
 BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at the website. GET /api/trending/topics returns200 from Go with6 populated topics/30 repository entries; GET /api/trending/refresh returns404. No deployment was performed by this task. Helpers/table/data retained; external scheduler inventory and general Phase7 cleanup remain separate gates. Receipt: docs/verification/trending-retirement-2026-10-31.json.
+
+
+REPOSYNC-002a/b (2026-11-01): accepted HLD discovery direction now has a pure offline Go search-slice planner. Counts above1000 split inclusive UTC date ranges, then bounded star ranges; incomplete/invalid counts fail, one-day unbounded stars request a verified bound, unsplittable crowded slices block. Enumerate means paging eligibility, never completion. No worker/network/runtime/legacy-contract changes. Metadata-only corpus preflight prepared, not executed. Code: backend/internal/discover; preflight: supabase/checks/corpus_001_inventory.sql; sequence: docs/plans/reposync-discover-readiness.md.

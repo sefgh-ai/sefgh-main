@@ -45,6 +45,10 @@ go test -tags solution ./01-values-and-functions
 
 ## The lessons
 
+Newest: [48 Splitting search ranges](48-splitting-search-ranges/README.md)
+teaches inclusive partitions, safe integer midpoints, calendar days and copied
+pointer bounds using the offline Discover planner (REPOSYNC-002b).
+
 Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github/search`. By the end you can read every line of it.
 
 | Lesson | You learn | Real code it is built on |
@@ -98,6 +102,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [46 Porting a Python worker](46-porting-a-python-worker/README.md) | Recording the original against fakes, injected clocks and sleeps, an `atomic.Bool` stop flag, and why Go times always have a zone | `Config`, `Worker.Stop` and `handleRateLimit` in `backend/internal/reposync`; `backend/cmd/reposync` |
 | [47 Wiring gated routes](47-wiring-gated-routes/README.md) | Exact opt-in, composing narrow capabilities, startup versus request budgets, and testing the production mux and forwarding path | `backend/cmd/api/keys.go`, `next.config.mjs` |
 | [47 Sharing code between routes](47-sharing-code-between-routes/README.md) | Moving a function into its own package, exported names without stutter, `internal` imports, why Go refuses import cycles, and strict `false` on raw JSON | `Read` and `Handler` in `backend/internal/publicrepo`; `publicRepoMux` in `backend/cmd/api/main.go` |
+| [48 Splitting search ranges](48-splitting-search-ranges/README.md) | Inclusive partitions, safe integer midpoints, UTC calendar days and copying pointer bounds | `Plan` in `backend/internal/discover/slices.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

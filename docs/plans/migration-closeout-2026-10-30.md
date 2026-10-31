@@ -1,5 +1,8 @@
 # Migration closeout checkpoint - 2026-10-30
 
+DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md.
+
+
 Decision pack2 local implementation is complete:27/27 fixes. This is not a declaration that the complete migration or live cutover is finished. Main base/current f5c5640; prior work preserved, changes uncommitted, peer review/deployment pending.
 
 ## Verified local work

@@ -1,5 +1,12 @@
 # SEFGH backend: high-level design
 
+**Owner update 2026-11-01:** D1 is superseded: corpus data now belongs in a
+separate `corpus` schema in User-DB. Preserve existing data/app behavior. The
+separate Corpus project and worker service-role assumptions below are historical;
+the worker now requires corpus-only capability without User-DB-wide access.
+Use the [consolidation plan](../plans/database-consolidation.md) before implementing
+or applying database/credential changes. No transfer has been executed.
+
 **Status: proposal** (ARCH-001, Claude Code, 2026-10-24). Nothing here is decided until the owner answers decisions D1 to D8 (section 11). It covers everything behind the UI. [`adr/0002-go-backend.md`](../adr/0002-go-backend.md) says *how* each route moves to Go; this document describes *what the whole backend should look like* when the moves are done, including the data pipeline the ADR's Phases 4 and 5 left open. The detailed design is in [`lld.md`](lld.md).
 
 Facts below were checked on 2026-10-24 unless marked as an estimate. Estimates are there to size choices, not to promise performance; each one has to be measured (ADR, "Measurements").

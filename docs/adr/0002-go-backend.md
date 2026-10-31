@@ -1,5 +1,14 @@
 # ADR-0002: Staged migration of the SEFGH application backend to Go
 
+Owner update 2026-11-01, DB-CONSOLIDATE-001: consolidate Repo-DB application
+objects/data into a `corpus` schema inside existing User-DB, preserving current
+application behavior/data. This supersedes 2026-10-28 HLD D1's separate-project
+choice. No broad deletion/rename, platform-schema overwrite or source teardown.
+Worker must use corpus-only capability, never User-DB's project-wide service
+key. Live inventory, backup/restore, exact additive scripts, reconciliation,
+credential design and rollback remain required. Current authoritative sequence:
+[database consolidation](../plans/database-consolidation.md).
+
 Status: **Accepted** by the project owner on 2026-10-11. Supersedes [ADR-0001](0001-rust-backend.md), which proposed Rust and was never accepted. Reviewers: Codex and Claude Code.
 
 This document stands alone. Nothing in ADR-0001 needs to be read to follow it.

@@ -1,5 +1,12 @@
 # SEFGH backend: low-level design
 
+**Owner update 2026-11-01:** corpus schema is now planned inside User-DB.
+The separate-project/service-role passages and grants below are historical
+sketches, not applicable deployment instructions. A corpus-only worker role,
+reviewed PUBLIC/inherited grants and verified user-data denial are required.
+See [consolidation plan](../plans/database-consolidation.md); do not apply this
+document's SQL or copy a project-wide key into the worker.
+
 **Status: proposal** (ARCH-001, Claude Code, 2026-10-24), detailing [`hld.md`](hld.md). SQL and Go below are sketches to review, not migrations or code to apply: every database change still goes through a reviewed migration, verify query and rollback, run only with the owner's approval. Decision numbers D1 to D8 are in the HLD, section 11.
 
 ## 1. Go module layout

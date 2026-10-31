@@ -1,5 +1,8 @@
 # Analysis and search workers: lineage and migration gate
 
+DB-CONSOLIDATE-001 owner update2026-11-01: Repo-DB application objects/data are to consolidate into corpus schema inside User-DB while preserving existing app behavior/data. This supersedes separate-project assumptions. Worker needs corpus-only capability, never User-DB service-role key. Live identity/inventory, backup/restore, reviewed additive scripts, reconciliation and rollback remain required; no transfer or cleanup executed. See docs/plans/database-consolidation.md.
+
+
 Tasks PHASE5-001 and PHASE5-002 / BUG-013, 2026-10-20. This records inspected local source, not the active
 deployment or verified database configuration. No sibling checkout was changed,
 no Python service imported, and no provider/database call made.
@@ -154,3 +157,8 @@ ARCH-001 (2026-10-24) proposes the target this sequence should build: a single G
 Phase 5 has started its source/evaluation foundation. It is **not complete**;
 worker execution, active corpus selection, live parity and deployment are gated.
 Phase 4 RepoSync and Phase 7 retirement remain separate work.
+
+
+## Discover foundation update, 2026-11-01
+
+ADR-0002 records the owner2026-10-28 acceptance of HLD D1-D8: separate Corpus DB, durable jobs, sliced discovery and no v1 LLM summaries. This supersedes treating those architectural directions as unanswered choices; it does not identify an active legacy deployment/corpus or approve execution. REPOSYNC-002a/b (2026-11-01): accepted HLD discovery direction now has a pure offline Go search-slice planner. Counts above1000 split inclusive UTC date ranges, then bounded star ranges; incomplete/invalid counts fail, one-day unbounded stars request a verified bound, unsplittable crowded slices block. Enumerate means paging eligibility, never completion. No worker/network/runtime/legacy-contract changes. Metadata-only corpus preflight prepared, not executed. See [readiness](reposync-discover-readiness.md). The first hosted dependency is independently identified Repo-DB metadata; no target is inferred from local credentials.
