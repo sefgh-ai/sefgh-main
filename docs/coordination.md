@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Codex: P7-01 handoff.
+Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-01 (commit `e9170a8`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-01 contributions retirement (Codex, 2026-11-02)
 
-Status: **implementation and read-only review complete; local verification complete**. Owner Codex; independent read-only reviewer review_p7_01. Branch `main`, base/current `2cd34049e558e7b292b350e90213f84291018ba5`; resulting changes explicitly uncommitted at this handoff, one P7-01 commit to follow. Previous writer released and initial tree/verification lease were clean.
+Status: **implementation and read-only review complete; local verification complete**. Owner Codex; independent read-only reviewer review_p7_01. Branch `main`, base `2cd3404`. Resulting commit: `e9170a8` (synchronized by Git Agent on `main` and `go-backend`). Previous writer released and initial tree/verification lease were clean.
 
 The exact-path and symbol caller audit in src/scripts/backend found no app caller, including dynamic builders. Shared GitHub access helpers remain used by other routes. Pre-removal unauthenticated production GET returned400 (Username is required) with X-Sefgh-Backend: go; secret-free receipt `verification/p7-01-contributions-2026-11-02.json`. This proves the production Go prerequisite only, not live retirement or arbitrary external consumers.
 
