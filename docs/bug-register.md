@@ -1,5 +1,11 @@
 # Bug and broken UI/UX register
 
+P7-03 (2026-11-02): Next share read/fork/conversation-share handlers and the
+unused src/lib/supabase/shares.js module are retired locally. R-081/R-082/
+R-089/R-090 retain their Go fixes and92cases; older Next rollback references
+are historical. No hosted share write or new behavior change is claimed.
+
+
 P7-02 (2026-11-02) retirement update: the public GitHub Next.js handlers are
 removed locally; Go behavior is retained. Older status text mentioning their
 rollback handlers/`next_*` fields is historical. R-015 remains the owner's
@@ -327,7 +333,7 @@ Dead code is not a bug, so it is not numbered above. Phase 7 removes it.
 - `streamAIResponse` in `src/lib/ai/github.js`: only throws; nothing calls it.
 - `src/lib/mockUsageData.js`: unused since R-006 was fixed in BUG-003; `scripts/contracts/usage-activity.test.mjs` fails if app code imports it again.
 - `resetOnboarding` in `src/lib/supabase/onboarding.js`: nothing imports it, and it uses a `supabase` variable that module does not define, so it would always throw (found in DATA-002).
-- `src/lib/supabase/shares.js`: nothing imports it (found in SHARE-002).
+- `src/lib/supabase/shares.js`: removed in P7-03 after confirming no caller (original finding SHARE-002).
 - `src/lib/trending.js` table helpers: unused since TREND-001b. The refresh handler was removed locally in TREND-001c under an explicit owner exception; helper/table/data cleanup remains parked. Replacement: `/api/trending/topics` (R-077).
 
 
@@ -351,4 +357,4 @@ Dead code is not a bug, so it is not numbered above. Phase 7 removes it.
 
 | ID | Sev | Problem | Evidence | Needs | Status |
 |---|---|---|---|---|---|
-| R-211 | Low | The optional full production forwarding probe has stale stand-ins/expected statuses after the Phase6 fixes: its repository fixture omits required owner/URL fields, video delete supplies no returned row, unshare verification still returns an active share, and avatar bytes are only the text PNG | P7-02 local full150scenario run:146passed,4expected-status failures; via-Next and direct-Go status/body matched for all4. Newer Go contracts require minimum repository shape, verified deletion and actual image signatures | - | open: public-repository stand-in corrected in P7-02 to exercise successful public/private reads; full remaining video/share/avatar harness alignment still needs a bounded tooling task. Scoped public-read probe is used for P7-02 and must not be presented as full150scenario acceptance. No app/backend behavior changed |
+| R-211 | Low | The optional full production forwarding probe has stale stand-ins/expected statuses after the Phase6 fixes: its repository fixture omits required owner/URL fields, video delete supplies no returned row, unshare verification still returns an active share, and avatar bytes are only the text PNG | P7-02 local full150scenario run:146passed,4expected-status failures; via-Next and direct-Go status/body matched for all4. Newer Go contracts require minimum repository shape, verified deletion and actual image signatures | - | open: public-repository stand-in corrected in P7-02 to exercise successful public/private reads; share/unshare stand-in aligned in P7-03 with owner-filtered revocation and empty-list verification; video/avatar harness alignment still needs a bounded tooling task. Scoped public-read probe is used for P7-02 and must not be presented as full150scenario acceptance. No app/backend behavior changed |

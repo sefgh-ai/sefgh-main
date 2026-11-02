@@ -27,6 +27,10 @@ const publicGoRoutes = [
   "/api/github/trending-developers", "/api/github/repo",
   "/api/github/repo/:owner/:repo", "/api/github/contents/:owner/:repo",
 ];
+// P7-03 shares retain their Go behavior with the same origin requirement.
+const shareGoRoutes = [
+  "/api/share/:token", "/api/share/:token/fork", "/api/conversations/:id/share",
+];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
@@ -40,11 +44,6 @@ const goBackendRoutes = {
   // The caller's starred repositories, from the database as the caller and
   // checked with GitHub (STAR-001). Bearer only, like activity.
   "repo-starred": "/api/repo/starred",
-  // A shared conversation, by the token in its link (SHARE-001). Signed in,
-  // the browser sends the bearer, so the owner's own private link is still
-  // told apart; signed out, the public key is used, as now. The fork route
-  // under it is not ported.
-  "share-token": "/api/share/:token",
   // Saving, removing and counting a repository in the caller's collections
   // (COLLECT-001), the first route that writes to the database. Bearer only,
   // like activity; the browser sends it (src/lib/supabase/session-fetch.js).
@@ -59,11 +58,6 @@ const goBackendRoutes = {
   "repo-comments": "/api/repo/comments",
   // A repository's videos (VIDEOS-001). Bearer only, like collect.
   "repo-videos": "/api/repo/videos",
-  // Creating and removing the share link of one's own conversation, and
-  // forking a public share (SHARE-002). Bearer only, like collect. The Go
-  // server needs NEXT_PUBLIC_SITE_URL for the link (backend/README.md).
-  "conversation-share": "/api/conversations/:id/share",
-  "share-fork": "/api/share/:token/fork",
   "upload-avatar": "/api/upload-avatar",
   // The trending page's topic sections, searched live on GitHub and cached by
   // the CDN (TREND-001a; R-077, option A). Go only: there is no Next.js
@@ -101,7 +95,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...publicGoRoutes.map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

@@ -1,15 +1,8 @@
-// POST and DELETE /api/conversations/[id]/share, contract version 1
-// (SHARE-002). The real handlers run with a client built by the real
-// supabase-js around a stand-in Supabase; see route-db-fixture.mjs. A Go port
-// must pass the same cases.
+// P7-03: fixture integrity only; Go still executes every endpoint case.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runRouteFixture, SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
-import { sameAnswer } from './engine-message.mjs';
-register('./route-db-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/conversations/[id]/share/route.js');
+import { SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/conversation-share/cases.json', import.meta.url), 'utf8'));
 
 test('conversation share fixture integrity', () => {
@@ -36,9 +29,3 @@ test('conversation share fixture integrity', () => {
     }
   }
 });
-
-for (const c of contract.cases) {
-  test(`conversation share: ${c.id} [${c.disposition}]`, async () => {
-    sameAnswer(await runRouteFixture(handlers, '/api/conversations/[id]/share', c), { ...c, expect: c.next_expect ?? c.expect, engine_message: c.next_engine_message ?? c.engine_message });
-  });
-}

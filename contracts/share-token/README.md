@@ -1,5 +1,16 @@
 # Shared conversation contract
 
+P7-03 (2026-11-02): the matching Next.js handler and its recorders/runners
+are retired. All21cases and their Go-relevant inputs/expected answers remain
+unchanged at the existing contract version. `next_*` rollback fields are
+removed. Node checks fixture integrity; Go still executes every case and its
+runtime authorization/mux tests. The URLs reach Go without per-route switches
+when SEFGH_GO_API_URL is configured, and are404 without that origin.
+Rollback requires reverting the P7-03 commit and redeploying both projects.
+Earlier Next.js parity/recorder/rollback descriptions below are historical
+at parent `18b921e`; they are not current executable commands.
+
+
 Update BUG-054 (R-082,2026-10-30): contract v3. Public share reads return404 only for a zero-row result or empty/null success. Network, HTTP, parse and invalid non-object results return503 with fixed Share could not be loaded text. Explicit private links retain403, public replies and caller credentials remain unchanged. Rollback Next.js answers remain in next_expect.
 
 

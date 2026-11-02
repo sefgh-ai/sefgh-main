@@ -3,12 +3,12 @@ import { test } from 'node:test';
 import { existsSync } from 'node:fs';
 import config from '../../next.config.mjs';
 
-// The public reads are unconditional since P7-02 and have their own tests.
+// Public reads and shares are unconditional since P7-02/P7-03 with their own tests.
 // These assertions keep checking the remaining switches independently.
-const publicPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo'];
+const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share'];
 async function switchedRewrites() {
   const rewrites = await config.rewrites();
-  return { beforeFiles: rewrites.beforeFiles.filter(route => !publicPaths.includes(route.source)) };
+  return { beforeFiles: rewrites.beforeFiles.filter(route => !fixedPaths.includes(route.source)) };
 }
 
 test('v1 key forwarding requires route, UI and origin gates together', async () => {
@@ -55,15 +55,12 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'ai-chat': '/api/ai/chat',
       'activity': '/api/activity',
       'repo-starred': '/api/repo/starred',
-      'share-token': '/api/share/:token',
       'repo-collect': '/api/repo/collect',
       'repo-vote': '/api/repo/vote',
       'repo-rating': '/api/repo/rating',
       'comment-vote': '/api/repo/comments/vote',
       'repo-comments': '/api/repo/comments',
       'repo-videos': '/api/repo/videos',
-      'conversation-share': '/api/conversations/:id/share',
-      'share-fork': '/api/share/:token/fork',
       'upload-avatar': '/api/upload-avatar',
       'trending-topics': '/api/trending/topics',
     };

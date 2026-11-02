@@ -1,10 +1,9 @@
-// Package shares ports the two routes that write shared conversations, at
-// contract version 1: POST and DELETE /api/conversations/{id}/share, which
+// Package shares serves the two routes that write shared conversations:
+// POST and DELETE /api/conversations/{id}/share, which
 // create or remove the share link of one's own conversation, and POST
 // /api/share/{token}/fork, which copies a public shared conversation into
-// one's own. Every case in contracts/conversation-share and
-// contracts/share-fork is answered as the Next.js handlers answer it,
-// defects included.
+// one's own. P7-03 retired the Next.js handlers; contracts/conversation-share
+// and contracts/share-fork retain every current Go behavior case.
 //
 // BUG-055/R-089: failure replies use fixed public messages.
 // Upstream details are never sent to the visitor.
@@ -200,7 +199,7 @@ func (h *Conversation) origin(r *http.Request) string {
 	return scheme + "://" + host
 }
 
-// unshare marks the user's share deleted: DELETE in the Next.js handler.
+// unshare implements DELETE for the caller's own conversation share.
 // Remove all active owner/conversation matches, then verify an empty result.
 func (h *Conversation) unshare(w http.ResponseWriter, r *http.Request) {
 	db := supabaserest.Client{HTTP: h.Database, URL: h.SupabaseURL, Key: h.SupabaseKey}

@@ -17,7 +17,7 @@
 // because it starts servers and takes about a minute.
 //
 // Add --production to build and check `next start` in an isolated output folder.
-// Add --public-reads to run only the P7-02 GitHub API forwarding scenarios.
+// Add --public-reads for P7-02 or --shares for P7-03 forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -31,6 +31,8 @@ if (!executable) throw new Error("pass the path to the built Go API executable")
 const production = process.argv.includes('--production');
 const phase2 = process.argv.includes('--phase2');
 const publicReadsOnly = process.argv.includes('--public-reads');
+const sharesOnly = process.argv.includes('--shares');
+if (publicReadsOnly && sharesOnly) throw new Error('choose one probe scope');
 const children = [];
 let upstream;
 
@@ -159,6 +161,8 @@ const allScenarios = [
   // it sets no Cache-Control. The token is a path segment, so awkward ones
   // test how each layer decodes it.
   { path: '/api/share/tok-public' },
+  { path: '/api/share/tok-public/fork', method: 'GET' },
+  { path: '/api/conversations/c1/share', method: 'GET' },
   { path: '/api/share/tok-public', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: null },
   { path: '/api/share/tok-private', headers: { Authorization: 'Bearer session-a' }, status: 403, cache: null },
   { path: '/api/share/tok-private' },
@@ -257,12 +261,15 @@ const allScenarios = [
   { path: '/api/data/conversations/rest/v1/user_conversations?id=eq.c1', method: 'PATCH', body: '{"title":"Renamed"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json', 'Content-Profile': 'private' }, status: 403, cache: 'private, no-store' },
   { path: '/api/data/home/rest/v1/projects?select=*', headers: { Authorization: 'Bearer session-a', 'Accept-Profile': 'public' }, status: 200, cache: 'private, no-store' },
 ];
-const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/github/')) : allScenarios;
+const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/github/'))
+  : sharesOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/share/') || scenario.path.startsWith('/api/conversations/'))
+  : allScenarios;
 
 
 try {
   const seen = [];
   let github;
+  const revokedShares = new Set();
   upstream = http.createServer((req, res) => {
     let body = ""; req.on("data", (d) => (body += d)).on("end", () => {
       seen.push(`${req.method} ${req.url}`);
@@ -304,7 +311,11 @@ try {
       // Shares: a public one for anyone, a private one only for session-a,
       // as row-level security has it; otherwise no row.
       else if (req.url.startsWith('/rest/v1/shared_conversations?') && req.method === 'PATCH') {
-        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        const params = new URL(req.url, 'http://stand.in').searchParams;
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key' || params.get('created_by') !== 'eq.a' || params.get('deleted_at') !== 'is.null') {
+          res.writeHead(401); res.end('{}'); return;
+        }
+        revokedShares.add(params.get('conversation_id'));
         res.writeHead(204); res.end();
       }
       else if (req.url.startsWith('/rest/v1/shared_conversations?')) {
@@ -312,7 +323,10 @@ try {
         const token = params.get('share_token');
         const owner = req.headers.authorization === 'Bearer session-a';
         if (req.headers.apikey !== 'fixture-public-key') { res.writeHead(401); res.end('{}'); return; }
-        if (params.get('conversation_id') === 'eq.c1' && owner) res.end(JSON.stringify({ id: 's1', created_by: 'a', conversation_id: 'c1' }));
+        if (params.get('conversation_id') && owner && params.get('created_by') === 'eq.a' && params.get('deleted_at') === 'is.null' && params.get('select') === 'id') {
+          res.end(JSON.stringify(revokedShares.has(params.get('conversation_id')) ? [] : [{ id: 's1' }]));
+        }
+        else if (params.get('conversation_id') === 'eq.c1' && owner) res.end(JSON.stringify({ id: 's1', created_by: 'a', conversation_id: 'c1' }));
         else if (token === 'eq.tok-public') res.end(JSON.stringify({ id: 's1', share_token: 'tok-public', is_public: true, title: 'Shared' }));
         else if (token === 'eq.tok-private' && owner) res.end(JSON.stringify({ id: 's2', share_token: 'tok-private', is_public: false, title: 'Mine' }));
         else { res.writeHead(406); res.end(JSON.stringify({ code: 'PGRST116', details: 'The result contains 0 rows', hint: null, message: 'Cannot coerce the result to a single JSON object' })); }
@@ -461,8 +475,8 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  // P7-02 public reads deliberately have no opt-in names here.
-  const routes = "ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
+  // Retired P7-02/P7-03 routes deliberately have no opt-in names here.
+  const routes = "ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,upload-avatar,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

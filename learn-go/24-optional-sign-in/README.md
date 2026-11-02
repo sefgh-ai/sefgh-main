@@ -1,5 +1,14 @@
 # Lesson 24: Optional sign-in, and a URL that matches byte for byte
 
+P7-03 update (2026-11-02): the share Next.js handlers, unused browser share
+helper and legacy recorders are retired. JavaScript handler snippets below
+are historical port comparisons (parent `18b921e`); Go implementations and
+all92share cases remain. Go still checks optional bearer/public-key reads,
+owner-scoped writes, fork isolation and verified share removal. Node checks
+fixture integrity. Share URLs require SEFGH_GO_API_URL and are404 without it.
+Exercise implementations and solutions are unchanged; lesson checks optional.
+
+
 **You will learn:** how a Go route takes a value out of its path, how a handler serves visitors who may or may not be signed in, why two "encode this for a URL" functions can disagree, and how to copy the browser's version exactly.
 
 **Real code:** `backend/internal/sharetoken/handler.go` (the port of `GET /api/share/[token]`), `SessionToken` in `backend/internal/githubaccess/access.go`, `FormEncode` in `backend/internal/jscompat/jscompat.go`, `Param` and `SelectObject` in `backend/internal/supabaserest`, and `shareMux` in `backend/cmd/api/main.go`.

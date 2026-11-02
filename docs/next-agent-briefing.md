@@ -1,5 +1,15 @@
 # Briefing for the next agent (written 2026-10-29)
 
+**Current Phase7 pickup (P7-03, 2026-11-02):** three Next share handlers and
+unused browser share helpers/recorders are retired locally; all92Go cases
+remain. Origin-required unconditional rewrites keep client URLs/session use.
+Read newest coordination for checks/commit/deployment state. R-211 share
+probe fixture is aligned; video/avatar fixture work remains open. Next P7-04
+only (activity/starred); one step/commit per task. Stop before P7-07 without
+owner AI-key confirmation on sefgh-api and R-038 checks. Older queues below
+are historical. No live share write, signing, worker or SQL action here.
+
+
 **Current Phase7 pickup (P7-02, 2026-11-02):** seven public GitHub Next handlers
 and the repository page's GitHub fallback are retired locally; Go and408cases
 remain. Unconditional rewrites and the page read require SEFGH_GO_API_URL.

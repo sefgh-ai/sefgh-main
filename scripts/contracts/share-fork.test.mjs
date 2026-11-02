@@ -1,14 +1,8 @@
-// POST /api/share/[token]/fork, contract version 1 (SHARE-002). The real
-// handler runs with a client built by the real supabase-js around a stand-in
-// Supabase; see route-db-fixture.mjs. A Go port must pass the same cases.
+// P7-03: fixture integrity only; Go still executes every endpoint case.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runRouteFixture, SUPABASE_KEY } from './route-db-fixture.mjs';
-import { sameAnswer } from './engine-message.mjs';
-register('./route-db-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/share/[token]/fork/route.js');
+import { SUPABASE_KEY } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/share-fork/cases.json', import.meta.url), 'utf8'));
 
 test('share fork fixture integrity', () => {
@@ -32,9 +26,3 @@ test('share fork fixture integrity', () => {
     }
   }
 });
-
-for (const c of contract.cases) {
-  test(`share fork: ${c.id} [${c.disposition}]`, async () => {
-    sameAnswer(await runRouteFixture(handlers, '/api/share/[token]/fork', c), { ...c, expect: c.next_expect ?? c.expect, engine_message: c.next_engine_message ?? c.engine_message });
-  });
-}

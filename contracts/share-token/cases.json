@@ -205,22 +205,6 @@
             "apikey": "public-fixture-key"
           }
         ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer session-expired",
-            "apikey": "public-fixture-key"
-          }
-        ]
       }
     },
     {
@@ -253,22 +237,6 @@
             "apikey": "public-fixture-key"
           }
         ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
       }
     },
     {
@@ -284,22 +252,6 @@
         "status": 503,
         "body": {
           "error": "Share could not be loaded"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -338,22 +290,6 @@
             "apikey": "public-fixture-key"
           }
         ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
       }
     },
     {
@@ -370,22 +306,6 @@
         "status": 503,
         "body": {
           "error": "Share could not be loaded"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -467,22 +387,6 @@
         "status": 503,
         "body": {
           "error": "Share could not be loaded"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 403,
-        "body": {
-          "error": "Private link"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -661,15 +565,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Your project's URL and Key are required to create a Supabase client!\n\nCheck your Supabase project's API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -691,22 +586,6 @@
         "status": 503,
         "body": {
           "error": "Share could not be loaded"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -745,22 +624,6 @@
             "apikey": "public-fixture-key"
           }
         ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
       }
     },
     {
@@ -788,22 +651,6 @@
             "apikey": "public-fixture-key"
           }
         ]
-      },
-      "next_expect": {
-        "status": 404,
-        "body": {
-          "error": "Not found"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
       }
     },
     {
@@ -820,22 +667,6 @@
         "status": 503,
         "body": {
           "error": "Share could not be loaded"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "path": "/rest/v1/shared_conversations?select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at&share_token=eq.0000000000000000deadbeef&deleted_at=is.null",
-            "accept": "application/vnd.pgrst.object+json",
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key"
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 403,
-        "body": {
-          "error": "Private link"
         },
         "content_type": "application/json",
         "cache_control": null,

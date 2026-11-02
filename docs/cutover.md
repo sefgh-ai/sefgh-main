@@ -1,5 +1,21 @@
 # Cutover runbook: switching the website to the Go backend
 
+P7-03 (2026-11-02): the Next.js handlers for `/api/share/[token]`,
+`/api/share/[token]/fork` and `/api/conversations/[id]/share` are retired.
+The shared page and ShareDialog keep their session-aware URLs; Go keeps
+all behavior/authorization and92contract cases. Rewrites are unconditional
+when SEFGH_GO_API_URL is configured; old share-token/share-fork/conversation-share
+switch names are ignored. Without a Go origin these API paths are404.
+Local development needs a local Go server or https://sefgh-api.vercel.app.
+The unused browser shares module and legacy Next share recorders/fixture
+runner are removed; shared session/server helpers remain in use.
+[Production prerequisite receipt](verification/p7-03-shares-2026-11-02.json)
+uses a missing-share GET and wrong-method GETs only, with Go markers.
+No live share writes, deployment or signed-in browser acceptance were done.
+Rollback: revert the P7-03 commit and redeploy both projects. Earlier Next
+share handler/switch/recorder descriptions below are historical.
+
+
 P7-02 (2026-11-02): seven public GitHub Next.js handlers are retired:
 search, languages, trending, trending developers, repository summary/details
 and contents. Their URLs still reach the retained Go implementations through

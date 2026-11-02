@@ -1,5 +1,14 @@
 # Lesson 30: Defaults, fallbacks and values that vanish
 
+P7-03 update (2026-11-02): the share Next.js handlers, unused browser share
+helper and legacy recorders are retired. JavaScript handler snippets below
+are historical port comparisons (parent `18b921e`); Go implementations and
+all92share cases remain. Go still checks optional bearer/public-key reads,
+owner-scoped writes, fork isolation and verified share removal. Node checks
+fixture integrity. Share URLs require SEFGH_GO_API_URL and are404 without it.
+Exercise implementations and solutions are unchanged; lesson checks optional.
+
+
 **You will learn:** the three ways JavaScript fills in a missing value, and how the Go share routes copy each one exactly. You will also see why Go has no negative slice index, and how to write JavaScript's `slice(-50)` without one.
 
 **Real code:** `share` and `property` in `backend/internal/shares/handler.go`, and `ErrorMessage` in `backend/internal/supabaserest/supabaserest.go`.

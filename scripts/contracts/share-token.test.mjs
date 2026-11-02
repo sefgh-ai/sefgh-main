@@ -1,13 +1,8 @@
-// GET /api/share/[token], contract version 1 (SHARE-001). The real handler
-// runs with a client built by the real supabase-js around a stand-in Data
-// API; see share-fixture.mjs. A Go port must pass the same cases.
+// P7-03: fixture integrity only; Go still executes every endpoint case.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runShareFixture, SUPABASE_KEY } from './share-fixture.mjs';
-register('./share-loader.mjs', import.meta.url);
-const { GET } = await import('../../src/app/api/share/[token]/route.js');
+import { SUPABASE_KEY } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/share-token/cases.json', import.meta.url), 'utf8'));
 
 const COLUMNS = 'select=id%2Cshare_token%2Cis_public%2Ctitle%2Csummary%2Csnapshot%2Cshared_at';
@@ -37,9 +32,3 @@ test('share fixture integrity', () => {
     assert.equal(request.authorization, `Bearer ${c.session ?? SUPABASE_KEY}`, c.id);
   }
 });
-
-for (const c of contract.cases) {
-  test(`share: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runShareFixture(GET, c), c.next_expect ?? c.expect);
-  });
-}

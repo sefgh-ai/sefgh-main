@@ -1,7 +1,5 @@
-// Package sharetoken ports GET /api/share/[token] at contract version 1:
-// one shared conversation, by the token in its link, for anyone who has the
-// link. Every case in contracts/share-token is answered as the Next.js
-// handler answers it, defects included.
+// Package sharetoken serves GET /api/share/{token}. P7-03 retired its Next.js
+// implementation; contracts/share-token keeps all current Go behavior cases.
 //
 // The database is asked through internal/supabaserest: with the visitor's
 // own token when the request carries one, and otherwise with the project's

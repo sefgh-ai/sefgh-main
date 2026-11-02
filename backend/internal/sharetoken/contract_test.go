@@ -17,7 +17,7 @@ import (
 var discard = slog.New(slog.NewTextHandler(io.Discard, nil))
 
 // Stand-ins: none of these addresses reaches a network. They are the ones
-// scripts/contracts/share-fixture.mjs recorded with.
+// the historical Next.js share recorder used before P7-03 retired it.
 const (
 	fixtureSupabaseURL = "https://contract-supabase.invalid"
 	fixtureSupabaseKey = "public-fixture-key"

@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-02 (commit `994b972`) on main and go-backend.
+Last updated: 2026-11-02 (Asia/Calcutta), by Codex: P7-03 handoff.
 
 ## Start here
 
@@ -13,9 +13,129 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released P7-02 (2026-11-02): seven public Next GitHub handlers/page fallback retired locally; Go/cases retained. P7-03 is next. Go origin required. Stop before P7-07 until owner confirms AI keys on sefgh-api and R-038 is checked. Keys, signing, worker and database gates remain.
+- **Active writer:** none. Codex released P7-03 (2026-11-02): three Next share handlers/unused helper retired locally; Go/cases retained. P7-04 (activity/starred) is next. Go origin required. Stop before P7-07 until owner confirms AI keys on sefgh-api and R-038 is checked. Signing, worker and database gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** P7-01 leaves22of the original25API entries ported, with contributions retired locally (deployment/live404 pending), trending refresh retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069), and playground keys retained. The following detailed progress is historical at PHASE7-000; playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: P7-03 share route retirement (Codex, 2026-11-02)
+
+Status: **implementation and read-only review complete; required local checks passed**. Owner Codex, independent read-only reviewer review_p7_03. Branch `main`, base/current `18b921e6c9d621849450179e9ddf9e2dad397724`; changes explicitly uncommitted when this record was written, exactly one P7-03 commit to follow. Previous writer released and initial tree/verification lease clean.
+
+Production Go prerequisite passed with GETs only: synthetic missing share404, fork405/Allow POST, conversation-share405/Allow DELETE,POST; all carried X-Sefgh-Backend: go. Receipt `verification/p7-03-shares-2026-11-02.json` separates these remote observations from local verification. No real share payload, credentials or mutation. This does not establish live authenticated sharing/forking/removal, two-user RLS/browser acceptance, deployment or hosted rollback.
+
+Caller audit: shared page uses fetchWithSession for share read/fork; ShareDialog uses it for create/delete. Unused browser shares.js has no imports (SQL/history references only); ShareDialog's deleteShare is its own callback. Removed3Next handlers, that orphan browser module, share-fixture/share-loader and3legacy recorders. Shared server/client/session helpers remain used elsewhere. Existing client URLs and session headers stay intact. Go runtime code changed only in explanatory comments. All92cases (21read/23fork/48conversation-share), their order/IDs and Go-relevant values are unchanged against base; only next_* rollback fields removed. Reviewer independently verified the same projections. Node endpoint suites retain substantive credential/ownership/path/cache/shape fixture guards.
+
+Share paths now have unconditional origin-required rewrites; old share-token/share-fork/conversation-share names are ignored. Without SEFGH_GO_API_URL they are404; local development needs a local Go server or sefgh-api. Docs, ADR/register/briefing/plan and lessons24/30/index reflect retirement; exercise.go/solutions untouched. Rollback is revert this step's one commit and redeploy both projects; a switch cannot restore deleted handlers. No later Phase7 step is included.
+
+Checks by Codex:3new retirement guards failed before edits, then focused fixture/routing/scanner18/18passed. `npm run lint` passed0errors/warnings. `npm run build` passed,57static outputs and retired share entries absent in built manifest. Full `npm run test:contracts`1172/1172passed. Full uncached `go test -count=1 ./...`, `go vet ./...` and empty `gofmt -l .` passed. Compiled API in OS temp. Isolated production localhost --shares probe17/17passed with all3old share switches omitted; direct/via-Next replies and relevant upstream behavior agree, including synthetic authenticated writes/fork/revocation, encoded paths and wrong-method requests. All owned children stopped. Added doc links, unchanged exercises/contract projections and `git diff --check` passed. Existing baseline/caniuse age advisories only. Lesson tests skipped by owner policy, not claimed passed. Normal `npm run handoff` passed contracts and Go test/vet/gofmt, lesson checks skipped; READY_VERIFIED matched precommit tree833711fcf043. One final normal handoff will reverify this completed bookkeeping and the committed fingerprint; consult its matching signal before synchronization.
+
+R-211: aligned the share revocation stand-in to current Go behavior (owner-filtered PATCH records revocation, subsequent bounded SELECTid returns empty list). Scope --shares passed. Video/avatar stale stand-ins remain open; full optional probe was not rerun or claimed accepted. No app behavior was changed to match a fake. Prior R-211 initial150scenario failure evidence remains attributed to P7-02.
+
+Review: no Critical/Important finding. Minor optional tooling follow-up: wrong-method local probe cases currently compare parity without independently pinning405/Allow; existing Go mux tests and production receipt cover method behavior. This is test strengthening, not an identified app regression. Prior P7-10 documentation follow-ups remain. Rulings/evidence boundaries: preserve shared session helpers and Go behavior; missing-origin fallback stays404; live authenticated/browser/external-consumer/CI/synchronization/rollback proof is not inferred from local/source checks. The no-origin404 behavior is configuration/source guarded, not a separate runtime production-server acceptance run.
+
+Actual changed files (all P7-03; uncommitted when recorded):
+
+```text
+ M backend/README.md
+ M backend/internal/shares/handler.go
+ M backend/internal/sharetoken/contract_test.go
+ M backend/internal/sharetoken/handler.go
+ M contracts/conversation-share/README.md
+ M contracts/conversation-share/cases.json
+ M contracts/share-fork/README.md
+ M contracts/share-fork/cases.json
+ M contracts/share-token/README.md
+ M contracts/share-token/cases.json
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/24-optional-sign-in/README.md
+ M learn-go/30-defaults-and-missing-values/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/contracts/conversation-share.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/contracts/public-read-retirement.test.mjs
+ D scripts/contracts/record-conversation-share.mjs
+ D scripts/contracts/record-share-fork.mjs
+ D scripts/contracts/record-share-token.mjs
+ D scripts/contracts/share-fixture.mjs
+ M scripts/contracts/share-fork.test.mjs
+ D scripts/contracts/share-loader.mjs
+ M scripts/contracts/share-token.test.mjs
+ D src/app/api/conversations/[id]/share/route.js
+ D src/app/api/share/[token]/fork/route.js
+ D src/app/api/share/[token]/route.js
+ D src/lib/supabase/shares.js
+?? docs/verification/p7-03-shares-2026-11-02.json
+?? scripts/contracts/share-retirement.test.mjs
+```
+
+Writer released: yes. No owned servers/processes; temporary API executable remains in OS temp, not running. No push/CI/deployment or live share write performed by this task. Signing remains stopped; no key, worker or database change. Next: create the single completed P7-03 commit containing this record, then final handoff on the committed fingerprint. The resulting commit is the one containing this record (explicitly uncommitted when written); retrieve its hash from Git history. Then P7-04 only; do not start P7-07 without owner AI-key confirmation and R-038 checks.
+
+## Checkpoint: P7-03 share route retirement (Codex, 2026-11-02)
+
+Status: **in progress / incomplete**. Owner Codex; reviewer unassigned. Branch `main`, base/current `18b921e6c9d621849450179e9ddf9e2dad397724`; uncommitted. Initial tree clean, previous writer released and IDLE_CLEAN/no lease verified. Objective: P7-03 only, one commit, following `plans/phase7-retirement.md`.
+
+Scope: Next handlers for share read, fork and conversation share; helpers imported by nothing; corresponding Next-only tests/expectations; preserve Go implementations, cases, authorization and all share semantics. Make these rewrites unconditional when Go origin configured. Audit callers and production Go prerequisite before deleting code. Read-only production GET probes only: synthetic nonexistent share token, wrong-method GET for fork/conversation share (expect405/Allow), no production mutation/auth material.
+
+Completed: current instructions, briefing/map/ADR/review/register, prior handoff/status and plan read. No implementation edit yet. Checks not run: full caller/helper audit, production proof, regressions, lint/build/contracts/Go/probe/handoff. No failures or owned processes. R-211 full optional probe has known stale fixtures; only share fixture compatibility within this step may be adjusted, other domain issues stay open. Signing/keys/workers/database untouched. Next: caller/helper audit and secret-free production receipt, then failing retirement guards and source/test/docs edits. This record is the durable execution ledger; checkpoint after each milestone and before long checks.
+
+Milestone1: production Go prerequisite passed for all3routes using GET only: synthetic missing share404, fork405/Allow POST, conversation-share405/Allow DELETE,POST; Go marker on all. Receipt `verification/p7-03-shares-2026-11-02.json`. Caller audit: shared page read/fork and ShareDialog create/delete use fetchWithSession. No imports of src/lib/supabase/shares.js (SQL/history references only); removed it. Shared server/client/session helpers remain for current callers. No share content or credentials stored; no live write.
+
+Milestone2: deleted3Next handlers, unused browser shares helper, share-fixture/share-loader and3legacy recorders. Retained92Go cases (21read/23fork/48conversation-share); removed only next_* fields and converted Node endpoint suites to integrity. Origin-required unconditional share rewrites preserve existing patterns; removed3old route names. New retirement3/3failed before edits and now passes; focused fixture/routing/scanner suites18/18passed; diff whitespace passes. Updated general rewrite tests so public and share fixed routes remain independently covered. Probe gets --shares scope; share deletion stand-in now records owner-filtered revocation and answers its bounded empty-list verification, addressing the share portion of R-211 without changing app behavior. Video/avatar stand-ins remain open. All changes uncommitted; no owned processes. Next: docs/lessons/projection audit, lint/build/contracts/Go and production localhost share scope, independent review, normal handoff.
+
+Milestone3 checkpoint before full build: `npm run lint` passed0ESLint errors/warnings, existing baseline-data age advisory only. Added documentation links and diff whitespace checks pass. Go projections compared against HEAD remain identical after stripping next_* fields; all92case IDs intact. Lessons24/30/index, contract READMEs, register/ADR/map/cutover/briefing/plan updated. No exercise.go or solution.go changed. Go changes are explanatory comments only and formatted. Remaining checks: production build, full Node contracts and Go test/vet/gofmt, local production --shares forwarding, independent read-only review, final handoff. No owned processes; uncommitted. Next command `npm run build`.
+
+Actual working-tree files at this checkpoint:
+
+```text
+ M backend/README.md
+ M backend/internal/shares/handler.go
+ M backend/internal/sharetoken/contract_test.go
+ M backend/internal/sharetoken/handler.go
+ M contracts/conversation-share/README.md
+ M contracts/conversation-share/cases.json
+ M contracts/share-fork/README.md
+ M contracts/share-fork/cases.json
+ M contracts/share-token/README.md
+ M contracts/share-token/cases.json
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/24-optional-sign-in/README.md
+ M learn-go/30-defaults-and-missing-values/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/contracts/conversation-share.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/contracts/public-read-retirement.test.mjs
+ D scripts/contracts/record-conversation-share.mjs
+ D scripts/contracts/record-share-fork.mjs
+ D scripts/contracts/record-share-token.mjs
+ D scripts/contracts/share-fixture.mjs
+ M scripts/contracts/share-fork.test.mjs
+ D scripts/contracts/share-loader.mjs
+ M scripts/contracts/share-token.test.mjs
+ D src/app/api/conversations/[id]/share/route.js
+ D src/app/api/share/[token]/fork/route.js
+ D src/app/api/share/[token]/route.js
+ D src/lib/supabase/shares.js
+?? docs/verification/p7-03-shares-2026-11-02.json
+?? scripts/contracts/share-retirement.test.mjs
+```
+
+Milestone4 before long Go/probe operation: `npm run build` passed (57static outputs; share/conversation handlers absent in built manifest). Full `npm run test:contracts`1172/1172passed. Independent read-only review_p7_03 found no Critical/Important finding and independently confirmed all92Go cases/projections unchanged. Minor verification follow-up: the new wrong-method local probe cases compare routing parity but do not independently pin405/Allow; existing Go mux tests and production receipt cover method behavior. This optional assertion improvement is recorded for later tooling work, not an app regression. No exercise/solution changed. Next: full uncached Go suite, vet/gofmt, compile temporary API executable and production localhost --shares probe. No app server currently running; probe will own and clean its children. Source uncommitted; no publish/handoff hook has run while pending.
 
 ## Handoff: P7-02 public GitHub read retirement (Codex, 2026-11-02)
 

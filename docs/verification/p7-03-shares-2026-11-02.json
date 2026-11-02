@@ -1,0 +1,73 @@
+{
+  "task": "P7-03",
+  "observed_at_utc": "2026-11-02T09:16:14.373372+00:00",
+  "credentials_sent": false,
+  "mutations": false,
+  "observations": [
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/share/__p7_03_routing_probe_no_share__",
+      "status": 404,
+      "backend": "go",
+      "allow": null,
+      "date": "Mon, 02 Nov 2026 09:16:16 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/share/__p7_03_routing_probe_no_share__/fork",
+      "status": 405,
+      "backend": "go",
+      "allow": "POST",
+      "date": "Mon, 02 Nov 2026 09:16:17 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/conversations/__p7_03_routing_probe_no_conversation__/share",
+      "status": 405,
+      "backend": "go",
+      "allow": "DELETE, POST",
+      "date": "Mon, 02 Nov 2026 09:16:18 GMT"
+    }
+  ],
+  "limits": [
+    "Synthetic nonexistent share read and wrong-method GETs only; no share content saved.",
+    "405 with Allow and Go marker verifies write-route routing without writes.",
+    "Not deployment, signed-in share acceptance, or live mutation verification."
+  ],
+  "caller_audit": {
+    "share_read": "shared conversation page, fetchWithSession",
+    "fork": "shared conversation page, fetchWithSession POST",
+    "create_delete": "ShareDialog, fetchWithSession POST/DELETE",
+    "unused_helper": "src/lib/supabase/shares.js has no imports; SQL/history references only",
+    "retained_shared_helpers": "session-fetch and Supabase server/client helpers still used by other routes",
+    "external_consumers": "not assessed"
+  },
+  "retained_contract_cases": {
+    "share-token": 21,
+    "share-fork": 23,
+    "conversation-share": 48
+  },
+  "purpose": "Production routing prerequisite; local verification is reported separately below.",
+  "local_verification": {
+    "lint": "passed, zero ESLint errors/warnings",
+    "build": "passed,57static outputs; retired handlers absent",
+    "node_contracts": {
+      "passed": 1172,
+      "failed": 0
+    },
+    "go_test": "go test -count=1 ./... passed",
+    "go_vet": "passed",
+    "gofmt": "empty",
+    "production_localhost_probe": {
+      "command": "node scripts/contracts/go-forwarding-probe.mjs <local-api-executable> --production --shares",
+      "passed": 17,
+      "total": 17,
+      "share_route_switches_set": false,
+      "credentials": "synthetic fixture-only, localhost stand-ins",
+      "children_stopped": true
+    },
+    "lesson_checks": "skipped-owner-policy",
+    "deployment": "not performed",
+    "handoff": "passed contracts and Go test/vet/gofmt; lessons skipped; precommit tree833711fcf043; final committed fingerprint to be reverified by normal handoff"
+  }
+}

@@ -1,5 +1,16 @@
 # Conversation share contract
 
+P7-03 (2026-11-02): the matching Next.js handler and its recorders/runners
+are retired. All48cases and their Go-relevant inputs/expected answers remain
+unchanged at the existing contract version. `next_*` rollback fields are
+removed. Node checks fixture integrity; Go still executes every case and its
+runtime authorization/mux tests. The URLs reach Go without per-route switches
+when SEFGH_GO_API_URL is configured, and are404 without that origin.
+Rollback requires reverting the P7-03 commit and redeploying both projects.
+Earlier Next.js parity/recorder/rollback descriptions below are historical
+at parent `18b921e`; they are not current executable commands.
+
+
 Update BUG-055 (R-089,2026-10-30): contract v2. Creating, removing and forking a share now return fixed failure text: Share operation failed for existing400 responses and Internal server error for500. Status codes, authorization and not-found replies stay pinned. No database, library, transport or parser details are sent to visitors. Rollback Next.js answers remain in next_expect.
 
 

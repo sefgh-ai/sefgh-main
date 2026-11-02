@@ -824,50 +824,6 @@
             }
           }
         ]
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "new row violates row-level security policy for table \"user_conversations\""
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
       }
     },
     {
@@ -951,50 +907,6 @@
             }
           }
         ]
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "upstream unavailable"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
       }
     },
     {
@@ -1038,50 +950,6 @@
         "status": 400,
         "body": {
           "error": "Share operation failed"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "TypeError: fetch failed"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -1204,50 +1072,6 @@
             }
           }
         ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Cannot read properties of null (reading 'id')"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
       }
     },
     {
@@ -1292,50 +1116,6 @@
         "status": 500,
         "body": {
           "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Cannot read properties of null (reading 'id')"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -1539,52 +1319,7 @@
             }
           }
         ]
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "SyntaxError: Unexpected token '<', \"<html>\" is not valid JSON"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/shared_conversations?select=id%2Ctitle%2Csnapshot%2Cis_public&share_token=eq.9c1e5d2a7b3f4e6d8a0b1c2d&deleted_at=is.null",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/user_conversations?select=id",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "title": "Rust lifetimes",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "What is a lifetime?"
-                },
-                {
-                  "role": "assistant",
-                  "content": "A scope a borrow is valid for."
-                }
-              ],
-              "model": "gpt-4o"
-            }
-          }
-        ]
-      },
-      "next_engine_message": true
+      }
     },
     {
       "id": "fork-signed-out",
@@ -1696,15 +1431,6 @@
         "status": 500,
         "body": {
           "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Your project's URL and Key are required to create a Supabase client!\n\nCheck your Supabase project's API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api"
         },
         "content_type": "application/json",
         "cache_control": null,
