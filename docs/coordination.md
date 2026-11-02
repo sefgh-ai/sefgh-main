@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Claude Code: P7-04 complete on base `6c1dd41`, uncommitted.
+Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-04 (commit `c356ab1`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-04 user-read retirement (Claude Code, 2026-11-02)
 
-Status: **implementation complete; required local checks passed; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `6c1dd41`. Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+Status: **implementation complete; required local checks passed; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `6c1dd41`. Resulting commit: `c356ab1` (synchronized by Git Agent on main and go-backend).
 
 - **Production prerequisite** (GETs only, no credentials): `/api/activity` and `/api/repo/starred` answer 401 with `X-Sefgh-Backend: go` for no bearer and a fake bearer. Receipt `verification/p7-04-user-reads-2026-11-02.json`. Signed-in reads, deployment and hosted rollback are not established here.
 - **Caller audit:** the profile's usage card and the starred page call both paths through `fetchWithSession`; nothing else in `src/`, `scripts/` or `backend/` imported the handlers except the tests and helpers removed below.
