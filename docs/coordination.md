@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-03 (Asia/Calcutta), by Codex: P7-10a documentation/review/checks complete; writer released, final committed handoff follows.
+Last updated: 2026-11-03 (Asia/Calcutta), by Git Agent: synchronized P7-10a (commit `5ceb8c4`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-10a current migration boundaries (Codex, 2026-11-03)
 
-Status: **bounded documentation and read-only review complete; source/link/diff checks passed**. Owner Codex; reviewer review_p7_10a. Branch main, base/current `c236f7167173e202991ba55da0104a5a2ac5fa61`; resulting commit explicitly uncommitted when written (the one P7-10a commit containing this record). Normal handoff passed contracts and Go test/vet/gofmt; final committed fingerprint verification follows. This is not deployment or Phase7 closure.
+Status: **bounded documentation and read-only review complete; source/link/diff checks passed**. Owner Codex; reviewer review_p7_10a. Branch main, base `c236f71`. Resulting commit: `5ceb8c4` (synchronized by Git Agent on main and go-backend). Pre-existing untracked image.png preserved byte-identical, excluded from this task's commit and synchronization.
 
 Scope/result: current migration-boundaries.md inventories4remaining NextAPI handlers (3AI/legacy keys), auth/session/UI, fixed origin-required routes,3AI selectors, independent website/Go v1 gates,9policy proxy plus2dedicated data areas, legacy direct playground calls, managed services, workers/corpus and residual helper. Linked backend-map/cutover/backend README/ADR/briefing/plan to it and clarified current progress. Hosting guide rewritten for current source without presenting old platform pricing/quotas as verified. Cutover old instructions explicitly archived; backend traffic instructions updated and older port instructions marked historical. Public-repository contract README correctly describes retained executable helper/page-adapter tests. No source/Go/fixture/lesson/exercise edit; no bug behavior/status changed.
 
