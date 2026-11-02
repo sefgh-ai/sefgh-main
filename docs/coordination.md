@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-03 (Asia/Calcutta), by Git Agent: synchronized P7-08b (commit `fadea0c`) on main and go-backend.
+Last updated: 2026-11-03 (Asia/Calcutta), by Codex: P7-09a handoff.
 
 ## Start here
 
@@ -13,9 +13,88 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released P7-08b (2026-11-03): the nine data-proxy areas always route through Go; NEXT_PUBLIC_SEFGH_GO_DATA and the server `goData` option removed from the code; P7-08 complete. Next: P7-09 for trending topics and playground keys v1 only; the AI switches wait for P7-07 (R-038, R-213).
+- **Active writer:** none. Codex released bounded P7-09a (2026-11-03): topics/v1 route-name gates removed locally. UI/runtime/accounting gates and legacy keys remain. All3AI switches wait for P7-07/R-038/R-213; P7-09/Phase7 not wholly complete. Pre-existing untracked image.png preserved and MUST NOT be staged/committed/synchronized as part of this task. Signing stopped.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** P7-01 leaves22of the original25API entries ported, with contributions retired locally (deployment/live404 pending), trending refresh retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069), and playground keys retained. The following detailed progress is historical at PHASE7-000; playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: P7-09a non-AI route-name switches (Codex, 2026-11-03)
+
+Status: **bounded implementation and read-only review complete; required local checks passed**. Owner Codex; independent read-only reviewer review_p7_09a, no findings. Branch main, operative base/current `7f153e0c94dd4c87b28c8dd9c671a4773a4773cf`; task changes explicitly uncommitted at this record, one P7-09a commit to follow. Initial basec4ce385 changed when prior GitAgent P7-08b sync completed; comparison found only timestamp/coordination metadata, no application tree differences. Our work preserved, no Codex rebase/reset/stash. Source before claim clean; pre-existing untracked image.png preserved byte-identical, excluded from this task's commit and synchronization. It MUST NOT be staged by Git Agent for this handoff.
+
+Owner scope: remove only trending-topics and playground-keys-v1 route-name opt-ins. Topics is now fixed/origin-required. New v1 paths keep exact NEXT_PUBLIC_SEFGH_KEYS_V1=1 and origin requirements. All3AI switches/handlers and SEFGH_GO_ROUTES reading remain until P7-07/R-038/R-213; partial P7-09 only. Legacy /api/playground/keys handler/UI remain. Go SEFGH_KEYS_V1, accountant/policy/capability checks unchanged; no runtime/contract/UI code changed. No real key/user/token/RPC provisioning, signing, live writes, deployment or hosted activation/acceptance.
+
+Audit/preflight: topics caller is trending-topics.js through useTrendingData; v1 client keys-client.mjs uses owner/session and API-key request boundaries under the existing UI flag. Production GETs observed topics200/Go; website v1 paths404 without Go marker, direct Go v1404/no-store. These observations are consistent with disabled v1 but do not establish internal settings or hosted acceptance. Receipt `verification/p7-09a-routing-2026-11-03.json` separates remote preflight and local results. New gated-v1 forwarding cleanup is not retirement/cutover of legacy keys; no gate is waived.
+
+Changes: next.config.mjs only application configuration change: topics fixed list, remove redundant v1 route-name condition, retain UI/origin and allAI gates. Updated routing tests/probes, docs/ADR/plan/briefing/hosting/backend map/readme and lesson47/index. No Go, contract, UI, legacy handler or exercise/solution edits. Keys production localhost receipt refreshed in keys-routing.json with source/executable hashes. Old source/route-name descriptions in earlier records are historical. Rollback is revert this step's one commit and redeploy the website.
+
+Checks by Codex:2new switch-removal guards failed before edits;2existing AI/origin/legacy invariants already passed. Final focused11/11passed. Full `npm run lint` passed0errors/warnings; `npm run build` passed48static outputs. Full `npm run test:contracts`737/737passed. Full uncached `go test -count=1 ./...`, `go vet ./...`, empty `gofmt -l .` passed, including disabled/misconfigured v1 runtime coverage. Production localhost topics --topics2/2matched direct Go without old name. Keys routing probe with route-name setting empty passed5checks: issuance, metadata-only list, encoded/accounted search, failed completion withheld/recovery saved, revocation denied provider work. Exercised Auth/RPC/provider addresses and credentials are local/synthetic; child/Next environment inheritance is disclosed, not claimed isolated. Both probes cleaned all owned children. Doc links/diff whitespace, source boundary and image-hash preservation checks passed. Existing baseline/caniuse age advisories only. Lesson checks skipped-owner-policy, not passed. Normal npm run handoff passed contracts and Go test/vet/gofmt, lessons skipped; READY_VERIFIED matched precommit tree44916b6fc31f. Final normal handoff will reverify completed bookkeeping and the committed fingerprint. This does not authorize staging/synchronizing image.png.
+
+Review accepted with no Critical/Important/Minor finding. Review did not run tests or establish hosted settings/accountant/SQL/RLS/policy/browser acceptance, AI function, deployment/signing or unobserved cleanup; parent executed local checks and cleanup above. Rulings: keep exact UI/Go gates, preserve legacy/AI boundaries, partial P7-09a source cleanup is separate from activation, and local fixture proof does not replace hosted acceptance. No new bug behavior discovered or register status closed.
+
+Actual working tree at this handoff (image.png is PRE-EXISTING/UNOWNED, exclude from commit/synchronization):
+
+```text
+ M backend/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/hosting-setup.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M docs/verification/keys-routing.json
+ M learn-go/47-wiring-gated-routes/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/keys-routing-probe.mjs
+?? docs/verification/p7-09a-routing-2026-11-03.json
+?? image.png
+?? scripts/contracts/non-ai-switch-retirement.test.mjs
+```
+
+Writer released: yes. No owned processes; temporary API executable remains in OS temp, not running. Source task uncommitted at record, no push/CI/deployment by this task. Next: stage/commit only the explicit17task files (never image.png), then normal handoff on the committed fingerprint. The resulting P7-09a commit is the one containing this record (explicitly uncommitted when written); retrieve its hash from Git history. AI remainder/P7-07 stays parked at R-038/R-213; do not call P7-09 or Phase7 wholly complete or remove SEFGH_GO_ROUTES yet.
+
+## Checkpoint: P7-09a non-AI route-name switches (Codex, 2026-11-03)
+
+Status: **in progress / incomplete**. Owner Codex; reviewer unassigned. Branch main, base/current `c4ce38526791e163f2573882f4291748ca66cba6`; uncommitted. Previous writer released, verification lease absent; only pre-existing untracked `image.png` before claim (SHA256 `28c896c095ca37635a05671b4132758c692142a800b1674d752411aa6ff787d3`). Preserve it byte-identical and exclude it from staging/commit/Git Agent synchronization. Source diff initially empty; status READY_NEEDS_VERIFY reflects that unrelated file, not a held lease.
+
+Objective: the owner's limited P7-09 instruction: remove trending-topics and playground-keys-v1 opt-in names from SEFGH_GO_ROUTES. Trending topics becomes fixed/origin-required. New v1 keys forwarding keeps NEXT_PUBLIC_SEFGH_KEYS_V1=1 and Go origin requirements; Go SEFGH_KEYS_V1/accountant/policy gates unchanged. Legacy plaintext keys handler/UI path and all three AI switches/handlers stay. This is bounded P7-09a, not full P7-09 completion; AI residue waits for P7-07/R-038/R-213.
+
+Scope: next.config.mjs, routing regressions/probes, current docs/ADR/lesson references and receipt. No Go runtime/contract changes expected. Use this record as durable ledger. Existing plan's per-route Go preflight applies to trending; keys v1 is gated new-endpoint forwarding cleanup, not retirement/activation of legacy keys. Observe production safely before edits and record limits. No key/users/tokens/RPC provisioning, signing, live writes, SQL, deployment, secrets or image edits. Required checks pending: audit/preflight, regressions, lint/build/contracts/Go/probes/handoff. No owned processes. Next: exact caller/gate audit and read-only production GETs; write failing route-gate tests, then minimal source change.
+
+Milestone1: caller/gate audit and read-only production receipt complete. Topics200/Go. Website v1 paths404 without Go marker; direct Go v1 paths404/no-store, consistent with disabled runtime but not its internal configuration/hosted acceptance proof. No payload/credential/state copied. Current v1 UI callers use keys-client; UI pages/header remain gated. Legacy keys and Go runtime files untouched.
+
+Milestone2: source change limited to next.config.mjs: fixed topics rewrite, v1 routing drops route-name requirement while keeping exact UI/origin gates; AI map unchanged. Two switch-removal regressions failed before edits; AI and origin/legacy invariants already passed. After edits all4new guards and focused routing/scanner/topics11/11pass. Probe keys environment now has empty SEFGH_GO_ROUTES; generic forwarding probe has --topics scope and omits its old topic name. Docs/ADR/plan/lesson47/index updated for partial P7-09a and retained activation gates. No Go/contract/UI runtime changes; existing image.png preserved/excluded. Next: final diff/reference checks, lint/build/full contracts/Go, local production topics and keys probes, independent review, handoff/one commit. All uncommitted, no owned processes.
+
+Milestone3 before long checks: lint passed0ESLint errors/warnings (existing baseline-data advisory only), focused11/11passed, diff whitespace passed. `git diff --exit-code -- src backend/cmd backend/internal contracts` confirms no UI/legacy handler, Go runtime or contract edits. image.png hash matches the initial checkpoint and it remains excluded from this task. No owned processes. Remaining: production build, full Node/Go checks, local production topics probe and gated v1 lifecycle/accounting probe with no route names, read-only review, handoff and one explicit-path commit. Probe will refresh keys-routing.json with current secret-free localhost receipt; no signing/live keys operation. All task changes currently uncommitted.
+
+Current working tree (image.png is pre-existing/unowned and MUST NOT be staged/synchronized for this task):
+
+```text
+ M backend/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/hosting-setup.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/47-wiring-gated-routes/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/keys-routing-probe.mjs
+?? docs/verification/p7-09a-routing-2026-11-03.json
+?? image.png
+?? scripts/contracts/non-ai-switch-retirement.test.mjs
+```
+
+Milestone4 / base drift: build passed48static outputs; four AI/legacy-key API handlers remain in the build as intended. Git Agent finished a previously started P7-08b synchronization during this task: HEAD moved from c4ce385 to7f153e0c94dd4c87b28c8dd9c671a4773a4773cf, rewriting the prior implementation id7bcf69a tofadea0c and timestamp history. Direct tree comparison shows only LAST_UPDATED.txt and docs/coordination.md metadata differ between bases; no src/backend/scripts/contracts/next.config changes. Our edits and ownership preserved; prior coordination stamp already reconciled tofadea0c. Operative base is7f153e0; keep original base/checkpoint as history. Reviewer notified with this evidence. No reset/clean/stash/rebase performed by Codex. Next: full Node contracts, Go/probes and final verified handoff; image still untracked/excluded.
+
+Milestone5 before long Go/probe operation: full `npm run test:contracts`737/737passed; build48static outputs and lint passed. Operative HEAD7f153e0 remains stable, task source/runtime/contract diff boundaries unchanged. Independent read-only review_p7_09a accepted limited scope with no Critical/Important/Minor finding; it did not execute tests or establish hosted/runtime/AI acceptance. Next: uncached Go suite/vet/gofmt, compile API under OS temp, production localhost --topics probe and keys lifecycle/accounting routing probe with route setting empty. These use only synthetic exercised credentials/stand-ins and will clean own children. No servers running now. User image preserved/excluded. Final handoff and one explicit-path commit pending; no activation/deployment/signing changes.
 
 ## Handoff: P7-08b data-proxy areas always through Go (Claude Code, 2026-11-03)
 

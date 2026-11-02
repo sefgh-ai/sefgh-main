@@ -113,7 +113,7 @@ try{
  stage='local services';
  upstream.listen(0,'127.0.0.1');await once(upstream,'listening');
  const up=`http://127.0.0.1:${upstream.address().port}`,goPort=await port(),nextPort=await port();
- const env={...process.env,NEXT_PUBLIC_SUPABASE_URL:up,NEXT_PUBLIC_SUPABASE_ANON_KEY:'synthetic-public-key',GITHUB_API_URL:up,GITHUB_TOKEN:'',GITHUB_PUBLIC_READ_TOKEN:'',OPENAI_API_KEY:'',ANTHROPIC_API_KEY:'',SEFGH_KEYS_V1:'1',SEFGH_KEYS_ACCOUNTANT_JWT:'synthetic-accountant',SEFGH_API_ADDR:`127.0.0.1:${goPort}`,SEFGH_GO_API_URL:`http://127.0.0.1:${goPort}`,SEFGH_GO_ROUTES:'playground-keys-v1',NEXT_PUBLIC_SEFGH_KEYS_V1:'1',NEXT_PUBLIC_SEFGH_GO_DATA:'',SEFGH_FORWARDING_PROBE:'1',SEFGH_KEYS_UI_PROBE:'',NEXT_PUBLIC_SITE_URL:`http://127.0.0.1:${nextPort}`,NEXT_TELEMETRY_DISABLED:'1'};
+ const env={...process.env,NEXT_PUBLIC_SUPABASE_URL:up,NEXT_PUBLIC_SUPABASE_ANON_KEY:'synthetic-public-key',GITHUB_API_URL:up,GITHUB_TOKEN:'',GITHUB_PUBLIC_READ_TOKEN:'',OPENAI_API_KEY:'',ANTHROPIC_API_KEY:'',SEFGH_KEYS_V1:'1',SEFGH_KEYS_ACCOUNTANT_JWT:'synthetic-accountant',SEFGH_API_ADDR:`127.0.0.1:${goPort}`,SEFGH_GO_API_URL:`http://127.0.0.1:${goPort}`,SEFGH_GO_ROUTES:'',NEXT_PUBLIC_SEFGH_KEYS_V1:'1',NEXT_PUBLIC_SEFGH_GO_DATA:'',SEFGH_FORWARDING_PROBE:'1',SEFGH_KEYS_UI_PROBE:'',NEXT_PUBLIC_SITE_URL:`http://127.0.0.1:${nextPort}`,NEXT_TELEMETRY_DISABLED:'1'};
  const go=start(resolve(executable),[],env);await ready(`http://127.0.0.1:${goPort}/api/v1/keys`,go);
  stage='production build';
  const build=start(process.execPath,['node_modules/next/dist/bin/next','build'],env,'inherit');
@@ -136,7 +136,7 @@ try{
  if(violation)throw violation;
  if(stopping)throw new Error('Probe interrupted');
  for(const path of sourceFiles)assert.equal(sha256(path),identity.wiringSourceHashes[path],'Wiring source changed during probe');
- completedReport={nextMode:'production',backend:'compiled Go production mux',services:'exercised RPC/provider endpoints are local stand-ins; child environment and Next env files are inherited',checks,providerCalls:2,browserUI:'not exercised',liveDeployment:'not exercised'};
+ completedReport={nextMode:'production',backend:'compiled Go production mux',services:'exercised RPC/provider endpoints are local stand-ins; child environment and Next env files are inherited',routeNameOptIn:false,uiGate:'synthetically enabled for this local probe only',checks,providerCalls:2,browserUI:'not exercised',liveDeployment:'not exercised'};
 }catch(error){
  if(!stopping)writeFileSync(receiptPath,JSON.stringify({status:'failed',startedAt,endedAt:new Date().toISOString(),...identity,stage},null,2)+'\n');
  throw error;

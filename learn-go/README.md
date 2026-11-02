@@ -186,3 +186,5 @@ P7-05 updates lessons 25, 27 and 29 for the retired repository-interaction handl
 P7-04 updates lesson 23 for the retired starred handler and recorder; exercises and solutions are unchanged; lesson checks skipped by policy.
 
 P7-03 updates lessons24/30 for retired Next.js share handlers/recorders. All92Go contract cases and owner/bearer/removal guards remain. Exercises and solutions are unchanged; lesson checks skipped by owner policy.
+
+P7-09a updates lesson47 wiring notes for removal of the v1 route-name gate; exact UI flag and all Go runtime/accounting gates remain. No exercise/solution changes or lesson checks requested.

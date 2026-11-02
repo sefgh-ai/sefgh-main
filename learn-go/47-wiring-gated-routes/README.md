@@ -1,5 +1,14 @@
 # Lesson 47: Connect a route without enabling it
 
+P7-09a update (2026-11-03): Next forwarding no longer requires the
+playground-keys-v1 route name. It still requires the Go origin and exact
+NEXT_PUBLIC_SEFGH_KEYS_V1=1. The Go flag and capability/policy checks below
+are unchanged: forwarding a request does not enable its runtime. Local probe
+uses synthetic credentials and stand-ins only; hosted acceptance/signing
+remain gated. The old plaintext Next keys handler stays. Exercises and
+solutions are unchanged; no new Go runtime behavior is introduced.
+
+
 **Real code:** [keys.go](../../backend/cmd/api/keys.go),
 [main.go](../../backend/cmd/api/main.go), the key wiring tests beside them,
 and [next.config.mjs](../../next.config.mjs).

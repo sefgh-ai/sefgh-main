@@ -1,5 +1,13 @@
 # Briefing for the next agent (written 2026-10-29)
 
+**Current pickup (P7-09a, 2026-11-03):** topics and v1 keys no longer depend
+on SEFGH_GO_ROUTES names locally. Topics requires the Go origin; v1 also
+requires exact NEXT_PUBLIC_SEFGH_KEYS_V1=1. Go runtime/accounting/policy gates
+and legacy keys stay. AI3names/handlers remain until P7-07/R-038/R-213, so
+P7-09/Phase7 are not wholly complete. Read newest coordination for checks,
+commit/deployment and the pre-existing image.png exclusion. Signing stopped.
+
+
 **Current Phase7 pickup (P7-08b, 2026-11-03):** the nine data-proxy areas always
 go through Go, and `NEXT_PUBLIC_SEFGH_GO_DATA` and the server `goData` option are
 gone (Claude Code). Next is P7-09 (the remaining `SEFGH_GO_ROUTES` switches: AI,

@@ -1,5 +1,23 @@
 # Hosting the Go backend on Vercel (free)
 
+P7-09a (2026-11-03): the trending-topics and playground-keys-v1 names are
+removed from SEFGH_GO_ROUTES selection. `/api/trending/topics` always forwards
+when SEFGH_GO_API_URL is configured. V1 `/api/v1/keys`, its selector child,
+and `/api/v1/search` forward with the Go origin and exact
+NEXT_PUBLIC_SEFGH_KEYS_V1=1, independent of route names. That UI flag is retained;
+Go SEFGH_KEYS_V1, accountant credentials and approved-policy checks are unchanged.
+The legacy `/api/playground/keys` handler remains; no keys activation, signing,
+SQL or hosted acceptance is performed. Only the3AI names still use
+SEFGH_GO_ROUTES; their handlers/switches stay until P7-07/R-038/R-213.
+Without the origin there are no Go rewrites. Without the UI flag, v1 is not
+forwarded. A disabled Go v1 runtime still returns404/no-store; missing runtime
+configuration/policy fails closed503. This is limited P7-09a, not full P7-09
+or Phase7 completion. Rollback: revert this step and redeploy the website.
+[Read-only production preflight](verification/p7-09a-routing-2026-11-03.json)
+observed topics200/Go, website v1 paths404 without the Go marker, direct Go
+v1 paths404/no-store. No deployment or hosted mutation is implied.
+
+
 > **On hold (OPS-003, 2026-10-14).** Your live Vercel project, `sefgh-ui` in the "sefgh" account, builds the old repository `sefgh-ai/sefgh-nextjs`, not `Adeel0-0/sefgh-nextjs-main`, where this work is. Part C below assumes the website project builds this repository. Settle that first; see the OPS-003 handoff in `coordination.md`. Once it is settled, create the Go project in the same Vercel account as `sefgh-ui`, and import the repository that holds this code.
 
 For the owner. This sets up option A of the hosting proposal in `adr/0002-go-backend.md`: a second Vercel project that runs only the Go server in `backend/`, next to the Next.js project you already have. Written 2026-10-14 (task OPS-002) from Vercel's documentation as read that day. Nobody has tried these steps on your account yet, so screens may be worded a little differently.

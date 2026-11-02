@@ -8,13 +8,13 @@ import { PROXY_AREAS } from '../../src/lib/go-areas.mjs';
 // avatar upload and the browser's data areas are unconditional since P7-02
 // to P7-08b, with their own tests.
 // These assertions keep checking the remaining switches independently.
-const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred', '/api/repo/collect', '/api/repo/vote', '/api/repo/rating', '/api/repo/comments/vote', '/api/repo/comments', '/api/repo/videos', '/api/upload-avatar', '/api/search-history', '/api/search-history/:path*', '/api/onboarding', ...Object.keys(PROXY_AREAS).map((area) => `/api/data/${area}/:path*`)];
+const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred', '/api/repo/collect', '/api/repo/vote', '/api/repo/rating', '/api/repo/comments/vote', '/api/repo/comments', '/api/repo/videos', '/api/upload-avatar', '/api/search-history', '/api/search-history/:path*', '/api/onboarding', '/api/trending/topics', ...Object.keys(PROXY_AREAS).map((area) => `/api/data/${area}/:path*`)];
 async function switchedRewrites() {
   const rewrites = await config.rewrites();
   return { beforeFiles: rewrites.beforeFiles.filter(route => !fixedPaths.includes(route.source)) };
 }
 
-test('v1 key forwarding requires route, UI and origin gates together', async () => {
+test('v1 key forwarding retains UI and origin gates without a route-name switch', async () => {
   const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA', 'NEXT_PUBLIC_SEFGH_KEYS_V1'];
   const old = Object.fromEntries(names.map((name) => [name, process.env[name]]));
   try {
@@ -28,8 +28,8 @@ test('v1 key forwarding requires route, UI and origin gates together', async () 
     process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = '1';
     const paths = ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search'];
     assert.deepEqual(await switchedRewrites(), {beforeFiles: paths.map((path) => ({source: path, destination: `http://127.0.0.1:8787${path}`}))});
-    process.env.SEFGH_GO_ROUTES = 'playground-keys';
-    assert.deepEqual(await switchedRewrites(), {beforeFiles: []}, 'legacy plaintext route is never forwarded by this switch');
+    process.env.SEFGH_GO_ROUTES = '';
+    assert.deepEqual(await switchedRewrites(), {beforeFiles: paths.map((path) => ({source: path, destination: `http://127.0.0.1:8787${path}`}))}, 'route-name opt-in is no longer required');
     process.env.SEFGH_GO_ROUTES = 'playground-keys-v1';
     process.env.SEFGH_GO_API_URL = '';
     assert.deepEqual(await switchedRewrites(), {beforeFiles: []});
@@ -40,10 +40,12 @@ test('v1 key forwarding requires route, UI and origin gates together', async () 
   }
 });
 
-test('Go routing is opt-in, exact, and independently reversible per route', async () => {
+test('AI routing stays opt-in, exact, and independently reversible', async () => {
   const oldURL = process.env.SEFGH_GO_API_URL;
   const oldRoutes = process.env.SEFGH_GO_ROUTES;
   const oldData = process.env.NEXT_PUBLIC_SEFGH_GO_DATA;
+  const oldUI = process.env.NEXT_PUBLIC_SEFGH_KEYS_V1;
+  process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = '';
   delete process.env.NEXT_PUBLIC_SEFGH_GO_DATA;
   try {
     delete process.env.SEFGH_GO_API_URL;
@@ -56,7 +58,6 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'ai-suggestions': '/api/ai/suggestions',
       'ai-enhance-query': '/api/ai/enhance-query',
       'ai-chat': '/api/ai/chat',
-      'trending-topics': '/api/trending/topics',
     };
     for (const [name, path] of Object.entries(routes)) {
       process.env.SEFGH_GO_ROUTES = ` unknown, ${name}, ${name} `;
@@ -70,17 +71,19 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
     if (oldURL === undefined) delete process.env.SEFGH_GO_API_URL; else process.env.SEFGH_GO_API_URL = oldURL;
     if (oldRoutes === undefined) delete process.env.SEFGH_GO_ROUTES; else process.env.SEFGH_GO_ROUTES = oldRoutes;
     if (oldData === undefined) delete process.env.NEXT_PUBLIC_SEFGH_GO_DATA; else process.env.NEXT_PUBLIC_SEFGH_GO_DATA = oldData;
+    if (oldUI === undefined) delete process.env.NEXT_PUBLIC_SEFGH_KEYS_V1; else process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = oldUI;
   }
 });
 
 // P7-01: an old deployment setting must not resurrect a retired endpoint.
 test('retired contributions has no Next handler or rewrite, even with its stale switch', async () => {
   assert.equal(existsSync(new URL('../../src/app/api/github/contributions/route.js', import.meta.url)), false);
-  const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA'];
+  const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA', 'NEXT_PUBLIC_SEFGH_KEYS_V1'];
   const old = Object.fromEntries(names.map(name => [name, process.env[name]]));
   try {
     process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
     process.env.SEFGH_GO_ROUTES = 'github-contributions';
+    process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 = '';
     for (const origin of ['', 'http://127.0.0.1:8787']) {
       process.env.SEFGH_GO_API_URL = origin;
       assert.deepEqual(await switchedRewrites(), { beforeFiles: [] });

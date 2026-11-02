@@ -46,16 +46,14 @@ const avatarGoRoutes = ["/api/upload-avatar"];
 // P7-08a search history and onboarding: their browser modules
 // (src/lib/supabase/) ask only Go, so the rewrite no longer has a switch.
 const browserDataGoRoutes = ["/api/search-history", "/api/search-history/:path*", "/api/onboarding"];
+// P7-09a topics is fixed; only AI routes retain route-name opt-ins.
+const topicsGoRoutes = ["/api/trending/topics"];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
   // The browser sends the bearer (src/lib/ai/chat-request.js).
   "ai-chat": "/api/ai/chat",
-  // The trending page's topic sections, searched live on GitHub and cached by
-  // the CDN (TREND-001a; R-077, option A). Go only: there is no Next.js
-  // handler, so with this switch off the path is a 404.
-  "trending-topics": "/api/trending/topics",
 };
 
 // P7-08b the Go data proxy's areas (DATA-PROXY-001), from
@@ -72,12 +70,12 @@ function goBackendRewrites() {
     .filter(([name]) => enabled.includes(name))
     .map(([, path]) => ({ source: path, destination: `${origin}${path}` }));
   // New hashed-key endpoints replace the legacy plaintext flow only after
-  // separate UI and per-route opt-ins. Direct Go activation is independent.
-  const keys = enabled.includes('playground-keys-v1') && process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1'
+  // the existing UI opt-in. Go runtime/accounting activation is independent.
+  const keys = process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1'
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes, ...browserDataGoRoutes, ...dataProxyGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes, ...browserDataGoRoutes, ...dataProxyGoRoutes, ...topicsGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

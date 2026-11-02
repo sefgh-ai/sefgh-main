@@ -1,5 +1,15 @@
 # Phase 7: retiring the old logic
 
+P7-09a owner scope (2026-11-03): remove only trending-topics and
+playground-keys-v1 route-name opt-ins. Topics is origin-required/fixed;
+v1 forwarding still requires the Go origin and exact UI flag. Go runtime,
+accounting/policy/signing gates and legacy keys stay. Preserve the3AI switches
+and SEFGH_GO_ROUTES reading until P7-07 clears R-038/R-213. This is partial
+P7-09; do not mark the whole step/phase complete. New gated v1 endpoint
+forwarding is not retirement or activation of legacy keys, so record the
+observed disabled production boundary rather than treating it as cutover proof.
+
+
 Started 2026-11-02 by the owner's decision ("after done start phase 7"), before the Phase 6 gate was fully met; see the ADR decisions log. Written by Claude Code (PHASE7-000). This plan is the order and the recipe; each step is one bounded task with its own handoff record in `../coordination.md`.
 
 P7-08b update (2026-11-03, Claude Code): the nine data-proxy areas always route through Go in the browser and on the server; `NEXT_PUBLIC_SEFGH_GO_DATA` and the server `goData` option are removed from the code, which completes P7-08. The variable can be deleted from `sefgh-main` after deployment. See the P7-08b coordination record.

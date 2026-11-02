@@ -1,0 +1,98 @@
+{
+  "task": "P7-09a",
+  "observed_at_utc": "2026-11-02T18:48:29.232579+00:00",
+  "credentials_sent": false,
+  "mutations": false,
+  "observations": [
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/trending/topics",
+      "status": 200,
+      "backend": "go",
+      "cache_control": "public, max-age=0",
+      "date": "Mon, 02 Nov 2026 18:48:17 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/v1/keys",
+      "status": 404,
+      "backend": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "date": "Mon, 02 Nov 2026 18:48:25 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/v1/keys/p7-09-probe-no-key",
+      "status": 404,
+      "backend": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "date": "Mon, 02 Nov 2026 18:48:32 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/v1/search",
+      "status": 404,
+      "backend": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "date": "Mon, 02 Nov 2026 18:48:32 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-api.vercel.app/api/v1/keys",
+      "status": 404,
+      "backend": "go",
+      "cache_control": "no-store",
+      "date": "Mon, 02 Nov 2026 18:48:33 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-api.vercel.app/api/v1/search",
+      "status": 404,
+      "backend": "go",
+      "cache_control": "no-store",
+      "date": "Mon, 02 Nov 2026 18:48:34 GMT"
+    }
+  ],
+  "limits": [
+    "GET routing preflight only. No keys, shares, tokens or RPC state created.",
+    "v1 observations do not authorize activation or establish hosted acceptance.",
+    "UI, backend runtime/accounting and signing gates remain intact; legacy keys not retired."
+  ],
+  "local_verification": {
+    "operative_base": "7f153e0c94dd4c87b28c8dd9c671a4773a4773cf",
+    "initial_base": "c4ce38526791e163f2573882f4291748ca66cba6",
+    "lint": "passed0errors/warnings",
+    "build": "passed48static outputs",
+    "node_contracts": {
+      "passed": 737,
+      "failed": 0
+    },
+    "go_test": "go test -count=1 ./... passed",
+    "go_vet": "passed",
+    "gofmt": "empty",
+    "topics_production_localhost": {
+      "command": "node scripts/contracts/go-forwarding-probe.mjs <api> --production --topics",
+      "passed": 2,
+      "total": 2,
+      "old_route_name_omitted": true
+    },
+    "keys_production_localhost": {
+      "receipt": "keys-routing.json",
+      "passed_checks": [
+        "owner issuance through production rewrite",
+        "metadata-only list",
+        "accounted public search and preserved query",
+        "failed completion withheld and recovery saved",
+        "revocation denies provider work"
+      ],
+      "route_name_setting_empty": true,
+      "exercised_services": "local stand-ins and synthetic credentials; inherited child/Next environments disclosed",
+      "cleanup": "all owned children stopped"
+    },
+    "preserved_image": true,
+    "runtime_ui_contracts_unchanged": true,
+    "lesson_checks": "skipped-owner-policy",
+    "deployment": "not performed",
+    "handoff": "passed contracts and Go test/vet/gofmt; lessons skipped; precommit tree44916b6fc31f; final committed fingerprint to be reverified; image.png unowned/excluded"
+  }
+}

@@ -1,5 +1,23 @@
 # SEFGH Go backend
 
+P7-09a (2026-11-03): the trending-topics and playground-keys-v1 names are
+removed from SEFGH_GO_ROUTES selection. `/api/trending/topics` always forwards
+when SEFGH_GO_API_URL is configured. V1 `/api/v1/keys`, its selector child,
+and `/api/v1/search` forward with the Go origin and exact
+NEXT_PUBLIC_SEFGH_KEYS_V1=1, independent of route names. That UI flag is retained;
+Go SEFGH_KEYS_V1, accountant credentials and approved-policy checks are unchanged.
+The legacy `/api/playground/keys` handler remains; no keys activation, signing,
+SQL or hosted acceptance is performed. Only the3AI names still use
+SEFGH_GO_ROUTES; their handlers/switches stay until P7-07/R-038/R-213.
+Without the origin there are no Go rewrites. Without the UI flag, v1 is not
+forwarded. A disabled Go v1 runtime still returns404/no-store; missing runtime
+configuration/policy fails closed503. This is limited P7-09a, not full P7-09
+or Phase7 completion. Rollback: revert this step and redeploy the website.
+[Read-only production preflight](../docs/verification/p7-09a-routing-2026-11-03.json)
+observed topics200/Go, website v1 paths404 without the Go marker, direct Go
+v1 paths404/no-store. No deployment or hosted mutation is implied.
+
+
 P7-03 (2026-11-02): the Next.js handlers for `/api/share/[token]`,
 `/api/share/[token]/fork` and `/api/conversations/[id]/share` are retired.
 The shared page and ShareDialog keep their session-aware URLs; Go keeps
@@ -92,7 +110,7 @@ fallback are provided. Runtime, SQL, signing, policy, cutover and deployment
 gates remain. [Completion review](../docs/plans/route-completion-review.md).
 
 Next.js forwards these paths only with the Go origin,
-`SEFGH_GO_ROUTES=playground-keys-v1` and `NEXT_PUBLIC_SEFGH_KEYS_V1=1` together.
+`NEXT_PUBLIC_SEFGH_KEYS_V1=1` and the Go origin together (P7-09a removes the route-name gate).
 The old `/api/playground/keys` path is not rewritten. The production localhost
 forwarding probe is `node scripts/keys-routing-probe.mjs <compiled-api>`;
 its secret-free receipt distinguishes local stand-ins from live evidence.
@@ -502,7 +520,7 @@ Opt-in name: `github-public-repo` in `SEFGH_GO_ROUTES`, off by default. The repo
 
 ## Trending topics (TREND-001a)
 
-Opt-in name: `trending-topics`, off by default. `GET /api/trending/topics` is new: it has no Next.js handler, so with the switch off the path is a 404. It replaces the stored `trending_repos` table and its refresh route, which could not write the table (R-077); the owner chose this design on 2026-10-19 (`../docs/plans/trending-refresh.md`, option A). It passes the 11 hand-written cases of `contracts/trending-topics`.
+P7-09a: `GET /api/trending/topics` has no route-name switch or Next.js handler; without the Go origin the website path is404. It replaces the stored `trending_repos` table and its refresh route, which could not write the table (R-077); the owner chose this design on 2026-10-19 (`../docs/plans/trending-refresh.md`, option A). It passes the 11 hand-written cases of `contracts/trending-topics`.
 
 TREND-001c (2026-10-30): the owner approved a narrow Phase 6 gate exception to
 remove only the unused Next.js `/api/trending/refresh` handler. That deletion is
