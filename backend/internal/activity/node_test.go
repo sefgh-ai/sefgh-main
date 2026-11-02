@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand/v2"
-	"os"
 	"os/exec"
 	"testing"
 	"time"
@@ -18,15 +17,12 @@ import (
 // are null, missing, negative, fractional or too large for a double, streaks
 // that end today or yesterday, and averages that fall exactly halfway.
 //
-// It needs Node and the repository's node_modules, as CI has; without them
-// it is skipped, and says so.
+// It needs Node, as CI has; without it the test is skipped, and says so.
+// The reference no longer runs the retired Next.js handler (P7-04).
 func TestMatchesNodeOnGeneratedInput(t *testing.T) {
 	node, err := exec.LookPath("node")
 	if err != nil {
 		t.Skip("node is not installed")
-	}
-	if _, err := os.Stat("../../../node_modules/next"); err != nil {
-		t.Skip("node_modules is missing; run npm ci in the repository root")
 	}
 
 	fixtures := generate(400)

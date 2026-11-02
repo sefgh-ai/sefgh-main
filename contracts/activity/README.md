@@ -22,7 +22,7 @@ How the Go runner reads a fixture: `user` becomes a bearer that a stand-in Supab
 
 ## What is replaced and what is real
 
-`scripts/contracts/activity-fixture.mjs` runs the real handler. It replaces the clock, the server's time zone (`TZ`) and the cookie-session Supabase client (through `activity-loader.mjs`), and restores all three. No Supabase project is contacted. The stand-in client answers `auth.getUser()` from the fixture's `user` and the `activity_logs` query from `rows` or `query_error`, and records every step of the query the handler builds, which `expect.query` pins.
+(Historical: the Next.js handler was retired in P7-04, with `activity-fixture.mjs` and `activity-loader.mjs`, and every `next_expect` was removed from the cases. Go's `TestContract` runs every case.) `scripts/contracts/activity-fixture.mjs` ran the real handler. It replaces the clock, the server's time zone (`TZ`) and the cookie-session Supabase client (through `activity-loader.mjs`), and restores all three. No Supabase project is contacted. The stand-in client answers `auth.getUser()` from the fixture's `user` and the `activity_logs` query from `rows` or `query_error`, and records every step of the query the handler builds, which `expect.query` pins.
 
 The grid is compacted without loss before comparing: each day `{date, count, color, weekIndex, dayOfWeekIndex}` is written `[date, count, color, weekIndex, dayOfWeekIndex]`.
 

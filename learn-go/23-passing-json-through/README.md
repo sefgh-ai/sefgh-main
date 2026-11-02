@@ -69,7 +69,7 @@ Every goroutine gets this same `ctx`. When the budget runs out, every request st
 
 ## Checking it against JavaScript
 
-The contract `contracts/repo-starred` was recorded by running the real Next.js handler (`scripts/contracts/record-repo-starred.mjs`), and Go passes all 14 cases. It also passes the 15 cases that already pinned each GitHub check. For unusual rows (a row that is a list, a number, text), the expected answers in `TestRowsOfOtherKinds` were also produced by running the Next.js handler: Go's replies match it character for character.
+The contract `contracts/repo-starred` was recorded by running the real Next.js handler (`scripts/contracts/record-repo-starred.mjs`), and Go passes all 14 cases. (That handler and its recorder were retired on 2026-11-02, P7-04: the recorded answers stay in the contract, and Go now answers this route on its own.) It also passes the 15 cases that already pinned each GitHub check. For unusual rows (a row that is a list, a number, text), the expected answers in `TestRowsOfOtherKinds` were also produced by running the Next.js handler: Go's replies match it character for character.
 
 ## Your turn
 

@@ -13,7 +13,7 @@ const { usageDaysFromActivity, normalizeUsageDays, computeUsageStats } = await i
 const root = fileURLToPath(new URL('../../', import.meta.url));
 
 test('days are read from the activity grid, leaving out the padding', () => {
-  // The shape src/app/api/activity/route.js answers with: weeks of days, the
+  // The shape GET /api/activity answers with (Go since P7-04): weeks of days, the
   // last week padded with days that have no date.
   const reply = {
     grid: [

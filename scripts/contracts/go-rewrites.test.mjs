@@ -3,9 +3,10 @@ import { test } from 'node:test';
 import { existsSync } from 'node:fs';
 import config from '../../next.config.mjs';
 
-// Public reads and shares are unconditional since P7-02/P7-03 with their own tests.
+// Public reads, shares and the user's own reads are unconditional since
+// P7-02 to P7-04, with their own tests.
 // These assertions keep checking the remaining switches independently.
-const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share'];
+const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred'];
 async function switchedRewrites() {
   const rewrites = await config.rewrites();
   return { beforeFiles: rewrites.beforeFiles.filter(route => !fixedPaths.includes(route.source)) };
@@ -53,8 +54,6 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'ai-suggestions': '/api/ai/suggestions',
       'ai-enhance-query': '/api/ai/enhance-query',
       'ai-chat': '/api/ai/chat',
-      'activity': '/api/activity',
-      'repo-starred': '/api/repo/starred',
       'repo-collect': '/api/repo/collect',
       'repo-vote': '/api/repo/vote',
       'repo-rating': '/api/repo/rating',

@@ -177,4 +177,6 @@ BUG-068/R-090 updates lesson30 for owner-scoped bulk unshare and post-write veri
 
 P7-02 marks public GitHub Next.js comparisons historical in lessons02/06/08/09/14/16/47; Go implementations and408contract cases remain. The search exercise R-015 now changes Go only, and remains the owner's unfinished task. Existing exercise.go/solutions unchanged; lesson checks skipped by owner policy.
 
+P7-04 updates lesson 23 for the retired starred handler and recorder; exercises and solutions are unchanged; lesson checks skipped by policy.
+
 P7-03 updates lessons24/30 for retired Next.js share handlers/recorders. All92Go contract cases and owner/bearer/removal guards remain. Exercises and solutions are unchanged; lesson checks skipped by owner policy.

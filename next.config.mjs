@@ -31,19 +31,15 @@ const publicGoRoutes = [
 const shareGoRoutes = [
   "/api/share/:token", "/api/share/:token/fork", "/api/conversations/:id/share",
 ];
+// P7-04 the caller's own reads (activity, starred) likewise: Go only, bearer
+// only (src/lib/supabase/session-fetch.js sends it).
+const userReadGoRoutes = ["/api/activity", "/api/repo/starred"];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
   // The browser sends the bearer (src/lib/ai/chat-request.js).
   "ai-chat": "/api/ai/chat",
-  // The caller's own activity, read from the database as the caller. Go
-  // accepts a Supabase bearer only; the browser sends one
-  // (src/lib/supabase/session-fetch.js).
-  "activity": "/api/activity",
-  // The caller's starred repositories, from the database as the caller and
-  // checked with GitHub (STAR-001). Bearer only, like activity.
-  "repo-starred": "/api/repo/starred",
   // Saving, removing and counting a repository in the caller's collections
   // (COLLECT-001), the first route that writes to the database. Bearer only,
   // like activity; the browser sends it (src/lib/supabase/session-fetch.js).
@@ -95,7 +91,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

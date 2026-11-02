@@ -1,14 +1,10 @@
-// GET /api/repo/starred, contract version 1 (STAR-001). The real handler
-// runs with the Supabase client and GitHub replaced; see
-// starred-fixture.mjs. A Go port must pass the same cases. The boundary of
-// each GitHub read is pinned separately by contracts/public-repository-reads.
+// GET /api/repo/starred, contract version 1 (STAR-001): fixture integrity.
+// Since P7-04 the Next.js handler is retired; Go runs every case
+// (backend/internal/starred). The boundary of each GitHub read is pinned
+// separately by contracts/public-repository-reads.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runStarredFixture } from './starred-fixture.mjs';
-register('./starred-loader.mjs', import.meta.url);
-const { GET } = await import('../../src/app/api/repo/starred/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-starred/cases.json', import.meta.url), 'utf8'));
 
 test('starred fixture integrity', () => {
@@ -29,9 +25,3 @@ test('starred fixture integrity', () => {
     if (c.expect.status === 200) assert.equal(c.expect.cache_control, 'private, no-store', c.id);
   }
 });
-
-for (const c of contract.cases) {
-  test(`starred: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runStarredFixture(GET, c), c.expect);
-  });
-}

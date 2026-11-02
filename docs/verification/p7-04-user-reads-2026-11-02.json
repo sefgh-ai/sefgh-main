@@ -1,0 +1,45 @@
+{
+  "task": "P7-04",
+  "checked_at": "2026-11-02T09:39:52Z",
+  "site": "https://sefgh-main.vercel.app",
+  "method": "GET only, no credentials; a missing and a fake bearer",
+  "observations": [
+    {
+      "path": "/api/activity",
+      "authorization": "none",
+      "status": 401,
+      "x_sefgh_backend": "go",
+      "body": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "path": "/api/activity",
+      "authorization": "fake bearer",
+      "status": 401,
+      "x_sefgh_backend": "go",
+      "body": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "path": "/api/repo/starred",
+      "authorization": "none",
+      "status": 401,
+      "x_sefgh_backend": "go",
+      "body": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "path": "/api/repo/starred",
+      "authorization": "fake bearer",
+      "status": 401,
+      "x_sefgh_backend": "go",
+      "body": {
+        "error": "Unauthorized"
+      }
+    }
+  ],
+  "not_established": "signed-in reads, deployment of P7-04, hosted rollback"
+}

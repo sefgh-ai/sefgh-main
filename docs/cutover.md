@@ -1,5 +1,16 @@
 # Cutover runbook: switching the website to the Go backend
 
+P7-04 (2026-11-02): the Next.js handlers for `/api/activity` and
+`/api/repo/starred` are retired. The profile card and the starred page keep
+their session-aware URLs; Go keeps all behaviour, and the activity (16) and
+repo-starred (14) contract cases. Rewrites are unconditional when
+SEFGH_GO_API_URL is configured; the old `activity` and `repo-starred` switch
+names are ignored. Without a Go origin these paths are 404. The activity
+reference model that Go's 400-input test compares with now stands alone
+(it was checked identical to the handler-based answers before removal).
+[Production prerequisite receipt](verification/p7-04-user-reads-2026-11-02.json).
+Rollback: revert the P7-04 commit and redeploy both projects.
+
 P7-03 (2026-11-02): the Next.js handlers for `/api/share/[token]`,
 `/api/share/[token]/fork` and `/api/conversations/[id]/share` are retired.
 The shared page and ShareDialog keep their session-aware URLs; Go keeps

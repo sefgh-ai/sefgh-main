@@ -1,14 +1,8 @@
-// GET /api/activity, contract version 3 (BUG-038): the first Phase 3
-// characterization. The real handler runs with the Supabase client, the clock
-// and the server time zone replaced; see activity-fixture.mjs. A Go port must
-// pass the same cases.
+// GET /api/activity, contract version 4: fixture integrity. Since P7-04 the
+// Next.js handler is retired; Go runs every case (backend/internal/activity).
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runActivityFixture } from './activity-fixture.mjs';
-register('./activity-loader.mjs', import.meta.url);
-const { GET } = await import('../../src/app/api/activity/route.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/activity/cases.json', import.meta.url), 'utf8'));
 
 test('activity fixture integrity', () => {
@@ -38,13 +32,10 @@ test('activity pagination fixtures cover a full page, overflow and later-page fa
   const byId = Object.fromEntries(contract.cases.map((c) => [c.id, c]));
   for (const id of ['over-one-page', 'exactly-one-page', 'later-page-fails']) {
     assert.equal(byId[id].go_queries.length, 2, id);
-    assert.ok(byId[id].next_expect, id);
   }
   assert.equal(byId['over-one-page'].rows.length, 1001);
   assert.equal(byId['over-one-page'].expect.body.stats.totalContributions, 1001);
-  assert.equal(byId['over-one-page'].next_expect.body.stats.totalContributions, 1000);
   assert.equal(byId['later-page-fails'].expect.status, 500);
-  assert.equal(byId['later-page-fails'].next_expect.status, 200);
 });
 
 // R-057: a server's time zone no longer changes the range or the days.
@@ -62,10 +53,11 @@ test('the same instant gives the same reply whatever the server time zone', () =
   }
 });
 
-for (const c of contract.cases) {
-  test(`activity: ${c.id} [${c.disposition}]`, async () => {
-    // Version 2 (R-063) is Go's; this Next.js handler answers next_expect
-    // until it is retired.
-    assert.deepEqual(await runActivityFixture(GET, c), c.next_expect ?? c.expect);
-  });
-}
+// P7-04: the Next.js handler is retired, and nothing here describes it:
+// Go's TestContract runs every case, and TestMatchesNodeOnGeneratedInput
+// compares Go with the standalone reference in activity-model.mjs.
+test('activity cases keep no Next.js-only expectations', () => {
+  for (const c of contract.cases) {
+    assert.ok(!Object.keys(c).some((key) => key.startsWith('next_')), c.id);
+  }
+});

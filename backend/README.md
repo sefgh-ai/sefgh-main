@@ -583,7 +583,7 @@ Opt-in name: `share-token`, off by default. One shared conversation, by the toke
 
 ## Starred (STAR-001)
 
-Opt-in name: `repo-starred`, off by default. The caller's saved repositories, each checked again with GitHub. It passes the 14 cases of `contracts/repo-starred` (recorded from the Next.js handler by `scripts/contracts/record-repo-starred.mjs`) and the 15 of `contracts/public-repository-reads`. Phase 3's database gate for it was met on 2026-10-15: `repo_collections` lets a user read only their own rows (`../docs/database/user-db.md`). Turning it on still waits for review.
+Retired from Next.js in P7-04: Go only, no switch (was `repo-starred`). The caller's saved repositories, each checked again with GitHub. It passes the 14 cases of `contracts/repo-starred` (recorded from the Next.js handler by `scripts/contracts/record-repo-starred.mjs`) and the 15 of `contracts/public-repository-reads`. Phase 3's database gate for it was met on 2026-10-15: `repo_collections` lets a user read only their own rows (`../docs/database/user-db.md`). Turning it on still waits for review.
 
 - **The database** is asked as the caller with their own bearer, through `internal/supabaserest`, which activity now uses too: `Select` sends the request, `ReadResult` reads the reply as supabase-js does.
 - **GitHub** is asked through the transport of signed-out reads: no credential of the caller's, never `GITHUB_TOKEN`, only the public read token when one is set. A name must pass `githubrepos.ValidOwner` and `ValidRepoName` (the same rules, now exported) before it reaches a URL. Redirects are refused, each read has 10 seconds, at most four run at once, and a repository counts as public only with an explicit `private: false`.
@@ -627,9 +627,11 @@ Where Go differs, all outside the contract's cases:
   `client-fails` case. supabase-js's reading of odd Data API replies, such
   as an empty 404 meaning "no rows", is copied (`readResult`).
 
-`internal/activity/node_test.go` also runs the real Next.js handler, through
-`../scripts/contracts/activity-run.mjs`, on 400 generated inputs and compares
-every answer. It needs Node and `npm ci`, as CI has; without them it skips.
+`internal/activity/node_test.go` also compares every answer, on 400 generated
+inputs, with the independent JavaScript reference in
+`../scripts/contracts/activity-run.mjs` (`activity-model.mjs`). Since P7-04 the
+reference no longer runs the retired Next.js handler; it needs only Node, and
+without it the test skips.
 
 ## Public read token (QUOTA-001)
 

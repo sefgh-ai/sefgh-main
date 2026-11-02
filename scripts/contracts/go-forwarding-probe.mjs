@@ -17,7 +17,8 @@
 // because it starts servers and takes about a minute.
 //
 // Add --production to build and check `next start` in an isolated output folder.
-// Add --public-reads for P7-02 or --shares for P7-03 forwarding scenarios.
+// Add --public-reads for P7-02, --shares for P7-03 or --user-reads for P7-04
+// forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -32,7 +33,8 @@ const production = process.argv.includes('--production');
 const phase2 = process.argv.includes('--phase2');
 const publicReadsOnly = process.argv.includes('--public-reads');
 const sharesOnly = process.argv.includes('--shares');
-if (publicReadsOnly && sharesOnly) throw new Error('choose one probe scope');
+const userReadsOnly = process.argv.includes('--user-reads');
+if ([publicReadsOnly, sharesOnly, userReadsOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
 const children = [];
 let upstream;
 
@@ -263,6 +265,7 @@ const allScenarios = [
 ];
 const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/github/'))
   : sharesOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/share/') || scenario.path.startsWith('/api/conversations/'))
+  : userReadsOnly ? allScenarios.filter(scenario => scenario.path === '/api/activity' || scenario.path === '/api/repo/starred')
   : allScenarios;
 
 
@@ -475,8 +478,8 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  // Retired P7-02/P7-03 routes deliberately have no opt-in names here.
-  const routes = "ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,upload-avatar,trending-topics";
+  // Retired P7-02 to P7-04 routes deliberately have no opt-in names here.
+  const routes = "ai-suggestions,ai-enhance-query,ai-chat,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,upload-avatar,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

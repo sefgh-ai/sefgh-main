@@ -10,7 +10,7 @@ cd backend && go test -count=1 ./internal/starred/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-starred.mjs` runs the real Next.js handler on each case's inputs and writes its answer into `expect`. The inputs and dispositions are written by hand. `scripts/contracts/starred-fixture.mjs` replaces the cookie-session Supabase client, through the existing `starred-loader.mjs`, and GitHub, through `fetch`. It records the database query the handler builds and every GitHub request. GitHub requests are listed sorted by URL, since up to four run at once.
+(Historical: the Next.js handler, this recorder and `starred-fixture.mjs` were retired in P7-04; Go's tests run every case.) `scripts/contracts/record-repo-starred.mjs` ran the real Next.js handler on each case's inputs and writes its answer into `expect`. The inputs and dispositions are written by hand. `scripts/contracts/starred-fixture.mjs` replaces the cookie-session Supabase client, through the existing `starred-loader.mjs`, and GitHub, through `fetch`. It records the database query the handler builds and every GitHub request. GitHub requests are listed sorted by URL, since up to four run at once.
 
 A fixture gives `user` (what `auth.getUser()` answers), `client_throws`, `rows` or `query_error`, and `github`: GitHub's answer per `owner/repo`. A name not listed answers 404.
 

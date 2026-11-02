@@ -1,4 +1,27 @@
 // Independent JavaScript reference for owner-approved R-059, not a live handler.
+// Since P7-04 the Next.js handler is retired: activityAnswer builds the
+// signed-in answer's status, headers and query itself. On the 400 generated
+// inputs it was checked identical to the answers built on the real handler
+// before that handler was removed.
+
+// activityAnswer is the reference answer to one signed-in fixture.
+export function activityAnswer(f) {
+  return activityModel(f, {
+    status: 200,
+    body: {},
+    content_type: 'application/json',
+    cache_control: null,
+    query: [
+      ['from', 'activity_logs'],
+      ['select', 'activity_date, activity_count'],
+      ['eq', 'user_id', f.user.id],
+      ['gte', 'activity_date', ''],
+      ['lte', 'activity_date', new Date(f.now).toISOString().slice(0, 10)],
+      ['order', 'activity_date', { ascending: true }],
+    ],
+  });
+}
+
 export function activityModel(f, answer) {
   const out=structuredClone(answer);
   if(!out.query.length)return out;
