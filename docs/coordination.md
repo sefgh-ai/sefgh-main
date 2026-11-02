@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Codex: P7-02 handoff.
+Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-02 (commit `994b972`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-02 public GitHub read retirement (Codex, 2026-11-02)
 
-Status: **implementation and read-only review complete; required local checks passed**. Owner Codex, independent read-only reviewer review_p7_02 (application/routing/contract removal; later probe compatibility edit self-reviewed and executed by Codex). Branch `main`, base/current `f86a1609a7a4812c6ed5f40f6c92f3f54b2321ce`; changes explicitly uncommitted at this record. Exactly one P7-02 commit to follow. Previous writer released, initial tree clean and verification lease absent.
+Status: **implementation and read-only review complete; required local checks passed**. Owner Codex, independent read-only reviewer review_p7_02. Branch `main`, base `f86a160`. Resulting commit: `994b972` (synchronized by Git Agent on `main` and `go-backend`). Previous writer released, initial tree clean and verification lease absent.
 
 Production prerequisite: seven bounded website GETs (search, languages, trending, developers, summary, details, contents) all carried X-Sefgh-Backend: go. Public-repo is a server-to-Go read without a website rewrite, so checked it on sefgh-api and received404/Go for an invalid owner. Receipt `verification/p7-02-public-reads-2026-11-02.json` separates remote preflight from local results. No credential sent, upstream sample retrieval or production mutation; this does not establish successful hosted GitHub retrieval, private access/quota behavior, deployment or browser acceptance.
 
