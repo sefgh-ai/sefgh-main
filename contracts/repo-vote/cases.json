@@ -86,59 +86,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 2,
-            "downvotes": 1,
-            "net_votes": 1
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -228,59 +175,6 @@
               "repo_full_name": "octo/demo",
               "vote_type": "downvote",
               "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 2,
-            "downvotes": 1,
-            "net_votes": 1
-          },
-          "userVote": "downvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "downvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
             }
           },
           {
@@ -393,54 +287,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 2,
-            "downvotes": 1,
-            "net_votes": 1
-          },
-          "userVote": null
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 204,
@@ -528,53 +374,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 204,
@@ -640,54 +439,6 @@
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
             "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          },
-          "userVote": ""
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
           },
           {
             "method": "GET",
@@ -1050,49 +801,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 3,
-            "downvotes": 1,
-            "net_votes": 2
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -1186,51 +894,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": [
-            {
-              "upvotes": 3,
-              "downvotes": 1,
-              "net_votes": 2
-            }
-          ],
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -1318,49 +981,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -1434,59 +1054,6 @@
               "repo_full_name": "octo/demo",
               "vote_type": "upvote",
               "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 2,
-            "downvotes": 1,
-            "net_votes": 1
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
             }
           },
           {
@@ -1599,59 +1166,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -1739,53 +1253,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -1856,53 +1323,6 @@
               "repo_full_name": "octo/demo",
               "vote_type": "upvote",
               "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
             }
           },
           {
@@ -2011,59 +1431,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 1,
-            "net_votes": -1
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "octo/demo"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -2156,59 +1523,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          },
-          "userVote": "upvote"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_votes?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": 42,
-              "vote_type": "upvote",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": 42
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.42",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 201,
@@ -2274,54 +1588,6 @@
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
             "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "votes": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "net_votes": 0
-          },
-          "userVote": null
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_votes?user_id=eq.user-a&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/rpc/get_repo_vote_stats",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_name": "a b&c=d+e/é*~"
-            }
           },
           {
             "method": "GET",
@@ -2899,15 +2165,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to vote."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -2951,31 +2208,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "votes": {
-            "upvotes": 2,
-            "downvotes": 1,
-            "net_votes": 1
-          },
-          "userVote": null
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_votes?select=vote_type&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     }
   ]

@@ -3,10 +3,10 @@ import { test } from 'node:test';
 import { existsSync } from 'node:fs';
 import config from '../../next.config.mjs';
 
-// Public reads, shares and the user's own reads are unconditional since
-// P7-02 to P7-04, with their own tests.
+// Public reads, shares, the user's own reads and repository interactions
+// are unconditional since P7-02 to P7-05, with their own tests.
 // These assertions keep checking the remaining switches independently.
-const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred'];
+const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred', '/api/repo/collect', '/api/repo/vote', '/api/repo/rating', '/api/repo/comments/vote', '/api/repo/comments', '/api/repo/videos'];
 async function switchedRewrites() {
   const rewrites = await config.rewrites();
   return { beforeFiles: rewrites.beforeFiles.filter(route => !fixedPaths.includes(route.source)) };
@@ -45,7 +45,7 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
   delete process.env.NEXT_PUBLIC_SEFGH_GO_DATA;
   try {
     delete process.env.SEFGH_GO_API_URL;
-    process.env.SEFGH_GO_ROUTES = 'repo-collect,repo-vote';
+    process.env.SEFGH_GO_ROUTES = 'ai-chat,upload-avatar';
     assert.deepEqual(await switchedRewrites(), {beforeFiles: []});
     process.env.SEFGH_GO_API_URL = 'http://127.0.0.1:8787///';
     delete process.env.SEFGH_GO_ROUTES;
@@ -54,12 +54,6 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'ai-suggestions': '/api/ai/suggestions',
       'ai-enhance-query': '/api/ai/enhance-query',
       'ai-chat': '/api/ai/chat',
-      'repo-collect': '/api/repo/collect',
-      'repo-vote': '/api/repo/vote',
-      'repo-rating': '/api/repo/rating',
-      'comment-vote': '/api/repo/comments/vote',
-      'repo-comments': '/api/repo/comments',
-      'repo-videos': '/api/repo/videos',
       'upload-avatar': '/api/upload-avatar',
       'trending-topics': '/api/trending/topics',
     };
@@ -67,10 +61,10 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       process.env.SEFGH_GO_ROUTES = ` unknown, ${name}, ${name} `;
       assert.deepEqual(await switchedRewrites(), {beforeFiles: [{source: path, destination: `http://127.0.0.1:8787${path}`}]});
     }
-    process.env.SEFGH_GO_ROUTES = 'repo-collect,repo-vote';
+    process.env.SEFGH_GO_ROUTES = 'ai-chat,upload-avatar';
     assert.equal((await switchedRewrites()).beforeFiles.length, 2);
-    process.env.SEFGH_GO_ROUTES = 'repo-vote';
-    assert.deepEqual(await switchedRewrites(), {beforeFiles: [{source: routes['repo-vote'], destination: `http://127.0.0.1:8787${routes['repo-vote']}`}]});
+    process.env.SEFGH_GO_ROUTES = 'upload-avatar';
+    assert.deepEqual(await switchedRewrites(), {beforeFiles: [{source: routes['upload-avatar'], destination: `http://127.0.0.1:8787${routes['upload-avatar']}`}]});
   } finally {
     if (oldURL === undefined) delete process.env.SEFGH_GO_API_URL; else process.env.SEFGH_GO_API_URL = oldURL;
     if (oldRoutes === undefined) delete process.env.SEFGH_GO_ROUTES; else process.env.SEFGH_GO_ROUTES = oldRoutes;

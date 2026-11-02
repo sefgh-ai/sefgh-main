@@ -64,41 +64,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -201,41 +166,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -298,41 +228,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "work",
-              "notes": "read later"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -388,41 +283,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -790,41 +650,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -880,41 +705,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "work",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -980,41 +770,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": 42,
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.42",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1068,43 +823,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.%5Bobject+Object%5D",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": {
-                "owner": "octo"
-              },
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.%5Bobject+Object%5D",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -1175,46 +893,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": [
-                "octo",
-                null,
-                1500,
-                true
-              ],
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2C%2C1500%2Ctrue",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1270,41 +948,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -1370,41 +1013,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": true,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_collections",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "a b&c=d+e/é*~",
-              "collection_name": "default",
-              "notes": null
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a+b%26c%3Dd%2Be%2F%C3%A9*%7E",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1450,26 +1058,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
@@ -1537,26 +1125,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": true,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1610,26 +1178,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -1727,26 +1275,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.a%2Fb",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1792,26 +1320,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo+x",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo+x",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
@@ -1991,26 +1499,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2065,26 +1553,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 7
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2130,26 +1598,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 3
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
@@ -2243,36 +1691,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -2398,36 +1816,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": false,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.work",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2474,36 +1862,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -2597,36 +1955,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/repo_collection_stats?select=total_saves&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "saved": false,
-          "totalSaves": 0
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_collections?user_id=eq.user-a&repo_full_name=eq.octo%2Fdemo&collection_name=eq.default",
-            "prefer": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
             "prefer": null,
             "content_type": null,
             "authorization": "Bearer session-a",
@@ -2757,15 +2085,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to save repositories."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -2805,26 +2124,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "saved": false,
-          "totalSaves": 1
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_collections?select=user_id&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2852,15 +2151,6 @@
         "status": 503,
         "body": {
           "error": "Sign-in could not be verified"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,

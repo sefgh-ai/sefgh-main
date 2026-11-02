@@ -6,26 +6,10 @@
 // must pass the same cases; GET's requests may come in any order.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runRouteFixture, SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
-register('./route-db-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/repo/comments/route.js');
+import { SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-comments/cases.json', import.meta.url), 'utf8'));
 
-// Version 2 (R-086) caps a page at 50 comments. Go sends the cap. This
-// Next.js handler keeps sending the limit as given until it is retired: the
-// owner's rule is to fix a backend bug once, in Go. Everything else must
-// still match.
-const asSentByNext = (c) => {
-  const expect = c.next_expect ?? c.expect;
-  const limit = Number.parseInt(new URLSearchParams(c.query ?? '').get('limit'));
-  if (!(limit > 50)) return expect;
-  return {
-    ...expect,
-    database: expect.database.map((request) => ({ ...request, path: request.path.replace('&limit=50&', `&limit=${limit}&`) })),
-  };
-};
 
 test('comments fixture integrity', () => {
   assert.equal(contract.contract_version, 5);
@@ -74,8 +58,8 @@ test('comments fixture integrity', () => {
   }
 });
 
-for (const c of contract.cases) {
-  test(`comments: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/comments', c), asSentByNext(c));
-  });
-}
+// P7-05: the Next.js handler is retired; Go's TestContract runs every case,
+// and no case keeps a Next.js-only expectation.
+test('cases keep no Next.js-only expectations', () => {
+  for (const c of contract.cases) assert.ok(!Object.keys(c).some((key) => key.startsWith('next_')), c.id);
+});

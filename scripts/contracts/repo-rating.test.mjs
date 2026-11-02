@@ -4,11 +4,8 @@
 // same cases.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runRouteFixture, SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
-register('./route-db-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/repo/rating/route.js');
+import { SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-rating/cases.json', import.meta.url), 'utf8'));
 
 test('rating fixture integrity', () => {
@@ -38,8 +35,8 @@ test('rating fixture integrity', () => {
   }
 });
 
-for (const c of contract.cases) {
-  test(`rating: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/rating', c), c.next_expect ?? c.expect);
-  });
-}
+// P7-05: the Next.js handler is retired; Go's TestContract runs every case,
+// and no case keeps a Next.js-only expectation.
+test('cases keep no Next.js-only expectations', () => {
+  for (const c of contract.cases) assert.ok(!Object.keys(c).some((key) => key.startsWith('next_')), c.id);
+});

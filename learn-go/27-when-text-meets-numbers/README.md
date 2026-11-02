@@ -62,7 +62,7 @@ Math.round(average * 10) / 10
 
 ## Checking it against JavaScript
 
-The contract `contracts/repo-rating` (52 cases) was recorded by running the three real Next.js handlers. Every expected value in `number_test.go` came from running the same expression in Node: `Number(...)`, the `reduce` sum, `Math.round`. Five deliberate mistakes in the Go handler were each caught by the contract. Among them: accepting only real numbers, adding as numbers only, and writing NaN as text.
+The contract `contracts/repo-rating` (52 cases) was recorded by running the three real Next.js handlers. Every expected value in `number_test.go` came from running the same expression in Node: `Number(...)`, the `reduce` sum, `Math.round`. Five deliberate mistakes in the Go handler were each caught by the contract. Among them: accepting only real numbers, adding as numbers only, and writing NaN as text. (Those handlers and the recorder were retired on 2026-11-02, P7-05: the recorded answers stay in the contract, and Go now answers this route on its own.)
 
 ## Your turn
 

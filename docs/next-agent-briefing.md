@@ -1,6 +1,11 @@
 # Briefing for the next agent (written 2026-10-29)
 
-**Current Phase7 pickup (P7-04, 2026-11-02):** the activity and starred Next
+**Current Phase7 pickup (P7-05, 2026-11-02):** the six repository-interaction
+Next handlers (collect, vote, rating, comments, comment votes, videos) and their
+recorders are retired locally (Claude Code); Go keeps every case. Next is P7-06
+(upload-avatar). Stop before P7-07 without owner AI-key confirmation and R-038.
+
+**Earlier pickup (P7-04, 2026-11-02):** the activity and starred Next
 handlers and their Next-only fixtures are retired locally (Claude Code); Go
 keeps every case, and the activity 400-input comparison now uses a standalone
 reference. Next is P7-05 (repository interactions), one route per task if

@@ -93,7 +93,7 @@ That is your exercise.
 
 ## Checking it against JavaScript
 
-The contract `contracts/repo-collect` (49 cases) was recorded by running the three real Next.js handlers with the real supabase-js around a stand-in database. Each case records every request the handler made: method, URL, headers and body. Go passes all 49. Five deliberate mistakes were tried, such as writing with the public key instead of your token, or forgetting that `null` throws. Each one makes cases fail.
+The contract `contracts/repo-collect` (49 cases) was recorded by running the three real Next.js handlers with the real supabase-js around a stand-in database. Each case records every request the handler made: method, URL, headers and body. Go passes all 49. Five deliberate mistakes were tried, such as writing with the public key instead of your token, or forgetting that `null` throws. Each one makes cases fail. (Those handlers and the recorder were retired on 2026-11-02, P7-05: the recorded answers stay in the contract, and Go now answers this route on its own.)
 
 The contract also keeps a known bug on purpose. The count of saves reads the table *as you*, and the database shows you only your own rows, so "saved by N people" only ever counts you (bug register R-083). The port copies it, so the two can be compared before the switch; the fix comes later, in Go.
 

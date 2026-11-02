@@ -26,10 +26,9 @@ const MIGRATION = 'supabase/migrations/20261015140000_sec_001_close_data_exposur
 // Columns asked for that are known to be wrong, each an open entry in
 // docs/bug-register.md. When one is fixed, remove it here; the test fails
 // until you do.
-const KNOWN = new Map([
-  ['src/app/api/repo/comments/route.js username', 'R-075'],
-  ['src/app/api/repo/videos/route.js username', 'R-075'],
-]);
+// The two Next.js handlers that still asked for username (R-075) were
+// retired in P7-05.
+const KNOWN = new Map();
 
 const columns = (list) => list.split(',').map((c) => c.trim()).filter(Boolean);
 const allowed = new Set(columns(PROFILE_COLUMNS));
@@ -116,7 +115,8 @@ test('code asks profiles only for granted columns', () => {
 // users' emails. Authors are shown from their public profile only. The two
 // Next.js route handlers keep their lookups until they are retired (Go answers
 // both routes without one).
-const ADMIN_KNOWN = ['src/app/api/repo/comments/route.js', 'src/app/api/repo/videos/route.js'];
+// The two Next.js handlers that kept the lookup were retired in P7-05.
+const ADMIN_KNOWN = [];
 
 test('no code asks Supabase Auth about another user (R-040)', () => {
   const found = sourceFiles(join(root, 'src'))

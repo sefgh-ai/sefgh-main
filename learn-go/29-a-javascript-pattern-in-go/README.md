@@ -110,7 +110,7 @@ Deleting the helpers it called, `AdminUser` and `AdminUserEmail` in `internal/su
 
 ## How the port was checked
 
-The videos contract (`contracts/repo-videos`) was recorded from the real Next.js handler, with addresses for each trap: a no-break space, a vertical tab, a line separator, an emoji inside the id and one cut in half. Then each fix was undone on purpose, one at a time. Go's own `\s`, Go's own `.`, matching over runes, and writing the id through a Go string: every one made a contract case fail.
+The videos contract (`contracts/repo-videos`) was recorded from the real Next.js handler, with addresses for each trap: a no-break space, a vertical tab, a line separator, an emoji inside the id and one cut in half. Then each fix was undone on purpose, one at a time. Go's own `\s`, Go's own `.`, matching over runes, and writing the id through a Go string: every one made a contract case fail. (Those handlers and the recorder were retired on 2026-11-02, P7-05: the recorded answers stay in the contract, and Go now answers this route on its own.)
 
 ## Your turn
 

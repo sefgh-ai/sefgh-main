@@ -173,119 +173,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 2
-            },
-            {
-              "id": "c2",
-              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Works on Windows too",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c2&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -404,73 +291,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 1
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -569,73 +389,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c3&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c3",
-              "user_id": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-              "repo_full_name": "octo/demo",
-              "parent_id": "c1",
-              "comment_text": "Agreed",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=eq.c1",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -1363,64 +1116,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_email": null,
-              "user_avatar": "https://avatars.example/octo.png",
-              "reply_count": 3
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1518,74 +1213,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_email": "a@example.test",
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -1711,73 +1338,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1885,36 +1445,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.not-a-uuid",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2006,73 +1536,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -2190,73 +1653,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "HEAD",
-            "path": "/rest/v1/repo_comments?select=*&parent_id=eq.c1&is_deleted=eq.false",
-            "prefer": "count=exact",
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "comments": [
-            {
-              "id": "c1",
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Great library",
-              "upvotes": 2,
-              "downvotes": 0,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "updated_at": "2026-10-16T08:00:00+00:00",
-              "is_edited": false,
-              "is_deleted": false,
-              "user_name": null,
-              "user_avatar": null,
-              "reply_count": 0
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=*&repo_full_name=eq.octo%2Fdemo&is_deleted=eq.false&order=created_at.desc&offset=0&limit=50&parent_id=is.null",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -2425,61 +1821,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "comment": {
-            "id": "c9",
-            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "repo_full_name": "octo/demo",
-            "parent_id": null,
-            "comment_text": "Nice work",
-            "upvotes": 2,
-            "downvotes": 0,
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "updated_at": "2026-10-16T08:00:00+00:00",
-            "is_edited": false,
-            "is_deleted": false,
-            "user_name": null,
-            "user_email": "a@example.test",
-            "user_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_comments?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Nice work",
-              "upvotes": 0,
-              "downvotes": 0,
-              "is_edited": false,
-              "is_deleted": false
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2583,71 +1924,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "comment": {
-            "id": "c9",
-            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "repo_full_name": "octo/demo",
-            "parent_id": "c1",
-            "comment_text": "Agreed",
-            "upvotes": 2,
-            "downvotes": 0,
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "updated_at": "2026-10-16T08:00:00+00:00",
-            "is_edited": false,
-            "is_deleted": false,
-            "user_name": null,
-            "user_email": "a@example.test",
-            "user_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_comments?select=id&id=eq.c1",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_comments?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": "c1",
-              "comment_text": "Agreed",
-              "upvotes": 0,
-              "downvotes": 0,
-              "is_edited": false,
-              "is_deleted": false
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -2927,61 +2203,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "comment": {
-            "id": "c9",
-            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "repo_full_name": "octo/demo",
-            "parent_id": null,
-            "comment_text": "Nice work",
-            "upvotes": 2,
-            "downvotes": 0,
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "updated_at": "2026-10-16T08:00:00+00:00",
-            "is_edited": false,
-            "is_deleted": false,
-            "user_name": null,
-            "user_email": "a@example.test",
-            "user_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_comments?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Nice",
-              "upvotes": 0,
-              "downvotes": 0,
-              "is_edited": false,
-              "is_deleted": false
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3128,61 +2349,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "comment": {
-            "id": "c9",
-            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "repo_full_name": "octo/demo",
-            "parent_id": null,
-            "comment_text": "Nice work",
-            "upvotes": 2,
-            "downvotes": 0,
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "updated_at": "2026-10-16T08:00:00+00:00",
-            "is_edited": false,
-            "is_deleted": false,
-            "user_name": null,
-            "user_email": "a@example.test",
-            "user_avatar": "a.png"
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_comments?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Hi",
-              "upvotes": 0,
-              "downvotes": 0,
-              "is_edited": false,
-              "is_deleted": false
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3267,60 +2433,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "comment": {
-            "id": "c9",
-            "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "repo_full_name": "octo/demo",
-            "parent_id": null,
-            "comment_text": "Nice work",
-            "upvotes": 2,
-            "downvotes": 0,
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "updated_at": "2026-10-16T08:00:00+00:00",
-            "is_edited": false,
-            "is_deleted": false,
-            "user_name": null,
-            "user_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_comments?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "repo_full_name": "octo/demo",
-              "parent_id": null,
-              "comment_text": "Hi",
-              "upvotes": 0,
-              "downvotes": 0,
-              "is_edited": false,
-              "is_deleted": false
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -3472,30 +2584,6 @@
         "status": 404,
         "body": {
           "error": "Comment not found or unauthorized"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "comment_text": "Edited",
-              "is_edited": true,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to update comment"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -3715,30 +2803,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -3779,30 +2843,6 @@
             "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -3903,30 +2943,6 @@
             "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to delete comment"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c1&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -4113,15 +3129,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to comment."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -4161,15 +3168,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -4193,15 +3191,6 @@
         "status": 503,
         "body": {
           "error": "Sign-in could not be verified"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -4239,30 +3228,6 @@
             "path": "/rest/v1/repo_comments?id=eq.missing&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.missing&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -4327,30 +3292,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 406,
@@ -4393,30 +3334,6 @@
             "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "is_deleted": true,
-              "comment_text": "[deleted]",
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/repo_comments?id=eq.c2&user_id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",

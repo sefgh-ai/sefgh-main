@@ -1,0 +1,39 @@
+{
+  "task": "P7-05",
+  "checked_at": "2026-11-02T09:55:03Z",
+  "site": "https://sefgh-main.vercel.app",
+  "method": "GET only, no credentials",
+  "observations": [
+    {
+      "path": "/api/repo/collect?repo=vercel/next.js",
+      "status": 200,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/repo/vote?repo=vercel/next.js",
+      "status": 200,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/repo/rating?repo=vercel/next.js",
+      "status": 200,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/repo/comments/vote",
+      "status": 400,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/repo/comments?repo=vercel/next.js",
+      "status": 200,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/repo/videos?repo=vercel/next.js",
+      "status": 200,
+      "x_sefgh_backend": "go"
+    }
+  ],
+  "not_established": "signed-in writes, deployment of P7-05, hosted rollback"
+}

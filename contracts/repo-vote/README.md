@@ -15,7 +15,7 @@ cd backend && go test -count=1 ./internal/vote/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-vote.mjs` runs the real Next.js handlers on each case's inputs and writes their answers into `expect`. The inputs and dispositions are written by hand. `scripts/contracts/route-db-fixture.mjs` builds the handlers' client with the **real** supabase-js 2.78 and replaces only its `fetch` and `auth.getUser()`. So every query, write, function call and reading of a reply is supabase-js's own. It also fixes the clock at `2026-10-17T09:30:00.000Z` while a handler runs, because a vote stores `updated_at`. `route-db-loader.mjs` hands that client to the handlers. Both files are meant for the next routes too.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-repo-vote.mjs` ran the real Next.js handlers on each case's inputs and writes their answers into `expect`. The inputs and dispositions are written by hand. `scripts/contracts/route-db-fixture.mjs` builds the handlers' client with the **real** supabase-js 2.78 and replaces only its `fetch` and `auth.getUser()`. So every query, write, function call and reading of a reply is supabase-js's own. It also fixes the clock at `2026-10-17T09:30:00.000Z` while a handler runs, because a vote stores `updated_at`. `route-db-loader.mjs` hands that client to the handlers. Both files are meant for the next routes too.
 
 A fixture gives:
 

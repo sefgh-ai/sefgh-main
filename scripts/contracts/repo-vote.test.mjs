@@ -4,11 +4,8 @@
 // cases.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runRouteFixture, SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
-register('./route-db-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/repo/vote/route.js');
+import { SUPABASE_KEY, NOW } from './route-db-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-vote/cases.json', import.meta.url), 'utf8'));
 
 test('vote fixture integrity', () => {
@@ -37,15 +34,16 @@ test('vote fixture integrity', () => {
     }
     if (c.go_database) {
       assert.equal(c.go_database.length, c.expect.database.length, c.id);
-      assert.ok(c.next_expect.database.some((request) => request.path === '/rest/v1/rpc/get_repo_vote_stats'), c.id);
+      // R-076: Go never calls the missing get_repo_vote_stats.
+      assert.ok(!c.expect.database.some((request) => request.path === '/rest/v1/rpc/get_repo_vote_stats'), c.id);
       assert.equal(c.expect.database.length, 2, c.id);
       assert.equal(c.expect.database[1].method, 'GET', c.id);
     }
   }
 });
 
-for (const c of contract.cases) {
-  test(`vote: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runRouteFixture(handlers, '/api/repo/vote', c), c.next_expect ?? c.expect);
-  });
-}
+// P7-05: the Next.js handler is retired; Go's TestContract runs every case,
+// and no case keeps a Next.js-only expectation.
+test('cases keep no Next.js-only expectations', () => {
+  for (const c of contract.cases) assert.ok(!Object.keys(c).some((key) => key.startsWith('next_')), c.id);
+});

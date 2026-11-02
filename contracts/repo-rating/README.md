@@ -22,7 +22,7 @@ cd backend && go test -count=1 ./internal/rating/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-rating.mjs` runs the real Next.js handlers through `scripts/contracts/route-db-fixture.mjs`, the shared runner of the vote contract. That is the real supabase-js 2.78 with only `fetch` and `auth.getUser()` replaced, and the clock fixed at `2026-10-17T09:30:00.000Z`. The inputs and dispositions are written by hand.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-repo-rating.mjs` ran the real Next.js handlers through `scripts/contracts/route-db-fixture.mjs`, the shared runner of the vote contract. That is the real supabase-js 2.78 with only `fetch` and `auth.getUser()` replaced, and the clock fixed at `2026-10-17T09:30:00.000Z`. The inputs and dispositions are written by hand.
 
 ## Recorded behaviour
 

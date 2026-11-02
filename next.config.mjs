@@ -34,26 +34,18 @@ const shareGoRoutes = [
 // P7-04 the caller's own reads (activity, starred) likewise: Go only, bearer
 // only (src/lib/supabase/session-fetch.js sends it).
 const userReadGoRoutes = ["/api/activity", "/api/repo/starred"];
+// P7-05 repository interactions: Go only, bearer only, the same origin
+// requirement.
+const interactionGoRoutes = [
+  "/api/repo/collect", "/api/repo/vote", "/api/repo/rating",
+  "/api/repo/comments/vote", "/api/repo/comments", "/api/repo/videos",
+];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
   // The browser sends the bearer (src/lib/ai/chat-request.js).
   "ai-chat": "/api/ai/chat",
-  // Saving, removing and counting a repository in the caller's collections
-  // (COLLECT-001), the first route that writes to the database. Bearer only,
-  // like activity; the browser sends it (src/lib/supabase/session-fetch.js).
-  "repo-collect": "/api/repo/collect",
-  // Votes on a repository (VOTE-001). Bearer only, like collect.
-  "repo-vote": "/api/repo/vote",
-  // Ratings of a repository (RATING-001). Bearer only, like collect.
-  "repo-rating": "/api/repo/rating",
-  // Votes on comments (CVOTE-001). Bearer only, like collect.
-  "comment-vote": "/api/repo/comments/vote",
-  // A repository's comments (COMMENTS-001). Bearer only, like collect.
-  "repo-comments": "/api/repo/comments",
-  // A repository's videos (VIDEOS-001). Bearer only, like collect.
-  "repo-videos": "/api/repo/videos",
   "upload-avatar": "/api/upload-avatar",
   // The trending page's topic sections, searched live on GitHub and cached by
   // the CDN (TREND-001a; R-077, option A). Go only: there is no Next.js
@@ -91,7 +83,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

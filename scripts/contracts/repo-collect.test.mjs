@@ -4,11 +4,8 @@
 // cases.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runCollectFixture, SUPABASE_KEY } from './collect-fixture.mjs';
-register('./collect-loader.mjs', import.meta.url);
-const handlers = await import('../../src/app/api/repo/collect/route.js');
+import { SUPABASE_KEY } from './collect-fixture.mjs';
 const contract = JSON.parse(await readFile(new URL('../../contracts/repo-collect/cases.json', import.meta.url), 'utf8'));
 
 test('collect fixture integrity', () => {
@@ -39,10 +36,8 @@ test('collect fixture integrity', () => {
   }
 });
 
-for (const c of contract.cases) {
-  test(`collect: ${c.id} [${c.disposition}]`, async () => {
-    // Version 2 (R-083) is Go's; this Next.js handler keeps counting the
-    // visitor's own rows until it is retired, and its answer is next_expect.
-    assert.deepEqual(await runCollectFixture(handlers, c), c.next_expect ?? c.expect);
-  });
-}
+// P7-05: the Next.js handler is retired; Go's TestContract runs every case,
+// and no case keeps a Next.js-only expectation.
+test('cases keep no Next.js-only expectations', () => {
+  for (const c of contract.cases) assert.ok(!Object.keys(c).some((key) => key.startsWith('next_')), c.id);
+});

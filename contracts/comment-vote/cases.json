@@ -1048,15 +1048,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to vote."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -1082,15 +1073,6 @@
         "status": 503,
         "body": {
           "error": "Sign-in could not be verified"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "userVote": null
         },
         "content_type": "application/json",
         "cache_control": null,

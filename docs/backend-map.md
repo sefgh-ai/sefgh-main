@@ -1,5 +1,13 @@
 # SEFGH backend map
 
+P7-05 (2026-11-02): the Next.js handlers for `/api/repo/collect`, `/vote`,
+`/rating`, `/comments`, `/comments/vote` and `/videos` are retired. The
+repository page keeps its session-aware URLs; Go keeps all behaviour and every
+case of the six contracts. Rewrites are unconditional when SEFGH_GO_API_URL is
+configured; the six old switch names are ignored. Without a Go origin these
+paths are 404. [Production prerequisite receipt](verification/p7-05-interactions-2026-11-02.json).
+Rollback: revert the P7-05 commit and redeploy both projects.
+
 P7-04 (2026-11-02): the Next.js handlers for `/api/activity` and
 `/api/repo/starred` are retired. The profile card and the starred page keep
 their session-aware URLs; Go keeps all behaviour, and the activity (16) and

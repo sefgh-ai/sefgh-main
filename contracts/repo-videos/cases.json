@@ -96,60 +96,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": "Walkthrough",
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -236,60 +182,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "https://youtu.be/dQw4w9WgXcQ?t=42",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtu.be/dQw4w9WgXcQ?t=42",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -392,60 +284,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -532,60 +370,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtube.com/shorts/abc/def/dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -688,60 +472,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?feature=x&v=dQw4w9WgXcQ&t=1",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -836,60 +566,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://github.com/octo/demo/raw/demo.mp4",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -939,60 +615,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "direct",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://example.test/clip.mp4",
-              "video_type": "direct",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1079,60 +701,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=short",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -1235,60 +803,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtu.be/abcdefghi😀x",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/abcdefghi😀/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1375,60 +889,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtu.be/abcdefghij😀",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/abcdefghij\ud83d/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -1531,60 +991,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtu.be/ bcdefghijk",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1634,60 +1040,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtu.be/abcdefghij\u000bk",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1782,60 +1134,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/a/b /dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1885,62 +1183,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "direct",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": [
-                "x"
-              ],
-              "video_type": "direct",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -1964,15 +1206,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -1992,15 +1225,6 @@
         "status": 400,
         "body": {
           "error": "Video URL must be an https link to YouTube or GitHub"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -2054,60 +1278,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "direct",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://example.test/clip.mp4",
-              "video_type": "direct",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2384,60 +1554,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": "a.png"
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2521,59 +1637,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -2676,60 +1739,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "direct",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://github.com/octo/demo/raw/demo.mp4",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2816,60 +1825,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -2972,60 +1927,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.github.com/octo/demo/raw/demo.mp4",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3120,60 +2021,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://github.com/octo/youtube.com/raw/demo.mp4",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3223,60 +2070,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "http://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3326,60 +2119,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3429,60 +2168,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://other.test/clip.mp4?github.com",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3532,60 +2217,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://github.com@other.test/clip.mp4",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3635,60 +2266,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "github",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": null,
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://github.com:8443/octo/demo/raw/demo.mp4",
-              "video_type": "github",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3738,60 +2315,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "video": {
-            "id": "v9",
-            "repo_full_name": "octo/demo",
-            "video_url": "x",
-            "video_type": "youtube",
-            "title": "Demo",
-            "description": null,
-            "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            "duration": null,
-            "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "created_at": "2026-10-16T08:00:00+00:00",
-            "is_featured": false,
-            "uploader_name": null,
-            "uploader_email": "a@example.test",
-            "uploader_avatar": null
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_videos?select=*",
-            "prefer": "return=representation",
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "repo_full_name": "octo/demo",
-              "video_url": "https://WWW.YOUTUBE.COM/watch?v=dQw4w9WgXcQ",
-              "video_type": "direct",
-              "title": null,
-              "description": null,
-              "thumbnail_url": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -3914,75 +2437,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "videos": [
-            {
-              "id": "v1",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false,
-              "uploader_name": null,
-              "uploader_avatar": null
-            },
-            {
-              "id": "v2",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://example.test/clip.mp4",
-              "video_type": "direct",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": null,
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -4083,62 +2537,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "videos": [
-            {
-              "id": "v1",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false,
-              "uploader_name": null,
-              "uploader_avatar": null
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -4233,62 +2631,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "videos": [
-            {
-              "id": "v1",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false,
-              "uploader_name": null,
-              "uploader_avatar": "a.png"
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -4377,62 +2719,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "videos": [
-            {
-              "id": "v1",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false,
-              "uploader_name": null,
-              "uploader_avatar": "a.png"
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -4534,63 +2820,6 @@
             "body": null
           }
         ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "videos": [
-            {
-              "id": "v1",
-              "repo_full_name": "octo/demo",
-              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              "video_type": "youtube",
-              "title": "Demo",
-              "description": null,
-              "thumbnail_url": null,
-              "duration": null,
-              "uploaded_by": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-              "created_at": "2026-10-16T08:00:00+00:00",
-              "is_featured": false,
-              "uploader_name": null,
-              "uploader_email": "a@example.test",
-              "uploader_avatar": null
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -4677,46 +2906,6 @@
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/auth/v1/admin/users/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": null,
             "authorization": "Bearer public-fixture-key",
             "apikey": "public-fixture-key",
@@ -4811,36 +3000,6 @@
           {
             "method": "GET",
             "path": "/rest/v1/profiles?select=full_name%2Cavatar_url&id=eq.NOT-A-UUID",
-            "prefer": null,
-            "accept": "application/vnd.pgrst.object+json",
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_videos?select=*&repo_full_name=eq.octo%2Fdemo&order=is_featured.desc%2Ccreated_at.desc",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer public-fixture-key",
-            "apikey": "public-fixture-key",
-            "body": null
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/profiles?select=username%2Cavatar_url&id=eq.NOT-A-UUID",
             "prefer": null,
             "accept": "application/vnd.pgrst.object+json",
             "content_type": null,
@@ -5217,26 +3376,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -5277,26 +3416,6 @@
             "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -5393,26 +3512,6 @@
             "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to delete video"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.v1&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -5571,15 +3670,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to add videos."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -5603,15 +3693,6 @@
         "status": 503,
         "body": {
           "error": "Sign-in could not be verified"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,
@@ -5649,26 +3730,6 @@
             "path": "/rest/v1/repo_videos?id=eq.missing&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.missing&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",
@@ -5725,26 +3786,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 406,
@@ -5787,26 +3828,6 @@
             "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b&select=*",
             "prefer": "return=representation",
             "accept": "application/vnd.pgrst.object+json",
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "DELETE",
-            "path": "/rest/v1/repo_videos?id=eq.v2&uploaded_by=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "prefer": null,
-            "accept": null,
             "content_type": "application/json",
             "authorization": "Bearer session-a",
             "apikey": "public-fixture-key",

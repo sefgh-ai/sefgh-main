@@ -27,7 +27,7 @@ cd backend && go test -count=1 ./internal/comments/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-comments.mjs` runs the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`. That is the real supabase-js 2.78 with only `fetch`, `auth.getUser()` and `auth.getSession()` replaced, so the Data API gets the visitor's token and the auth admin API gets the public key, as with the real cookie client. The clock is fixed at `2026-10-17T09:30:00.000Z`.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-repo-comments.mjs` ran the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`. That is the real supabase-js 2.78 with only `fetch`, `auth.getUser()` and `auth.getSession()` replaced, so the Data API gets the visitor's token and the auth admin API gets the public key, as with the real cookie client. The clock is fixed at `2026-10-17T09:30:00.000Z`.
 
 GET makes its per-comment requests at the same time. Its cases therefore answer by `routes`, matched on `METHOD path?query`, and its requests are compared in any order. The runner gained `routes`, reply headers and PATCH bodies for this contract; the vote, rating and comment-vote contracts pass unchanged with it.
 

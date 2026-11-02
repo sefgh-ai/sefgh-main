@@ -21,7 +21,7 @@ cd backend && go test -count=1 ./internal/collect/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-collect.mjs` runs the real Next.js handlers on each case's inputs and writes their answers into `expect`. The inputs and dispositions are written by hand. A throwaway script typed the first draft; `cases.json` itself is the source now. `scripts/contracts/collect-fixture.mjs` builds the handlers' client with the **real** supabase-js 2.78 and replaces only its `fetch` and `auth.getUser()`. So every query, write and reading of a reply is supabase-js's own. `collect-loader.mjs` hands that client to the handlers.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-repo-collect.mjs` ran the real Next.js handlers on each case's inputs and writes their answers into `expect`. The inputs and dispositions are written by hand. A throwaway script typed the first draft; `cases.json` itself is the source now. `scripts/contracts/collect-fixture.mjs` builds the handlers' client with the **real** supabase-js 2.78 and replaces only its `fetch` and `auth.getUser()`. So every query, write and reading of a reply is supabase-js's own. `collect-loader.mjs` hands that client to the handlers.
 
 A fixture gives:
 

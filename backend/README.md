@@ -521,7 +521,7 @@ Opt-in names: `conversation-share` (`POST` and `DELETE /api/conversations/{id}/s
 
 ## Videos (VIDEOS-001)
 
-Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 57 cases (version 2: only `https` addresses on YouTube's or GitHub's exact hosts, R-088; version 3: uploaders from `profiles.full_name, avatar_url`, no admin lookup, R-040 and R-075) of `contracts/repo-videos`, recorded with the shared runner.
+Retired from Next.js in P7-05: Go only, no switch (was `repo-videos`). `GET`, `POST` and `DELETE /api/repo/videos`. It passes the 57 cases (version 2: only `https` addresses on YouTube's or GitHub's exact hosts, R-088; version 3: uploaders from `profiles.full_name, avatar_url`, no admin lookup, R-040 and R-075) of `contracts/repo-videos`, recorded with the shared runner.
 
 - **Uploader details from the public profile (version 3):** the profile read asks for `full_name,avatar_url`, and there is no admin lookup, so `uploader_email` is null for listed videos (R-040, R-075; version 1 copied the failing `username` read and the refused admin call). `supabaserest.AdminUser` and `AdminUserEmail` were removed with it (BUG-028b). A video without `uploaded_by` is answered as it is.
 - **The YouTube pattern matches what JavaScript matches:** `jscompat.JSSpace` and `jscompat.JSDot` stand in for Go's `\s` and `.`, which match different characters, and `jscompat.FindSubmatchUTF16` runs the pattern over UTF-16 units, so the id's `{11}` counts an emoji as two and can end in half of one. The thumbnail is written from those units (`jscompat.UTF16`), so the half survives as JavaScript writes it.
@@ -531,7 +531,7 @@ Opt-in name: `repo-videos`, off by default. `GET`, `POST` and `DELETE /api/repo/
 
 ## Comments (COMMENTS-001)
 
-Opt-in name: `repo-comments`, off by default. `GET`, `POST`, `PATCH` and `DELETE /api/repo/comments`. It passes the 52 cases (version 2: a page holds at most `comments.MaxLimit`, 50, R-086; version 3: authors from `profiles.full_name, avatar_url`, no admin lookup, R-040 and R-075) of `contracts/repo-comments`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`, which now hands supabase-js the session the way the cookie client does, answers by route, and sends PATCH bodies).
+Retired from Next.js in P7-05: Go only, no switch (was `repo-comments`). `GET`, `POST`, `PATCH` and `DELETE /api/repo/comments`. It passes the 52 cases (version 2: a page holds at most `comments.MaxLimit`, 50, R-086; version 3: authors from `profiles.full_name, avatar_url`, no admin lookup, R-040 and R-075) of `contracts/repo-comments`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`, which now hands supabase-js the session the way the cookie client does, answers by route, and sends PATCH bodies).
 
 - **Author details copied as they fail:** the profile read asks for `username`, which does not exist (R-075), and the admin lookup (`supabaserest.AdminUser`, new) goes with the public key and is refused (R-040). Names never show, as today. The lookup is kept so the two can be compared; the fix lands here after cutover.
 - **Concurrency:** each comment's profile, admin lookup and reply count (`supabaserest.Count`, a `HEAD` with `Prefer: count=exact`) run for at most four comments at once, all within `comments.DetailsBudget` (16 seconds) after the list's own read. A comment that makes `Promise.all` reject (null, or an author id that is not a lower-case UUID) answers 500 and cancels the rest.
@@ -541,11 +541,11 @@ Opt-in name: `repo-comments`, off by default. `GET`, `POST`, `PATCH` and `DELETE
 
 ## Comment votes (CVOTE-001)
 
-Opt-in name: `comment-vote`, off by default. `POST` and `GET /api/repo/comments/vote`: voting on a comment, and the caller's own vote. It passes the 25 cases of `contracts/comment-vote`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`). Only a signed-in caller reaches the database, with their own token: a signed-out GET answers `{"userVote":null}` without a request. Writes use `supabaserest.Upsert` (`on_conflict=user_id,comment_id`) and `Delete`. The counts after a vote are read as one row and written with `jscompat.FieldOr` (`comment?.upvotes || 0`), now shared with vote. Differs from Next.js as vote does: a bearer instead of the session cookie (the comment arrows use `fetchWithSession`), a 1 MiB body limit, Go's 405 for other methods.
+Retired from Next.js in P7-05: Go only, no switch (was `comment-vote`). `POST` and `GET /api/repo/comments/vote`: voting on a comment, and the caller's own vote. It passes the 25 cases of `contracts/comment-vote`, recorded with the shared runner (`scripts/contracts/route-db-fixture.mjs`). Only a signed-in caller reaches the database, with their own token: a signed-out GET answers `{"userVote":null}` without a request. Writes use `supabaserest.Upsert` (`on_conflict=user_id,comment_id`) and `Delete`. The counts after a vote are read as one row and written with `jscompat.FieldOr` (`comment?.upvotes || 0`), now shared with vote. Differs from Next.js as vote does: a bearer instead of the session cookie (the comment arrows use `fetchWithSession`), a 1 MiB body limit, Go's 405 for other methods.
 
 ## Rating (RATING-001)
 
-Opt-in name: `repo-rating`, off by default. `POST`, `DELETE` and `GET /api/repo/rating`: rating a repository, removing the rating, and every rating with the total and average. It passes the 52 cases of `contracts/repo-rating`, recorded from the Next.js handlers with the shared runner (`scripts/contracts/route-db-fixture.mjs`).
+Retired from Next.js in P7-05: Go only, no switch (was `repo-rating`). `POST`, `DELETE` and `GET /api/repo/rating`: rating a repository, removing the rating, and every rating with the total and average. It passes the 52 cases of `contracts/repo-rating`, recorded from the Next.js handlers with the shared runner (`scripts/contracts/route-db-fixture.mjs`).
 
 - **JavaScript's loose rules, copied:** the check (`rating < 1 || rating > 5`) turns the rating into a number with `jscompat.Number`, so `"5"`, `" 5 "`, `"0x5"` and `[3]` pass and `"great"` (NaN) passes every comparison. The average adds with `jscompat.Add`, which joins text, and rounds with `jscompat.MathRound`; NaN is written `null` (`jscompat.NumberJSON`). These are bug R-085, kept so the two can be compared; the fix comes after cutover.
 - **Writes go as the caller** (`supabaserest.Upsert`, `Delete`), with `updated_at` from `Handler.Now`.
@@ -554,7 +554,7 @@ Opt-in name: `repo-rating`, off by default. `POST`, `DELETE` and `GET /api/repo/
 
 ## Vote (VOTE-001)
 
-Opt-in name: `repo-vote`, off by default. `POST` and `GET /api/repo/vote`: upvoting, downvoting or removing a vote, and the counts. It passes the 37 cases of `contracts/repo-vote`, recorded from the Next.js handlers with the real supabase-js and a fixed clock (`scripts/contracts/route-db-fixture.mjs`).
+Retired from Next.js in P7-05: Go only, no switch (was `repo-vote`). `POST` and `GET /api/repo/vote`: upvoting, downvoting or removing a vote, and the counts. It passes the 37 cases of `contracts/repo-vote`, recorded from the Next.js handlers with the real supabase-js and a fixed clock (`scripts/contracts/route-db-fixture.mjs`).
 
 - **Writes go as the caller:** `supabaserest.Upsert` (new: `on_conflict` and `Prefer: resolution=merge-duplicates`) and `Delete`, with the caller's own token. `updated_at` comes from `Handler.Now`, written by `jscompat.ISOString` as `toISOString()` writes it.
 - **Counts (BUG-037, R-076):** Go reads votes directly after a successful write. Contract version 2 removes the missing `get_repo_vote_stats` call from Go; `next_expect` keeps the rollback Next.js handler characterized. Failed counts retain zeros.
@@ -563,7 +563,7 @@ Opt-in name: `repo-vote`, off by default. `POST` and `GET /api/repo/vote`: upvot
 
 ## Collect (COLLECT-001)
 
-Opt-in name: `repo-collect`, off by default. `POST`, `DELETE` and `GET /api/repo/collect`: saving a repository to the caller's collection, removing it, and asking whether it is saved and how many saves it has. It is the first Go route that writes to the database. It passes the 49 cases of `contracts/repo-collect`, recorded from the Next.js handlers by `scripts/contracts/record-repo-collect.mjs` with the real supabase-js around a stand-in Data API.
+Retired from Next.js in P7-05: Go only, no switch (was `repo-collect`). `POST`, `DELETE` and `GET /api/repo/collect`: saving a repository to the caller's collection, removing it, and asking whether it is saved and how many saves it has. It is the first Go route that writes to the database. It passes the 49 cases of `contracts/repo-collect`, recorded from the Next.js handlers by `scripts/contracts/record-repo-collect.mjs` with the real supabase-js around a stand-in Data API.
 
 - **Writes go as the caller.** `supabaserest.Insert` and `supabaserest.Delete` send the caller's own token with the public key, with the headers postgrest-js sends (`Content-Profile: public`, a JSON `Content-Type`). The row names the user id that Supabase Auth gave for that token, and the table's own rule checks it again: a user may add, change or remove only rows whose `user_id` is their own (`../docs/database/user-db.md`). No service key exists.
 - **Reads** go with the caller's bearer, or the public key when signed out. For `GET`, Supabase Auth is asked only for whether the row is the caller's; a token it refuses still goes to the database, as the cookie client sends the session it has.

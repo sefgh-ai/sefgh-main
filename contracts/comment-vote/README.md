@@ -13,7 +13,7 @@ cd backend && go test -count=1 ./internal/commentvote/
 
 ## How it was recorded
 
-`scripts/contracts/record-comment-vote.mjs` runs the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`: the real supabase-js 2.78 with only `fetch` and `auth.getUser()` replaced. The inputs and dispositions are written by hand.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-comment-vote.mjs` ran the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`: the real supabase-js 2.78 with only `fetch` and `auth.getUser()` replaced. The inputs and dispositions are written by hand.
 
 ## Recorded behaviour
 

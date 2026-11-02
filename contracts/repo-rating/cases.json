@@ -403,46 +403,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 4.5
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": 4.5,
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -479,46 +439,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 5
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": "5",
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -552,32 +472,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to save rating"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": "great",
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          }
-        ]
       }
     },
     {
@@ -637,46 +531,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 5
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": " 5 ",
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -713,46 +567,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 5
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": "0x5",
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -789,48 +603,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 3
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": [
-                3
-              ],
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -890,48 +662,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 4
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": {
-                "stars": 4
-              },
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -968,46 +698,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "ratings": {
-            "total": 1,
-            "average": 1
-          }
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/rest/v1/repo_ratings?on_conflict=user_id%2Crepo_full_name",
-            "prefer": "resolution=merge-duplicates",
-            "accept": null,
-            "content_type": "application/json",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": {
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": true,
-              "review_text": null,
-              "updated_at": "2026-10-17T09:30:00.000Z"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=rating&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2677,15 +2367,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized. Please login to rate."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -2744,50 +2425,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "ratings": {
-            "total": 2,
-            "average": 4.5
-          },
-          "userRating": null,
-          "allRatings": [
-            {
-              "id": "r1",
-              "user_id": "user-a",
-              "repo_full_name": "octo/demo",
-              "rating": 4,
-              "review_text": "Solid",
-              "created_at": "2026-10-10T08:00:00+00:00",
-              "updated_at": "2026-10-10T08:00:00+00:00"
-            },
-            {
-              "id": "r2",
-              "user_id": "user-b",
-              "repo_full_name": "octo/demo",
-              "rating": 5,
-              "review_text": null,
-              "created_at": "2026-10-11T08:00:00+00:00",
-              "updated_at": "2026-10-11T08:00:00+00:00"
-            }
-          ]
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "GET",
-            "path": "/rest/v1/repo_ratings?select=*&repo_full_name=eq.octo%2Fdemo",
-            "prefer": null,
-            "accept": null,
-            "content_type": null,
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "body": null
-          }
-        ]
       }
     },
     {
@@ -2811,15 +2448,6 @@
         "status": 503,
         "body": {
           "error": "Sign-in could not be verified"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
         },
         "content_type": "application/json",
         "cache_control": null,

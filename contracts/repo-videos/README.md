@@ -26,7 +26,7 @@ cd backend && go test -count=1 ./internal/videos/
 
 ## How it was recorded
 
-`scripts/contracts/record-repo-videos.mjs` runs the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`, as for comments: the real supabase-js 2.78 with only `fetch`, `auth.getUser()` and `auth.getSession()` replaced. The Data API gets the visitor's token, or the public key when signed out, and the auth admin API gets the public key. GET makes its per-video requests at the same time, so its cases answer by `routes` and its requests are compared in any order. Inputs, reasons and dispositions are written by hand; only `expect` is recorded.
+(Historical: the Next.js handlers and this recorder were retired in P7-05, and every `next_*` field was removed from the cases; Go's tests run every case.) `scripts/contracts/record-repo-videos.mjs` ran the real Next.js handlers through the shared runner `scripts/contracts/route-db-fixture.mjs`, as for comments: the real supabase-js 2.78 with only `fetch`, `auth.getUser()` and `auth.getSession()` replaced. The Data API gets the visitor's token, or the public key when signed out, and the auth admin API gets the public key. GET makes its per-video requests at the same time, so its cases answer by `routes` and its requests are compared in any order. Inputs, reasons and dispositions are written by hand; only `expect` is recorded.
 
 ## Recorded behaviour
 
