@@ -448,6 +448,8 @@ is reverting the P7-06 commit and redeploying both projects.
 
 ## Data proxy (DATA-PROXY-001)
 
+Since P7-08b the website's browser and server clients always send these areas here; `NEXT_PUBLIC_SEFGH_GO_DATA`, mentioned below, is no longer read.
+
 The rest of the browser's own database calls: notifications, profile, user stats, home (projects and categories), submissions, search statistics, conversations, the repository page's reads and the activity log. With an area in the website's `NEXT_PUBLIC_SEFGH_GO_DATA`, the browser's Supabase client (`src/lib/supabase/data-routing.js`) sends that area's Data API requests to `/api/data/{area}/rest/v1/...`, and `next.config.mjs` rewrites them here.
 
 - **Checked, then passed on unchanged:** `policy.json` (embedded) lists each area's tables and functions, their methods and the fields a write may set. Anything else is refused with a 403 in the Data API's own error shape, so supabase-js reports it as the database's error. An allowed request goes on with the caller's own token, the server's public key and the headers the Data API reads; its reply comes back with its status, body and `Content-Range`.

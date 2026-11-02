@@ -1,0 +1,46 @@
+{
+  "task": "P7-08b",
+  "checked_at": "2026-11-02",
+  "site": "https://sefgh-main.vercel.app",
+  "method": "GET without credentials (recorded with P7-08a's check)",
+  "observations": [
+    {
+      "path": "/api/data/notifications/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/profile/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/user-stats/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/home/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/submissions/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/search-stats/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/conversations/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/repo-page/rest/v1/...",
+      "x_sefgh_backend": "go"
+    },
+    {
+      "path": "/api/data/activity/rest/v1/...",
+      "x_sefgh_backend": "go"
+    }
+  ],
+  "note": "all nine answered from Go (200, or 403 for a GET on the activity function, a policy refusal by Go)",
+  "not_established": "signed-in use, deployment of P7-08b, hosted rollback"
+}

@@ -61,9 +61,9 @@ export async function GET(request) {
 
   if (!code && !tokenHash) return fail("invalid_link");
 
-  // The welcome notification goes through Go when notifications are
-  // switched on (DATA-010); sign-in itself always goes to Supabase Auth.
-  const supabase = await createClient({ goData: true });
+  // The welcome notification goes through Go (DATA-010); sign-in itself
+  // goes to Supabase Auth.
+  const supabase = await createClient();
 
   let authError = null;
 

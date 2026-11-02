@@ -18,8 +18,8 @@
 //
 // Add --production to build and check `next start` in an isolated output folder.
 // Add --public-reads for P7-02, --shares for P7-03, --user-reads for P7-04,
-// --interactions for P7-05, --avatar for P7-06 or --browser-data for P7-08a
-// forwarding scenarios.
+// --interactions for P7-05, --avatar for P7-06, --browser-data for P7-08a or
+// --data-proxy for P7-08b forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -38,7 +38,8 @@ const userReadsOnly = process.argv.includes('--user-reads');
 const interactionsOnly = process.argv.includes('--interactions');
 const avatarOnly = process.argv.includes('--avatar');
 const browserDataOnly = process.argv.includes('--browser-data');
-if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly, avatarOnly, browserDataOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
+const dataProxyOnly = process.argv.includes('--data-proxy');
+if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly, avatarOnly, browserDataOnly, dataProxyOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
 const children = [];
 let upstream;
 
@@ -275,6 +276,7 @@ const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.pat
   : interactionsOnly ? allScenarios.filter(scenario => /^\/api\/repo\/(collect|vote|rating|comments|videos)(\/vote)?([?]|$)/.test(scenario.path))
   : avatarOnly ? allScenarios.filter(scenario => scenario.path === '/api/upload-avatar')
   : browserDataOnly ? allScenarios.filter(scenario => /^\/api\/(search-history|onboarding)([/?]|$)/.test(scenario.path))
+  : dataProxyOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/data/'))
   : allScenarios;
 
 
@@ -507,7 +509,7 @@ try {
   // Retired P7-02 to P7-06 routes deliberately have no opt-in names here.
   const routes = "ai-suggestions,ai-enhance-query,ai-chat,trending-topics";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

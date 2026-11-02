@@ -2,6 +2,8 @@
 
 Started 2026-11-02 by the owner's decision ("after done start phase 7"), before the Phase 6 gate was fully met; see the ADR decisions log. Written by Claude Code (PHASE7-000). This plan is the order and the recipe; each step is one bounded task with its own handoff record in `../coordination.md`.
 
+P7-08b update (2026-11-03, Claude Code): the nine data-proxy areas always route through Go in the browser and on the server; `NEXT_PUBLIC_SEFGH_GO_DATA` and the server `goData` option are removed from the code, which completes P7-08. The variable can be deleted from `sefgh-main` after deployment. See the P7-08b coordination record.
+
 P7-08a update (2026-11-02, Claude Code): P7-08 is split in two. P7-08a removes the direct Supabase path from the search history and onboarding modules and makes their rewrites unconditional; P7-08b does the nine data-proxy areas and the server-side `goData` option. All eleven areas answered from Go in production before the change. P7-07 is parked behind R-038 and R-213. See the P7-08a coordination record.
 
 P7-06 update (2026-11-02, Claude Code): the avatar upload's Next.js handler, recorder and fixture are removed locally; Go is the only upload writer; R-095's hosted acceptance gates stay open. See the P7-06 coordination record. Next: P7-07 once its gate is met, otherwise P7-08.

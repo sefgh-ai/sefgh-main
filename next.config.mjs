@@ -58,35 +58,26 @@ const goBackendRoutes = {
   "trending-topics": "/api/trending/topics",
 };
 
-// The Go data proxy's areas of the browser's own database calls
-// (DATA-PROXY-001; docs/plans/browser-data.md), from src/lib/go-areas.mjs.
-// NEXT_PUBLIC_SEFGH_GO_DATA lists them, and the browser's Supabase client
-// reads the same setting (src/lib/supabase/data-routing.js), so one name
-// switches an area's routing and its rewrite together. Without the rewrite
-// the client gets a 404 and uses Supabase directly, as before.
-const goDataAreas = {
-  ...Object.fromEntries(Object.keys(PROXY_AREAS).map((area) => [area, [`/api/data/${area}/:path*`]])),
-};
+// P7-08b the Go data proxy's areas (DATA-PROXY-001), from
+// src/lib/go-areas.mjs: the Supabase clients always send these tables there,
+// so the rewrite no longer has a switch.
+const dataProxyGoRoutes = Object.keys(PROXY_AREAS).map((area) => `/api/data/${area}/:path*`);
 
 function goBackendRewrites() {
   const origin = (process.env.SEFGH_GO_API_URL || "").replace(/\/+$/, "");
   if (!origin) return [];
   const listed = (setting) => (setting || "").split(",").map((name) => name.trim());
   const enabled = listed(process.env.SEFGH_GO_ROUTES);
-  const areas = listed(process.env.NEXT_PUBLIC_SEFGH_GO_DATA);
   const routes = Object.entries(goBackendRoutes)
     .filter(([name]) => enabled.includes(name))
     .map(([, path]) => ({ source: path, destination: `${origin}${path}` }));
-  const data = Object.entries(goDataAreas)
-    .filter(([name]) => areas.includes(name))
-    .flatMap(([, paths]) => paths.map((path) => ({ source: path, destination: `${origin}${path}` })));
   // New hashed-key endpoints replace the legacy plaintext flow only after
   // separate UI and per-route opt-ins. Direct Go activation is independent.
   const keys = enabled.includes('playground-keys-v1') && process.env.NEXT_PUBLIC_SEFGH_KEYS_V1 === '1'
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes, ...browserDataGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes, ...browserDataGoRoutes, ...dataProxyGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

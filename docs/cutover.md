@@ -1,5 +1,14 @@
 # Cutover runbook: switching the website to the Go backend
 
+P7-08b (2026-11-03): the browser's and the server's Supabase clients always send
+the nine data-proxy areas' tables through Go (`src/lib/supabase/data-routing.js`);
+there is no switch and no direct fallback. `NEXT_PUBLIC_SEFGH_GO_DATA` is no longer
+read anywhere, and the server-side `goData` option is gone: every server client is
+routed. Without SEFGH_GO_API_URL, proxied requests fail (503 on the server, 404 in
+the browser) instead of reaching Supabase. Contracts and Go unchanged.
+[Production prerequisite receipt](verification/p7-08b-data-proxy-2026-11-03.json).
+Rollback: revert the P7-08b commit and redeploy the website.
+
 P7-08a (2026-11-02): the browser modules for search history and onboarding
 (`src/lib/supabase/{search-history,onboarding}.js`) lost their direct Supabase
 path and ask only Go; a missing Go route is now an ordinary failure, never a

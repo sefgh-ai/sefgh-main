@@ -5,17 +5,14 @@ import { serverRoutedFetch } from '@/lib/supabase/data-routing'
 /**
  * Server Supabase client, signed in by the session cookie.
  *
- * With `goData`, the Data API requests of areas switched to Go go through
- * the Go data proxy, as the browser client's do (DATA-010). It is for code
- * that reads or writes an area's data on the server: the repository page
- * and the sign-in callback. Route handlers leave it off, so a switched
- * area never sends a Next.js handler's own writes through the proxy's
- * rules; each handler moves to Go by its own switch.
+ * Its Data API requests for the Go data proxy's tables go through the Go
+ * server, as the browser client's do (DATA-010); since P7-08b always, with
+ * no `goData` option. The route handlers that still make a client touch no
+ * proxied table (scripts/contracts/data-proxy.test.mjs checks).
  */
-export async function createClient({ goData = false } = {}) {
+export async function createClient() {
   const cookieStore = await cookies()
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const routed = goData ? serverRoutedFetch(url) : undefined
 
   return createServerClient(
     url,
@@ -37,7 +34,7 @@ export async function createClient({ goData = false } = {}) {
           }
         },
       },
-      ...(routed && { global: { fetch: routed } }),
+      global: { fetch: serverRoutedFetch(url) },
     }
   )
 }

@@ -1,6 +1,12 @@
 # Briefing for the next agent (written 2026-10-29)
 
-**Current Phase7 pickup (P7-08a, 2026-11-02):** search history and onboarding
+**Current Phase7 pickup (P7-08b, 2026-11-03):** the nine data-proxy areas always
+go through Go, and `NEXT_PUBLIC_SEFGH_GO_DATA` and the server `goData` option are
+gone (Claude Code). Next is P7-09 (the remaining `SEFGH_GO_ROUTES` switches: AI,
+trending topics, playground keys v1). P7-07 stays parked behind R-038 and R-213,
+and P7-09 must not remove the AI switches before P7-07.
+
+**Earlier pickup (P7-08a, 2026-11-02):** search history and onboarding
 ask only Go in the browser (Claude Code). Next is P7-08b, the nine data-proxy
 areas and the server-side `goData` option. P7-07 (AI routes) is parked behind
 R-038 and R-213 (owner, 2026-11-02).
