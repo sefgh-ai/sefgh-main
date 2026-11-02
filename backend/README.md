@@ -207,8 +207,12 @@ go run ./cmd/api
 |---|---|---|
 | `SEFGH_API_ADDR` | `127.0.0.1:8787` | Address to listen on. Wins over `PORT` |
 | `PORT` | none | Set by a hosting platform. When `SEFGH_API_ADDR` is not set, the server listens on this port on every network interface. A value that is not a number from 1 to 65535 stops the server at start-up |
+| `SEFGH_AI_PROVIDER` | chosen by key | The AI routes' provider (AI-PROVIDER-001): `github`, `gemini`, `groq`, `openrouter` or `custom`. Unset, the first of `GITHUB_TOKEN`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` that is set decides, then `custom`. All speak OpenAI's chat-completions format. Each key goes only to its own provider's address. A half-configured choice is logged as `ai_provider` and the routes answer with their fallbacks |
+| `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` | none | Free-tier provider keys. Default models: `gemini-2.5-flash`, `llama-3.3-70b-versatile`; OpenRouter has none |
+| `SEFGH_AI_MODEL` | the provider's default | Replaces the model name; required for OpenRouter and `custom`. Free model names change, so this needs no code change |
+| `SEFGH_AI_URL`, `SEFGH_AI_KEY` | none | Any other OpenAI-compatible service (`custom`): its full chat-completions address and key |
 | `GITHUB_TOKEN` | none | The credential for GitHub Models, used by the AI routes only, as in `src/lib/ai/github.js`. It is never sent to a GitHub API route: those get no token for callers without credentials, and a test fails if that changes |
-| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | none | Keys for enhance-query. OpenAI is used when its key is set, otherwise Anthropic, otherwise the built-in word lists and no provider |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | none | Keys for enhance-query. OpenAI is used when its key is set, otherwise Anthropic, otherwise the AI routes' provider when it has a key (AI-PROVIDER-001), otherwise the built-in word lists and no provider |
 | `SEFGH_AI_MODELS_URL`, `SEFGH_OPENAI_URL`, `SEFGH_ANTHROPIC_URL` | the providers' real addresses | For pointing the three AI providers at a stub in tests and in the forwarding probe |
 | `NEXT_PUBLIC_SUPABASE_URL` | none | Project URL for online identity verification, for private GitHub reads and for chat. Without it chat answers 503 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | none | Public anon key; no service-role key needed |

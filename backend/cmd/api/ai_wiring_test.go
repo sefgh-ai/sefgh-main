@@ -74,7 +74,8 @@ func aiServer(t *testing.T, env map[string]string) (http.Handler, *aiUpstream) {
 	t.Setenv("SEFGH_ANTHROPIC_URL", backend.URL+"/anthropic")
 	t.Setenv("NEXT_PUBLIC_SUPABASE_URL", backend.URL)
 	t.Setenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-key")
-	for _, name := range []string{"GITHUB_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GITHUB_PUBLIC_READ_TOKEN"} {
+	for _, name := range []string{"GITHUB_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GITHUB_PUBLIC_READ_TOKEN",
+		"SEFGH_AI_PROVIDER", "SEFGH_AI_MODEL", "SEFGH_AI_URL", "SEFGH_AI_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY"} {
 		t.Setenv(name, env[name])
 	}
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil))), upstream
@@ -304,5 +305,54 @@ func TestChatAllowanceIsPerUserAndSeparate(t *testing.T) {
 	// Another user from the same address still has a whole allowance.
 	if rec := postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-b", "X-Forwarded-For": "203.0.113.9"}); rec.Code != 200 {
 		t.Errorf("another user: %d", rec.Code)
+	}
+}
+
+// AI-PROVIDER-001: a free-tier key alone serves all three AI routes, and the
+// key goes only to that provider's address.
+func TestAFreeProviderKeyServesAllThreeAIRoutes(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"GEMINI_API_KEY": "gemini-key"})
+	rec := postJSON(handler, "/api/ai/suggestions", `{"query":"obscure thing"}`, nil)
+	if rec.Code != 200 || !strings.Contains(rec.Body.String(), `"ai-powered"`) {
+		t.Fatalf("suggestions: %d %s", rec.Code, rec.Body)
+	}
+	rec = postJSON(handler, "/api/ai/enhance-query", `{"query":"charts"}`, nil)
+	if rec.Code != 200 || !strings.Contains(rec.Body.String(), `"ai-powered"`) {
+		t.Fatalf("enhance-query: %d %s", rec.Code, rec.Body)
+	}
+	rec = postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-a"})
+	if rec.Code != 200 {
+		t.Fatalf("chat: %d %s", rec.Code, rec.Body)
+	}
+	want := []string{"POST /models|Bearer gemini-key|", "POST /models|Bearer gemini-key|", "GET /auth/v1/user|Bearer session-a||public-key", "POST /models|Bearer gemini-key|"}
+	if got := upstream.take(); strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("calls %q, want %q", got, want)
+	}
+}
+
+// A paid OpenAI key still decides the query helper; chat keeps the free one.
+func TestAPaidKeyStillServesTheQueryHelper(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"GEMINI_API_KEY": "gemini-key", "OPENAI_API_KEY": "openai-key"})
+	rec := postJSON(handler, "/api/ai/enhance-query", `{"query":"charts"}`, nil)
+	if !strings.Contains(rec.Body.String(), "enhanced by openai") {
+		t.Fatalf("enhance-query: %d %s", rec.Code, rec.Body)
+	}
+	if got := upstream.take(); len(got) != 1 || got[0] != "POST /openai|Bearer openai-key|" {
+		t.Errorf("enhance-query reached %q", got)
+	}
+}
+
+// A half-configured provider calls nobody: the routes use their fallbacks.
+func TestAHalfConfiguredProviderCallsNobody(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"OPENROUTER_API_KEY": "router-key"})
+	suggestions := postJSON(handler, "/api/ai/suggestions", `{"query":"obscure thing"}`, nil)
+	enhance := postJSON(handler, "/api/ai/enhance-query", `{"query":"web charts"}`, nil)
+	if suggestions.Code != 200 || enhance.Code != 200 || !strings.Contains(enhance.Body.String(), "basic-enhancement") {
+		t.Fatalf("%d %s / %d %s", suggestions.Code, suggestions.Body, enhance.Code, enhance.Body)
+	}
+	for _, call := range upstream.take() {
+		if strings.Contains(call, "router-key") {
+			t.Errorf("the key was sent without a model: %q", call)
+		}
 	}
 }

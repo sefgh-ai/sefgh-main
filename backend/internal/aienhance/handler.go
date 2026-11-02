@@ -30,18 +30,21 @@ const (
 	maxReplyBytes   = 4 << 20
 )
 
-// Handler answers enhance-query requests. With OpenAIKey set it asks OpenAI;
-// otherwise, with AnthropicKey set, Anthropic; with neither it uses the word
-// lists below and calls nobody.
+// Handler answers enhance-query requests. With OpenAIKey set it asks OpenAI,
+// or the OpenAI-compatible service at OpenAIURL with OpenAIModel; otherwise,
+// with AnthropicKey set, Anthropic; with neither it uses the word lists below
+// and calls nobody.
 type Handler struct {
 	Client       *http.Client
 	OpenAIKey    string
 	AnthropicKey string
 	OpenAIURL    string
 	AnthropicURL string
-	Limiter      *ailimit.Limiter
-	Now          func() time.Time
-	Logger       *slog.Logger
+	// OpenAIModel is empty for OpenAI itself, which means gpt-3.5-turbo.
+	OpenAIModel string
+	Limiter     *ailimit.Limiter
+	Now         func() time.Time
+	Logger      *slog.Logger
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -164,8 +167,12 @@ func (h *Handler) withOpenAI(ctx context.Context, query string) (string, error) 
 	if url == "" {
 		url = DefaultOpenAIURL
 	}
+	model := h.OpenAIModel
+	if model == "" {
+		model = openAIModel
+	}
 	data, err := h.post(ctx, url, map[string]string{"Authorization": "Bearer " + h.OpenAIKey}, map[string]any{
-		"model": openAIModel,
+		"model": model,
 		"messages": []map[string]string{
 			{"role": "system", "content": openAISystemPrompt},
 			{"role": "user", "content": query},

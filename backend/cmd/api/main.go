@@ -171,17 +171,33 @@ func activityMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.Serv
 	return mux
 }
 
-// aiMux serves the AI routes. GITHUB_TOKEN is the credential for GitHub
-// Models here, exactly as it is in src/lib/ai/github.js. It is sent to the
-// models endpoint and never to a GitHub API route: githubMux above still gets
-// no token for callers without credentials. verifier is used only for its
+// aiMux serves the AI routes. aiprovider.FromEnv chooses the provider: by
+// default GitHub Models with GITHUB_TOKEN, as in src/lib/ai/github.js, or a
+// free-tier one such as Gemini (AI-PROVIDER-001). Its key is sent to its own
+// endpoint and never to a GitHub API route: githubMux above still gets no
+// token for callers without credentials. verifier is used only for its
 // Supabase half, to say who is calling chat.
 func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 	mux := http.NewServeMux()
+	provider, err := aiprovider.FromEnv(os.Getenv)
+	if err != nil {
+		// A half-configured provider is reported, not guessed at. Without a
+		// key the AI routes answer with their fallbacks.
+		logger.Error("ai_provider", "error", err)
+		provider = aiprovider.Provider{}
+	} else if provider.Key != "" {
+		logger.Info("ai_provider", "name", provider.Name, "model", provider.Model)
+	}
 	models := &aiprovider.Client{
 		HTTP:     &http.Client{Timeout: aiprovider.Timeout},
-		Endpoint: envOr("SEFGH_AI_MODELS_URL", aiprovider.DefaultEndpoint),
-		Token:    os.Getenv("GITHUB_TOKEN"),
+		Endpoint: envOr("SEFGH_AI_MODELS_URL", provider.Endpoint),
+		Token:    provider.Key,
+		Model:    provider.Model,
+	}
+	// Without a paid key, the query helper asks the same provider as chat.
+	enhanceKey, enhanceURL, enhanceModel := os.Getenv("OPENAI_API_KEY"), envOr("SEFGH_OPENAI_URL", aienhance.DefaultOpenAIURL), ""
+	if enhanceKey == "" && os.Getenv("ANTHROPIC_API_KEY") == "" && provider.Key != "" {
+		enhanceKey, enhanceURL, enhanceModel = provider.Key, models.Endpoint, provider.Model
 	}
 	// One allowance per address, shared by the two search-box helpers.
 	searchAllowance := ailimit.New(ailimit.Requests, ailimit.Window)
@@ -194,9 +210,10 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 	})
 	mux.Handle("POST /api/ai/enhance-query", &aienhance.Handler{
 		Client:       &http.Client{Timeout: aienhance.Timeout},
-		OpenAIKey:    os.Getenv("OPENAI_API_KEY"),
+		OpenAIKey:    enhanceKey,
 		AnthropicKey: os.Getenv("ANTHROPIC_API_KEY"),
-		OpenAIURL:    envOr("SEFGH_OPENAI_URL", aienhance.DefaultOpenAIURL),
+		OpenAIURL:    enhanceURL,
+		OpenAIModel:  enhanceModel,
 		AnthropicURL: envOr("SEFGH_ANTHROPIC_URL", aienhance.DefaultAnthropicURL),
 		Limiter:      searchAllowance,
 		Logger:       logger,

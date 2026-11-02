@@ -1,6 +1,6 @@
-// Package aiprovider calls GitHub Models the way src/lib/ai/github.js does.
-// The request it builds is pinned by the provider requests recorded in
-// contracts/ai-chat.
+// Package aiprovider calls GitHub Models the way src/lib/ai/github.js does,
+// or any other OpenAI-compatible provider chosen in config.go. The request it
+// builds is pinned by the provider requests recorded in contracts/ai-chat.
 package aiprovider
 
 import (
@@ -38,12 +38,14 @@ type Options struct {
 	MaxTokens   int
 }
 
-// Client holds what every call needs. Token is the credential for GitHub
-// Models; it is sent to Endpoint and nowhere else.
+// Client holds what every call needs. Token is the provider's credential; it
+// is sent to Endpoint and nowhere else. Model is used when a call names none;
+// empty means gpt-4o, the GitHub Models default.
 type Client struct {
 	HTTP     *http.Client
 	Endpoint string
 	Token    string
+	Model    string
 }
 
 type request struct {
@@ -66,6 +68,9 @@ type undefined struct{}
 // decides, and callers check. A nil error does not mean it is a string, and
 // a missing content field is Undefined, not nil.
 func (c *Client) Generate(ctx context.Context, messages []Message, options Options) (any, error) {
+	if options.Model == "" {
+		options.Model = c.Model
+	}
 	if options.Model == "" {
 		options.Model = "gpt-4o"
 	}
@@ -126,7 +131,7 @@ func (c *Client) Generate(ctx context.Context, messages []Message, options Optio
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		// Only the status is kept. The provider's own text is not repeated,
 		// not even in the server log, because it can echo what a user typed.
-		return nil, fmt.Errorf("GitHub AI API error: %d", resp.StatusCode)
+		return nil, fmt.Errorf("AI provider error: %d", resp.StatusCode)
 	}
 	data, err := jscompat.DecodeJSON(body)
 	if err != nil {
