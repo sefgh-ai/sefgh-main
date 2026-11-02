@@ -1,5 +1,7 @@
 # Cutover runbook: switching the website to the Go backend
 
+**Current boundary inventory (P7-10a, 2026-11-03):** [Next.js, Go and managed-service responsibilities](migration-boundaries.md). It supersedes earlier dated switch/fallback descriptions below. P7-07 and the AI part of P7-09 remain gated by R-038/R-213; Phase 7 stays open. Removing a retired route name cannot restore a deleted handler: rollback requires reverting the relevant commit and redeploying.
+
 P7-09a (2026-11-03): the trending-topics and playground-keys-v1 names are
 removed from SEFGH_GO_ROUTES selection. `/api/trending/topics` always forwards
 when SEFGH_GO_API_URL is configured. V1 `/api/v1/keys`, its selector child,
@@ -107,6 +109,18 @@ switch-only rollback described below still applies to routes not yet retired.
 Phase7 started by the owner before the Phase6 gate (ADR, 2026-11-02); follow
 [the retirement plan](plans/phase7-retirement.md). P7-02 is next; do not start
 P7-07 until the owner confirms AI keys on `sefgh-api` and R-038 is checked.
+
+## Historical cutover instructions (2026-10-19 snapshot)
+
+**The entire remainder of this document, including undated subsections such as
+"The two switches", "Recommended order" and "Not ready to switch", is retained as
+historical evidence, not an executable current runbook.** It describes handlers,
+selectors and direct fallbacks that have since been removed. Do not follow its
+remove-name/unset-origin rollback instructions for retired routes. Current
+operations and rollback are in the [hosting configuration](hosting-setup.md) and
+[current boundary inventory](migration-boundaries.md); follow the latest bounded
+task's coordination record and gates. Later dated observations in this archive
+retain their original scope and are not refreshed live evidence.
 
 Written by Claude Code on 2026-10-19 for the owner. Everything below is **off** until you switch it, and each switch is undone by removing a name and redeploying. Nothing here has been switched on except `github-trending` (since 2026-10-15). How the Go project itself is hosted is in `hosting-setup.md`; this runbook starts where that guide's Part C ends.
 

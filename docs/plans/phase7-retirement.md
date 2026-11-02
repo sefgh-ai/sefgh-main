@@ -1,5 +1,14 @@
 # Phase 7: retiring the old logic
 
+P7-10a (2026-11-03): [current boundary inventory](../migration-boundaries.md)
+prepared ahead of final phase closure while AI work is parked. P7-01 through
+P7-06 and P7-08 are implemented; P7-09a completed its non-AI scope. P7-07 and the
+AI remainder of P7-09 still require R-038/R-213. P7-10 must be refreshed after
+those code steps and their evidence; this documentation substep does not close
+Phase 7. For this docs-only substep, use AGENTS.md's documentation checks (source,
+links and diff) plus normal handoff; the lint/build recipe below applies to code
+retirement steps. See coordination for review/check/commit/deployment status.
+
 P7-09a owner scope (2026-11-03): remove only trending-topics and
 playground-keys-v1 route-name opt-ins. Topics is origin-required/fixed;
 v1 forwarding still requires the Go origin and exact UI flag. Go runtime,
@@ -22,7 +31,7 @@ P7-05 update (2026-11-02, Claude Code): the six repository-interaction Next.js h
 
 P7-04 update (2026-11-02, Claude Code): the activity and starred Next.js handlers, their fixtures, loaders and recorder are removed locally; the activity reference model stands alone; see the P7-04 coordination record. Next: P7-05.
 
-P7-01 implementation update (2026-11-02): both contributions handlers, its switch, contract and old tests are removed locally. See the P7-01 coordination record for checks, commit and deployment state. P7-02 retires the public GitHub Next handlers and page fallback locally (2026-11-02); Go and cases stay, with unconditional origin-required routing. See coordination for checks/commit/deployment state. P7-03 retires three Next share handlers and unused share helpers locally (2026-11-02); Go/cases stay with origin-required unconditional rewrites. See coordination for checks/commit/deployment state. P7-04 is next; no later step is included.
+P7-01 implementation update (2026-11-02): both contributions handlers, its switch, contract and old tests are removed locally. See the P7-01 coordination record for checks, commit and deployment state. P7-02 retires the public GitHub Next handlers and page fallback locally (2026-11-02); Go and cases stay, with unconditional origin-required routing. See coordination for checks/commit/deployment state. P7-03 retires three Next share handlers and unused share helpers locally (2026-11-02); Go/cases stay with origin-required unconditional rewrites. See coordination for checks/commit/deployment state. That dated record covered P7-01/P7-02/P7-03 only; use the current pickup above.
 
 ## What Phase 7 removes, and what stays
 
@@ -36,7 +45,7 @@ P7-01 implementation update (2026-11-02): both contributions handlers, its switc
 - Supabase Auth, database, Storage and Realtime, which the migration keeps by design.
 - The contract fixtures (`contracts/*/cases.json`): Go's tests keep running them. **Exception: P7-01 retires the unused endpoint itself, so its contract and Go implementation are removed too.**
 
-## Caller audit (2026-11-02, first pass)
+## Historical caller audit (2026-11-02, first pass)
 
 Browser and server code calling each old route, outside `src/app/api` (a `grep` for the quoted path; repeat it exactly in each step):
 
@@ -65,7 +74,7 @@ Every route listed except the keys route answers with `X-Sefgh-Backend: go` on `
 | P7-07 | AI routes: chat, enhance-query, suggestions | After the AI keys are on the Go project and R-038 is checked |
 | P7-08 | Browser data areas: remove the direct Supabase fallback in each module behind `NEXT_PUBLIC_SEFGH_GO_DATA` (search history, onboarding, the proxy areas), and the server-side `goData` routing option | After P7-02 to P7-06, one area at a time |
 | P7-09 | The switches: `goBackendRoutes` and `goDataAreas` in `next.config.mjs` become fixed rewrites to `SEFGH_GO_API_URL`; `SEFGH_GO_ROUTES` and `NEXT_PUBLIC_SEFGH_GO_DATA` are removed | Last code step |
-| P7-10 | Documents: the remaining Next.js and managed-service boundaries (ADR gate), `backend-map.md`, `cutover.md`, `backend/README.md`, the briefing | Closes the phase |
+| P7-10 | Documents: the remaining Next.js and managed-service boundaries (ADR gate), `backend-map.md`, `cutover.md`, `backend/README.md`, the briefing. P7-10a records the current boundary; refresh after P7-07/P7-09 | Final documentation gate; phase remains open |
 
 ## Recipe for one step
 

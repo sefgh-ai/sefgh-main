@@ -1,5 +1,7 @@
 # SEFGH Go backend
 
+**Current boundary inventory (P7-10a, 2026-11-03):** [Next.js, Go and managed-service responsibilities](../docs/migration-boundaries.md). It supersedes earlier dated switch/fallback descriptions below. P7-07 and the AI part of P7-09 remain gated by R-038/R-213; Phase 7 stays open. Removing a retired route name cannot restore a deleted handler: rollback requires reverting the relevant commit and redeploying.
+
 P7-09a (2026-11-03): the trending-topics and playground-keys-v1 names are
 removed from SEFGH_GO_ROUTES selection. `/api/trending/topics` always forwards
 when SEFGH_GO_API_URL is configured. V1 `/api/v1/keys`, its selector child,
@@ -265,37 +267,39 @@ waiters retry. Loader panic cleanup releases waiters and preserves stale data.
 The repository handlers use the server's `slog` logger for upstream failure
 stages and HTTP status failures, without logging URLs, tokens or reply bodies.
 
-`internal/githubsearch` runs every case in `../contracts/github-search/cases.json` twice: once in memory, checking the exact upstream URL and headers, and once over real sockets, checking the bytes on the wire. The same file drives `npm run test:contracts` against the Next.js handler. No test contacts GitHub.
+`internal/githubsearch` runs every case in `../contracts/github-search/cases.json` twice: once in memory, checking the exact upstream URL and headers, and once over real sockets, checking the bytes on the wire. The Next.js handler and its Node runner were retired in P7-02; the Go suite still executes the cases, while `npm run test:contracts` checks the retained Node suites and retirement/routing guards. These fixture tests use stand-ins and do not contact GitHub.
 
 ## Send traffic to it
 
-Next.js forwards a route here only when both variables are set **when Next.js is built or started in dev**:
+Set the Go origin on the website when building Next.js (or before starting dev):
 
-```
+```text
 SEFGH_GO_API_URL=http://127.0.0.1:8787
-SEFGH_GO_ROUTES=github-search
 ```
 
-`SEFGH_GO_ROUTES` is a comma-separated list of route names from `goBackendRoutes` in `../next.config.mjs`. To roll back, remove the route's name, or unset `SEFGH_GO_API_URL`, and rebuild. The Next.js handler stays in place until its route is retired.
+The fixed retired API routes and eleven migrated data areas then use Go. Only
+`ai-suggestions`, `ai-enhance-query` and `ai-chat` still use the comma-separated
+`SEFGH_GO_ROUTES` opt-ins; keep those selections unchanged until P7-07/R-038/R-213
+clears. The repository page uses the Go origin directly without a selector. Keys
+v1 forwarding additionally requires exact `NEXT_PUBLIC_SEFGH_KEYS_V1=1`; Go's
+runtime/accountant/policy gates are independent. Legacy keys stays in Next.js.
 
-The new names are `github-repo`, `github-repo-details`, and `github-contents`.
-GO-004 adds `github-languages`, a static embedded catalog with no upstream
-calls, credentials or runtime data file. It also stays disabled by default.
-GO-005b historically added contributions; P7-01 retires that endpoint and switch.
-They remain off by default and await peer review and ADR cutover gates. The
-summary cache is local to one Go process: ten-minute freshness (`FreshFor`, R-034),
-stale background refresh, a copy dropped when GitHub answers 404, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence
-and sharing need resolution before public rollout. The repository routes check
-owner, name and path before any request to GitHub (`internal/githubrepos/identifiers.go`,
-contract version 4). See the repository contract README for exact boundaries.
+Without the origin, retired website API paths return 404, server data-proxy calls
+return503 and repository-page enrichment follows the not-found path. There is no
+direct Supabase/GitHub fallback for these retired paths. Old route names do nothing.
+To roll back a retirement, revert its bounded commit, restore any required prior
+selection and redeploy affected projects. Removing a name or the origin cannot
+restore deleted source. See the [full boundary and gate table](../docs/migration-boundaries.md).
 
-To see which backend answered a request, send a blank query, which is answered with a 400 without contacting GitHub, and read the headers:
+For a read-only local forwarding check, request an invalid search without calling
+GitHub and inspect the backend marker:
 
-```
+```text
 curl.exe -i "http://localhost:3000/api/github/search?q=%20"
 ```
 
-A header `x-sefgh-backend: go` means Go answered. Without it, Next.js did. In PowerShell type `curl.exe`; plain `curl` is a different command there.
+`x-sefgh-backend: go` means Go answered. An absent marker alone does not identify
+which component answered; inspect the status and body as well.
 
 ### On Vercel (OPS-002)
 
@@ -308,6 +312,17 @@ node scripts/check-go-deployment.mjs https://<go project>.vercel.app
 To compare it with the website on the public GitHub routes of cutover step 1, before or after a switch: `node scripts/compare-deployments.mjs https://<website> https://<go project> [--switched=name,name]` ([results of 2026-10-24](../docs/verification/cutover-step1.md)).
 
 The in-memory parts of the server (the summary cache and the AI allowances) belong to one running copy, and Vercel may run several copies at once. Each copy counts and caches on its own.
+
+## Historical port notes and later corrections
+
+**The route-by-route implementation notes below describe original ports and their
+later dated corrections. Undated selector, fallback, recorder and rollback-handler
+instructions in these notes are historical and must not be used for current
+routing or rollback.** In particular, the old repository-page selector, public/
+share/activity opt-ins and direct data-area fallbacks are gone. Use "Send traffic
+to it" above and the [current boundary inventory](../docs/migration-boundaries.md)
+for current operation. Recorded contract behavior and subsequent corrections keep
+their attributed scope; current source/contracts decide which details still apply.
 
 ## Where it differs from the Next.js handler on purpose
 

@@ -5,21 +5,26 @@ page's direct GitHub fallback are retired. This contract keeps all
 15 cases and its existing Go behavior/version. All `next_*` rollback
 expectations have been removed; historical notes below describing those
 fields or the old Node handler runner refer to the pre-retirement snapshot
-at parent `f86a160`. The remaining Node suite checks fixture integrity;
-Go's full suite still executes every case. Rollback requires reverting
+at parent `f86a160`. The remaining Node suite executes the retained public
+GitHub helper and the
+repository page's mandatory Go adapter against stand-ins, plus the failure-response
+and page-source guards; it is not fixture-integrity-only. Go's full suite still
+executes every case. Rollback requires reverting
 P7-02 and redeploying both projects, not changing a route switch.
 
 
 Version 1 records the public-only boundary for `src/lib/repo/repoData.js`, used
 by the repository page and `/api/repo/starred`. This implements the owner's
 chosen rule: a visitor cannot borrow the server credential's private access.
-These consumers do not yet provide verified private GitHub credentials.
+These original consumers did not provide verified private GitHub credentials.
+The starred implementation is now Go; earlier implementation notes below are historical.
 
 The 15 JSON cases cover public/private/unknown visibility, upstream failures,
-redirect status, and invalid identifiers. Four additional executable tests in
-`scripts/contracts/public-repository-reads.test.mjs` cover the actual starred
-handler with only Supabase and GitHub stubbed: authentication, user-scoped
-query and stale snapshot isolation, database failure, bounded concurrency.
+redirect status, and invalid identifiers. The old executable Next starred-handler
+tests were removed in P7-04. Current
+`scripts/contracts/public-repository-reads.test.mjs` exercises the retained helper
+and page adapter, not a deleted starred handler. The helper currently has test
+callers only; the page uses Go with no direct GitHub fallback.
 Run `node --test scripts/contracts/public-repository-reads.test.mjs`.
 
 Changes from the earlier implementation:

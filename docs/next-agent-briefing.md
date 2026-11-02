@@ -1,6 +1,19 @@
 # Briefing for the next agent (written 2026-10-29)
 
-**Current pickup (P7-09a, 2026-11-03):** topics and v1 keys no longer depend
+**Current pickup (P7-10a, 2026-11-03):** read the
+[current boundary inventory](migration-boundaries.md) and newest coordination
+record. Boundary documentation is prepared; Phase 7 stays open. P7-07 and the AI
+part of P7-09 wait for R-038/R-213. Exactly four Next API handlers remain (three AI,
+legacy keys), plus the retained auth callback/session proxy. Legacy playground
+business-data calls and managed Auth/Storage/Realtime remain; the eleven migrated
+data areas have no direct fallback. No AI retirement, keys activation, signing,
+worker or SQL action is authorized by this pickup. Preserve the pre-existing
+untracked image.png and exclude it from task commits/synchronization.
+
+Earlier dated pickups below are history; use the current inventory and newest
+coordination for the next task and actual checks/commit/deployment state.
+
+**Earlier pickup (P7-09a, 2026-11-03):** topics and v1 keys no longer depend
 on SEFGH_GO_ROUTES names locally. Topics requires the Go origin; v1 also
 requires exact NEXT_PUBLIC_SEFGH_KEYS_V1=1. Go runtime/accounting/policy gates
 and legacy keys stay. AI3names/handlers remain until P7-07/R-038/R-213, so
@@ -8,7 +21,7 @@ P7-09/Phase7 are not wholly complete. Read newest coordination for checks,
 commit/deployment and the pre-existing image.png exclusion. Signing stopped.
 
 
-**Current Phase7 pickup (P7-08b, 2026-11-03):** the nine data-proxy areas always
+**Earlier Phase7 pickup (P7-08b, 2026-11-03):** the nine data-proxy areas always
 go through Go, and `NEXT_PUBLIC_SEFGH_GO_DATA` and the server `goData` option are
 gone (Claude Code). Next is P7-09 (the remaining `SEFGH_GO_ROUTES` switches: AI,
 trending topics, playground keys v1). P7-07 stays parked behind R-038 and R-213,
@@ -46,7 +59,7 @@ owner AI-key confirmation on sefgh-api and R-038 checks. Older queues below
 are historical. No live share write, signing, worker or SQL action here.
 
 
-**Current Phase7 pickup (P7-02, 2026-11-02):** seven public GitHub Next handlers
+**Earlier Phase7 pickup (P7-02, 2026-11-02):** seven public GitHub Next handlers
 and the repository page's GitHub fallback are retired locally; Go and408cases
 remain. Unconditional rewrites and the page read require SEFGH_GO_API_URL.
 Shared starred/auth helpers stay for their current callers. R-211 records stale
@@ -56,7 +69,7 @@ one step/commit per task. Stop before P7-07 without owner confirmation of AI
 keys on sefgh-api and R-038 checks. Older pickup/queue text below is historical.
 
 
-**Current Phase7 pickup (P7-01, 2026-11-02):** contributions is retired locally
+**Earlier Phase7 pickup (P7-01, 2026-11-02):** contributions is retired locally
 from Next.js and Go, including its switch/contract/old tests, with retirement
 guards. See the newest `coordination.md` record for exact checks and commit.
 The owner started Phase7 before the Phase6 gate in PHASE7-000; the older

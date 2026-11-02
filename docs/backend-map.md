@@ -1,5 +1,7 @@
 # SEFGH backend map
 
+**Current boundary inventory (P7-10a, 2026-11-03):** [Next.js, Go and managed-service responsibilities](migration-boundaries.md). It supersedes earlier dated switch/fallback descriptions below. P7-07 and the AI part of P7-09 remain gated by R-038/R-213; Phase 7 stays open. Removing a retired route name cannot restore a deleted handler: rollback requires reverting the relevant commit and redeploying.
+
 P7-09a (2026-11-03): the trending-topics and playground-keys-v1 names are
 removed from SEFGH_GO_ROUTES selection. `/api/trending/topics` always forwards
 when SEFGH_GO_API_URL is configured. V1 `/api/v1/keys`, its selector child,
