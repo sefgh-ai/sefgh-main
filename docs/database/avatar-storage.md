@@ -6,7 +6,7 @@ AVATAR-POLICY-001, started 2026-10-23 by Claude Code. Covers R-041 and the Phase
 
 ## What the route calls
 
-The Next.js route ([route.js](../../src/app/api/upload-avatar/route.js)) and the Go port ([handler.go](../../backend/internal/avatar/handler.go)) make the same calls, with the caller's own token and the public key. Neither uses the service role, so Storage applies row-level security to every call.
+The Go handler ([handler.go](../../backend/internal/avatar/handler.go)) makes these calls with the caller's own token and the public key; the Next.js route that made the same calls was retired in P7-06. It does not use the service role, so Storage applies row-level security to every call.
 
 The permissions column is Supabase's own statement for each storage-js method (TSDoc in `packages/core/storage-js/src/packages/StorageFileApi.ts` and `StorageBucketApi.ts` of `supabase/supabase-js`, read 2026-10-23; the access-control guide says the same for upsert).
 

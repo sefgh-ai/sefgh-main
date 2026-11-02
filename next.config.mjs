@@ -40,13 +40,15 @@ const interactionGoRoutes = [
   "/api/repo/collect", "/api/repo/vote", "/api/repo/rating",
   "/api/repo/comments/vote", "/api/repo/comments", "/api/repo/videos",
 ];
+// P7-06 avatar upload: Go only, bearer only. Go is then the only upload
+// writer, as the R-095 lock protocol requires.
+const avatarGoRoutes = ["/api/upload-avatar"];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
   // The browser sends the bearer (src/lib/ai/chat-request.js).
   "ai-chat": "/api/ai/chat",
-  "upload-avatar": "/api/upload-avatar",
   // The trending page's topic sections, searched live on GitHub and cached by
   // the CDN (TREND-001a; R-077, option A). Go only: there is no Next.js
   // handler, so with this switch off the path is a 404.
@@ -83,7 +85,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

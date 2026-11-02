@@ -1,6 +1,6 @@
 # Avatar upload contract
 
-Update BUG-056 (R-094,2026-10-30): contract v3. Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check. Rollback Next.js answers remain in next_expect.
+Update BUG-056 (R-094,2026-10-30): contract v3. Avatar uploads detect PNG, JPEG, GIF87a/GIF89a and WebP signatures from bytes, reject empty/unsupported/truncated signatures, and derive MIME and stored extension from the detected format. User filenames and MIME labels cannot choose the stored suffix. The 5MiB bound, caller token, existing metadata/error/cleanup policies remain; full image decoding is outside this signature check. (The Next.js rollback answers, `next_expect` and `next_engine_message`, were removed in P7-06 with the handler.)
 
 
 Version 1, AVATAR-001a/b (2026-10-18), extended in REVIEW-028 (2026-10-24): **47 cases, 25 marked defect**,
@@ -9,12 +9,11 @@ is unchanged; `AvatarUpload.jsx` now sends its session bearer for either backend
 
 ```powershell
 node --test scripts/contracts/upload-avatar.test.mjs
-node scripts/contracts/record-upload-avatar.mjs
 # Inside backend:
 go test -count=1 ./internal/avatar
 ```
 
-The recorder uses the installed Supabase Storage, Auth and PostgREST clients
+(Historical: the Next.js handler, this recorder and `avatar-fixture.mjs` were retired in P7-06; Go's tests run every case.) The recorder used the installed Supabase Storage, Auth and PostgREST clients
 with only HTTP, the session and clock replaced. It creates real multipart
 requests. Upload bytes are compared by size and SHA-256, avoiding multi-MiB
 fixtures. `auth.updateUser` keeps its real HTTP/parsing implementation: only

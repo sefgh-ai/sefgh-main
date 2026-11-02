@@ -1,0 +1,21 @@
+{
+  "task": "P7-06",
+  "checked_at": "2026-11-02",
+  "site": "https://sefgh-main.vercel.app",
+  "method": "requests without credentials or files",
+  "observations": [
+    {
+      "method": "POST",
+      "path": "/api/upload-avatar",
+      "status": 401,
+      "x_sefgh_backend": "go"
+    },
+    {
+      "method": "GET",
+      "path": "/api/upload-avatar",
+      "status": 405,
+      "x_sefgh_backend": "go"
+    }
+  ],
+  "not_established": "signed-in upload, hosted R-095 lock acceptance, deployment of P7-06, hosted rollback"
+}

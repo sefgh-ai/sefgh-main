@@ -423,8 +423,8 @@ JavaScript does.
 
 ## Avatar upload (AVATAR-001a/b)
 
-`internal/avatar` matches the 45 version-1 fixtures. The `upload-avatar`
-switch is off by default. The browser sends its bearer with multipart data;
+`internal/avatar` matches the 45 version-1 fixtures. Retired from Next.js in
+P7-06: Go only, no switch (was `upload-avatar`). The browser sends its bearer with multipart data;
 Storage upload/list/remove, Auth update and profile PATCH all carry that
 same user's token and the public project key, never a privileged credential.
 
@@ -439,8 +439,8 @@ three-second child budget before Go returns. This avoids a detached goroutine
 being abandoned after a serverless response. The file-selection defects and
 partial-write behavior are preserved (R-094 to R-096). Full Storage policy and
 deployment-size checks, independent review and owner approval remain before
-cutover. Removing `upload-avatar` from the routing list and rebuilding rolls
-back to the existing Next.js handler.
+cutover. Since P7-06 there is no Next.js handler: rollback
+is reverting the P7-06 commit and redeploying both projects.
 
 ## Data proxy (DATA-PROXY-001)
 

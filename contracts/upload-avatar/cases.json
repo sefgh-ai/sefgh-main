@@ -40,15 +40,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -85,15 +76,6 @@
       ],
       "auth_error": true,
       "expect": {
-        "status": 401,
-        "body": {
-          "error": "Unauthorized"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 401,
         "body": {
           "error": "Unauthorized"
@@ -144,16 +126,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error",
-          "details": "Your project's URL and Key are required to create a Supabase client!\n\nCheck your Supabase project's API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -184,15 +156,6 @@
         }
       ],
       "expect": {
-        "status": 400,
-        "body": {
-          "error": "No file provided"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 400,
         "body": {
           "error": "No file provided"
@@ -243,15 +206,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "No file provided"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -288,15 +242,6 @@
         }
       ],
       "expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 400,
         "body": {
           "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
@@ -431,76 +376,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -661,76 +536,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.jpeg?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.jpeg",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/jpeg",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 3,
-              "sha256": "6e568e1f67fba258184c78181539e5e8fdee447e49bb706fc0ea34fbf12336a5"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.jpeg?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.jpeg?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -883,76 +688,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.gif?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.gif",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/gif",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 6,
-              "sha256": "610f5ae4d76e332636a17bd357fd6ce99029316a99d320280d4d77a746bf29e8"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.gif?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.gif?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -1113,76 +848,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.webp?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.webp",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/webp",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 12,
-              "sha256": "3fe79651a92ea3850c3fc3dd9519a67c7f70b598fa238a3fd92042f6446e6452"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.webp?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.webp?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -1248,76 +913,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 0,
-              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
       }
     },
     {
@@ -1360,76 +955,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 12,
-              "sha256": "3fc14a5ad0906f2d3b1a2839a87dfa35be1b0219908665cc3e97a7fc8607eb31"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
       }
     },
     {
@@ -1463,15 +988,6 @@
         }
       ],
       "expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 400,
         "body": {
           "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
@@ -1519,15 +1035,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
       }
     },
     {
@@ -1561,15 +1068,6 @@
         }
       ],
       "expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 400,
         "body": {
           "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
@@ -1707,76 +1205,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 5242880,
-              "sha256": "112108f550c28bb8687a7202aa74d326c0fc8e4eec9c9f63bb8487e1066225e0"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -1836,15 +1264,6 @@
         }
       ],
       "expect": {
-        "status": 400,
-        "body": {
-          "error": "File size exceeds 5MB limit"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_expect": {
         "status": 400,
         "body": {
           "error": "File size exceeds 5MB limit"
@@ -1979,76 +1398,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -2209,76 +1558,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.photo?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.photo",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.photo?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.photo?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -2431,76 +1710,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -2661,76 +1870,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png/",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png//?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -2883,76 +2022,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png/x",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png///x?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -3112,76 +2181,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.PNG?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.PNG",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.PNG?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.PNG?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -3337,76 +2336,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.%C3%A6%E2%80%94%C2%A5%C3%A6%C5%93%C2%AC?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.%C3%A6%E2%80%94%C2%A5%C3%A6%C5%93%C2%AC",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.%C3%A6%E2%80%94%C2%A5%C3%A6%C5%93%C2%AC?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.%C3%A6%E2%80%94%C2%A5%C3%A6%C5%93%C2%AC?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -3558,76 +2487,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.a%20b?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.a%20b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.a%20b?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.a%20b?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -3802,76 +2661,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -3940,18 +2729,7 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error",
-          "details": "Content-Type was not one of \"multipart/form-data\" or \"application/x-www-form-urlencoded\"."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_engine_message": true
+      }
     },
     {
       "id": "broken-multipart",
@@ -3995,18 +2773,7 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error",
-          "details": "Failed to parse body as FormData."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
-      "next_engine_message": true
+      }
     },
     {
       "id": "upload-refused-bucket-missing",
@@ -4080,40 +2847,6 @@
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
             }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket.",
-          "details": "permission denied"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
           }
         ]
       },
@@ -4213,40 +2946,6 @@
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
             }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to upload avatar",
-          "details": "permission denied"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
           }
         ]
       },
@@ -4350,40 +3049,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to upload avatar",
-          "details": "fetch failed"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -4480,40 +3145,6 @@
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
             }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket.",
-          "details": "bad object"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
           }
         ]
       },
@@ -4621,40 +3252,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to upload avatar",
-          "details": "first"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -4759,40 +3356,6 @@
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
             }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to upload avatar",
-          "details": "nested"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
           }
         ]
       },
@@ -4929,46 +3492,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to update user profile",
-          "details": "metadata refused"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -5095,46 +3618,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to update user profile",
-          "details": "fetch failed"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
             }
           }
         ]
@@ -5285,76 +3768,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -5531,76 +3944,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -5785,91 +4128,6 @@
             "body": {
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
-              ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old2.png"
               ]
             }
           }
@@ -6061,90 +4319,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old.png"
-              ]
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -6306,76 +4480,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -6563,91 +4667,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/a.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/b.png"
-              ]
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -6813,76 +4832,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -6984,31 +4933,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error",
-          "details": "Cannot read properties of null (reading 'Id')"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          }
-        ]
-      },
-      "next_engine_message": true,
       "go_database": [
         {
           "status": 200,
@@ -7106,41 +5030,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to upload avatar",
-          "details": "Unexpected token 'o', \"not-json\" is not valid JSON"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "GET",
-            "path": "/storage/v1/bucket",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": null,
-            "cache_control": null,
-            "x_upsert": null,
-            "body": null
-          }
-        ]
-      },
-      "next_engine_message": true,
       "go_database": [
         {
           "status": 200,
@@ -7264,46 +5153,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error",
-          "details": "Cannot read properties of null (reading 'user')"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -7323,8 +5172,7 @@
           "status": 200,
           "body": []
         }
-      ],
-      "next_engine_message": true
+      ]
     },
     {
       "id": "metadata-invalid-json",
@@ -7428,46 +5276,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to update user profile",
-          "details": "Unexpected token 'o', \"not-json\" is not valid JSON"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -7487,8 +5295,7 @@
           "status": 200,
           "body": []
         }
-      ],
-      "next_engine_message": true
+      ]
     },
     {
       "id": "bytes-override-label",
@@ -7615,76 +5422,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/jpeg",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]
@@ -7845,15 +5582,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": []
-      },
       "go_database": [
         {
           "status": 200,
@@ -8010,76 +5738,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/gif",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 6,
-              "sha256": "9faccac8ea389a38814e46d03b2d4704bc2caf3bed368f3d6a694cfebcbf1d29"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -8147,76 +5805,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 4,
-              "sha256": "0f4636c78f65d3639ece5a064b5ae753e3408614a14fb18ab4d7540d2c248543"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
       }
     },
     {
@@ -8259,76 +5847,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/jpeg",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 2,
-              "sha256": "71563ad80061407ede9c6f316836284bd3710a520c5a792b5eda1cb703690815"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
       }
     },
     {
@@ -8371,76 +5889,6 @@
         "content_type": "application/json",
         "cache_control": null,
         "database": []
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/webp",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 12,
-              "sha256": "090acf02bd35dbdf985a4fdd2b429d5f1c26f912bbfea6326acae034ccb2ba03"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.exe?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
       }
     },
     {
@@ -8546,46 +5994,6 @@
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
               ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to update user profile",
-          "details": "metadata refused"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
             }
           }
         ]
@@ -9426,189 +6834,6 @@
             "body": {
               "prefixes": [
                 "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
-              ]
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old000.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old001.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old002.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old003.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old004.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old005.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old006.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old007.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old008.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old009.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old010.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old011.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old012.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old013.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old014.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old015.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old016.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old017.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old018.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old019.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old020.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old021.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old022.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old023.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old024.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old025.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old026.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old027.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old028.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old029.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old030.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old031.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old032.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old033.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old034.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old035.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old036.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old037.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old038.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old039.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old040.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old041.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old042.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old043.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old044.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old045.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old046.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old047.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old048.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old049.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old050.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old051.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old052.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old053.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old054.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old055.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old056.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old057.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old058.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old059.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old060.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old061.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old062.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old063.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old064.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old065.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old066.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old067.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old068.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old069.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old070.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old071.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old072.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old073.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old074.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old075.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old076.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old077.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old078.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old079.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old080.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old081.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old082.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old083.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old084.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old085.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old086.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old087.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old088.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old089.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old090.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old091.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old092.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old093.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old094.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old095.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old096.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old097.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old098.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old099.png"
               ]
             }
           }
@@ -11029,189 +8254,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old000.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old001.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old002.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old003.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old004.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old005.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old006.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old007.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old008.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old009.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old010.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old011.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old012.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old013.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old014.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old015.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old016.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old017.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old018.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old019.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old020.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old021.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old022.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old023.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old024.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old025.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old026.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old027.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old028.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old029.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old030.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old031.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old032.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old033.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old034.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old035.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old036.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old037.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old038.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old039.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old040.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old041.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old042.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old043.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old044.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old045.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old046.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old047.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old048.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old049.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old050.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old051.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old052.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old053.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old054.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old055.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old056.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old057.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old058.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old059.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old060.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old061.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old062.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old063.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old064.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old065.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old066.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old067.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old068.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old069.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old070.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old071.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old072.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old073.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old074.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old075.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old076.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old077.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old078.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old079.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old080.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old081.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old082.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old083.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old084.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old085.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old086.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old087.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old088.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old089.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old090.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old091.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old092.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old093.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old094.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old095.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old096.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old097.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old098.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old099.png"
-              ]
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -11798,92 +8840,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          },
-          {
-            "method": "DELETE",
-            "path": "/storage/v1/object/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "prefixes": [
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/old.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400001.png",
-                "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/.avatar-upload-lock.png"
-              ]
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -12092,76 +9048,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 200,
@@ -12259,76 +9145,6 @@
           }
         ]
       },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
-            }
-          }
-        ]
-      },
       "go_database": [
         {
           "status": 400,
@@ -12390,76 +9206,6 @@
             "body": {
               "bytes": 8,
               "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          }
-        ]
-      },
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "success": true,
-          "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "database": [
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "image/png",
-            "cache_control": "max-age=3600",
-            "x_upsert": "true",
-            "body": {
-              "bytes": 8,
-              "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
-            }
-          },
-          {
-            "method": "PUT",
-            "path": "/auth/v1/user",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json;charset=UTF-8",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "data": {
-                "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-              },
-              "code_challenge": null,
-              "code_challenge_method": null
-            }
-          },
-          {
-            "method": "PATCH",
-            "path": "/rest/v1/profiles?id=eq.0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "avatar_url": "https://contract-supabase.invalid/storage/v1/object/public/avatars/0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b/avatar-1792229400000.png?t=1792229400000"
-            }
-          },
-          {
-            "method": "POST",
-            "path": "/storage/v1/object/list/avatars",
-            "authorization": "Bearer session-a",
-            "apikey": "public-fixture-key",
-            "content_type": "application/json",
-            "cache_control": null,
-            "x_upsert": null,
-            "body": {
-              "limit": 100,
-              "offset": 0,
-              "sortBy": {
-                "column": "name",
-                "order": "asc"
-              },
-              "prefix": "0f5e9b8a-1c2d-4e3f-8a9b-0c1d2e3f4a5b"
             }
           }
         ]

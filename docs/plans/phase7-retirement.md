@@ -2,6 +2,8 @@
 
 Started 2026-11-02 by the owner's decision ("after done start phase 7"), before the Phase 6 gate was fully met; see the ADR decisions log. Written by Claude Code (PHASE7-000). This plan is the order and the recipe; each step is one bounded task with its own handoff record in `../coordination.md`.
 
+P7-06 update (2026-11-02, Claude Code): the avatar upload's Next.js handler, recorder and fixture are removed locally; Go is the only upload writer; R-095's hosted acceptance gates stay open. See the P7-06 coordination record. Next: P7-07 once its gate is met, otherwise P7-08.
+
 P7-05 update (2026-11-02, Claude Code): the six repository-interaction Next.js handlers and their recorders are removed locally; see the P7-05 coordination record. Next: P7-06.
 
 P7-04 update (2026-11-02, Claude Code): the activity and starred Next.js handlers, their fixtures, loaders and recorder are removed locally; the activity reference model stands alone; see the P7-04 coordination record. Next: P7-05.

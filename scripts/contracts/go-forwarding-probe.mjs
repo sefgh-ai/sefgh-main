@@ -17,8 +17,8 @@
 // because it starts servers and takes about a minute.
 //
 // Add --production to build and check `next start` in an isolated output folder.
-// Add --public-reads for P7-02, --shares for P7-03, --user-reads for P7-04 or
-// --interactions for P7-05 forwarding scenarios.
+// Add --public-reads for P7-02, --shares for P7-03, --user-reads for P7-04,
+// --interactions for P7-05 or --avatar for P7-06 forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -35,7 +35,8 @@ const publicReadsOnly = process.argv.includes('--public-reads');
 const sharesOnly = process.argv.includes('--shares');
 const userReadsOnly = process.argv.includes('--user-reads');
 const interactionsOnly = process.argv.includes('--interactions');
-if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
+const avatarOnly = process.argv.includes('--avatar');
+if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly, avatarOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
 const children = [];
 let upstream;
 
@@ -127,7 +128,9 @@ const probes = [
   "/api/github/trending?language=C%23",
 ];
 const avatarBoundary = 'sefgh-avatar-probe';
-const avatarMultipart = `--${avatarBoundary}\r\nContent-Disposition: form-data; name="avatar"; filename="photo.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n--${avatarBoundary}--\r\n`;
+// Go detects the image from its bytes (R-094); a GIF signature is plain ASCII.
+const avatarImage = 'GIF89a fixture';
+const avatarMultipart = `--${avatarBoundary}\r\nContent-Disposition: form-data; name="avatar"; filename="photo.gif"\r\nContent-Type: image/gif\r\n\r\n${avatarImage}\r\n--${avatarBoundary}--\r\n`;
 const allScenarios = [
   ...probes.map(path => ({ path })),
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
@@ -229,7 +232,7 @@ const allScenarios = [
   { path: '/api/share/tok-private/fork', body: '', headers: { Authorization: 'Bearer session-b' }, status: 401, cache: null },
   { path: '/api/share/tok-public/fork', body: '' },
   { path: '/api/upload-avatar', body: avatarMultipart, headers: { Authorization: 'Bearer session-a', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 200, cache: null },
-  { path: '/api/upload-avatar', body: avatarMultipart.replace('image/png', 'text/plain'), headers: { Authorization: 'Bearer session-a', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 400, cache: null },
+  { path: '/api/upload-avatar', body: avatarMultipart.replace(avatarImage, 'not an image'), headers: { Authorization: 'Bearer session-a', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 400, cache: null },
   { path: '/api/upload-avatar', body: '{}', headers: { Authorization: 'Bearer session-a' }, status: 500, cache: null },
   { path: '/api/upload-avatar', body: avatarMultipart, headers: { Authorization: 'Bearer session-b', 'Content-Type': `multipart/form-data; boundary=${avatarBoundary}` }, status: 401, cache: null },
   { path: '/api/upload-avatar', body: avatarMultipart },
@@ -268,6 +271,7 @@ const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.pat
   : sharesOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/share/') || scenario.path.startsWith('/api/conversations/'))
   : userReadsOnly ? allScenarios.filter(scenario => scenario.path === '/api/activity' || scenario.path === '/api/repo/starred')
   : interactionsOnly ? allScenarios.filter(scenario => /^\/api\/repo\/(collect|vote|rating|comments|videos)(\/vote)?([?]|$)/.test(scenario.path))
+  : avatarOnly ? allScenarios.filter(scenario => scenario.path === '/api/upload-avatar')
   : allScenarios;
 
 
@@ -371,6 +375,11 @@ try {
       }
       // Comments: the list, counts, writes, profiles (refused, as with the
       // missing username column) and the admin lookup (refused).
+      // The avatar's profile update.
+      else if (req.url.startsWith('/rest/v1/profiles?') && req.method === 'PATCH') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.writeHead(204); res.end();
+      }
       else if (req.url.startsWith('/rest/v1/profiles?')) { res.writeHead(400); res.end(JSON.stringify({ code: '42703', message: 'column profiles.username does not exist' })); }
       else if (req.url.startsWith('/auth/v1/admin/users/')) { res.writeHead(403); res.end(JSON.stringify({ code: 403, msg: 'User not allowed' })); }
       else if (req.method === 'HEAD' && req.url.startsWith('/rest/v1/repo_comments?')) { res.setHeader('Content-Range', '0-1/2'); res.end(); }
@@ -422,11 +431,18 @@ try {
         if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
         res.writeHead(201); res.end(JSON.stringify({ id: 'c9' }));
       }
+      // Go's upload lock (a PNG signature) and the upload itself, neither
+      // allowed to overwrite (R-095).
       else if (req.url.startsWith('/storage/v1/object/avatars/')) {
-        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key' || body !== 'PNG' || req.headers['x-upsert'] !== 'true') {
+        const lock = req.url.endsWith('/.avatar-upload-lock.png');
+        if (req.headers.authorization !== 'Bearer session-a' || req.headers.apikey !== 'fixture-public-key' || req.headers['x-upsert'] !== 'false' || !(lock ? body.endsWith('PNG\r\n\x1a\n') : body === avatarImage)) {
           res.writeHead(403); res.end(JSON.stringify({ message: 'invalid avatar upload' })); return;
         }
-        res.end(JSON.stringify({ Key: 'avatars/photo.png' }));
+        res.end(JSON.stringify({ Key: req.url.slice('/storage/v1/object/'.length) }));
+      }
+      else if (req.url === '/storage/v1/object/avatars' && req.method === 'DELETE') {
+        if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
+        res.end('[]');
       }
       else if (req.url === '/storage/v1/object/list/avatars') {
         if (req.headers.authorization !== 'Bearer session-a') { res.writeHead(401); res.end('{}'); return; }
@@ -485,8 +501,8 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  // Retired P7-02 to P7-05 routes deliberately have no opt-in names here.
-  const routes = "ai-suggestions,ai-enhance-query,ai-chat,upload-avatar,trending-topics";
+  // Retired P7-02 to P7-06 routes deliberately have no opt-in names here.
+  const routes = "ai-suggestions,ai-enhance-query,ai-chat,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
@@ -519,7 +535,7 @@ try {
     if (path === '/api/upload-avatar') {
       // Separate requests deliberately use separate clocks. Contract tests
       // pin the exact timestamp; here compare transport behavior without it.
-      const normalize = value => value.replace(/avatar-\d+/g, 'avatar-CLOCK').replace(/\?t=\d+/g, '?t=CLOCK');
+      const normalize = value => value.replace(/avatar-\d+(-[0-9a-f]{32})?/g, 'avatar-CLOCK').replace(/\?t=\d+/g, '?t=CLOCK');
       answer.body = normalize(answer.body);
       upstream = upstream.map(normalize);
     }

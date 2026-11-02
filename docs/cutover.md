@@ -1,5 +1,13 @@
 # Cutover runbook: switching the website to the Go backend
 
+P7-06 (2026-11-02): the Next.js handler for `/api/upload-avatar` is retired.
+Go answers it alone and keeps every case of the contract; the rewrite is
+unconditional when SEFGH_GO_API_URL is configured, and the old switch name is
+ignored. Without a Go origin the path is 404. Go is now the only avatar upload
+writer, which the R-095 lock protocol requires; its hosted acceptance gates stay
+open. [Production prerequisite receipt](verification/p7-06-avatar-2026-11-02.json).
+Rollback: revert the P7-06 commit and redeploy both projects.
+
 P7-05 (2026-11-02): the Next.js handlers for `/api/repo/collect`, `/vote`,
 `/rating`, `/comments`, `/comments/vote` and `/videos` are retired. The
 repository page keeps its session-aware URLs; Go keeps all behaviour and every

@@ -94,7 +94,7 @@ The deferred closure reads committed when the handler returns. A failure leaves 
 
 ## BUG-058: R-097
 
-Avatar500 responses carry only their fixed public error field; Storage/Auth/database/library and runtime diagnostic details are omitted. Sanitized stage logging and status codes stay unchanged. Next rollback replies retain their original details.
+Avatar500 responses carry only their fixed public error field; Storage/Auth/database/library and runtime diagnostic details are omitted. Sanitized stage logging and status codes stay unchanged. The Next.js rollback handler, which kept its original details, was retired on 2026-11-02 (P7-06); Go now answers this route on its own.
 
 See the real backend and its regression fixtures. Existing exercise.go files are untouched; lesson checks are optional.
 

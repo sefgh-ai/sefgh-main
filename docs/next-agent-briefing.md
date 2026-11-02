@@ -1,6 +1,12 @@
 # Briefing for the next agent (written 2026-10-29)
 
-**Current Phase7 pickup (P7-05, 2026-11-02):** the six repository-interaction
+**Current Phase7 pickup (P7-06, 2026-11-02):** the avatar upload's Next handler,
+recorder and fixture are retired locally (Claude Code); Go keeps every case and
+is now the only upload writer. P7-07 (AI routes) waits for the owner to confirm
+AI keys on sefgh-api and for R-038; P7-08 (browser data-area fallbacks) does not
+depend on that.
+
+**Earlier pickup (P7-05, 2026-11-02):** the six repository-interaction
 Next handlers (collect, vote, rating, comments, comment votes, videos) and their
 recorders are retired locally (Claude Code); Go keeps every case. Next is P7-06
 (upload-avatar). Stop before P7-07 without owner AI-key confirmation and R-038.
