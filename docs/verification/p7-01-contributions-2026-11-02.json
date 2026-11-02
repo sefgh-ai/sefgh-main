@@ -1,0 +1,37 @@
+{
+  "task": "P7-01",
+  "observed_at_utc": "2026-11-02T04:52:47.232104+00:00",
+  "purpose": "Pre-retirement production routing prerequisite, not post-retirement acceptance",
+  "method": "GET",
+  "url": "https://sefgh-main.vercel.app/api/github/contributions",
+  "status": 400,
+  "headers": {
+    "X-Sefgh-Backend": "go",
+    "Content-Type": "application/json",
+    "Date": "Mon, 02 Nov 2026 04:52:51 GMT"
+  },
+  "body": {
+    "error": "Username is required"
+  },
+  "credentials_sent": false,
+  "mutations": false,
+  "caller_audit": {
+    "search_roots": [
+      "src/",
+      "scripts/",
+      "backend/"
+    ],
+    "patterns": [
+      "/api/github/contributions",
+      "githubcontributions",
+      "github-contributions",
+      "contributions-fixture"
+    ],
+    "application_callers_outside_handler": 0,
+    "references": "Handler, Go package/mux, rewrite switch, Node/Go tests, forwarding probe, deployment comparison; no browser or server application caller. Shared access/githubFetch remain used by other routes."
+  },
+  "limits": [
+    "Observed website forwarding only; no project settings or secrets inspected.",
+    "No deployment or live retirement performed by this task."
+  ]
+}

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { existsSync } from 'node:fs';
 import config from '../../next.config.mjs';
 
 test('v1 key forwarding requires route, UI and origin gates together', async () => {
@@ -45,7 +46,6 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
       'github-languages': '/api/github/languages',
       'github-trending': '/api/github/trending',
       'github-trending-developers': '/api/github/trending-developers',
-      'github-contributions': '/api/github/contributions',
       'github-repo': '/api/github/repo',
       'github-repo-details': '/api/github/repo/:owner/:repo',
       'github-contents': '/api/github/contents/:owner/:repo',
@@ -107,6 +107,25 @@ test('browser data areas are rewritten by the same setting their modules read', 
   } finally {
     for (const [name, value] of [['SEFGH_GO_API_URL', old.url], ['SEFGH_GO_ROUTES', old.routes], ['NEXT_PUBLIC_SEFGH_GO_DATA', old.data]]) {
       if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  }
+});
+
+// P7-01: an old deployment setting must not resurrect a retired endpoint.
+test('retired contributions has no Next handler or rewrite, even with its stale switch', async () => {
+  assert.equal(existsSync(new URL('../../src/app/api/github/contributions/route.js', import.meta.url)), false);
+  const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA'];
+  const old = Object.fromEntries(names.map(name => [name, process.env[name]]));
+  try {
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
+    process.env.SEFGH_GO_ROUTES = 'github-contributions';
+    for (const origin of ['', 'http://127.0.0.1:8787']) {
+      process.env.SEFGH_GO_API_URL = origin;
+      assert.deepEqual(await config.rewrites(), { beforeFiles: [] });
+    }
+  } finally {
+    for (const name of names) {
+      if (old[name] === undefined) delete process.env[name]; else process.env[name] = old[name];
     }
   }
 });

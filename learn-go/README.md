@@ -66,7 +66,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [10 Shared cache](10-shared-cache/README.md) | Mutexes, goroutines, completion channels, background refresh, required-lookup failures (BUG-046), decoded JSON assertions and filtering (BUG-047) | `backend/internal/githubrepos/cache.go`, `handler.go`, `shapes.go` |
 | [11 Shared results](11-shared-results/README.md) | Waiting with `select`, cancellation, and preserving errors | `cacheFlight` in `cache.go`, upstream errors in `handler.go` |
 | [12 Embedded data](12-embedded-data/README.md) | `go:embed`, blank imports, serving static JSON and a private catalog lookup set (BUG-040) | `backend/internal/githublanguages/handler.go` |
-| [13 Time and clocks](13-time-and-clocks/README.md) | Moments/time zones, UTC ranges and day-anchored streaks (BUG-048), date formatting and an injected clock | `dateRange` in `backend/internal/githubcontributions/dates.go`, and `Handler`/`currentStreak` in `handler.go` beside it |
+| [13 Time and clocks](13-time-and-clocks/README.md) | Moments/time zones, UTC ranges and day-anchored streaks (BUG-048), date formatting and an injected clock | Historical contributions example (endpoint retired in P7-01); lesson13 exercise/solution retained |
 | [14 Checking input](14-checking-input/README.md) | Regular expressions, allowlists against blocklists, and putting outside text into a URL safely | `backend/internal/githubrepos/identifiers.go` |
 | [15 Settings from the environment](15-settings-from-the-environment/README.md) | Environment variables, handing a function to a function, and refusing a bad setting at start-up | `listenAddr` in `backend/cmd/api/main.go` |
 | [16 Verifying access](16-verifying-access/README.md) | Middleware, online identity verification, deadlines and private cache isolation | `backend/internal/githubaccess/access.go` and `backend/cmd/api/main.go` |
@@ -171,6 +171,6 @@ BUG-064/R-036: updated 32-request-budgets-and-redirects.
 
 BUG-065/R-037: lesson19 updated for query validation, trimming and selected-result deduplication.
 
-BUG-067/R-207 updates lesson13 with the handler username guard; date/streak behavior is unchanged.
+BUG-067/R-207 historically updated lesson13 with the username guard. P7-01 marks its endpoint examples retired; exercises remain unchanged.
 
 BUG-068/R-090 updates lesson30 for owner-scoped bulk unshare and post-write verification.

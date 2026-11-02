@@ -34,15 +34,15 @@ cannot follow an enrichment URL to another origin.
 `cases.json` is shared by the Node and Go verifier tests. `isolation.json`
 checks anonymous, Alice and Bob reads, followed by permission/token revocation.
 Node exercises the actual exported handlers; Go uses the production mux factory
-over real localhost sockets. Both check all five routes reject incomplete auth.
+over real localhost sockets. Both check all four remaining caller-token routes reject incomplete auth (P7-01 retired contributions).
 
 Route contracts now use `github_token` for a verified **per-user** credential:
-search v3, repository routes v4, contributions v2. Node's `access-fixture.mjs`
+search v3 and repository routes v4 (historical versions). Node's `access-fixture.mjs`
 supplies the matching fake issuer responses; Go's domain tests inject the
 verified token directly. Boundary tests separately verify that runtime wiring
 cannot bypass authorization. Authenticated responses add the no-store header.
-Anonymous contributions retain the existing missing-token 500 because GraphQL
-requires a credential; there is no current UI consumer of that route.
+P7-01 retires the unused contributions endpoint, its contract and implementation
+tests from both runtimes; retirement guards replace its auth/missing-token cases.
 
 Private browser requests are intentionally not wired yet: search persists
 results under one localStorage key, and chat/share consumers need a privacy

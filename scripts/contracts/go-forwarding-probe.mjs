@@ -118,8 +118,6 @@ const probes = [
   "/api/github/trending-developers?since=invalid",
   "/api/github/trending?since=invalid",
   "/api/github/trending?language=C%23",
-  "/api/github/contributions?username=octocat",
-  "/api/github/contributions?username=-bad-",
 ];
 const avatarBoundary = 'sefgh-avatar-probe';
 const avatarMultipart = `--${avatarBoundary}\r\nContent-Disposition: form-data; name="avatar"; filename="photo.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n--${avatarBoundary}--\r\n`;
@@ -436,7 +434,6 @@ try {
         if (req.headers.authorization !== 'Bearer phase2-fixture-key') { res.writeHead(401); res.end('{}'); return; }
         res.end(JSON.stringify({ choices: [{ message: { content: 'enhanced by fixture' } }] }));
       }
-      else if (req.url === "/graphql") res.end(JSON.stringify({ data: { user: { contributionsCollection: { contributionCalendar: { totalContributions: 0, weeks: [] } } } } }));
       else if (req.url.startsWith("/search/")) res.end(JSON.stringify({ total_count: 0, items: [] }));
       else if (req.url.endsWith("/languages")) res.end('{"Go":42}');
       else if (req.url.endsWith("/readme")) res.end("# Demo");
@@ -460,7 +457,7 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-contributions,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
+  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

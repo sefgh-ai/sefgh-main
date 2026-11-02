@@ -2,6 +2,8 @@
 
 Started 2026-11-02 by the owner's decision ("after done start phase 7"), before the Phase 6 gate was fully met; see the ADR decisions log. Written by Claude Code (PHASE7-000). This plan is the order and the recipe; each step is one bounded task with its own handoff record in `../coordination.md`.
 
+P7-01 implementation update (2026-11-02): both contributions handlers, its switch, contract and old tests are removed locally. See the P7-01 coordination record for checks, commit and deployment state. P7-02 is next; no later step is included.
+
 ## What Phase 7 removes, and what stays
 
 **Removed, route by route:** the 23 Next.js API handlers that Go serves in production (`src/app/api/**/route.js`), their now-unused helpers, the Node contract tests that run those handlers, the `next_expect*` entries that describe them, the opt-in switches (`SEFGH_GO_ROUTES`, `NEXT_PUBLIC_SEFGH_GO_DATA` and the code reading them), and the browser modules' direct Supabase fallbacks for areas Go serves.
@@ -12,7 +14,7 @@ Started 2026-11-02 by the owner's decision ("after done start phase 7"), before 
 - The worker and RepoSync code: the owner left that migration as a gap.
 - The Next.js app itself: pages, React, `src/app/auth/callback/route.js`, `src/proxy.js` (session refresh).
 - Supabase Auth, database, Storage and Realtime, which the migration keeps by design.
-- The contract fixtures (`contracts/*/cases.json`): Go's tests keep running them.
+- The contract fixtures (`contracts/*/cases.json`): Go's tests keep running them. **Exception: P7-01 retires the unused endpoint itself, so its contract and Go implementation are removed too.**
 
 ## Caller audit (2026-11-02, first pass)
 
@@ -50,8 +52,8 @@ Every route listed except the keys route answers with `X-Sefgh-Backend: go` on `
 1. **Claim** the writer role in `../coordination.md`.
 2. **Audit callers** for the exact paths: `grep -rn` over `src/`, `scripts/` and `backend/`. Check the production answer carries `X-Sefgh-Backend: go` (`curl -s -D - -o /dev/null https://sefgh-main.vercel.app/<path>`). If a route is not answered by Go in production, stop: it is not ready.
 3. **Remove** the Next.js `route.js` and every helper now imported by nothing (check with `grep`; delete files only when nothing else uses them).
-4. **Make the rewrite unconditional** for that route in `next.config.mjs`, or leave the switch until P7-09 if that is simpler. Either way, the route must still reach Go. Note that without `SEFGH_GO_API_URL` the route is then a 404: say so in `backend/README.md` (local development points it at a local Go server or `sefgh-api`).
-5. **Tests:**
+4. **P7-01 exception:** remove its rewrite/switch entirely because the Go endpoint is retired too; verify the old switch name is ignored. Other steps: **make the rewrite unconditional** for that route in `next.config.mjs`, or leave the switch until P7-09 if that is simpler. Either way, the route must still reach Go. Note that without `SEFGH_GO_API_URL` the route is then a 404: say so in `backend/README.md` (local development points it at a local Go server or `sefgh-api`).
+5. **Tests:** P7-01 removes the whole endpoint contract (including `next_expect*`) and old Node/Go endpoint suites; keep retirement404/no-rewrite guards instead. For retained Go routes:
    - Delete the Node test that imported the removed handler, or reduce it to fixture-integrity checks.
    - Drop the `next_expect*` fields from that contract's cases, and note it in the contract README.
    - Make sure `go test -count=1 ./...` still runs every case.

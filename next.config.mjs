@@ -29,7 +29,6 @@ const goBackendRoutes = {
   "github-languages": "/api/github/languages",
   "github-trending": "/api/github/trending",
   "github-trending-developers": "/api/github/trending-developers",
-  "github-contributions": "/api/github/contributions",
   "github-repo": "/api/github/repo",
   "github-repo-details": "/api/github/repo/:owner/:repo",
   "github-contents": "/api/github/contents/:owner/:repo",

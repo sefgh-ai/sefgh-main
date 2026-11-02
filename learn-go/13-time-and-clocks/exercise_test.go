@@ -57,7 +57,7 @@ func TestISOMillis(t *testing.T) {
 }
 
 // One moment, two clocks, two different Mondays. This is the time-zone defect
-// recorded in contracts/github-contributions, in miniature.
+// recorded in the contributions contract retired by P7-01, in miniature.
 func TestWeekStartUsesTheClockItIsGiven(t *testing.T) {
 	sundayEveningUTC := time.Date(2026, 10, 11, 20, 0, 0, 0, time.UTC)
 	r := reporter{now: func() time.Time { return sundayEveningUTC }}

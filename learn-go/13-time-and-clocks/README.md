@@ -2,15 +2,15 @@
 
 **You will learn:** how Go holds a moment in time, why the time zone changes the answer to "what day is it?", and how to test code that depends on today's date.
 
-**Real code:** `dateRange` in `backend/internal/githubcontributions/dates.go`, and the `Now` field and `currentStreak` function in `handler.go` beside it.
+**Historical example (P7-01, 2026-11-02):** the unused contributions endpoint, both handlers and its contract/tests are retired. The JavaScript and Go snippets below describe the removed implementation, available at parent commit `2cd3404` under `src/app/api/github/contributions/route.js` and `backend/internal/githubcontributions/`. They are teaching examples, not current source pointers. Your `exercise.go`, solution and exercise tests remain; no lesson checks were requested.
 
-## Production now uses UTC (BUG-048)
+## The retired Go handler used UTC (BUG-048)
 
-The handler reads `Now` once, converts the result to UTC and uses that same
+The retired handler read `Now` once, converted the result to UTC and used that same
 moment for its query window and streak. `dateRange` subtracts365calendar days
 and moves back to Monday in UTC; there is no host-zone override or special
-daylight-saving helper. The old JavaScript handler below remains the rollback
-characterization. The existing exercise also retains its original local-calendar
+daylight-saving helper. The JavaScript snippet below is historical; rollback reverts the P7-01
+retirement commit and redeploys both projects. The existing exercise also retains its original local-calendar
 behavior; your exercise files have not been changed.
 
 `currentStreak` builds a `map[time.Time]bool` of active dates, starts from
@@ -28,7 +28,7 @@ The fixture checks both the status and preservation of the other failures.
 
 ## The problem in the app
 
-The contributions route asks GitHub for "about the last year, starting on a Monday". The Next.js handler works that out like this:
+The retired contributions route asked GitHub for "about the last year, starting on a Monday". The retired Next.js handler worked that out like this:
 
 ```js
 const to = new Date()
@@ -60,7 +60,7 @@ moment.In(india).Weekday()  // Monday, because it is already 01:30 there
 
 `In` does not change the moment. It changes which clock you read it from.
 
-JavaScript's `Date` is one moment too, but it hides the choice: `getDay()` silently uses the zone of the machine it runs on, and `getUTCDay()` uses UTC. That is how the Next.js handler ended up depending on the server's zone. The contract records it as a defect, with a case where a server in UTC and a server in India pick Mondays a week apart for the same moment.
+JavaScript's `Date` is one moment too, but it hides the choice: `getDay()` silently uses the zone of the machine it runs on, and `getUTCDay()` uses UTC. That is how the Next.js handler ended up depending on the server's zone. The removed contract recorded it as a defect, with a case where a server in UTC and a server in India pick Mondays a week apart for the same moment.
 
 ## Moving by days
 
@@ -73,11 +73,11 @@ These usually agree. They differ when a daylight-saving change falls in between,
 
 `t.Weekday()` counts the same way as `getDay()`: Sunday is 0, Monday is 1, Saturday is 6.
 
-The production `dateRange` now uses `AddDate` after converting to UTC, where
+The retired Go `dateRange` used `AddDate` after converting to UTC, where
 daylight-saving gaps do not occur. The original parity port needed `wallClock`
 to reproduce JavaScript's handling of a skipped local time; BUG-048 removed
 that helper when the owner approved UTC behavior. This leaves the exercise's
-local-calendar examples intact while the production route has one date policy.
+local-calendar examples intact while the retired Go route had one date policy.
 
 ## Writing a time as text
 
@@ -110,16 +110,16 @@ type Handler struct {
 }
 ```
 
-The real server leaves `Now` empty and gets the real clock. A test sets it to a function that always returns the same moment:
+The retired server left `Now` empty and used the real clock. A test sets it to a function that always returns the same moment:
 
 ```go
 Now: func() time.Time { return fixedMoment },
 ```
 
-The106contract cases pass time values viewed in different zones through the
-injected clock; Go must still produce the same UTC window. The Node runner
-replaces JavaScript's global `Date` and retains the unchanged handler's local
-calendar requests separately as `next_calls`.
+The retired contract cases passed time values viewed in different zones
+through the injected clock; Go had to produce the same UTC window. The retired
+Node runner replaced JavaScript's global `Date` and recorded local-calendar
+requests separately as `next_calls`. Those endpoint suites are removed in P7-01.
 
 ## Your turn
 
@@ -137,7 +137,7 @@ go test -tags solution ./13-time-and-clocks
 The first command fails until you finish. One exercise test gives `weekStart`
 the same moment in two zones and expects two different Mondays. It preserves
 the original port's local-calendar example, so do not change your exercise to
-UTC just because the production route now uses UTC. Lesson checks are optional.
+UTC just because the retired Go route used UTC. Lesson checks are optional.
 
 ## You now know
 
@@ -151,4 +151,4 @@ UTC just because the production route now uses UTC. Lesson checks are optional.
 
 BUG-067/R-207 enforces the existing39-character contributions login limit with an explicit length guard before the handler token check or GraphQL request. Interleaved hyphens cannot admit40/77-character names; valid39-character names still pass. Invalid400 text is unchanged, and Next rollback replies/calls are preserved.
 
-len(string) counts bytes in Go. That is appropriate for a username constrained to ASCII by the adjacent pattern; non-ASCII input is refused by that pattern. Optional hyphens can add extra characters per regex repetition, so a repetition count is not a total string-length limit. The boundary fixtures distinguish39,40 and77 characters. Existing exercise.go is unchanged.
+len(string) counts bytes in Go. That is appropriate for a username constrained to ASCII by the adjacent pattern; non-ASCII input is refused by that pattern. Optional hyphens can add extra characters per regex repetition, so a repetition count is not a total string-length limit. The retired boundary fixtures distinguished39,40 and77 characters. Existing exercise.go is unchanged.

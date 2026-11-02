@@ -38,8 +38,8 @@ test('Next summary isolates users, rechecks revoked access and ignores the serve
   }
 });
 
-test('all five Next routes reject a provider credential without a session',async()=>{
-  for(const route of ['search','repo','repo/[owner]/[repo]','contents/[owner]/[repo]','contributions']){
+test('all four Next routes reject a provider credential without a session',async()=>{
+  for(const route of ['search','repo','repo/[owner]/[repo]','contents/[owner]/[repo]']){
     const {GET}=await import(`../../src/app/api/github/${route}/route.js`);
     const res=await GET(new Request('https://app.test/api/github/x',{headers:{'X-GitHub-Token':'gh-a'}}));
     assert.equal(res.status,401,route);

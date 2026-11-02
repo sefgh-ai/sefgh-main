@@ -120,7 +120,7 @@ func TestPrivateRepositoryIsolation(t *testing.T) {
 			t.Errorf("%s: resource requests=%d want %d", tc.ID, gotCalls, wantCalls)
 		}
 	}
-	for _, path := range []string{"/api/github/search?q=x", "/api/github/repo?owner=o&name=r", "/api/github/repo/o/r", "/api/github/contents/o/r", "/api/github/contributions?username=octo"} {
+	for _, path := range []string{"/api/github/search?q=x", "/api/github/repo?owner=o&name=r", "/api/github/repo/o/r", "/api/github/contents/o/r"} {
 		req := httptest.NewRequest("GET", path, nil)
 		req.Header.Set("X-GitHub-Token", "gh-a")
 		rec := httptest.NewRecorder()

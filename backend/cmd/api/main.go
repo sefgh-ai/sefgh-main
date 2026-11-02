@@ -27,7 +27,6 @@ import (
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/commentvote"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/dataproxy"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubaccess"
-	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubcontributions"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubdevelopers"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githublanguages"
 	"github.com/Adeel0-0/sefgh-nextjs-main/backend/internal/githubrepos"
@@ -474,12 +473,6 @@ func githubMux(logger *slog.Logger, token string, transport http.RoundTripper) *
 	mux.Handle("GET /api/github/trending", &githubtrending.Handler{
 		Client:  &http.Client{Timeout: githubtrending.Timeout, Transport: transport},
 		BaseURL: envOr("GITHUB_API_URL", githubtrending.DefaultBaseURL),
-		Logger:  logger,
-	})
-	mux.Handle("GET /api/github/contributions", &githubcontributions.Handler{
-		Client:  client,
-		BaseURL: envOr("GITHUB_API_URL", githubcontributions.DefaultBaseURL),
-		Token:   token,
 		Logger:  logger,
 	})
 	repositories := githubrepos.New(client,

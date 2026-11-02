@@ -1,5 +1,24 @@
 # SEFGH Go backend
 
+P7-01 (2026-11-02): `/api/github/contributions` is retired from both Next.js
+and Go under R-032's owner-approved decision. The caller audit found no app
+caller; the pre-removal website GET returned400 with `X-Sefgh-Backend: go`.
+The handler, Go package, switch, endpoint contract and endpoint-specific tests
+are removed. Retirement guards cover404 in Go and ignored stale switch names
+in Next.js. [Production prerequisite receipt](../docs/verification/p7-01-contributions-2026-11-02.json).
+Local retirement requires deployment before it changes the live endpoint.
+Earlier contribution implementation/contract references below are historical;
+use Git history at parent `2cd3404` to inspect the removed files.
+
+This endpoint has no rewrite, with or without `SEFGH_GO_API_URL`, and is404
+locally after retirement; it does not need an unconditional rewrite. A stale
+`github-contributions` entry in deployed `SEFGH_GO_ROUTES` is ignored after
+rebuilding. Other route switches remain for their later steps. For future
+Go-only routes, without `SEFGH_GO_API_URL` the website path is404; local
+development must point that setting at a local Go server or `sefgh-api`.
+Rollback for P7-01: `git revert <P7-01-commit>` and redeploy both projects;
+the old switch alone cannot restore deleted implementations.
+
 BUG-048 (R-033, 2026-10-30): contribution contract v3 uses one UTC clock for
 the query range and a today/yesterday-anchored streak, and structured user
 NOT_FOUND errors become404. Rollback Next.js responses/date variables remain
@@ -114,7 +133,6 @@ The current Next playground key route has its own [version2 contract](../contrac
 | `GET /api/github/trending-developers` | `internal/githubdevelopers` | `../contracts/github-trending-developers/` |
 | `GET /api/github/trending` | `internal/githubtrending` | `../contracts/github-trending/` |
 | `GET /api/github/languages` | `internal/githublanguages` | `../contracts/github-languages/` |
-| `GET /api/github/contributions` | `internal/githubcontributions` | `../contracts/github-contributions/` |
 | `GET /api/github/repo` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/repo/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
 | `GET /api/github/contents/{owner}/{repo}` | `internal/githubrepos` | `../contracts/github-repositories/` |
@@ -207,9 +225,7 @@ SEFGH_GO_ROUTES=github-search
 The new names are `github-repo`, `github-repo-details`, and `github-contents`.
 GO-004 adds `github-languages`, a static embedded catalog with no upstream
 calls, credentials or runtime data file. It also stays disabled by default.
-GO-005b adds `github-contributions`, which now needs a verified user credential: without it
-every valid request answers 500. It works out its date range in the time zone
-of the machine it runs on, as the Next.js handler does.
+GO-005b historically added contributions; P7-01 retires that endpoint and switch.
 They remain off by default and await peer review and ADR cutover gates. The
 summary cache is local to one Go process: ten-minute freshness (`FreshFor`, R-034),
 stale background refresh, a copy dropped when GitHub answers 404, 256 entries and 64 MiB of stored key/header/body bytes. Cache persistence

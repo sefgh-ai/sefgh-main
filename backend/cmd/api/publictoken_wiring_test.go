@@ -75,7 +75,7 @@ func TestPublicReadTokenGoesOnlyToSignedOutReads(t *testing.T) {
 			t.Errorf("%s signed out: Cache-Control %q; a public read stays cacheable", route, rec.Header().Get("Cache-Control"))
 		}
 	}
-	for _, route := range fiveRoutes {
+	for _, route := range callerTokenRoutes {
 		req := httptest.NewRequest("GET", route, nil)
 		req.Header.Set("Authorization", "Bearer session-a")
 		req.Header.Set("X-GitHub-Token", "gh-a")
@@ -85,21 +85,6 @@ func TestPublicReadTokenGoesOnlyToSignedOutReads(t *testing.T) {
 				t.Errorf("%s signed in: %s, want only the caller's token", route, call)
 			}
 		}
-	}
-}
-
-// Contributions answers 500 without a caller's token before asking GitHub
-// anything, and the public read token does not change that.
-func TestPublicReadTokenDoesNotOpenContributions(t *testing.T) {
-	empty := ""
-	handler, upstream := publicReadServer(t, &empty)
-	rec := httptest.NewRecorder()
-	handler.ServeHTTP(rec, httptest.NewRequest("GET", "/api/github/contributions?username=octo", nil))
-	if rec.Code != 500 {
-		t.Errorf("contributions signed out: %d, want 500", rec.Code)
-	}
-	if seen := upstream.take(); len(seen) != 0 {
-		t.Errorf("contributions signed out reached %q", seen)
 	}
 }
 

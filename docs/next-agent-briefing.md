@@ -1,5 +1,14 @@
 # Briefing for the next agent (written 2026-10-29)
 
+**Current Phase7 pickup (P7-01, 2026-11-02):** contributions is retired locally
+from Next.js and Go, including its switch/contract/old tests, with retirement
+guards. See the newest `coordination.md` record for exact checks and commit.
+The owner started Phase7 before the Phase6 gate in PHASE7-000; the older
+section3/4 queue and contribution references below are historical. Next is
+P7-02, one step/commit per task. Keys route and workers stay; signing remains
+stopped. Stop before P7-07 unless the owner confirms AI keys on `sefgh-api`,
+and check R-038. No deployment/live404 is asserted by this update.
+
 DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision. See docs/database/user-db-organization-2026-11-01.md and the namespace/source receipts.
 
 
@@ -100,7 +109,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
    - The file sits outside the repository, at `D:\Users\Windows\Downloads\` (`sefgh mail and password for testing.txt`).
    - **Never open it to copy its contents anywhere, never paste a password, never ask for one.**
    - If the owner wants it done, ask them how.
-6. **Phase 7** (retire the Next.js handlers, the browser's direct Supabase paths and the switches) starts only when Phase 6's gate in the ADR is met.
+6. **Phase 7** started by owner decision2026-11-02 before Phase6's gate; follow `plans/phase7-retirement.md` and the newest coordination record. P7-01 retires contributions; next P7-02.
 7. **Parked; do not start without the owner:**
    - RepoSync (R-189 to R-198): not deployed.
    - Analysis and search workers (R-116 to R-123): worker-execution gate.

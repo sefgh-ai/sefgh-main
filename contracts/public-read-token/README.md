@@ -31,7 +31,7 @@ Requests that arrive while a check is in progress wait for that check, so there 
 
 Signed-out reads of search, repository summary, repository detail (with its languages and README), contents, trending and trending developers, in Next.js and Go, and the repository page's own read in Next.js (`src/lib/repo/repoData.js`), which still refuses a private repository.
 
-Not contributions. It refuses a signed-out caller with 500 before asking GitHub anything, and allowing it would change its contract. Nothing in the app calls it (bug register R-032).
+The unused contributions endpoint was retired in P7-01 (R-032); it no longer has a contract or implementation in either runtime. The public-read-token coverage for the remaining routes stays.
 
 ## Not established here
 

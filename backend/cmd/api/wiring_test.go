@@ -38,8 +38,6 @@ func (u *upstreamLog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	switch {
-	case r.URL.Path == "/graphql":
-		io.WriteString(w, `{"data":{"user":{"contributionsCollection":{"contributionCalendar":{"totalContributions":0,"weeks":[]}}}}}`)
 	case strings.HasPrefix(r.URL.Path, "/search/"):
 		io.WriteString(w, `{"total_count":0,"items":[]}`)
 	case strings.HasSuffix(r.URL.Path, "/languages"):
@@ -61,12 +59,11 @@ func (u *upstreamLog) take() []string {
 	return seen
 }
 
-var fiveRoutes = []string{
+var callerTokenRoutes = []string{
 	"/api/github/search?q=x",
 	"/api/github/repo?owner=o&name=r",
 	"/api/github/repo/o/r",
 	"/api/github/contents/o/r",
-	"/api/github/contributions?username=octo",
 }
 
 func serverUnderTest(t *testing.T, upstream *upstreamLog) http.Handler {
@@ -84,12 +81,12 @@ func serverUnderTest(t *testing.T, upstream *upstreamLog) http.Handler {
 }
 
 // The server as run() builds it: a caller without credentials reaches GitHub
-// with no credential, a verified caller with only their own, on all five
+// with no credential, a verified caller with only their own, on all four
 // routes. The server's own GITHUB_TOKEN reaches GitHub on none.
 func TestServerNeverLendsItsOwnToken(t *testing.T) {
 	upstream := &upstreamLog{}
 	handler := serverUnderTest(t, upstream)
-	for _, route := range fiveRoutes {
+	for _, route := range callerTokenRoutes {
 		for _, signedIn := range []bool{false, true} {
 			req := httptest.NewRequest("GET", route, nil)
 			want := ""
@@ -101,8 +98,7 @@ func TestServerNeverLendsItsOwnToken(t *testing.T) {
 			rec := httptest.NewRecorder()
 			handler.ServeHTTP(rec, req)
 			seen := upstream.take()
-			// Contributions needs a credential, so without one it asks nothing.
-			if len(seen) == 0 && (signedIn || !strings.Contains(route, "contributions")) {
+			if len(seen) == 0 {
 				t.Errorf("%s signedIn=%v: no request reached GitHub (status %d)", route, signedIn, rec.Code)
 			}
 			for _, call := range seen {
@@ -121,7 +117,7 @@ func TestServerNeverLendsItsOwnToken(t *testing.T) {
 func TestVerifiedRequestsDoNotFollowRedirects(t *testing.T) {
 	upstream := &upstreamLog{redirect: true}
 	handler := serverUnderTest(t, upstream)
-	for _, route := range fiveRoutes {
+	for _, route := range callerTokenRoutes {
 		req := httptest.NewRequest("GET", route, nil)
 		req.Header.Set("Authorization", "Bearer session-a")
 		req.Header.Set("X-GitHub-Token", "gh-a")

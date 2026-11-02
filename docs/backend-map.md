@@ -1,5 +1,15 @@
 # SEFGH backend map
 
+P7-01 (2026-11-02): `/api/github/contributions` is retired from both Next.js
+and Go under R-032's owner-approved decision. The caller audit found no app
+caller; the pre-removal website GET returned400 with `X-Sefgh-Backend: go`.
+The handler, Go package, switch, endpoint contract and endpoint-specific tests
+are removed. Retirement guards cover404 in Go and ignored stale switch names
+in Next.js. [Production prerequisite receipt](verification/p7-01-contributions-2026-11-02.json).
+Local retirement requires deployment before it changes the live endpoint.
+Earlier contribution implementation/contract references below are historical;
+use Git history at parent `2cd3404` to inspect the removed files.
+
 DB-CONSOLIDATE-003 (2026-11-01): User-DB now has an empty restricted corpus schema, migration corpus_001_restricted_namespace/version20261031233939. Ownerpostgres; anon/authenticated/service_role have no USAGE/CREATE; no API exposure change. Six before/after app catalog fingerprints match. Existing tables/data/policies/roles unchanged. Repo-DB now healthy and metadata/count inventory saved; source transfer not performed. R-210 source public-write grants recorded; separate reviewed containment proposal awaiting owner decision. See docs/database/user-db-organization-2026-11-01.md and the namespace/source receipts.
 
 
@@ -265,7 +275,6 @@ Paths below are relative to `/api`; corresponding source is `src/app/api/<path>/
 | `github/repo` | GET | Public `owner` + `name` lookup; selected repository fields; one-hour Next fetch cache (Go: ten minutes, dropped on 404, R-034) |
 | `github/repo/[owner]/[repo]` | GET | Repository, languages, README; `{repository, languages, readme, rate_limit}` |
 | `github/contents/[owner]/[repo]` | GET | Optional relative `path`; `{contents, rate_limit}` |
-| `github/contributions` | GET | Validated username -> GitHub GraphQL -> contribution grid and stats |
 | `github/languages` | GET | Local language catalogue |
 | `github/trending` | GET | GitHub search transformed into cards; `starsToday` is randomized |
 | `github/trending-developers` | GET | User search plus up to 20 repository lookups |

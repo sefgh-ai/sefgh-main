@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized PHASE7-000 (commit `c65f702`) on main and go-backend.
+Last updated: 2026-11-02 (Asia/Calcutta), by Codex: P7-01 handoff.
 
 ## Start here
 
@@ -13,9 +13,125 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released PHASE7-000 (2026-11-02). **Phase 7 started by the owner** before the Phase 6 gate was fully met (ADR decisions log 2026-11-02); order and recipe in `plans/phase7-retirement.md`; next step **P7-01** (retire `/api/github/contributions`, R-032). The playground keys route stays (not on Go); the worker, search and RepoSync migration is an owner-accepted gap. Owner signing stop and worker-execution gate remain.
+- **Active writer:** none. Codex released P7-01 (2026-11-02). Contributions retired locally; P7-02 is next under `plans/phase7-retirement.md`. Stop before P7-07 until owner confirms AI keys on `sefgh-api` and R-038 is checked. Keys, workers and signing gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
-- **Stage:** Of the original 25 API route entries, 23 are ported and one is retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069); playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+- **Stage:** P7-01 leaves22of the original25API entries ported, with contributions retired locally (deployment/live404 pending), trending refresh retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069), and playground keys retained. The following detailed progress is historical at PHASE7-000; playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: P7-01 contributions retirement (Codex, 2026-11-02)
+
+Status: **implementation and read-only review complete; local verification complete**. Owner Codex; independent read-only reviewer review_p7_01. Branch `main`, base/current `2cd34049e558e7b292b350e90213f84291018ba5`; resulting changes explicitly uncommitted at this handoff, one P7-01 commit to follow. Previous writer released and initial tree/verification lease were clean.
+
+The exact-path and symbol caller audit in src/scripts/backend found no app caller, including dynamic builders. Shared GitHub access helpers remain used by other routes. Pre-removal unauthenticated production GET returned400 (Username is required) with X-Sefgh-Backend: go; secret-free receipt `verification/p7-01-contributions-2026-11-02.json`. This proves the production Go prerequisite only, not live retirement or arbitrary external consumers.
+
+Removed the Next.js endpoint, Go endpoint/package, switch, complete contribution contract/next expectations, endpoint-specific Node/Go tests, unused fixture helper, and probe/comparison entries. P7-01 explicitly retires the whole unused endpoint (R-032), so it overrides the generic recipe that preserves Go contracts and rewrites for other routes. No unconditional rewrite is appropriate. A stale deployed route name is safely ignored after rebuilding. Go retirement tests cover missing/valid/malformed usernames for anonymous and verified callers, require404 and no GitHub resource requests. Next regression requires no handler and no rewrite with or without a Go origin. Both guards failed before removal and pass afterward.
+
+Updated R-032 and remaining R-033/R-207 statuses, route docs/map/cutover/ADR/briefing/plan, access/public-token contract notes and lesson13/index. Teaching examples are marked historical; existing exercise.go and solutions are unchanged. The path scanner's obsolete minimum25handler assertion failed as expected after retirement (now24including auth callback); replaced it with presence checks for auth callback and playground keys, the boundaries the plan keeps.
+
+Checks run by Codex: `npm run lint` passed0errors/warnings; `npm run build` passed,62static pages and no contributions handler/rewrite in built manifests; focused Node tests6/6 and path-scanner tests3/3 passed; targeted ESLint on the later scanner edit passed; final standalone `npm run test:contracts`1699/1699 passed; `go test -count=1 ./...` all packages passed; `go vet ./...` passed; `gofmt -l .` empty; added documentation links and `git diff --check` passed. Initial full contracts1698pass/1fail was the obsolete count and is resolved. Existing baseline-browser-mapping/caniuse age advisories appeared; no dependency update. Lesson checks skipped by owner policy, not claimed passed. Normal `npm run handoff` passed contracts and Go test/vet/gofmt, with lessons explicitly skipped; status READY_VERIFIED, matching precommit tree99c63439b48a. This final bookkeeping and commit change the fingerprint, so one final normal handoff will reverify the committed checkout; consult its matching signal/status before synchronization.
+
+Independent review: no Critical/Important finding. Minor deferred to P7-10: `hosting-setup.md` still lists the obsolete switch and generic Next fallback; backend README/cutover/plan document the retirement and stale settings are harmless. Reviewer did not assess live retirement or consumers outside the repository. Ruling: preserve those boundaries, since treating this audit as hosted404 or external-consumer proof would overstate the evidence.
+
+Actual changed files (all P7-01, uncommitted at this record):
+
+```text
+ M backend/README.md
+ M backend/cmd/api/access_test.go
+ M backend/cmd/api/main.go
+ M backend/cmd/api/publictoken_wiring_test.go
+ M backend/cmd/api/wiring_test.go
+ D backend/internal/githubcontributions/contract_test.go
+ D backend/internal/githubcontributions/dates.go
+ D backend/internal/githubcontributions/dates_test.go
+ D backend/internal/githubcontributions/handler.go
+ D backend/internal/githubcontributions/limits_test.go
+ D backend/internal/githubcontributions/query.go
+ M contracts/github-access/README.md
+ D contracts/github-contributions/README.md
+ D contracts/github-contributions/cases.json
+ M contracts/public-read-token/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/13-time-and-clocks/README.md
+ M learn-go/13-time-and-clocks/exercise_test.go
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/compare-deployments.mjs
+ D scripts/contracts/contributions-fixture.mjs
+ M scripts/contracts/github-access-isolation.test.mjs
+ D scripts/contracts/github-contributions.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/contracts/internal-paths.test.mjs
+ D src/app/api/github/contributions/route.js
+?? backend/cmd/api/retired_routes_test.go
+?? docs/verification/p7-01-contributions-2026-11-02.json
+```
+
+Writer released: yes. No owned servers/processes; the normal verifier will own its lease only while running. No commit/push/CI/deployment/live404 is claimed at this record. No keys, database, workers, signing or AI activation change. Rollback: revert the one P7-01 commit and redeploy both projects; switch-only rollback cannot restore deleted code. Next: commit this completed P7-01 record/source as exactly one commit, then run normal handoff to verify the committed fingerprint. The resulting commit is the one containing this record (explicitly uncommitted when written); retrieve its hash from Git history. Subsequent task P7-02 only. Do not start P7-07 without the owner's AI-key confirmation and R-038 check.
+
+## Checkpoint: P7-01 contributions retirement (Codex, 2026-11-02)
+
+Status: **in progress / incomplete**. Owner Codex; reviewer unassigned. Branch `main`, base/current `2cd34049e558e7b292b350e90213f84291018ba5`; uncommitted. Initial tree clean, verifier IDLE_CLEAN, previous writer released. Scope: the P7-01 row and recipe in `plans/phase7-retirement.md`, one commit for this step only.
+
+Decision: P7-01 specifically retires both Next.js and Go implementations, the switch, contract and endpoint tests; this takes precedence over the generic recipe that retains Go contracts/rewrites for other routes. Use this coordination record as the durable execution ledger. Owner explicitly requested this checkout and its existing main branch. No P7-02 work, keys, workers, signing, database changes or deployment.
+
+Expected files: Next handler; `backend/internal/githubcontributions/`; Go mux/wiring tests; contribution Node fixtures/tests; rewrite/probe/comparison route lists; route contract; lesson13/index and other retired references; register, ADR, backend-map, cutover, backend README, plan, briefing and this record. Exact changed list will be recorded after edits.
+
+Completed milestone: exact-path/symbol audit found no application callers. Pre-removal production GET400 carries X-Sefgh-Backend: go; secret-free receipt `verification/p7-01-contributions-2026-11-02.json`. Removed both endpoint implementations, switch, entire endpoint contract and old tests/fixture helper; shared GitHub access remains in use. Updated route lists, docs/register (R-032, remainder R-033, R-207) and historical lesson13 references; exercise.go unchanged. P7-01-specific full retirement overrides the generic retained-Go recipe; no unconditional rewrite is appropriate for an endpoint being removed.
+
+Regression evidence: new retirement guard failed in Node (handler still present) and Go (400/500/200, GraphQL reached). After removal, focused Node tests6/6 pass; focused Go API retirement/credential/redirect/public-token tests pass. `git diff --check` passes (line-ending notices only). No production settings or deployment changed. Required full lint/build/contracts/Go/handoff not run yet; lessons skipped by owner policy. Running processes: none owned. Next command: `npm run lint`, then build, contracts, `go test -count=1 ./...`, vet/gofmt, review and final handoff.
+
+Verification update: lint passed (ESLint0errors/warnings; baseline-data advisory only); build passed (62static pages, retired endpoint absent; existing baseline/caniuse age advisories). First full contract run failed1of1699: the internal-path scan required at least25handlers, now24including auth callback after one retirement. Root cause verified from scanner and Git/source inventories; replace the obsolete count with required retained-route sentinels (auth callback and playground keys). This keeps the scanner completeness check compatible with intentional Phase7 removals. Focused rerun and full suite next.
+
+Contracts milestone: `node --test scripts/contracts/internal-paths.test.mjs`3/3 passed after the scanner adjustment; targeted ESLint for that file passed. Final standalone `npm run test:contracts`1699/1699 passed. Full `go test -count=1 ./...`, then `go vet ./...` and empty `gofmt -l .` are running in owned exec session94489 (log in OS temp, no secrets). No app server is running. Next: inspect exit/results, final diff/docs check, complete/release handoff record and normal handoff. No publish/synchronization hook has run while incomplete.
+
+Review: independent read-only review by review_p7_01 found no Critical/Important issues. One Minor deferred to P7-10 documentation: hosting-setup.md still lists the obsolete switch and generic Next fallback. The name is safely ignored; backend README/cutover/plan describe current retirement. Reviewer did not judge live404 (deployment outside task) or arbitrary external consumers (repo audit proves only no app callers). Ruling: retain these evidence boundaries; assuming otherwise could falsely claim live retirement or external compatibility. No second review claimed.
+
+Actual working-tree files at this milestone (all P7-01; uncommitted):
+
+```text
+ M backend/README.md
+ M backend/cmd/api/access_test.go
+ M backend/cmd/api/main.go
+ M backend/cmd/api/publictoken_wiring_test.go
+ M backend/cmd/api/wiring_test.go
+ D backend/internal/githubcontributions/contract_test.go
+ D backend/internal/githubcontributions/dates.go
+ D backend/internal/githubcontributions/dates_test.go
+ D backend/internal/githubcontributions/handler.go
+ D backend/internal/githubcontributions/limits_test.go
+ D backend/internal/githubcontributions/query.go
+ M contracts/github-access/README.md
+ D contracts/github-contributions/README.md
+ D contracts/github-contributions/cases.json
+ M contracts/public-read-token/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/13-time-and-clocks/README.md
+ M learn-go/13-time-and-clocks/exercise_test.go
+ M learn-go/README.md
+ M next.config.mjs
+ M scripts/compare-deployments.mjs
+ D scripts/contracts/contributions-fixture.mjs
+ M scripts/contracts/github-access-isolation.test.mjs
+ D scripts/contracts/github-contributions.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ D src/app/api/github/contributions/route.js
+?? backend/cmd/api/retired_routes_test.go
+?? docs/verification/p7-01-contributions-2026-11-02.json
+```
+
 
 ## Handoff: PHASE7-000, the owner's answers and the Phase 7 plan (Claude Code, 2026-11-02)
 

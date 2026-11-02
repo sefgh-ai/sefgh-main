@@ -32,8 +32,6 @@ const paths = [
   ['github-trending', '/api/github/trending?since=daily', true],
   ['github-trending-developers', '/api/github/trending-developers?since=yearly', false],
   ['github-trending-developers', '/api/github/trending-developers?since=daily', true],
-  ['github-contributions', '/api/github/contributions', false],
-  ['github-contributions', '/api/github/contributions?username=torvalds', true],
   ['github-repo', '/api/github/repo', false],
   ['github-repo', '/api/github/repo?owner=vercel&name=next.js', true],
   ['github-repo-details', '/api/github/repo/-octo/demo', false],

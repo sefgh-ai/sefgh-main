@@ -95,7 +95,11 @@ function deadPaths() {
 test('the scan finds the app: pages and route handlers', () => {
   const { pages, apis } = deadPaths();
   assert.ok(pages.length >= 40, `${pages.length} pages`);
-  assert.ok(apis.length >= 25, `${apis.length} API routes`);
+  // Phase7 intentionally reduces handler count. Prove the scanner still
+  // sees the two Next.js route boundaries the retirement plan preserves.
+  for (const path of ['/auth/callback', '/api/playground/keys']) {
+    assert.ok(apis.some(route => route.path === path), `missing retained route ${path}`);
+  }
   assert.ok(pages.some((p) => p.path === '/download'));
 });
 
