@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Claude Code: P7-06 complete on base `dbeb930`, uncommitted.
+Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-06 (commit `848d62f`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-06 avatar upload retirement (Claude Code, 2026-11-02)
 
-Status: **implementation complete; required local checks passed; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `dbeb930`. Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+Status: **implementation complete; required local checks passed; unreviewed; not deployed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `dbeb930`. Resulting commit: `848d62f` (synchronized by Git Agent on main and go-backend).
 
 - **Production prerequisite** (no credentials, no file): `POST /api/upload-avatar` answers 401 and `GET` 405, both with `X-Sefgh-Backend: go`. Receipt `verification/p7-06-avatar-2026-11-02.json`. A signed-in upload, deployment and hosted rollback are not established here.
 - **Caller audit:** only `src/components/AvatarUpload.jsx` calls the path, through `fetchWithSession` (bearer). Nothing else imported the handler except its test and recorder.
