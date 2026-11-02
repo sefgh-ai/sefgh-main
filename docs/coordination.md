@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-03 (Asia/Calcutta), by Codex: P7-09a handoff.
+Last updated: 2026-11-03 (Asia/Calcutta), by Git Agent: synchronized P7-09a (commit `7688bca`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: P7-09a non-AI route-name switches (Codex, 2026-11-03)
 
-Status: **bounded implementation and read-only review complete; required local checks passed**. Owner Codex; independent read-only reviewer review_p7_09a, no findings. Branch main, operative base/current `7f153e0c94dd4c87b28c8dd9c671a4773a4773cf`; task changes explicitly uncommitted at this record, one P7-09a commit to follow. Initial basec4ce385 changed when prior GitAgent P7-08b sync completed; comparison found only timestamp/coordination metadata, no application tree differences. Our work preserved, no Codex rebase/reset/stash. Source before claim clean; pre-existing untracked image.png preserved byte-identical, excluded from this task's commit and synchronization. It MUST NOT be staged by Git Agent for this handoff.
+Status: **bounded implementation and read-only review complete; required local checks passed**. Owner Codex; independent read-only reviewer review_p7_09a, no findings. Branch main, operative base `7f153e0`. Resulting commit: `7688bca` (synchronized by Git Agent on main and go-backend). Pre-existing untracked image.png preserved byte-identical, excluded from this task's commit and synchronization.
 
 Owner scope: remove only trending-topics and playground-keys-v1 route-name opt-ins. Topics is now fixed/origin-required. New v1 paths keep exact NEXT_PUBLIC_SEFGH_KEYS_V1=1 and origin requirements. All3AI switches/handlers and SEFGH_GO_ROUTES reading remain until P7-07/R-038/R-213; partial P7-09 only. Legacy /api/playground/keys handler/UI remain. Go SEFGH_KEYS_V1, accountant/policy/capability checks unchanged; no runtime/contract/UI code changed. No real key/user/token/RPC provisioning, signing, live writes, deployment or hosted activation/acceptance.
 
