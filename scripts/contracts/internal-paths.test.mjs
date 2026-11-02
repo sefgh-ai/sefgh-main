@@ -25,7 +25,8 @@ const routedApis = await (async () => {
     process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
     return (await config.rewrites()).beforeFiles.map(route => ({
       path: route.source,
-      re: new RegExp(`^${route.source.replace(/:[a-z]+/g, '[^/]+')}/?$`),
+      // ":name*" (P7-08a's search history) matches the rest of the path.
+      re: new RegExp(`^${route.source.replace(/:[a-z]+\*/g, '.*').replace(/:[a-z]+/g, '[^/]+')}/?$`),
     }));
   } finally {
     for (const name of names) {

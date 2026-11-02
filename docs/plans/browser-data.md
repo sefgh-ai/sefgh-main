@@ -2,6 +2,8 @@
 
 Written by Claude Code on 2026-10-19. This is the plan for the half of Phase 3 that has not started: the database reads and writes the browser makes itself, without an API route. It proposes an order and one design choice for the owner.
 
+**P7-08a (2026-11-02):** search history and onboarding no longer read the setting: their modules ask only Go and their rewrites are unconditional. The setting now switches only the data-proxy areas, until P7-08b.
+
 **Decision, 2026-10-19: the owner chose option A**, a per-area list in a public build setting. DATA-001 (search history) starts with it.
 
 ## What exists

@@ -1,6 +1,11 @@
 # Briefing for the next agent (written 2026-10-29)
 
-**Current Phase7 pickup (P7-06, 2026-11-02):** the avatar upload's Next handler,
+**Current Phase7 pickup (P7-08a, 2026-11-02):** search history and onboarding
+ask only Go in the browser (Claude Code). Next is P7-08b, the nine data-proxy
+areas and the server-side `goData` option. P7-07 (AI routes) is parked behind
+R-038 and R-213 (owner, 2026-11-02).
+
+**Earlier pickup (P7-06, 2026-11-02):** the avatar upload's Next handler,
 recorder and fixture are retired locally (Claude Code); Go keeps every case and
 is now the only upload writer. P7-07 (AI routes) waits for the owner to confirm
 AI keys on sefgh-api and for R-038; P7-08 (browser data-area fallbacks) does not

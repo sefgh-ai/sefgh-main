@@ -18,7 +18,8 @@
 //
 // Add --production to build and check `next start` in an isolated output folder.
 // Add --public-reads for P7-02, --shares for P7-03, --user-reads for P7-04,
-// --interactions for P7-05 or --avatar for P7-06 forwarding scenarios.
+// --interactions for P7-05, --avatar for P7-06 or --browser-data for P7-08a
+// forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -36,7 +37,8 @@ const sharesOnly = process.argv.includes('--shares');
 const userReadsOnly = process.argv.includes('--user-reads');
 const interactionsOnly = process.argv.includes('--interactions');
 const avatarOnly = process.argv.includes('--avatar');
-if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly, avatarOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
+const browserDataOnly = process.argv.includes('--browser-data');
+if ([publicReadsOnly, sharesOnly, userReadsOnly, interactionsOnly, avatarOnly, browserDataOnly].filter(Boolean).length > 1) throw new Error('choose one probe scope');
 const children = [];
 let upstream;
 
@@ -240,8 +242,8 @@ const allScenarios = [
   // with the CDN cache header.
   { path: '/api/trending/topics' },
   { path: '/api/trending/topics', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200, cache: 'public, max-age=0, s-maxage=21600, stale-while-revalidate=3600' },
-  // Search history (DATA-001b), a browser data area switched by
-  // NEXT_PUBLIC_SEFGH_GO_DATA: the caller's own rows only, never cached.
+  // Search history (DATA-001b), Go only since P7-08a: the caller's own
+  // rows only, never cached.
   { path: '/api/search-history?user=a&offset=0&limit=50', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
   { path: '/api/search-history/count?user=a', headers: { Authorization: 'Bearer session-a' }, status: 200, cache: 'private, no-store' },
   { path: '/api/search-history', body: '{"user":"a","query":"rust","source":"search","filters":{},"resultsCount":0}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json' }, status: 200, cache: 'private, no-store' },
@@ -272,6 +274,7 @@ const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.pat
   : userReadsOnly ? allScenarios.filter(scenario => scenario.path === '/api/activity' || scenario.path === '/api/repo/starred')
   : interactionsOnly ? allScenarios.filter(scenario => /^\/api\/repo\/(collect|vote|rating|comments|videos)(\/vote)?([?]|$)/.test(scenario.path))
   : avatarOnly ? allScenarios.filter(scenario => scenario.path === '/api/upload-avatar')
+  : browserDataOnly ? allScenarios.filter(scenario => /^\/api\/(search-history|onboarding)([/?]|$)/.test(scenario.path))
   : allScenarios;
 
 
@@ -504,7 +507,7 @@ try {
   // Retired P7-02 to P7-06 routes deliberately have no opt-in names here.
   const routes = "ai-suggestions,ai-enhance-query,ai-chat,trending-topics";
   const nextEnv = {
-    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
+    SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',
     // This probe never needs a real Supabase account or browser session.
     NEXT_PUBLIC_SUPABASE_URL: 'https://probe.invalid',

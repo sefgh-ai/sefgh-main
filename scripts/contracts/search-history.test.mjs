@@ -1,19 +1,21 @@
 // The browser's search history (src/lib/supabase/search-history.js),
 // contract version 2 (DATA-001a, DATA-001b; version 2, R-102). The module's real functions run
-// against a stand-in Supabase; see browser-db-fixture.mjs. Switched to Go,
-// the module must send `expect.go_request` and give what Go answers; with no
-// Go route (404) it must take its direct path as before. The Go endpoints
-// (backend/internal/searchhistory) run the same cases from Go.
+// against a stand-in Supabase; see browser-db-fixture.mjs. The module must
+// send `expect.go_request` and give what Go answers, whatever
+// NEXT_PUBLIC_SEFGH_GO_DATA says: its direct path was retired in P7-08a.
+// `expect.database` stays: the Go endpoints (backend/internal/searchhistory)
+// run the same cases from Go and make those calls.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { register } from 'node:module';
 import { test } from 'node:test';
-import { installBrowserClient, runBrowserFixture, runSwitchedFixture, SUPABASE_KEY } from './browser-db-fixture.mjs';
+import { installBrowserClient, runSwitchedFixture, SUPABASE_KEY } from './browser-db-fixture.mjs';
 register('./browser-db-loader.mjs', import.meta.url);
 installBrowserClient();
 const history = await import('../../src/lib/supabase/search-history.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/search-history/cases.json', import.meta.url), 'utf8'));
-const AREA = 'search-history';
+// P7-08a: the area is not switched on, and the module asks Go anyway.
+const AREA = '';
 
 test('search history fixture integrity', () => {
   assert.equal(contract.contract_version, 2);
@@ -55,10 +57,7 @@ test('search history fixture integrity', () => {
 });
 
 for (const c of contract.cases) {
-  const { go_request, ...direct } = c.expect;
-  test(`search history: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runBrowserFixture(history, c), direct);
-  });
+  const { go_request } = c.expect;
   test(`search history via Go: ${c.id}`, async () => {
     const value = 'go_returns' in c ? c.go_returns : c.expect.returns;
     const run = await runSwitchedFixture(history, c, AREA, { status: c.go_status ?? 200, body: value });
@@ -69,10 +68,11 @@ for (const c of contract.cases) {
   });
   if (go_request) {
     test(`search history, Go route missing: ${c.id}`, async () => {
-      const run = await runSwitchedFixture(history, c, AREA, { status: 404, body: { error: 'Not Found' } });
-      const { go, ...rest } = run;
-      assert.deepEqual(go, [go_request]);
-      assert.deepEqual(rest, direct, 'the direct path, as with the area off');
+      const missing = await runSwitchedFixture(history, c, AREA, { status: 404, body: { error: 'Not Found' } });
+      const failed = await runSwitchedFixture(history, c, AREA, { status: 500, body: { error: 'failed' } });
+      assert.deepEqual(missing.go, [go_request]);
+      assert.deepEqual(missing.database, [], 'never the database directly');
+      assert.deepEqual(missing, failed, 'a missing route is an ordinary failure');
     });
   }
 }

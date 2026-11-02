@@ -3,18 +3,20 @@
 // Supabase; see browser-db-fixture.mjs. Switched to Go, the module asks for
 // each database call's result, { data, error }: it must send
 // `expect.go_requests` and, given `expect.go_answers`, reach
-// `expect.go_outcome`. With no Go route (404) it must take its direct path.
-// The Go endpoints (backend/internal/onboarding) run the same cases from Go.
+// `expect.go_outcome`, whatever NEXT_PUBLIC_SEFGH_GO_DATA says: its direct
+// path was retired in P7-08a. `expect.database` stays: the Go endpoints
+// (backend/internal/onboarding) run the same cases from Go.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { register } from 'node:module';
 import { test } from 'node:test';
-import { installBrowserClient, runBrowserFixture, runSwitchedFixture, SUPABASE_KEY } from './browser-db-fixture.mjs';
+import { installBrowserClient, runSwitchedFixture, SUPABASE_KEY } from './browser-db-fixture.mjs';
 register('./browser-db-loader.mjs', import.meta.url);
 installBrowserClient();
 const onboarding = await import('../../src/lib/supabase/onboarding.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/onboarding/cases.json', import.meta.url), 'utf8'));
-const AREA = 'onboarding';
+// P7-08a: the area is not switched on, and the module asks Go anyway.
+const AREA = '';
 const outcome = (run) => ('throws' in run ? { throws: run.throws } : { returns: run.returns });
 
 test('onboarding fixture integrity', () => {
@@ -42,10 +44,7 @@ test('onboarding fixture integrity', () => {
 });
 
 for (const c of contract.cases) {
-  const { go_requests, go_answers, go_outcome, ...direct } = c.expect;
-  test(`onboarding: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runBrowserFixture(onboarding, c), direct);
-  });
+  const { go_requests, go_answers, go_outcome } = c.expect;
   test(`onboarding via Go: ${c.id}`, async () => {
     const run = await runSwitchedFixture(onboarding, c, AREA, go_answers.map((body) => ({ status: c.go_status ?? 200, body })));
     assert.deepEqual(run.go, go_requests);
@@ -53,9 +52,10 @@ for (const c of contract.cases) {
     assert.deepEqual(outcome(run), go_outcome);
   });
   test(`onboarding, Go route missing: ${c.id}`, async () => {
-    const run = await runSwitchedFixture(onboarding, c, AREA, { status: 404, body: { error: 'Not Found' } });
-    const { go, ...rest } = run;
-    assert.ok(go.length >= 1);
-    assert.deepEqual(rest, direct, 'the direct path, as with the area off');
+    const missing = await runSwitchedFixture(onboarding, c, AREA, { status: 404, body: { error: 'Not Found' } });
+    const refused = await runSwitchedFixture(onboarding, c, AREA, { status: 500, body: { error: 'Not Found' } });
+    assert.ok(missing.go.length >= 1);
+    assert.deepEqual(missing.database, [], 'never the database directly');
+    assert.deepEqual(missing, refused, 'a missing route is an ordinary failure');
   });
 }

@@ -43,6 +43,9 @@ const interactionGoRoutes = [
 // P7-06 avatar upload: Go only, bearer only. Go is then the only upload
 // writer, as the R-095 lock protocol requires.
 const avatarGoRoutes = ["/api/upload-avatar"];
+// P7-08a search history and onboarding: their browser modules
+// (src/lib/supabase/) ask only Go, so the rewrite no longer has a switch.
+const browserDataGoRoutes = ["/api/search-history", "/api/search-history/:path*", "/api/onboarding"];
 const goBackendRoutes = {
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
@@ -55,15 +58,13 @@ const goBackendRoutes = {
   "trending-topics": "/api/trending/topics",
 };
 
-// Areas of the browser's own database calls served by Go (DATA-001b;
-// docs/plans/browser-data.md). NEXT_PUBLIC_SEFGH_GO_DATA lists them, and the
-// browser modules read the same setting (src/lib/go-data.js), so one name
-// switches an area's module and its rewrite together. Without the rewrite
-// the module gets a 404 and uses Supabase directly, as before.
+// The Go data proxy's areas of the browser's own database calls
+// (DATA-PROXY-001; docs/plans/browser-data.md), from src/lib/go-areas.mjs.
+// NEXT_PUBLIC_SEFGH_GO_DATA lists them, and the browser's Supabase client
+// reads the same setting (src/lib/supabase/data-routing.js), so one name
+// switches an area's routing and its rewrite together. Without the rewrite
+// the client gets a 404 and uses Supabase directly, as before.
 const goDataAreas = {
-  "search-history": ["/api/search-history", "/api/search-history/:path*"],
-  onboarding: ["/api/onboarding"],
-  // The Go data proxy's areas (DATA-PROXY-001), from src/lib/go-areas.mjs.
   ...Object.fromEntries(Object.keys(PROXY_AREAS).map((area) => [area, [`/api/data/${area}/:path*`]])),
 };
 
@@ -85,7 +86,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
+  return [...[...publicGoRoutes, ...shareGoRoutes, ...userReadGoRoutes, ...interactionGoRoutes, ...avatarGoRoutes, ...browserDataGoRoutes].map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

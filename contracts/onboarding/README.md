@@ -1,10 +1,13 @@
 # Onboarding contract
 
+**P7-08a (2026-11-02):** the module's direct database path and this contract's recorder were retired. The module asks only Go, whatever NEXT_PUBLIC_SEFGH_GO_DATA says; a missing Go route is an ordinary failure. `expect.database` stays: it is what Go's own tests require Go to send. The Node test runs every case through Go with the area switched off.
+
+`resetOnboarding`, which could not run, was removed with it.
+
 **Version 1** (DATA-002, 2026-10-19): 34 cases for the browser module `src/lib/supabase/onboarding.js`, the second area of the browser's own database calls to move behind Go (`../../docs/plans/browser-data.md`). The first-visit onboarding (`AutoOnboarding.jsx`) and its five steps call it.
 
 ```text
 node --test scripts/contracts/onboarding.test.mjs
-node scripts/contracts/record-onboarding.mjs   # re-record after a reviewed change
 cd backend && go test -count=1 ./internal/onboarding/
 ```
 

@@ -1,5 +1,14 @@
 # Cutover runbook: switching the website to the Go backend
 
+P7-08a (2026-11-02): the browser modules for search history and onboarding
+(`src/lib/supabase/{search-history,onboarding}.js`) lost their direct Supabase
+path and ask only Go; a missing Go route is now an ordinary failure, never a
+direct database call. Their rewrites are unconditional when SEFGH_GO_API_URL is
+configured; `search-history` and `onboarding` in NEXT_PUBLIC_SEFGH_GO_DATA are
+ignored. The unused, broken `resetOnboarding` is removed. Contracts unchanged.
+[Production prerequisite receipt](verification/p7-08a-browser-data-2026-11-02.json).
+Rollback: revert the P7-08a commit and redeploy the website.
+
 P7-06 (2026-11-02): the Next.js handler for `/api/upload-avatar` is retired.
 Go answers it alone and keeps every case of the contract; the rewrite is
 unconditional when SEFGH_GO_API_URL is configured, and the old switch name is

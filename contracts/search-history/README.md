@@ -1,12 +1,13 @@
 # Search history contract
 
+**P7-08a (2026-11-02):** the module's direct database path and this contract's recorder were retired. The module asks only Go, whatever NEXT_PUBLIC_SEFGH_GO_DATA says; a missing Go route is an ordinary failure. `expect.database` stays: it is what Go's own tests require Go to send. The Node test runs every case through Go with the area switched off.
+
 **Version 2** (BUG-032, 2026-10-28): after a successful save Go asks `increment_platform_stat({ key: "total_searches" })` as the user, so the search counter moves (R-102). The four successful saves (`save-search`, `save-chat`, `save-defaults`, `save-without-source`) now carry `go_database` with that call and a stand-in 204 answer, and are `preserve`. The module's direct path is unchanged: it never sends the call, and is used only when Go does not answer, until it is retired. The rule "Go never asks more than the module" now allows exactly this one call after a save.
 
 **Version 1** (DATA-001a and DATA-001b, 2026-10-19): 35 cases, 5 marked `defect`, for the browser module `src/lib/supabase/search-history.js`. It is the first area of the browser's own database calls to move behind Go (`../../docs/plans/browser-data.md`). The search page, the chat and the search history dropdown call it.
 
 ```text
 node --test scripts/contracts/search-history.test.mjs
-node scripts/contracts/record-search-history.mjs   # re-record after a reviewed change
 ```
 
 ## How it was recorded

@@ -3,10 +3,11 @@ import { test } from 'node:test';
 import { existsSync } from 'node:fs';
 import config from '../../next.config.mjs';
 
-// Public reads, shares, the user's own reads, repository interactions and
-// the avatar upload are unconditional since P7-02 to P7-06, with their own tests.
+// Public reads, shares, the user's own reads, repository interactions, the
+// avatar upload, search history and onboarding are unconditional since P7-02
+// to P7-08a, with their own tests.
 // These assertions keep checking the remaining switches independently.
-const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred', '/api/repo/collect', '/api/repo/vote', '/api/repo/rating', '/api/repo/comments/vote', '/api/repo/comments', '/api/repo/videos', '/api/upload-avatar'];
+const fixedPaths = ['/api/github/search', '/api/github/languages', '/api/github/trending', '/api/github/trending-developers', '/api/github/repo', '/api/github/repo/:owner/:repo', '/api/github/contents/:owner/:repo', '/api/share/:token', '/api/share/:token/fork', '/api/conversations/:id/share', '/api/activity', '/api/repo/starred', '/api/repo/collect', '/api/repo/vote', '/api/repo/rating', '/api/repo/comments/vote', '/api/repo/comments', '/api/repo/videos', '/api/upload-avatar', '/api/search-history', '/api/search-history/:path*', '/api/onboarding'];
 async function switchedRewrites() {
   const rewrites = await config.rewrites();
   return { beforeFiles: rewrites.beforeFiles.filter(route => !fixedPaths.includes(route.source)) };
@@ -77,22 +78,21 @@ test('Go routing is opt-in, exact, and independently reversible per route', asyn
 test('browser data areas are rewritten by the same setting their modules read', async () => {
   const old = { url: process.env.SEFGH_GO_API_URL, routes: process.env.SEFGH_GO_ROUTES, data: process.env.NEXT_PUBLIC_SEFGH_GO_DATA };
   const history = [
-    { source: '/api/search-history', destination: 'http://127.0.0.1:8787/api/search-history' },
-    { source: '/api/search-history/:path*', destination: 'http://127.0.0.1:8787/api/search-history/:path*' },
+    { source: '/api/data/notifications/:path*', destination: 'http://127.0.0.1:8787/api/data/notifications/:path*' },
   ];
   try {
     delete process.env.SEFGH_GO_ROUTES;
-    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'search-history';
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'notifications';
     delete process.env.SEFGH_GO_API_URL;
     assert.deepEqual(await switchedRewrites(), { beforeFiles: [] }, 'no Go address, no rewrite: the module falls back on the 404');
     process.env.SEFGH_GO_API_URL = 'http://127.0.0.1:8787/';
     assert.deepEqual(await switchedRewrites(), { beforeFiles: history });
-    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = ' unknown , search-history ';
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = ' unknown , notifications ';
     assert.deepEqual(await switchedRewrites(), { beforeFiles: history });
-    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'onboarding,search-history';
-    assert.deepEqual(await switchedRewrites(), { beforeFiles: [...history, { source: '/api/onboarding', destination: 'http://127.0.0.1:8787/api/onboarding' }] });
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = 'profile,notifications';
+    assert.deepEqual(await switchedRewrites(), { beforeFiles: [...history, { source: '/api/data/profile/:path*', destination: 'http://127.0.0.1:8787/api/data/profile/:path*' }] });
     process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
-    process.env.SEFGH_GO_ROUTES = 'search-history';
+    process.env.SEFGH_GO_ROUTES = 'notifications';
     assert.deepEqual(await switchedRewrites(), { beforeFiles: [] }, 'the route list does not switch a data area');
   } finally {
     for (const [name, value] of [['SEFGH_GO_API_URL', old.url], ['SEFGH_GO_ROUTES', old.routes], ['NEXT_PUBLIC_SEFGH_GO_DATA', old.data]]) {

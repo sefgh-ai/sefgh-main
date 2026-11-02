@@ -3,23 +3,13 @@
  * CRUD operations for user onboarding flow
  */
 
-import { createClient } from "@/lib/supabase/client";
-import { resultFrom } from "@/lib/go-data";
+import { goResult } from "@/lib/go-data";
 
-// With "onboarding" in NEXT_PUBLIC_SEFGH_GO_DATA, the three database calls
-// below are made by Go (DATA-002), which answers each call's own result,
-// { data, error }, so everything after them is unchanged. Without the Go
-// route (404) the call is made here, as before. contracts/onboarding pins it.
-const AREA = "onboarding";
+// The three database calls below are made by Go (DATA-002), which answers
+// each call's own result, { data, error }, so everything after them is
+// unchanged. The direct database path was retired in P7-08a.
+// contracts/onboarding pins the calls.
 const json = (method, body) => ({ method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-
-/**
- * Get a fresh Supabase client for each operation
- * This ensures auth state is current
- */
-function getSupabase() {
-  return createClient();
-}
 
 /**
  * Get user's onboarding data
@@ -27,10 +17,7 @@ function getSupabase() {
  * @returns {Promise<Object|null>} - Onboarding data or null
  */
 export async function getOnboardingData(userId) {
-  const supabase = getSupabase();
-  const { data, error } = await resultFrom(AREA, `/api/onboarding?${new URLSearchParams({ user: userId })}`, {}, () =>
-    supabase.from("onboarding_data").select("*").eq("user_id", userId).single()
-  );
+  const { data, error } = await goResult(`/api/onboarding?${new URLSearchParams({ user: userId })}`, {});
 
   if (error) {
     if (error.code === "PGRST116") {
@@ -67,19 +54,7 @@ export async function getOnboardingData(userId) {
  * @returns {Promise<Object>} - Created onboarding data
  */
 export async function createOnboardingData(userId) {
-  const supabase = getSupabase();
-  const { data, error } = await resultFrom(AREA, "/api/onboarding", json("POST", { user: userId }), () =>
-    supabase
-      .from("onboarding_data")
-      .insert([
-        {
-          user_id: userId,
-          current_step: 1,
-        },
-      ])
-      .select()
-      .single()
-  );
+  const { data, error } = await goResult("/api/onboarding", json("POST", { user: userId }));
 
   if (error) {
     console.error("Error creating onboarding data:", {
@@ -115,10 +90,7 @@ export async function createOnboardingData(userId) {
  * @returns {Promise<Object>} - Updated onboarding data
  */
 export async function updateOnboardingData(userId, updates) {
-  const supabase = getSupabase();
-  const { data, error } = await resultFrom(AREA, "/api/onboarding", json("PATCH", { user: userId, updates }), () =>
-    supabase.from("onboarding_data").update(updates).eq("user_id", userId).select().single()
-  );
+  const { data, error } = await goResult("/api/onboarding", json("PATCH", { user: userId, updates }));
 
   if (error) {
     console.error("Error updating onboarding data:", {
@@ -272,23 +244,4 @@ export async function saveStepPreferences(userId, notificationPref, language) {
     completed: true,
     completed_at: new Date().toISOString(),
   });
-}
-
-/**
- * Reset onboarding (for testing or allowing users to redo)
- * @param {string} userId - User ID
- * @returns {Promise<Object>}
- */
-export async function resetOnboarding(userId) {
-  const { error } = await supabase
-    .from("onboarding_data")
-    .delete()
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error resetting onboarding:", error);
-    throw error;
-  }
-
-  return createOnboardingData(userId);
 }
