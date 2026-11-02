@@ -20,18 +20,14 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
-// API routes the Go backend can serve instead of their Next.js handlers.
-// Nothing is forwarded unless SEFGH_GO_API_URL is set and the route's name
-// is listed in SEFGH_GO_ROUTES (comma-separated). Both are read at build
-// time. Unsetting them is the rollback. See backend/README.md.
+// P7-02 public reads have no Next handler; the Go origin is required.
+// Other routes retain their opt-in switch until their own retirement step.
+const publicGoRoutes = [
+  "/api/github/search", "/api/github/languages", "/api/github/trending",
+  "/api/github/trending-developers", "/api/github/repo",
+  "/api/github/repo/:owner/:repo", "/api/github/contents/:owner/:repo",
+];
 const goBackendRoutes = {
-  "github-search": "/api/github/search",
-  "github-languages": "/api/github/languages",
-  "github-trending": "/api/github/trending",
-  "github-trending-developers": "/api/github/trending-developers",
-  "github-repo": "/api/github/repo",
-  "github-repo-details": "/api/github/repo/:owner/:repo",
-  "github-contents": "/api/github/contents/:owner/:repo",
   "ai-suggestions": "/api/ai/suggestions",
   "ai-enhance-query": "/api/ai/enhance-query",
   // Go accepts a Supabase bearer only, not the session cookie Next.js reads.
@@ -105,7 +101,7 @@ function goBackendRewrites() {
     ? ['/api/v1/keys', '/api/v1/keys/:selector', '/api/v1/search']
       .map((path) => ({ source: path, destination: `${origin}${path}` }))
     : [];
-  return [...routes, ...data, ...keys];
+  return [...publicGoRoutes.map(path => ({ source: path, destination: `${origin}${path}` })), ...routes, ...data, ...keys];
 }
 
 /** @type {import('next').NextConfig} */

@@ -49,9 +49,8 @@ type Verifier struct {
 // GitHub checks token validity; each resource request checks repository access.
 //
 // Both replies are decoded as "whatever arrived" and then checked field by
-// field, so a reply of the wrong shape is refused exactly as the Next.js
-// check in src/lib/github/access.js refuses it. The shared fixtures in
-// contracts/github-access pin each case for both.
+// field. P7-02 retired the matching Next GitHub resolver; the retained
+// contracts/github-access fixtures still pin each Go boundary case.
 func (v Verifier) Resolve(r *http.Request) (string, int) {
 	auth, token := r.Header.Get("Authorization"), r.Header.Get("X-GitHub-Token")
 	if auth == "" && token == "" {

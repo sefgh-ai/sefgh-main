@@ -1,5 +1,15 @@
 # Trending developers contract (GO-007a)
 
+P7-02 (2026-11-02): the Next.js public GitHub handlers and the repository
+page's direct GitHub fallback are retired. This contract keeps all
+75 cases and its existing Go behavior/version. All `next_*` rollback
+expectations have been removed; historical notes below describing those
+fields or the old Node handler runner refer to the pre-retirement snapshot
+at parent `f86a160`. The remaining Node suite checks fixture integrity;
+Go's full suite still executes every case. Rollback requires reverting
+P7-02 and redeploying both projects, not changing a route switch.
+
+
 **Version 6** (BUG-045, R-027, 2026-10-30): 75 cases. Before repository URL
 construction, Go skips non-object users and absent/non-string/invalid logins.
 Accepted logins have 1..39 ASCII letters/digits with single internal hyphens,

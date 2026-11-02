@@ -19,7 +19,10 @@
   "upstream_responses": {
     "one_repo": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "9", "x-ratelimit-reset": "1760000000" },
+      "headers": {
+        "x-ratelimit-remaining": "9",
+        "x-ratelimit-reset": "1760000000"
+      },
       "body": {
         "total_count": 1,
         "incomplete_results": false,
@@ -31,84 +34,158 @@
             "description": "The library for web and native user interfaces.",
             "stargazers_count": 230000,
             "language": "JavaScript",
-            "topics": ["react", "ui"],
+            "topics": [
+              "react",
+              "ui"
+            ],
             "license": null,
-            "owner": { "login": "facebook", "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4" }
+            "owner": {
+              "login": "facebook",
+              "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4"
+            }
           }
         ]
       }
     },
     "empty": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "8", "x-ratelimit-reset": "1760000000" },
-      "body": { "total_count": 0, "incomplete_results": false, "items": [] }
+      "headers": {
+        "x-ratelimit-remaining": "8",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "total_count": 0,
+        "incomplete_results": false,
+        "items": []
+      }
     },
     "no_rate_limit_headers": {
       "status": 200,
       "headers": {},
-      "body": { "total_count": 0, "incomplete_results": false, "items": [] }
+      "body": {
+        "total_count": 0,
+        "incomplete_results": false,
+        "items": []
+      }
     },
     "body_without_expected_fields": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
+      "headers": {
+        "x-ratelimit-remaining": "7",
+        "x-ratelimit-reset": "1760000000"
+      },
       "body": {}
     },
     "items_not_array": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
-      "body": { "total_count": 1, "items": { "0": {} } }
+      "headers": {
+        "x-ratelimit-remaining": "7",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "total_count": 1,
+        "items": {
+          "0": {}
+        }
+      }
     },
     "total_count_not_number": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
-      "body": { "total_count": "1", "items": [] }
+      "headers": {
+        "x-ratelimit-remaining": "7",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "total_count": "1",
+        "items": []
+      }
     },
     "null_body": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
+      "headers": {
+        "x-ratelimit-remaining": "7",
+        "x-ratelimit-reset": "1760000000"
+      },
       "raw_body": "null"
     },
     "invalid_json": {
       "status": 200,
-      "headers": { "x-ratelimit-remaining": "7", "x-ratelimit-reset": "1760000000" },
+      "headers": {
+        "x-ratelimit-remaining": "7",
+        "x-ratelimit-reset": "1760000000"
+      },
       "raw_body": "<html>bad gateway</html>"
     },
     "unauthorized_401": {
       "status": 401,
-      "headers": { "x-ratelimit-remaining": "9", "x-ratelimit-reset": "1760000000" },
-      "body": { "message": "Bad credentials" }
+      "headers": {
+        "x-ratelimit-remaining": "9",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "message": "Bad credentials"
+      }
     },
     "forbidden_403_primary_limit": {
       "status": 403,
-      "headers": { "x-ratelimit-remaining": "0", "x-ratelimit-reset": "1760000000" },
-      "body": { "message": "API rate limit exceeded" }
+      "headers": {
+        "x-ratelimit-remaining": "0",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "message": "API rate limit exceeded"
+      }
     },
     "forbidden_403_retry_after": {
       "status": 403,
-      "headers": { "retry-after": "30", "x-ratelimit-remaining": "12", "x-ratelimit-reset": "1760000000" },
-      "body": { "message": "You have exceeded a secondary rate limit" }
+      "headers": {
+        "retry-after": "30",
+        "x-ratelimit-remaining": "12",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "message": "You have exceeded a secondary rate limit"
+      }
     },
     "forbidden_403_other": {
       "status": 403,
-      "headers": { "x-ratelimit-remaining": "25", "x-ratelimit-reset": "1760000000" },
-      "body": { "message": "Resource not accessible" }
+      "headers": {
+        "x-ratelimit-remaining": "25",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "message": "Resource not accessible"
+      }
     },
     "unprocessable_422": {
       "status": 422,
-      "headers": { "x-ratelimit-remaining": "6", "x-ratelimit-reset": "1760000000" },
-      "body": { "message": "Only the first 1000 search results are available" }
+      "headers": {
+        "x-ratelimit-remaining": "6",
+        "x-ratelimit-reset": "1760000000"
+      },
+      "body": {
+        "message": "Only the first 1000 search results are available"
+      }
     },
     "too_many_429": {
       "status": 429,
-      "headers": { "retry-after": "60" },
-      "body": { "message": "You have exceeded a secondary rate limit" }
+      "headers": {
+        "retry-after": "60"
+      },
+      "body": {
+        "message": "You have exceeded a secondary rate limit"
+      }
     },
     "server_error_500": {
       "status": 500,
       "headers": {},
-      "body": { "message": "Server Error" }
+      "body": {
+        "message": "Server Error"
+      }
     },
-    "network_error": { "network_error": true }
+    "network_error": {
+      "network_error": true
+    }
   },
   "responses": {
     "one_repo_ok": {
@@ -123,49 +200,105 @@
             "description": "The library for web and native user interfaces.",
             "stargazers_count": 230000,
             "language": "JavaScript",
-            "topics": ["react", "ui"],
+            "topics": [
+              "react",
+              "ui"
+            ],
             "license": null,
-            "owner": { "login": "facebook", "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4" }
+            "owner": {
+              "login": "facebook",
+              "avatar_url": "https://avatars.githubusercontent.com/u/69631?v=4"
+            }
           }
         ],
-        "rate_limit": { "remaining": "9", "reset": "1760000000" }
+        "rate_limit": {
+          "remaining": "9",
+          "reset": "1760000000"
+        }
       }
     },
     "empty_ok": {
       "status": 200,
-      "body": { "total_count": 0, "items": [], "rate_limit": { "remaining": "8", "reset": "1760000000" } }
+      "body": {
+        "total_count": 0,
+        "items": [],
+        "rate_limit": {
+          "remaining": "8",
+          "reset": "1760000000"
+        }
+      }
     },
     "empty_ok_null_rate_limit": {
       "status": 200,
-      "body": { "total_count": 0, "items": [], "rate_limit": { "remaining": null, "reset": null } }
+      "body": {
+        "total_count": 0,
+        "items": [],
+        "rate_limit": {
+          "remaining": null,
+          "reset": null
+        }
+      }
     },
-    "missing_query": { "status": 400, "body": { "error": "Search query is required" } },
-    "invalid_parameters": { "status": 400, "body": { "error": "Invalid search parameters" } },
-    "upstream_rejected_search": { "status": 400, "body": { "error": "GitHub could not process this search" } },
+    "missing_query": {
+      "status": 400,
+      "body": {
+        "error": "Search query is required"
+      }
+    },
+    "invalid_parameters": {
+      "status": 400,
+      "body": {
+        "error": "Invalid search parameters"
+      }
+    },
+    "upstream_rejected_search": {
+      "status": 400,
+      "body": {
+        "error": "GitHub could not process this search"
+      }
+    },
     "rate_limited_primary": {
       "status": 429,
       "body": {
         "error": "GitHub rate limit reached, please try again shortly",
-        "rate_limit": { "remaining": "0", "reset": "1760000000" }
+        "rate_limit": {
+          "remaining": "0",
+          "reset": "1760000000"
+        }
       }
     },
     "rate_limited_retry_after_30": {
       "status": 429,
-      "headers": { "retry-after": "30" },
+      "headers": {
+        "retry-after": "30"
+      },
       "body": {
         "error": "GitHub rate limit reached, please try again shortly",
-        "rate_limit": { "remaining": "12", "reset": "1760000000" }
+        "rate_limit": {
+          "remaining": "12",
+          "reset": "1760000000"
+        }
       }
     },
     "rate_limited_retry_after_60": {
       "status": 429,
-      "headers": { "retry-after": "60" },
+      "headers": {
+        "retry-after": "60"
+      },
       "body": {
         "error": "GitHub rate limit reached, please try again shortly",
-        "rate_limit": { "remaining": null, "reset": null }
+        "rate_limit": {
+          "remaining": null,
+          "reset": null
+        }
       }
     },
-    "upstream_failure": { "status": 500, "body": { "error": "Failed to search repositories" } }
+    "upstream_failure": {
+      "status": 500,
+      "body": {
+        "error": "Failed to search repositories"
+      }
+    }
   },
   "cases": [
     {
@@ -228,8 +361,7 @@
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2026-09-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok",
-      "now": "2026-10-29T12:34:56Z",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30"
+      "now": "2026-10-29T12:34:56Z"
     },
     {
       "id": "sort-yearly",
@@ -239,8 +371,7 @@
       "expect_upstream_url": "q=react%20created%3A%3E2025-10-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok",
       "now": "2026-10-29T12:34:56Z",
-      "note": "R-016: fixed UTC duration window; rollback Next.js still sends only the sort.",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30"
+      "note": "R-016: fixed UTC duration window; rollback Next.js still sends only the sort."
     },
     {
       "id": "sort-featured",
@@ -392,9 +523,7 @@
       "request": "q=react&license=mit",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20license%3Amit&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-license-with-dot",
@@ -403,9 +532,7 @@
       "request": "q=react&license=apache-2.0",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20license%3Aapache-2.0&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-created-after",
@@ -414,9 +541,7 @@
       "request": "q=react&created=%3E2026-10-21",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2026-10-21&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-created-range",
@@ -425,9 +550,7 @@
       "request": "q=react&created=2026-01-01..2026-06-30",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A2026-01-01..2026-06-30&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-topics",
@@ -436,9 +559,7 @@
       "request": "q=react&topic=web,cli",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20topic%3Aweb%20topic%3Acli&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-forks",
@@ -447,9 +568,7 @@
       "request": "q=react&forks=%3E%3D10",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20forks%3A%3E%3D10&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-all-in-order",
@@ -458,9 +577,7 @@
       "request": "q=react&forks=5..50&topic=ui&created=%3C2020-01-01&license=mit&stars=%3E100&language=Go",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E100%20license%3Amit%20created%3A%3C2020-01-01%20topic%3Aui%20forks%3A5..50&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E100&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-empty-values-ignored",
@@ -469,9 +586,7 @@
       "request": "q=react&license=&created=&topic=&forks=",
       "upstream": "empty",
       "expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "expect": "empty_ok",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "empty_ok"
     },
     {
       "id": "filter-license-invalid",
@@ -480,9 +595,7 @@
       "request": "q=react&license=MIT",
       "upstream": "empty",
       "expect_upstream_url": null,
-      "expect": "invalid_parameters",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "invalid_parameters"
     },
     {
       "id": "filter-created-invalid",
@@ -491,9 +604,7 @@
       "request": "q=react&created=yesterday",
       "upstream": "empty",
       "expect_upstream_url": null,
-      "expect": "invalid_parameters",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "invalid_parameters"
     },
     {
       "id": "filter-topic-invalid",
@@ -502,9 +613,7 @@
       "request": "q=react&topic=Web%20Dev",
       "upstream": "empty",
       "expect_upstream_url": null,
-      "expect": "invalid_parameters",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "invalid_parameters"
     },
     {
       "id": "filter-topics-too-many",
@@ -513,9 +622,7 @@
       "request": "q=react&topic=a,b,c,d,e,f",
       "upstream": "empty",
       "expect_upstream_url": null,
-      "expect": "invalid_parameters",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "invalid_parameters"
     },
     {
       "id": "filter-forks-invalid",
@@ -524,9 +631,7 @@
       "request": "q=react&forks=lots",
       "upstream": "empty",
       "expect_upstream_url": null,
-      "expect": "invalid_parameters",
-      "next_expect_upstream_url": "q=react&sort=&order=desc&page=1&per_page=30",
-      "next_expect": "empty_ok"
+      "expect": "invalid_parameters"
     },
     {
       "id": "stars-bare-asterisk",
@@ -1073,7 +1178,6 @@
       "now": "2026-03-31T12:00:00Z",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2026-03-01T12%3A00%3A00Z&sort=updated&order=desc&page=1&per_page=30",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     },
     {
@@ -1084,7 +1188,6 @@
       "now": "2024-03-01T12:00:00Z",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2023-03-02T12%3A00%3A00Z&sort=updated&order=desc&page=1&per_page=30",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     },
     {
@@ -1095,7 +1198,6 @@
       "now": "2026-03-08T23:30:00-04:00",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2026-02-07T03%3A30%3A00Z&sort=updated&order=desc&page=1&per_page=30",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     },
     {
@@ -1106,7 +1208,6 @@
       "now": "2026-03-09T09:00:00+05:30",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20created%3A%3E2026-02-07T03%3A30%3A00Z&sort=updated&order=desc&page=1&per_page=30",
-      "next_expect_upstream_url": "q=react&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     },
     {
@@ -1117,7 +1218,6 @@
       "now": "2026-10-29T12:34:56Z",
       "upstream": "empty",
       "expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E10%20created%3A%3E%3D2026-01-01%20created%3A%3E2026-09-29T12%3A34%3A56Z&sort=updated&order=desc&page=1&per_page=30",
-      "next_expect_upstream_url": "q=react%20language%3AGo%20stars%3A%3E10&sort=updated&order=desc&page=1&per_page=30",
       "expect": "empty_ok"
     }
   ]

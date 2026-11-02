@@ -1,5 +1,23 @@
 # SEFGH Go backend
 
+P7-02 (2026-11-02): seven public GitHub Next.js handlers are retired:
+search, languages, trending, trending developers, repository summary/details
+and contents. Their URLs still reach the retained Go implementations through
+unconditional rewrites whenever `SEFGH_GO_API_URL` is configured. Without that
+origin these URLs are404; local development must point it at a local Go
+server or `https://sefgh-api.vercel.app`. The repository page and metadata
+also require the Go origin and no longer fall back to GitHub. Their old
+`github-public-repo` switch is ignored. The direct GitHub helper stays only
+for the Next starred handler until P7-04; shared issuer/public-token/identifier
+helpers remain where still used. All408Go contract cases remain; Next-only
+fields/runners and orphan language catalog/trending measure code are removed.
+[Production routing prerequisite](../docs/verification/p7-02-public-reads-2026-11-02.json):
+all seven website paths answered from Go; server-only public-repo was checked
+on sefgh-api. This is not deployment or browser acceptance. Rollback: revert
+the P7-02 commit and redeploy both projects. Earlier public-route switch,
+rollback-handler and duplicated-implementation notes below are historical.
+
+
 P7-01 (2026-11-02): `/api/github/contributions` is retired from both Next.js
 and Go under R-032's owner-approved decision. The caller audit found no app
 caller; the pre-removal website GET returned400 with `X-Sefgh-Backend: go`.

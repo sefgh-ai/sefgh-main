@@ -38,16 +38,13 @@ export async function fetchRepoFromGitHub(owner, repo) {
 }
 
 /**
- * The repository page's read (REPO-PAGE-001). With "github-public-repo" in
- * SEFGH_GO_ROUTES and SEFGH_GO_API_URL set, the Go server makes it
- * (backend/internal/publicrepo, which passes the same contract); otherwise
- * fetchRepoFromGitHub does. The page reads on the server, so no rewrite is
- * involved: removing the name and redeploying is the rollback.
+ * P7-02: the repository page always reads through Go. Without the Go origin,
+ * or when Go cannot return public metadata, the page follows its not-found path.
+ * fetchRepoFromGitHub remains only for the Next starred route until P7-04.
  */
 export async function fetchRepoForPage(owner, repo) {
   const origin = (process.env.SEFGH_GO_API_URL || '').replace(/\/+$/, '');
-  const switched = (process.env.SEFGH_GO_ROUTES || '').split(',').map((name) => name.trim()).includes('github-public-repo');
-  if (!origin || !switched) return fetchRepoFromGitHub(owner, repo);
+  if (!origin) return null;
   if (!isValidOwner(owner) || !isValidRepoName(repo)) return null;
   try {
     const response = await fetch(`${origin}/api/github/public-repo/${owner}/${repo}`, {

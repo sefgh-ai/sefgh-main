@@ -242,22 +242,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12%2Blanguage%3AC%2B%2B&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
       }
     },
     {
@@ -408,16 +392,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
-        "random_calls": 0
       }
     },
     {
@@ -478,22 +452,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-03&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
       }
     },
     {
@@ -524,22 +482,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2024-03-02&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
       }
     },
     {
@@ -563,22 +505,6 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-07T23%3A30%3A00Z&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-08&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -1236,43 +1162,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [
-          {
-            "id": 1,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "__proto__",
-            "languageColor": {},
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          }
-        ],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
       }
     },
     {
@@ -1446,26 +1335,7 @@
         "random_calls": 0,
         "retry_after": null
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending repositories"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "upstream-503",
@@ -2439,16 +2309,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
-        "random_calls": 0
       }
     },
     {
@@ -2478,16 +2338,6 @@
             }
           }
         ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
         "random_calls": 0
       }
     },
@@ -2519,16 +2369,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
-        "random_calls": 0
       }
     },
     {
@@ -2558,16 +2398,6 @@
             }
           }
         ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
         "random_calls": 0
       }
     },
@@ -2599,16 +2429,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
-        "random_calls": 0
       }
     },
     {
@@ -2639,16 +2459,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 400,
-        "body": {
-          "error": "Invalid parameters"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [],
-        "random_calls": 0
       }
     },
     {
@@ -2672,22 +2482,6 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-01-30T00%3A05%3A00Z&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-02-01&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2725,22 +2519,6 @@
           }
         ],
         "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-03&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
       }
     },
     {
@@ -2764,22 +2542,6 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-03-03T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-03-03&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"
@@ -2829,26 +2591,7 @@
         "random_calls": 0,
         "retry_after": null
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending repositories"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "rate-secondary-403",
@@ -2889,26 +2632,7 @@
         "random_calls": 0,
         "retry_after": "30"
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending repositories"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "rate-metadata-429",
@@ -2951,26 +2675,7 @@
         "random_calls": 0,
         "retry_after": "Fri, 30 Oct 2026 00:30:00 GMT"
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending repositories"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "rate-ordinary-403",
@@ -3007,26 +2712,7 @@
         "random_calls": 0,
         "retry_after": null
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch trending repositories"
-        },
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "success-with-rate-headers",
@@ -3062,24 +2748,7 @@
         "random_calls": 0,
         "retry_after": null
       },
-      "capture_retry_after": true,
-      "next_expect": {
-        "status": 200,
-        "body": [],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0,
-        "retry_after": null
-      }
+      "capture_retry_after": true
     },
     {
       "id": "inherited-color-names",
@@ -3467,232 +3136,6 @@
         "calls": [
           {
             "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%20created%3A%3E2026-10-12T12%3A00%3A00Z&sort=stars&order=desc&per_page=30",
-            "headers": {
-              "Accept": "application/vnd.github.v3+json",
-              "User-Agent": "SEFGH-AI-App"
-            }
-          }
-        ],
-        "random_calls": 0
-      },
-      "next_expect": {
-        "status": 200,
-        "body": [
-          {
-            "id": 10,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "constructor",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 11,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "toString",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 12,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "valueOf",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 13,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "hasOwnProperty",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 14,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "isPrototypeOf",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 15,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "propertyIsEnumerable",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 16,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "toLocaleString",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 17,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "__defineGetter__",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 18,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "__defineSetter__",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 19,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "__lookupGetter__",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          },
-          {
-            "id": 20,
-            "author": "octo",
-            "name": "demo",
-            "description": "Demo",
-            "language": "__lookupSetter__",
-            "stars": 123,
-            "forks": 4,
-            "starsPerDay": null,
-            "contributors": [
-              {
-                "avatar": "https://example.test/avatar",
-                "name": "octo"
-              }
-            ],
-            "heatLevel": 1,
-            "trending": true,
-            "url": "https://github.com/octo/demo"
-          }
-        ],
-        "content_type": "application/json",
-        "cache_control": null,
-        "calls": [
-          {
-            "url": "https://api.github.com/search/repositories?q=stars%3A%3E100%2Bcreated%3A%3E2026-10-12&sort=stars&order=desc&per_page=30",
             "headers": {
               "Accept": "application/vnd.github.v3+json",
               "User-Agent": "SEFGH-AI-App"

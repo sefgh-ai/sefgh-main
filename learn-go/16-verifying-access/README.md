@@ -1,5 +1,13 @@
 # Lesson 16: Verifying access before a handler runs
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 **Real code:** `backend/internal/githubaccess/access.go` and
 `backend/cmd/api/main.go`. Read lesson 06 on HTTP handlers first.
 

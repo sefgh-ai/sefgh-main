@@ -17,6 +17,7 @@
 // because it starts servers and takes about a minute.
 //
 // Add --production to build and check `next start` in an isolated output folder.
+// Add --public-reads to run only the P7-02 GitHub API forwarding scenarios.
 // A deployment on Vercel forwards through Vercel's
 // own routing layer, which has to be checked there.
 import { spawn } from "node:child_process";
@@ -29,6 +30,7 @@ const executable = process.argv[2];
 if (!executable) throw new Error("pass the path to the built Go API executable");
 const production = process.argv.includes('--production');
 const phase2 = process.argv.includes('--phase2');
+const publicReadsOnly = process.argv.includes('--public-reads');
 const children = [];
 let upstream;
 
@@ -121,7 +123,7 @@ const probes = [
 ];
 const avatarBoundary = 'sefgh-avatar-probe';
 const avatarMultipart = `--${avatarBoundary}\r\nContent-Disposition: form-data; name="avatar"; filename="photo.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n--${avatarBoundary}--\r\n`;
-const scenarios = [
+const allScenarios = [
   ...probes.map(path => ({ path })),
   { path: '/api/github/repo?owner=octo&name=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
   { path: '/api/github/search?q=private', headers: { Authorization: 'Bearer session-a', 'X-GitHub-Token': 'fixture-user' }, status: 200 },
@@ -255,6 +257,8 @@ const scenarios = [
   { path: '/api/data/conversations/rest/v1/user_conversations?id=eq.c1', method: 'PATCH', body: '{"title":"Renamed"}', headers: { Authorization: 'Bearer session-a', 'Content-Type': 'application/json', 'Content-Profile': 'private' }, status: 403, cache: 'private, no-store' },
   { path: '/api/data/home/rest/v1/projects?select=*', headers: { Authorization: 'Bearer session-a', 'Accept-Profile': 'public' }, status: 200, cache: 'private, no-store' },
 ];
+const scenarios = publicReadsOnly ? allScenarios.filter(scenario => scenario.path.startsWith('/api/github/')) : allScenarios;
+
 
 try {
   const seen = [];
@@ -440,7 +444,7 @@ try {
       else if (req.url.includes("/contents/")) res.end("[]");
       // full_name repeats the path that was asked for, so a reply served from
       // the Go cache still shows which repository the request reached.
-      else res.end(JSON.stringify({ id: 42, name: "demo", full_name: req.url.slice("/repos/".length), languages_url: `${github}/repos/octo/demo/languages` }));
+      else res.end(JSON.stringify({ id: 42, name: "demo", full_name: req.url.slice("/repos/".length), owner: { login: "octo" }, html_url: "https://github.com/octo/demo", languages_url: `${github}/repos/octo/demo/languages` }));
     });
   });
   upstream.listen(0, "127.0.0.1"); await once(upstream, "listening");
@@ -457,7 +461,8 @@ try {
     // which host each path shows the Go server.
     NEXT_PUBLIC_SITE_URL: 'https://probe.test' });
   await ready(`http://127.0.0.1:${goPort}/healthz`, go);
-  const routes = "github-search,github-languages,github-trending,github-trending-developers,github-repo,github-repo-details,github-contents,ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
+  // P7-02 public reads deliberately have no opt-in names here.
+  const routes = "ai-suggestions,ai-enhance-query,ai-chat,activity,repo-starred,share-token,repo-collect,repo-vote,repo-rating,comment-vote,repo-comments,repo-videos,conversation-share,share-fork,upload-avatar,trending-topics";
   const nextEnv = {
     SEFGH_GO_API_URL: `http://127.0.0.1:${goPort}`, SEFGH_GO_ROUTES: routes, NEXT_PUBLIC_SEFGH_GO_DATA: 'search-history,onboarding,home,conversations,user-stats', GITHUB_TOKEN: "", GITHUB_PUBLIC_READ_TOKEN: "",
     SEFGH_FORWARDING_PROBE: '1', NEXT_TELEMETRY_DISABLED: '1',

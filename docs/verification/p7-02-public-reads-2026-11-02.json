@@ -1,0 +1,114 @@
+{
+  "task": "P7-02",
+  "observed_at_utc": "2026-11-02T08:37:01.736931+00:00",
+  "credentials_sent": false,
+  "mutations": false,
+  "observations": [
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/search",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:01 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/languages",
+      "status": 200,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:02 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/trending?since=invalid",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:03 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/trending-developers?since=invalid",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:04 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/repo?owner=-bad&name=r",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:04 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/repo/-bad/r",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:04 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-main.vercel.app/api/github/contents/-bad/r",
+      "status": 400,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:05 GMT"
+    },
+    {
+      "method": "GET",
+      "url": "https://sefgh-api.vercel.app/api/github/public-repo/-bad/r",
+      "status": 404,
+      "backend": "go",
+      "date": "Mon, 02 Nov 2026 08:37:05 GMT"
+    }
+  ],
+  "limits": [
+    "Routing prerequisite only, not deployment or UI acceptance.",
+    "Seven website API paths; public-repo is a server-to-Go read checked on the Go host directly.",
+    "Invalid query/identifier inputs avoid upstream work; languages is a static catalog."
+  ],
+  "caller_audit": {
+    "search": "search hook (three calls), chat page",
+    "languages": "trending page",
+    "trending_and_developers": "useTrendingData builds exact paths",
+    "summary": "parse-repos",
+    "details": "CodeExplorer",
+    "contents": "no app caller found; existing URL retained in Go",
+    "public_repo": "repository page and metadata, server-to-Go",
+    "retained_helpers": "fetchRepoFromGitHub still used by Next starred until P7-04; askIssuer by verify-bearer; public-token/identifiers by retained helper",
+    "no_external_consumer_claim": true
+  },
+  "retained_contract_cases": {
+    "github-search": 107,
+    "github-languages": 3,
+    "github-trending": 60,
+    "github-trending-developers": 75,
+    "github-repositories": 148,
+    "public-repository-reads": 15
+  },
+  "local_verification": {
+    "lint": "passed; subsequent probe edit passed targeted ESLint",
+    "build": "passed; retired handlers absent, 57 static outputs",
+    "node_contracts": {
+      "passed": 1261,
+      "failed": 0
+    },
+    "go_test": "go test -count=1 ./... passed",
+    "go_vet": "passed",
+    "gofmt": "empty after formatting one comment edit",
+    "production_localhost_probe": {
+      "command": "node scripts/contracts/go-forwarding-probe.mjs <local-api-executable> --production --public-reads",
+      "passed": 53,
+      "total": 53,
+      "public_route_switches_set": false,
+      "children_stopped": true
+    },
+    "initial_optional_full_probe": {
+      "passed": 146,
+      "total": 150,
+      "result": "failed stale stand-ins/expected statuses; R-211 records four initial mismatches, public repo stand-in corrected for P7-02; unrelated full-probe cases not rerun or claimed passed"
+    },
+    "lesson_checks": "skipped-owner-policy",
+    "deployment": "not performed",
+    "handoff": "passed contracts and Go test/vet/gofmt; lessons skipped; precommit tree b8b2bb8609d5; final committed fingerprint to be reverified by normal handoff"
+  }
+}

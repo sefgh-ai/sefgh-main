@@ -8,7 +8,6 @@ import { register } from 'node:module';
 import { test } from 'node:test';
 register('./route-loader.mjs', import.meta.url);
 const { createPublicReader, publicGitHubFetch, resetPublicGitHubFetch, PUBLIC_TOKEN_TRUST_MS, PUBLIC_TOKEN_RETRY_MS } = await import('../../src/lib/github/public-token.js');
-const { githubFetch } = await import('../../src/lib/github/access.js');
 const contract = JSON.parse(await readFile(new URL('../../contracts/public-read-token/cases.json', import.meta.url), 'utf8'));
 
 const START = Date.parse('2026-10-14T12:00:00Z');
@@ -147,39 +146,8 @@ test('without the variable, the shared reader is plain fetch', async () => {
   }
 });
 
-test('githubFetch: signed out uses the public token, signed in only the caller token', async () => {
-  await withPublicToken(async (seen) => {
-    await githubFetch('https://api.github.com/repos/octo/demo', '', { headers: { Accept: 'x' } });
-    assert.deepEqual(seen, ['https://api.github.com/user|Bearer public-read', 'https://api.github.com/repos/octo/demo|Bearer public-read']);
-    seen.length = 0;
-    await githubFetch('https://api.github.com/repos/octo/private', 'caller-token', { headers: { Accept: 'x' } });
-    assert.deepEqual(seen, ['https://api.github.com/repos/octo/private|Bearer caller-token']);
-  });
-});
-
-test('the search route, signed out, reads with the public token', async () => {
-  const { GET } = await import('../../src/app/api/github/search/route.js');
-  await withPublicToken(async (seen) => {
-    const response = await GET(new Request('https://app.test/api/github/search?q=react'));
-    assert.equal(response.status, 200);
-    assert.ok(seen.length >= 2 && seen.every((call) => call.endsWith('|Bearer public-read')), seen.join('\n'));
-  });
-});
-
-test('trending and trending developers read with the public token', async () => {
-  const trending = await import('../../src/app/api/github/trending/route.js');
-  const developers = await import('../../src/app/api/github/trending-developers/route.js');
-  await withPublicToken(async (seen) => {
-    assert.equal((await trending.GET(new Request('https://app.test/api/github/trending?since=daily'))).status, 200);
-    assert.equal((await developers.GET(new Request('https://app.test/api/github/trending-developers?since=daily'))).status, 200);
-    const reads = seen.filter((call) => !call.startsWith('https://api.github.com/user|'));
-    assert.ok(reads.length >= 3, seen.join('\n'));
-    assert.ok(reads.every((call) => call.endsWith('|Bearer public-read')), seen.join('\n'));
-  });
-});
-
 // Its refusal of private repositories is pinned in public-repository-reads.
-test('the repository page reads with the public token', async () => {
+test('the retained starred enrichment helper reads with the public token', async () => {
   const { fetchRepoFromGitHub } = await import('../../src/lib/repo/repoData.js');
   await withPublicToken(async (seen) => {
     assert.equal((await fetchRepoFromGitHub('octo', 'demo'))?.full_name, 'octo/demo');

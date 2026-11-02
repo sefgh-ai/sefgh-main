@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-02 (Asia/Calcutta), by Git Agent: synchronized P7-01 (commit `e9170a8`) on main and go-backend.
+Last updated: 2026-11-02 (Asia/Calcutta), by Codex: P7-02 handoff.
 
 ## Start here
 
@@ -13,9 +13,184 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released P7-01 (2026-11-02). Contributions retired locally; P7-02 is next under `plans/phase7-retirement.md`. Stop before P7-07 until owner confirms AI keys on `sefgh-api` and R-038 is checked. Keys, workers and signing gates remain.
+- **Active writer:** none. Codex released P7-02 (2026-11-02): seven public Next GitHub handlers/page fallback retired locally; Go/cases retained. P7-03 is next. Go origin required. Stop before P7-07 until owner confirms AI keys on sefgh-api and R-038 is checked. Keys, signing, worker and database gates remain.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** P7-01 leaves22of the original25API entries ported, with contributions retired locally (deployment/live404 pending), trending refresh retired with website GET404 verified on2026-10-31 (TREND-001c/BUG-069), and playground keys retained. The following detailed progress is historical at PHASE7-000; playground keys has reviewed default-off replacement wiring but hosted acceptance/cutover remains open. This is route progress, not whole-migration or live-completion evidence: every read-only route, and nine that write (`/api/repo/collect`, `/api/repo/vote`, `/api/repo/rating`, `/api/repo/comments/vote`, `/api/repo/comments`, `/api/repo/videos`, `/api/conversations/[id]/share`, `/api/share/[token]/fork`, `/api/upload-avatar`). Left: `playground/keys` (KEYS-001, catalog verified; UI built/tested; dev SQL applied/catalog checked; KEYS-WIRING-001 adds reviewed default-off v1 runtime/forwarding; hosted provisioning/acceptance/activation/cutover gated) and `trending/refresh`, which the owner chose to replace rather than port (R-077, option A): its Go replacement `GET /api/trending/topics` exists, off by default (TREND-001a), and the unused route is now deleted locally under the explicit 2026-10-30 exception (TREND-001c); website GET404 verified in BUG-069; this run performed no deployment. The browser's direct database calls: planned (`docs/plans/browser-data.md`), every area now reachable through Go behind `NEXT_PUBLIC_SEFGH_GO_DATA`, off by default: search history (DATA-001b) and onboarding (DATA-002) by their own endpoints, the other nine by the policy proxy (DATA-PROXY-001); only the playground (KEYS-001) and dead code remain. Switch defaults remain off in source. Historical trending cutover is recorded in SEC-001b (2026-10-15); fresh2026-10-31 observations verify conversation-share forwarding, Go topics and refresh GET404; this run does not assert other live settings. Phase 2 has closed all seven implementation, review and verification gates (languages, contributions, trending, developers, suggestions, enhance-query, chat). Phase 6 (bugs and broken UI/UX) has 209 entries (R-001 through R-209; R-209 automatic crash-lock recovery owner-deferred until after Phase 7; manual recovery accepted; R-208 verifier buffer recovery fixed locally; R-207 login-length guard fixed locally in BUG-067; R-206 placeholder navigation fixed locally in BUG-066; R-205 browser wait-time feedback fixed locally in BUG-066; R-204 from DATA-010, fixed; R-202 and R-203 from OPS-005, production trending; R-189 to R-198 from REPOSYNC-001, the RepoSync worker recorded and ported to a gated Go command; R-199 to R-201 from ARCH-001's review of the analysers); eight local worker defects R116-R123 remain gated on active lineage/schema/deployment; R124-R126 fixed at afcaf05 with hostedCI success. KEYS-CORE-001/BUG-014 adds R127-R129 open legacy defects and fixes R130-R135 locally. Hashed lifecycle core and legacy characterization are implemented, independently reviewed and locally verified; no production adapter, additional route port or deployment. KEYS-HTTP-001 adds reviewed/tested unregistered management/public-search adapters,36 proposed fixtures and lesson41; R136 open logging discovery, R137-R141 corrected locally; route count unchanged. R-106/R-107/R-108 committed in BUG-011 at 83ee024; R-109 through R-115 fixed in BUG-012 at 49c33b2. Phase 5 offline search parity and pipeline lineage completed; no live worker port or cutover. Phase 3 has its first contract and port (`GET /api/activity`).
+
+## Handoff: P7-02 public GitHub read retirement (Codex, 2026-11-02)
+
+Status: **implementation and read-only review complete; required local checks passed**. Owner Codex, independent read-only reviewer review_p7_02 (application/routing/contract removal; later probe compatibility edit self-reviewed and executed by Codex). Branch `main`, base/current `f86a1609a7a4812c6ed5f40f6c92f3f54b2321ce`; changes explicitly uncommitted at this record. Exactly one P7-02 commit to follow. Previous writer released, initial tree clean and verification lease absent.
+
+Production prerequisite: seven bounded website GETs (search, languages, trending, developers, summary, details, contents) all carried X-Sefgh-Backend: go. Public-repo is a server-to-Go read without a website rewrite, so checked it on sefgh-api and received404/Go for an invalid owner. Receipt `verification/p7-02-public-reads-2026-11-02.json` separates remote preflight from local results. No credential sent, upstream sample retrieval or production mutation; this does not establish successful hosted GitHub retrieval, private access/quota behavior, deployment or browser acceptance.
+
+Caller audit: search hook3calls plus chat; trending hook constructs trending/developers; languages from trending page; summary from parse-repos; details from CodeExplorer; no app contents caller found (URL retained in Go); repository page/metadata call fetchRepoForPage. Only the repository-page fallback is removed: fetchRepoFromGitHub remains required by Next starred until P7-04. public-token/identifiers remain for it; askIssuer/4sdeadline remain for verify-bearer. No executable caller remains for removed wrapper/resolver/fetch exports, duplicate catalog or trending measure helper.
+
+Removed seven Next handlers and orphan helpers/runners, and reduced endpoint Node suites to fixture integrity. Go implementations remain unchanged except explanatory comments. All408cases and Go-relevant JSON values are unchanged against base; removed only next_* rollback fields. Unconditional rewrites preserve each existing URL pattern when SEFGH_GO_API_URL is configured; these old switch names are ignored. With no Go origin, public APIs are404 and the page read returns null; it never silently asks GitHub. R-015 remains the owner's unfinished Go task. Lessons/docs/register/ADR updated; exercise.go and solutions unchanged. Rollback is revert this step's commit and redeploy both projects, not unset a route switch.
+
+Checks by Codex: retirement regressions5/5failed before edits, then focused fixture/page/token/UI85/85 and routing/scanner/retirement12/12passed. `npm run lint` passed0errors/warnings; later probe edit passed targeted ESLint. `npm run build` passed (57static outputs; retired handlers absent). `npm run test:contracts`1261/1261passed. `go test -count=1 ./...` and `go vet ./...` passed; initial gofmt check found a later comment edit in githubaccess/access.go, formatted it, repeat `gofmt -l .` empty. Compiled API in OS temp. Isolated production localhost public-read forwarding53/53passed with old public switch names omitted, including awkward encoding and verified credential cases. All probe-owned children stopped. Added documentation links, retained contract projections, unchanged exercises and `git diff --check` passed. Existing baseline/caniuse age advisories only. Lesson tests skipped by owner policy, not passed. Normal `npm run handoff` passed contracts and Go test/vet/gofmt, lessons skipped; READY_VERIFIED matched precommit tree b8b2bb8609d5. After this bookkeeping/single commit, one final normal handoff will verify the committed fingerprint; inspect its matching signal before synchronization.
+
+Known failure: initial optional full150scenario probe reported146passed/4expected-status failures from stale stand-ins after Phase6 changes. Direct and forwarded status/body agreed for all4. R-211 records the finding; public-repo stand-in corrected to supply required owner/URL fields. Remaining video-delete/unshare/avatar harness work is open for a separate bounded tooling task; not owner-deferred, fixed, or claimed accepted. The explicit --public-reads run is not a full-probe pass. This does not change application/backend behavior.
+
+Review: no Critical/Important issue. Minor deferred to P7-10: public-repository contract README understates executable Node helper/page-adapter/starred coverage as fixture integrity. Prior hosting-guide switch-list follow-up remains P7-10. Rulings: server-only public-repo preflight uses the actual Go origin; shared helpers stay for current callers; public routing is origin-required/unconditional; scoped integration evidence does not establish other domains or hosted acceptance. Treating local/source proof as live/browser/private/external-consumer/CI/sync proof would overstate the evidence. Runtime no-origin404 is source/config guarded, not a separate production-server run.
+
+Actual changed files (all P7-02; uncommitted at this record):
+
+```text
+ M backend/README.md
+ M backend/internal/githubaccess/access.go
+ M backend/internal/githublanguages/handler.go
+ M backend/internal/githubsearch/contract_test.go
+ M backend/internal/githubsearch/handler.go
+ M contracts/github-access/README.md
+ M contracts/github-languages/README.md
+ M contracts/github-repositories/README.md
+ M contracts/github-repositories/cases.json
+ M contracts/github-search/README.md
+ M contracts/github-search/cases.json
+ M contracts/github-trending-developers/README.md
+ M contracts/github-trending-developers/cases.json
+ M contracts/github-trending/README.md
+ M contracts/github-trending/cases.json
+ M contracts/public-read-token/README.md
+ M contracts/public-repository-reads/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/02-structs-and-maps/README.md
+ M learn-go/06-http-handlers/README.md
+ M learn-go/08-testing/README.md
+ M learn-go/09-path-parameters/README.md
+ M learn-go/14-checking-input/README.md
+ M learn-go/16-verifying-access/README.md
+ M learn-go/47-sharing-code-between-routes/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ D scripts/contracts/access-fixture.mjs
+ D scripts/contracts/developers-fixture.mjs
+ D scripts/contracts/github-access-isolation.test.mjs
+ D scripts/contracts/github-access.test.mjs
+ M scripts/contracts/github-languages.test.mjs
+ D scripts/contracts/github-repositories-smoke.mjs
+ M scripts/contracts/github-repositories.test.mjs
+ M scripts/contracts/github-search.test.mjs
+ M scripts/contracts/github-trending-developers.test.mjs
+ M scripts/contracts/github-trending.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/contracts/internal-paths.test.mjs
+ M scripts/contracts/public-read-token.test.mjs
+ M scripts/contracts/public-repository-reads.test.mjs
+ D scripts/contracts/trending-fixture.mjs
+ M scripts/contracts/trending-measure.test.mjs
+ D src/app/api/github/contents/[owner]/[repo]/route.js
+ D src/app/api/github/languages/route.js
+ D src/app/api/github/repo/[owner]/[repo]/route.js
+ D src/app/api/github/repo/route.js
+ D src/app/api/github/search/route.js
+ D src/app/api/github/trending-developers/route.js
+ D src/app/api/github/trending/route.js
+ D src/data/github-languages.js
+ M src/lib/github/access.js
+ M src/lib/repo/repoData.js
+ D src/lib/utils/trending/trendingMeasure.js
+?? docs/verification/p7-02-public-reads-2026-11-02.json
+?? scripts/contracts/public-read-retirement.test.mjs
+```
+
+Writer released: yes. No owned servers/processes; temporary API executable remains in OS temp, not running. No commit/push/CI/deployment is claimed at this precommit record. Signing stopped; no keys, SQL, worker or AI activation change. Next: create exactly one completed P7-02 commit containing this record, then handoff on the committed fingerprint. The resulting commit is the one containing this record (explicitly uncommitted when written); obtain its hash from Git history. Subsequent task P7-03 only; do not start P7-07 without owner AI-key confirmation and R-038 check.
+
+## Checkpoint: P7-02 public GitHub read retirement (Codex, 2026-11-02)
+
+Status: **in progress / incomplete**. Owner Codex; reviewer unassigned. Branch `main`, base/current `f86a1609a7a4812c6ed5f40f6c92f3f54b2321ce`; uncommitted. Initial clean checkout, previous writer released, IDLE_CLEAN/no verification lease. Objective: execute P7-02 only, one commit, under `plans/phase7-retirement.md`.
+
+Scope: seven Next GitHub handlers (search, languages, trending, trending developers, summary, details, contents); public-repository read fallback in repoData.js; unused helpers only after reference audit; retain Go implementations and their cases, remove Next-only expectations/tests; routing, lessons/docs and required checks/handoff. Choose unconditional rewrites for the retired handlers, with Go origin still required. Retain unrelated switches until their planned steps. The server-rendered public-repo read calls the Go origin directly, so its production prerequisite is checked on sefgh-api, not a website rewrite that does not exist.
+
+Completed: read current plan/briefing/instructions/ownership and inspected new GitAgent-synchronized P7-01 state. Current diff initially empty; no code edits. Checks not run: caller audit completion, production route proof, regressions, lint/build/contracts/Go/handoff. No failures or owned processes. Dependencies: each route must answer from Go in production before removing its handler. No deployment, signing, keys, worker or database action authorized by this task. Next: exact paths/helper caller audit and bounded production GETs, then contract/test/routing retirement edits. This is the durable execution ledger; checkpoints follow each milestone.
+
+Milestone1: eight bounded unauthenticated production reads all carried X-Sefgh-Backend: go (seven website APIs plus server-only public-repo on sefgh-api). Receipt `verification/p7-02-public-reads-2026-11-02.json`. Caller audit: search hook3fetches +chat1; trending hook builds trending/developers paths; trending page loads languages; parse-repos uses summary; CodeExplorer uses details. No app contents request found, but path remains served by Go for existing clients. Repo page/metadata use fetchRepoForPage. Shared fetchRepoFromGitHub is still used by the Next starred handler and must stay until P7-04, along with public-token and identifier helpers. askIssuer and the4sdeadline still serve verify-bearer; only unused GitHub wrapper/resolver/fetch exports were trimmed.
+
+Milestone2: seven Next handlers deleted; unconditional Go rewrites installed, old route switches removed for this group. Page fallback/switch removed (missing origin returns null/no direct request). Unused Next language catalog, trending measure helper, endpoint fixture runners, access wrapper tests and obsolete Next-versus-Go smoke script removed. Retained408cases across six contracts (107search/3languages/60trending/75developers/148repository/15public read); only next_* fields removed. Node endpoint suites reduced to integrity checks; full Go cases stay. New5retirement tests all failed before changes, then focused85tests passed. Remaining switch/path scanner tests updated to see actual unconditional rewrites. Checks not yet run: final lint/build/contracts/Go, production localhost forwarding and handoff. Current changes uncommitted; no deployment or app servers. Next: focused routing/scanner checks, docs/lessons/reference audit, required full checks. One initial read-only command used unsupported PowerShell brace expansion and was rerun with explicit paths; no code/check result affected.
+
+
+Milestone3 checkpoint before full build/checks: focused routing/scanner/retirement12/12passed; focused fixture/page/token/UI85/85passed. `npm run lint` passed0ESLint errors/warnings (existing baseline-data advisory only). `git diff --check` initially reported3extra blank EOF lines, now fixed. Contract projection comparison against HEAD confirms the408case IDs and all Go-relevant JSON values are unchanged; only next_* keys removed. Docs/lessons updated, including owner R-015 instructions without implementing it; Go changes are explanatory comments only. Full build/contracts/Go/forwarding/handoff and independent review remain to run. No owned server processes; source uncommitted. Next command `npm run build`, then full contracts, Go suite/vet/gofmt, production localhost forwarding probe and review.
+
+Actual changed files at this checkpoint:
+
+```text
+ M backend/README.md
+ M backend/internal/githubaccess/access.go
+ M backend/internal/githublanguages/handler.go
+ M backend/internal/githubsearch/contract_test.go
+ M backend/internal/githubsearch/handler.go
+ M contracts/github-access/README.md
+ M contracts/github-languages/README.md
+ M contracts/github-repositories/README.md
+ M contracts/github-repositories/cases.json
+ M contracts/github-search/README.md
+ M contracts/github-search/cases.json
+ M contracts/github-trending-developers/README.md
+ M contracts/github-trending-developers/cases.json
+ M contracts/github-trending/README.md
+ M contracts/github-trending/cases.json
+ M contracts/public-read-token/README.md
+ M contracts/public-repository-reads/README.md
+ M docs/adr/0002-go-backend.md
+ M docs/backend-map.md
+ M docs/bug-register.md
+ M docs/coordination.md
+ M docs/cutover.md
+ M docs/next-agent-briefing.md
+ M docs/plans/phase7-retirement.md
+ M learn-go/02-structs-and-maps/README.md
+ M learn-go/06-http-handlers/README.md
+ M learn-go/08-testing/README.md
+ M learn-go/09-path-parameters/README.md
+ M learn-go/14-checking-input/README.md
+ M learn-go/16-verifying-access/README.md
+ M learn-go/47-sharing-code-between-routes/README.md
+ M learn-go/README.md
+ M next.config.mjs
+ D scripts/contracts/access-fixture.mjs
+ D scripts/contracts/developers-fixture.mjs
+ D scripts/contracts/github-access-isolation.test.mjs
+ D scripts/contracts/github-access.test.mjs
+ M scripts/contracts/github-languages.test.mjs
+ D scripts/contracts/github-repositories-smoke.mjs
+ M scripts/contracts/github-repositories.test.mjs
+ M scripts/contracts/github-search.test.mjs
+ M scripts/contracts/github-trending-developers.test.mjs
+ M scripts/contracts/github-trending.test.mjs
+ M scripts/contracts/go-forwarding-probe.mjs
+ M scripts/contracts/go-rewrites.test.mjs
+ M scripts/contracts/internal-paths.test.mjs
+ M scripts/contracts/public-read-token.test.mjs
+ M scripts/contracts/public-repository-reads.test.mjs
+ D scripts/contracts/trending-fixture.mjs
+ M scripts/contracts/trending-measure.test.mjs
+ D src/app/api/github/contents/[owner]/[repo]/route.js
+ D src/app/api/github/languages/route.js
+ D src/app/api/github/repo/[owner]/[repo]/route.js
+ D src/app/api/github/repo/route.js
+ D src/app/api/github/search/route.js
+ D src/app/api/github/trending-developers/route.js
+ D src/app/api/github/trending/route.js
+ D src/data/github-languages.js
+ M src/lib/github/access.js
+ M src/lib/repo/repoData.js
+ D src/lib/utils/trending/trendingMeasure.js
+?? docs/verification/p7-02-public-reads-2026-11-02.json
+?? scripts/contracts/public-read-retirement.test.mjs
+```
+
+Milestone4: `npm run build` passed (57static outputs; seven retired handler entries absent). Full `npm run test:contracts`1261/1261passed. Added Markdown links and diff whitespace check passed; no exercise.go/solution.go changed. Existing baseline/caniuse data-age advisories only. Independent read-only review_p7_02 is running, no acceptance claimed yet. Next long operation: full uncached Go test suite, vet/gofmt, compile an API executable in OS temp, then isolated production forwarding probe. Probe uses only localhost stand-ins and owns/cleans its server children. No app server currently running; source remains uncommitted and active writer Codex. Normal handoff remains pending, and no deployment/remote mutation occurred.
+
+Milestone5: full `go test -count=1 ./...` and `go vet ./...` passed. First gofmt check identified the later comment edit in githubaccess/access.go; formatted it and the repeated check is empty. API executable compiled in OS temp. The optional full production forwarding probe built/started localhost Next/Go, then reported146/150:4expected-status failures from stale fixtures, while direct/via-Next status and body agreed. Logged new tooling R-211 in the register. Investigated fixture inputs against current Go contracts: missing repo owner/URL fields; video no deleted row; unshare verify still active; fake avatar only textPNG. Corrected only the public-read repo stand-in for P7-02 and added explicit --public-reads scope; unrelated domains remain open under R-211, not owner-deferred and not silently weakened. Original probe children all stopped (process inventory empty). Next: repeat production public-read scope, lint new probe edit, then required normal handoff.
+
+Review complete: independent read-only review_p7_02 found no Critical/Important issue; one Minor deferred to P7-10, public-repository README understates retained executable Node helper/adapter/starred tests as fixture integrity. Ruling: hosted retirement, successful production retrieval/private/quota behavior, external consumers and CI/sync are not established by routing preflight/local tests. Scope production localhost forwarding and no-origin source guard separately. The missing live evidence is not inferred from local success.
 
 ## Handoff: P7-01 contributions retirement (Codex, 2026-11-02)
 

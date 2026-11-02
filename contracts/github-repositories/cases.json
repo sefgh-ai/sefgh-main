@@ -228,10 +228,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {}
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -317,11 +313,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 200,
-        "body": {}
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-explicit-nulls",
@@ -353,14 +345,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "id": null,
-          "description": null
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-array-body",
@@ -389,11 +374,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 200,
-        "body": {}
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-boolean-body",
@@ -422,11 +403,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 200,
-        "body": {}
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-status-404",
@@ -483,13 +460,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 403"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-status-429",
@@ -522,13 +493,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 429"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-status-422",
@@ -557,13 +522,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 422"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-status-500",
@@ -592,13 +551,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 500"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-null-body",
@@ -627,13 +580,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-empty-json",
@@ -662,13 +609,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-network",
@@ -698,13 +639,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-complete",
@@ -1068,13 +1003,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-status-403",
@@ -1101,13 +1030,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-status-429",
@@ -1138,13 +1061,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-status-500",
@@ -1171,13 +1088,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-languages-404",
@@ -1568,12 +1479,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      },
       "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
@@ -1689,12 +1594,6 @@
           "wire_url": "https://api.github.com/repos/octo/demo/languages"
         }
       ],
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -2373,44 +2272,7 @@
           "next": null,
           "wire_url": "https://api.github.com/repos/octo/demo/languages"
         }
-      ],
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "repository": {
-            "id": 42,
-            "full_name": "octo/demo",
-            "name": "demo",
-            "owner": {
-              "login": "octo"
-            },
-            "html_url": "https://github.com/octo/demo",
-            "description": null,
-            "stargazers_count": 7,
-            "forks_count": 2,
-            "language": null,
-            "topics": [],
-            "license": null,
-            "created_at": "2024-01-01",
-            "updated_at": "2024-02-01",
-            "pushed_at": "2024-02-01",
-            "homepage": "",
-            "clone_url": "https://github.com/octo/demo.git",
-            "default_branch": "main",
-            "open_issues_count": 1,
-            "watchers_count": 7,
-            "size": 12,
-            "languages_url": "https://api.github.com/repos/octo/demo/languages",
-            "extra": "kept only in detail"
-          },
-          "languages": null,
-          "readme": "# Demo\n",
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      }
+      ]
     },
     {
       "id": "detail-repo-null",
@@ -2451,12 +2313,6 @@
           "wire_url": "https://api.github.com/repos/octo/demo"
         }
       ],
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -2498,12 +2354,6 @@
           "wire_url": "https://api.github.com/repos/octo/demo"
         }
       ],
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -2974,13 +2824,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-status-403",
@@ -3007,13 +2851,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-status-429",
@@ -3044,13 +2882,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-status-500",
@@ -3077,13 +2909,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-network",
@@ -3111,12 +2937,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      },
       "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
@@ -3144,12 +2964,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -3180,17 +2994,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": null,
-          "rate_limit": {
-            "remaining": "",
-            "reset": "123"
-          }
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "contents-token-not-sent",
@@ -3403,13 +3207,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-truncated-json",
@@ -3438,13 +3236,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "summary-whitespace-json",
@@ -3473,13 +3265,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository"
-        }
-      }
+      "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
       "id": "detail-readme-utf8-bom",
@@ -5362,13 +5148,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 403"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-rate-secondary-403",
@@ -5406,13 +5186,7 @@
         "retry_after": "30"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 403"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-rate-metadata-429",
@@ -5451,13 +5225,7 @@
         "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 429"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-ordinary-403-with-allowance",
@@ -5490,13 +5258,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "GitHub API error: 403"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-rate-primary-403",
@@ -5532,13 +5294,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-rate-secondary-403",
@@ -5574,13 +5330,7 @@
         "retry_after": "30"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-rate-metadata-429",
@@ -5617,13 +5367,7 @@
         "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "detail-ordinary-403-with-allowance",
@@ -5654,13 +5398,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository details"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-rate-primary-403",
@@ -5696,13 +5434,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-rate-secondary-403",
@@ -5738,13 +5470,7 @@
         "retry_after": "30"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-rate-metadata-429",
@@ -5781,13 +5507,7 @@
         "retry_after": "Fri, 30 Oct 2026 12:00:00 GMT"
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "contents-ordinary-403-with-allowance",
@@ -5818,13 +5538,7 @@
         }
       },
       "disposition": "preserve",
-      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained.",
-      "next_expect": {
-        "status": 500,
-        "body": {
-          "error": "Failed to fetch repository contents"
-        }
-      }
+      "note": "R-029: classify required GitHub lookup failure without exposing upstream text; rollback Next.js response retained."
     },
     {
       "id": "summary-null-owner",
@@ -5876,31 +5590,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "id": 42,
-          "full_name": "octo/demo",
-          "name": "demo",
-          "owner": null,
-          "html_url": "https://github.com/octo/demo",
-          "description": null,
-          "stargazers_count": 7,
-          "forks_count": 2,
-          "language": null,
-          "topics": [],
-          "license": null,
-          "created_at": "2024-01-01",
-          "updated_at": "2024-02-01",
-          "pushed_at": "2024-02-01",
-          "homepage": "",
-          "clone_url": "https://github.com/octo/demo.git",
-          "default_branch": "main",
-          "open_issues_count": 1,
-          "watchers_count": 7,
-          "size": 12
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -5955,33 +5644,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "id": "42",
-          "full_name": "octo/demo",
-          "name": "demo",
-          "owner": {
-            "login": "octo"
-          },
-          "html_url": "https://github.com/octo/demo",
-          "description": null,
-          "stargazers_count": 7,
-          "forks_count": 2,
-          "language": null,
-          "topics": [],
-          "license": null,
-          "created_at": "2024-01-01",
-          "updated_at": "2024-02-01",
-          "pushed_at": "2024-02-01",
-          "homepage": "",
-          "clone_url": "https://github.com/octo/demo.git",
-          "default_branch": "main",
-          "open_issues_count": 1,
-          "watchers_count": 7,
-          "size": 12
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6062,40 +5724,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "id": 42,
-          "full_name": "octo/demo",
-          "name": "demo",
-          "owner": {
-            "login": "octo"
-          },
-          "html_url": "https://github.com/octo/demo",
-          "description": {
-            "bad": true
-          },
-          "stargazers_count": "7",
-          "forks_count": -1,
-          "language": [],
-          "topics": [
-            "go",
-            null,
-            42,
-            "web"
-          ],
-          "license": false,
-          "created_at": "2024-01-01",
-          "updated_at": "2024-02-01",
-          "pushed_at": "2024-02-01",
-          "homepage": "",
-          "clone_url": "https://github.com/octo/demo.git",
-          "default_branch": "main",
-          "open_issues_count": 1,
-          "watchers_count": 7,
-          "size": 12
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6171,33 +5799,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "id": 42,
-          "full_name": "octo/demo",
-          "name": "demo",
-          "owner": {
-            "login": "octo"
-          },
-          "html_url": "https://github.com/octo/demo",
-          "description": null,
-          "stargazers_count": 7,
-          "forks_count": 2,
-          "language": null,
-          "topics": [],
-          "license": null,
-          "created_at": "2024-01-01",
-          "updated_at": "2024-02-01",
-          "pushed_at": "2024-02-01",
-          "homepage": "",
-          "clone_url": "https://github.com/octo/demo.git",
-          "default_branch": "main",
-          "open_issues_count": 1,
-          "watchers_count": 7,
-          "size": 12
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6315,45 +5916,6 @@
           "wire_url": "https://api.github.com/repos/octo/demo"
         }
       ],
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "repository": {
-            "id": false,
-            "full_name": "octo/demo",
-            "name": "demo",
-            "owner": {
-              "login": "octo"
-            },
-            "html_url": "https://github.com/octo/demo",
-            "description": null,
-            "stargazers_count": 7,
-            "forks_count": 2,
-            "language": null,
-            "topics": [],
-            "license": null,
-            "created_at": "2024-01-01",
-            "updated_at": "2024-02-01",
-            "pushed_at": "2024-02-01",
-            "homepage": "",
-            "clone_url": "https://github.com/octo/demo.git",
-            "default_branch": "main",
-            "open_issues_count": 1,
-            "watchers_count": 7,
-            "size": 12,
-            "languages_url": "https://api.github.com/repos/octo/demo/languages",
-            "extra": "kept only in detail"
-          },
-          "languages": {
-            "Go": 5
-          },
-          "readme": "# Demo\n",
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6481,43 +6043,6 @@
           "wire_url": "https://api.github.com/repos/octo/demo/languages"
         }
       ],
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "repository": {
-            "id": 42,
-            "full_name": "octo/demo",
-            "name": "demo",
-            "owner": {
-              "login": "octo"
-            },
-            "html_url": "https://github.com/octo/demo",
-            "description": null,
-            "stargazers_count": 7,
-            "forks_count": 2,
-            "language": null,
-            "topics": [],
-            "license": null,
-            "created_at": "2024-01-01",
-            "updated_at": "2024-02-01",
-            "pushed_at": "2024-02-01",
-            "homepage": "",
-            "clone_url": "https://github.com/octo/demo.git",
-            "default_branch": "main",
-            "open_issues_count": 1,
-            "watchers_count": 7,
-            "size": 12,
-            "languages_url": "https://api.github.com/repos/octo/demo/languages",
-            "extra": "kept only in detail"
-          },
-          "languages": [],
-          "readme": "# Demo\n",
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6635,50 +6160,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "repository": {
-            "id": 42,
-            "full_name": "octo/demo",
-            "name": "demo",
-            "owner": {
-              "login": "octo"
-            },
-            "html_url": "https://github.com/octo/demo",
-            "description": null,
-            "stargazers_count": 7,
-            "forks_count": 2,
-            "language": null,
-            "topics": [],
-            "license": null,
-            "created_at": "2024-01-01",
-            "updated_at": "2024-02-01",
-            "pushed_at": "2024-02-01",
-            "homepage": "",
-            "clone_url": "https://github.com/octo/demo.git",
-            "default_branch": "main",
-            "open_issues_count": 1,
-            "watchers_count": 7,
-            "size": 12,
-            "languages_url": "https://api.github.com/repos/octo/demo/languages",
-            "extra": "kept only in detail"
-          },
-          "languages": {
-            "Go": 5,
-            "Python": 0,
-            "bad": "2",
-            "negative": -1,
-            "fraction": 1.5,
-            "missing": null
-          },
-          "readme": "# Demo\n",
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6706,16 +6187,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": 42,
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6743,16 +6214,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": true,
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6784,20 +6245,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": {
-            "type": "file",
-            "content": 42,
-            "encoding": "base64"
-          },
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6858,36 +6305,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": [
-            null,
-            {},
-            true,
-            {
-              "type": "file",
-              "name": "main.go"
-            },
-            {
-              "type": "dir",
-              "name": "src"
-            },
-            {
-              "type": "unknown",
-              "name": "bad"
-            },
-            {
-              "type": "file",
-              "name": 4
-            }
-          ],
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     },
     {
@@ -6927,20 +6344,6 @@
         }
       },
       "disposition": "preserve",
-      "next_expect": {
-        "status": 200,
-        "body": {
-          "contents": {
-            "type": "symlink",
-            "name": "link",
-            "target": "src/main.go"
-          },
-          "rate_limit": {
-            "remaining": null,
-            "reset": null
-          }
-        }
-      },
       "note": "R-030: reject unusable success shapes with fixed502 and omit malformed items; legitimate nullable values remain; rollback Next.js answer retained."
     }
   ],

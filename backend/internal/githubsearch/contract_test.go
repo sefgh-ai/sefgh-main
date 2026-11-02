@@ -16,8 +16,8 @@ import (
 )
 
 // These tests run every case in contracts/github-search/cases.json, the same
-// file that scripts/contracts/github-search.test.mjs runs against the Next.js
-// handler.
+// file whose integrity scripts/contracts/github-search.test.mjs checks.
+// P7-02 retired the Next.js handler; these tests still execute every case.
 
 type contract struct {
 	Version        int                          `json:"contract_version"`

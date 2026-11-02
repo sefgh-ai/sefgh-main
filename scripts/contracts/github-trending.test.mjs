@@ -1,28 +1,8 @@
+// P7-02: fixture integrity only; Go runs every endpoint case.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { register } from 'node:module';
 import { test } from 'node:test';
-import { runTrendingFixture } from './trending-fixture.mjs';
-register('./route-loader.mjs', import.meta.url);
-const { GET } = await import('../../src/app/api/github/trending/route.js');
-const contract = JSON.parse(await readFile(new URL('../../contracts/github-trending/cases.json', import.meta.url)));
-
-// Versions 3 and 4 changed only the GitHub query. Version 3 (R-068): the
-// search terms are separated by spaces. Version 4 (R-203): the search starts
-// at a time, not a date, so "daily" is the last 24 hours. Go sends the fixed
-// query. This Next.js handler keeps the version 2 query, joined with "+" and
-// starting at a date, until trending is switched to Go and the handler is
-// retired: the owner's rule is to fix a backend bug once, in Go. Everything
-// else must still match.
-const asSentByNext = (expect) => ({
-  ...expect,
-  calls: expect.calls.map((call) => ({
-    ...call,
-    url: call.url.replace(/q=([^&]*)/, (_, q) => 'q=' + encodeURIComponent(decodeURIComponent(q)
-      .replace(/(created:>\d{4}-\d{2}-\d{2})T\d{2}:\d{2}:\d{2}Z/, '$1')
-      .replace(/ (created|language):/g, '+$1:'))),
-  })),
-});
+const contract = JSON.parse(await readFile(new URL('../../contracts/github-trending/cases.json', import.meta.url), 'utf8'));
 
 test('trending fixture integrity', () => {
   assert.equal(contract.contract_version,8);
@@ -53,7 +33,6 @@ test('colours use only the real table and C++ survives query decoding (R-024)', 
     const c = contract.cases.find(c => c.id === id);
     assert.ok(c.expect.body.length > 0);
     for (const item of c.expect.body) assert.equal(item.languageColor, '#8b949e', item.language);
-    assert.notDeepEqual(c.expect.body, c.next_expect.body);
   }
   const cpp = contract.cases.find(c => c.id === 'cpp-language');
   const query = new URL(cpp.expect.calls[0].url).searchParams.get('q');
@@ -78,12 +57,6 @@ test('trending rate-limit cases pin status and wait metadata (R-023)', () => {
       assert.equal(c.expect.status, 429, c.id);
       assert.deepEqual(c.expect.body.rate_limit, {remaining: headers['x-ratelimit-remaining'] ?? null, reset: headers['x-ratelimit-reset'] ?? null}, c.id);
       assert.equal(c.expect.retry_after, headers['retry-after'] ?? null, c.id);
-      assert.equal(c.next_expect.status, 500, c.id);
     }
   }
 });
-for (const c of contract.cases) {
-  test(`trending: ${c.id} [${c.disposition}]`, async () => {
-    assert.deepEqual(await runTrendingFixture(GET,c),c.next_expect ?? asSentByNext(c.expect));
-  });
-}

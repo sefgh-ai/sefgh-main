@@ -1,5 +1,13 @@
 # Lesson 08: Testing
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 **You will learn:** how Go tests are written, what a table-driven test is, and how this project proves that two programs in two languages behave the same.
 
 **Real code:** `backend/internal/githubsearch/contract_test.go` and `contracts/github-search/cases.json`.
@@ -74,7 +82,7 @@ go test -v ./08-testing
 
 `-v` lists each row by name. When a broken copy slips through, the failure message tells you which mistake your rows did not catch. Read that copy in `lesson.go` and think of an input it gets wrong.
 
-## How the project tests two languages at once
+## How the project keeps a contract after retiring an implementation
 
 Open `contracts/github-search/cases.json`. It is a table too, but written as data instead of code. One row looks like this, with two descriptive fields left out:
 
@@ -92,10 +100,10 @@ It says: when this request arrives, exactly this URL must be sent to GitHub, and
 
 Two test programs read that one file:
 
-- `scripts/contracts/github-search.test.mjs` runs every row against the Next.js handler.
+- `scripts/contracts/github-search.test.mjs` checks fixture integrity; the Next.js handler is retired.
 - `backend/internal/githubsearch/contract_test.go` runs every row against the Go handler.
 
-If both pass, the two handlers agree on every row. Switching still requires peer review, staging measurements, cache and timeout checks, and the other ADR gates. Neither test talks to the real GitHub. Each replaces GitHub with a stand-in that gives the reply the row names. Use `go test -count=1` after changing fixtures outside the Go module so cached test results cannot hide the change.
+Before P7-02 the two language runners checked parity. Now Go executes every row in memory and over sockets, replacing GitHub with a stand-in. Retirement does not erase that regression coverage. Deployment and browser acceptance remain separate from local verification. Use `go test -count=1` after changing fixtures outside the Go module so cached test results cannot hide the change.
 
 Find the loop in `contract_test.go`:
 
@@ -134,7 +142,7 @@ The contract checks the stars filters `>=50`, `<10`, `100..500` and `*`. Nothing
 
    The search suite gains one case (other route suites may also run). Use `-count=1` in the Go command after editing fixtures. The Go output shows your case running twice, once in `TestContract` and once in `TestContractOverHTTP`.
 
-3. Break it on purpose. Change `%3D10` to `%3D11` in `expect_upstream_url`, run again, watch both suites fail on your case, then change it back.
+3. Break it on purpose. Change `%3D10` to `%3D11` in `expect_upstream_url`, run again, watch both Go transports fail on your case, then change it back.
 
 A new case that describes what the programs already do needs no version change. `contract_version` rises only when an existing expectation changes.
 

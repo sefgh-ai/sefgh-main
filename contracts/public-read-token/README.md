@@ -1,5 +1,12 @@
 # Public read token contract
 
+P7-02 (2026-11-02): Go serves the public GitHub API routes. The Next public
+reader stays for fetchRepoFromGitHub in the not-yet-retired starred handler,
+with its token fixture/unit tests. Node endpoint-wrapper tests were removed;
+Go's public-token and mux suites retain the endpoint credential boundary.
+Earlier references to Next public API handlers are historical.
+
+
 **Version 1** (QUOTA-001, 2026-10-14): 20 cases. The rules for the server's token for GitHub reads made for signed-out visitors. Both implementations pass every case:
 
 ```text

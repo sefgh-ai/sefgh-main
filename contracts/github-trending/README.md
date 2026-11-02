@@ -1,5 +1,15 @@
 # GitHub trending characterization (GO-006a)
 
+P7-02 (2026-11-02): the Next.js public GitHub handlers and the repository
+page's direct GitHub fallback are retired. This contract keeps all
+60 cases and its existing Go behavior/version. All `next_*` rollback
+expectations have been removed; historical notes below describing those
+fields or the old Node handler runner refer to the pre-retirement snapshot
+at parent `f86a160`. The remaining Node suite checks fixture integrity;
+Go's full suite still executes every case. Rollback requires reverting
+P7-02 and redeploying both projects, not changing a route switch.
+
+
 ## Version 8 (BUG-043, R-024, 2026-10-30): current
 
 60 cases. Go returns a colour string from the real table or `#8b949e` for

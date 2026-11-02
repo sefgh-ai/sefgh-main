@@ -1,5 +1,13 @@
 # Lesson 02: Structs and maps
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 **You will learn:** how to group data, how to look things up, and why one real bug in this app cannot happen in Go.
 
 **Real code:** `sortOption` and `sortOptions` in `backend/internal/githubsearch/request.go`.
@@ -107,10 +115,10 @@ This one changes the real app. Take it on once the exercise passes.
 
 **The bug.** The search navbar offers "Most Stars" and "Recently Updated". It sends `sort=stars` and `sort=updated`. Neither name is in the table, so both fall back to `all` and the buttons do nothing. This is recorded as an open defect in `contracts/github-search/cases.json`.
 
-**The fix** is two new entries in the table, made in both programs, with the contract changed first. (`best-match`, the navbar's fourth choice, already works: an unknown name means `all`, which is GitHub's best-match order.)
+**The fix** is two new entries in the Go table, with the contract changed first. The old two-program instructions below are adjusted for P7-02. (`best-match`, the navbar's fourth choice, already works: an unknown name means `all`, which is GitHub's best-match order.)
 
 1. In `contracts/github-search/cases.json`, find the cases `sort-navbar-stars-ignored` and `sort-navbar-updated-ignored`. Change each `expect_upstream_url` so it expects `sort=stars` and `sort=updated`. Change `"disposition"` from `"defect"` to `"preserve"`, and rewrite the two `note` lines to say what now happens. Raise `"contract_version"` to 3.
-2. Run both test suites. Both must now **fail** on those two cases. That is the point: the contract now asks for something neither program does.
+2. Run the Go suite. It must now **fail** on those two cases. Node checks fixture integrity; it no longer executes the retired handler. That is the point: the contract now asks for something neither program does.
 
    ```
    npm run test:contracts              (from the repository root)
@@ -118,7 +126,7 @@ This one changes the real app. Take it on once the exercise passes.
    ```
 
 3. Add the entries to `sortOptions` in `backend/internal/githubsearch/request.go`. Run the Go tests until they pass.
-4. Add the same entries to `filterMap` in `src/app/api/github/search/route.js`. Run the Next.js tests until they pass.
+4. Do not recreate the retired JavaScript handler. Run `npm run test:contracts` for fixture integrity and frontend guards after the Go tests pass.
 5. Add a version 3 row to the table in `contracts/github-search/README.md`, and remove the open defect from that file and from `docs/adr/0002-go-backend.md`.
 
 Commit all of it together. The rule in this project is that the contract and every program that follows it change in the same commit, so they can never disagree.

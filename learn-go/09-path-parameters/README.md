@@ -1,5 +1,13 @@
 # Lesson 09: Path parameters
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 AUTH-001 update: all repository resource calls now use the verified caller
 credential when present. Anonymous calls use no token. Private enrichment URLs
 are restricted to the GitHub origin and redirects are refused. The path

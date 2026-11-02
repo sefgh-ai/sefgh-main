@@ -12,6 +12,28 @@ import { join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+import config from '../../next.config.mjs';
+
+// Retired public handlers are supplied by the real unconditional rewrites.
+// Inspect a configured Go deployment without exposing or depending on local env.
+const routedApis = await (async () => {
+  const names = ['SEFGH_GO_API_URL', 'SEFGH_GO_ROUTES', 'NEXT_PUBLIC_SEFGH_GO_DATA'];
+  const old = Object.fromEntries(names.map(name => [name, process.env[name]]));
+  try {
+    process.env.SEFGH_GO_API_URL = 'http://127.0.0.1:8787';
+    process.env.SEFGH_GO_ROUTES = '';
+    process.env.NEXT_PUBLIC_SEFGH_GO_DATA = '';
+    return (await config.rewrites()).beforeFiles.map(route => ({
+      path: route.source,
+      re: new RegExp(`^${route.source.replace(/:[a-z]+/g, '[^/]+')}/?$`),
+    }));
+  } finally {
+    for (const name of names) {
+      if (old[name] === undefined) delete process.env[name]; else process.env[name] = old[name];
+    }
+  }
+})();
+
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const src = join(root, 'src');
 
@@ -62,6 +84,7 @@ const PATTERNS = [
 function deadPaths() {
   const files = sourceFiles(src);
   const { pages, apis } = routes(files);
+  apis.push(...routedApis);
   const dead = [];
   for (const file of files) {
     const text = readFileSync(file, 'utf8');
@@ -97,7 +120,7 @@ test('the scan finds the app: pages and route handlers', () => {
   assert.ok(pages.length >= 40, `${pages.length} pages`);
   // Phase7 intentionally reduces handler count. Prove the scanner still
   // sees the two Next.js route boundaries the retirement plan preserves.
-  for (const path of ['/auth/callback', '/api/playground/keys']) {
+  for (const path of ['/auth/callback', '/api/playground/keys', '/api/github/search']) {
     assert.ok(apis.some(route => route.path === path), `missing retained route ${path}`);
   }
   assert.ok(pages.some((p) => p.path === '/download'));

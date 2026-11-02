@@ -1,5 +1,13 @@
 # GitHub access boundary, version 1
 
+P7-02 (2026-11-02): this access/isolation contract remains enforced by the Go
+verifier and production mux suites. Its old Next GitHub handlers, wrappers,
+resolver, fetch adapter and Node runners are retired; `access-fixture.mjs`
+is removed. Only `askIssuer` and the4sdeadline remain in the shared Next
+access module, used by the still-live session bearer checks. Earlier Node
+parity statements below describe the historical implementation at `f86a160`.
+
+
 AUTH-001 implements the owner's policy for the five migrated dynamic GitHub
 handlers: anonymous callers receive public data; signed-in users can use only
 their own GitHub account's repository permissions. Languages/health stay public.
@@ -31,18 +39,11 @@ Next's fetch cache and Go's shared cache. Authenticated redirects are refused;
 private callers may need a renamed repository's canonical name. Credentials
 cannot follow an enrichment URL to another origin.
 
-`cases.json` is shared by the Node and Go verifier tests. `isolation.json`
-checks anonymous, Alice and Bob reads, followed by permission/token revocation.
-Node exercises the actual exported handlers; Go uses the production mux factory
-over real localhost sockets. Both check all four remaining caller-token routes reject incomplete auth (P7-01 retired contributions).
-
-Route contracts now use `github_token` for a verified **per-user** credential:
-search v3 and repository routes v4 (historical versions). Node's `access-fixture.mjs`
-supplies the matching fake issuer responses; Go's domain tests inject the
-verified token directly. Boundary tests separately verify that runtime wiring
-cannot bypass authorization. Authenticated responses add the no-store header.
-P7-01 retires the unused contributions endpoint, its contract and implementation
-tests from both runtimes; retirement guards replace its auth/missing-token cases.
+`cases.json` and `isolation.json` are retained for Go's verifier, credential
+and production-mux isolation checks. Go tests use real localhost sockets and
+verify all four caller-token routes reject incomplete auth. Route fixtures
+inject a verified per-user `github_token`; runtime tests check that boundary
+cannot bypass authorization. Authenticated responses retain no-store.
 
 Private browser requests are intentionally not wired yet: search persists
 results under one localStorage key, and chat/share consumers need a privacy

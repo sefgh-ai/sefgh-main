@@ -55,7 +55,7 @@ for (const c of contract.cases) {
   });
 }
 
-// The repository page's read with github-public-repo switched on
+// The repository page's mandatory Go read after P7-02
 // (REPO-PAGE-001). The stand-in Go answers each case as the Go route does,
 // which TestRouteAnswersTheContract in backend/internal/publicrepo checks
 // on these same cases: the repository with 200, otherwise 404 null.
@@ -70,7 +70,7 @@ function switchTo(t, url, routes) {
 
 for (const c of contract.cases) {
   test(`repository page through Go: ${c.id}`, async (t) => {
-    switchTo(t, `${GO}/`, 'github-search, github-public-repo');
+    switchTo(t, `${GO}/`, '');
     const calls = [];
     mockFetch(t, async (url, init) => {
       calls.push({ url, init });
@@ -88,19 +88,6 @@ for (const c of contract.cases) {
     }
   });
 }
-
-test('the repository page reads GitHub itself unless both switches are set', async (t) => {
-  switchTo(t, undefined, undefined);
-  let calls = [];
-  mockFetch(t, async (target) => { calls.push(target); return Response.json({ id: 1, private: false }); });
-  for (const [url, routes] of [[undefined, undefined], [undefined, 'github-public-repo'], [GO, 'github-repo'], [GO, '']]) {
-    if (url === undefined) delete process.env.SEFGH_GO_API_URL; else process.env.SEFGH_GO_API_URL = url;
-    if (routes === undefined) delete process.env.SEFGH_GO_ROUTES; else process.env.SEFGH_GO_ROUTES = routes;
-    calls = [];
-    assert.deepEqual(await fetchRepoForPage('octo', 'demo'), { id: 1, private: false });
-    assert.deepEqual(calls, ['https://api.github.com/repos/octo/demo'], `${url} ${routes}`);
-  }
-});
 
 test('the repository page shows nothing when Go fails or says private', async (t) => {
   switchTo(t, GO, 'github-public-repo');

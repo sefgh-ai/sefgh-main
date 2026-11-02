@@ -1,5 +1,15 @@
 # Briefing for the next agent (written 2026-10-29)
 
+**Current Phase7 pickup (P7-02, 2026-11-02):** seven public GitHub Next handlers
+and the repository page's GitHub fallback are retired locally; Go and408cases
+remain. Unconditional rewrites and the page read require SEFGH_GO_API_URL.
+Shared starred/auth helpers stay for their current callers. R-211 records stale
+full forwarding-probe fixtures; public-read scope is checked separately. Read the newest
+coordination record for checks/commit and deployment state. Next P7-03 only;
+one step/commit per task. Stop before P7-07 without owner confirmation of AI
+keys on sefgh-api and R-038 checks. Older pickup/queue text below is historical.
+
+
 **Current Phase7 pickup (P7-01, 2026-11-02):** contributions is retired locally
 from Next.js and Go, including its switch/contract/old tests, with retirement
 guards. See the newest `coordination.md` record for exact checks and commit.
@@ -97,7 +107,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 
 **Database:** R-078 and R-103 were applied to production on 2026-10-28 by the owner in the Supabase SQL Editor and verified read-only (files in `supabase/migrations/` and `supabase/checks/`).
 
-**Next free IDs:** task **BUG-071**, register entry **R-211**. Never reuse or renumber; recheck the register before claiming.
+**Next free IDs:** task **BUG-071**, register entry **R-212**. Never reuse or renumber; recheck the register before claiming.
 
 ## 4. Your work queue, in order
 

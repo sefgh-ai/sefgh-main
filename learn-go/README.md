@@ -174,3 +174,5 @@ BUG-065/R-037: lesson19 updated for query validation, trimming and selected-resu
 BUG-067/R-207 historically updated lesson13 with the username guard. P7-01 marks its endpoint examples retired; exercises remain unchanged.
 
 BUG-068/R-090 updates lesson30 for owner-scoped bulk unshare and post-write verification.
+
+P7-02 marks public GitHub Next.js comparisons historical in lessons02/06/08/09/14/16/47; Go implementations and408contract cases remain. The search exercise R-015 now changes Go only, and remains the owner's unfinished task. Existing exercise.go/solutions unchanged; lesson checks skipped by owner policy.

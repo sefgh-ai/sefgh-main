@@ -1,5 +1,15 @@
 # GitHub search contract fixtures
 
+P7-02 (2026-11-02): the Next.js public GitHub handlers and the repository
+page's direct GitHub fallback are retired. This contract keeps all
+107 cases and its existing Go behavior/version. All `next_*` rollback
+expectations have been removed; historical notes below describing those
+fields or the old Node handler runner refer to the pre-retirement snapshot
+at parent `f86a160`. The remaining Node suite checks fixture integrity;
+Go's full suite still executes every case. Rollback requires reverting
+P7-02 and redeploying both projects, not changing a route switch.
+
+
 **Version 5** (BUG-039, R-016, 2026-10-29): 107 cases. Owner approved decision pack 2 option A. Go's `sort=monthly` and `sort=yearly` append `created:>` at the UTC instant 30 or 365 fixed days before `Handler.Now` (defaults to `time.Now`). Existing filters still apply and updated sorting stays. The two original period cases and five new clock/boundary cases pin exact URLs, month end, leap day, DST/offset equivalence and intersection with explicit filters. Each period fixture supplies `now`; the unchanged rollback Next.js handler's URL stays in `next_expect_upstream_url`. Other 100 existing cases remain identical. The Go runner now requires contract version 5.
 
 **Version 4** (BUG-034, 2026-10-28): 102 cases. Go accepts four more parameters from the navbar (R-017): `license` (a lower-case license key), `created` (a date with an optional comparison, or a date range), `topic` (up to five comma-separated topic names) and `forks` (the `stars` format). Each becomes a GitHub qualifier after `language` and `stars`, in that order; a malformed one answers `invalid_parameters`; empty ones are ignored. 13 new `filter-*` cases. Go only: the Next.js handler ignores them until it is retired, so each new case carries `next_expect_upstream_url` and `next_expect`, which `scripts/contracts/github-search.test.mjs` uses.
@@ -14,7 +24,6 @@ Prior version notes below are historical.
 
 | Implementation | Check it with |
 |---|---|
-| Next.js handler, `src/app/api/github/search/route.js` | `npm run test:contracts` |
 | Go handler, `backend/internal/githubsearch` | `go test ./...` inside `backend/` |
 
 The Next.js runner (`scripts/contracts/github-search.test.mjs`) calls the handler directly and replaces `fetch` with a stub. It makes no network request, needs no dev server, and ignores any real `GITHUB_TOKEN`. The Go test (`contract_test.go`) runs each case twice: in memory, and over real sockets against a fake GitHub.

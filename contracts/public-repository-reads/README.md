@@ -1,5 +1,15 @@
 # Public repository page and collection enrichment (AUTH-002)
 
+P7-02 (2026-11-02): the Next.js public GitHub handlers and the repository
+page's direct GitHub fallback are retired. This contract keeps all
+15 cases and its existing Go behavior/version. All `next_*` rollback
+expectations have been removed; historical notes below describing those
+fields or the old Node handler runner refer to the pre-retirement snapshot
+at parent `f86a160`. The remaining Node suite checks fixture integrity;
+Go's full suite still executes every case. Rollback requires reverting
+P7-02 and redeploying both projects, not changing a route switch.
+
+
 Version 1 records the public-only boundary for `src/lib/repo/repoData.js`, used
 by the repository page and `/api/repo/starred`. This implements the owner's
 chosen rule: a visitor cannot borrow the server credential's private access.
@@ -40,9 +50,10 @@ REPO-PAGE-001 (2026-10-27) moved that read to `backend/internal/publicrepo` as `
 which the starred port now calls, and serves it as `GET /api/github/public-repo/{owner}/{repo}`
 for the repository page: 200 with the repository where these cases expect one, otherwise no
 200 (404 `null` when GitHub was asked). `TestRouteAnswersTheContract` runs the 15 cases
-through the route. On the Node side, `fetchRepoForPage` (the page's read, switched by
-`github-public-repo`) passes them against a stand-in that answers as the route does, and
-reads GitHub itself while the switch is off. The cases are unchanged; version 1.
+through the route. After P7-02, `fetchRepoForPage` always calls Go when its
+origin is set and returns null when it is absent. Node checks this adapter
+against a stand-in; the direct helper is retained only for starred until
+P7-04. The cases are unchanged; version1.
 
 REVIEW-006 (Claude Code, 2026-10-13) added `error-status-with-public-body`: an
 error status is not a public repository even when its body says

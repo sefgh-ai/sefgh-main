@@ -1,5 +1,13 @@
 # Lesson 14: Checking input before you trust it
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 **You will learn:** regular expressions in Go, the difference between an allowlist and a blocklist, and how to put outside text into a URL safely.
 
 **Real code:** `backend/internal/githubrepos/identifiers.go`. The Next.js version of the same rules is `src/lib/github/repo-identifiers.js`.

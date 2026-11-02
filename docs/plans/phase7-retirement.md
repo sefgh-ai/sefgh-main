@@ -2,7 +2,7 @@
 
 Started 2026-11-02 by the owner's decision ("after done start phase 7"), before the Phase 6 gate was fully met; see the ADR decisions log. Written by Claude Code (PHASE7-000). This plan is the order and the recipe; each step is one bounded task with its own handoff record in `../coordination.md`.
 
-P7-01 implementation update (2026-11-02): both contributions handlers, its switch, contract and old tests are removed locally. See the P7-01 coordination record for checks, commit and deployment state. P7-02 is next; no later step is included.
+P7-01 implementation update (2026-11-02): both contributions handlers, its switch, contract and old tests are removed locally. See the P7-01 coordination record for checks, commit and deployment state. P7-02 retires the public GitHub Next handlers and page fallback locally (2026-11-02); Go and cases stay, with unconditional origin-required routing. See coordination for checks/commit/deployment state. P7-03 is next; no later step is included.
 
 ## What Phase 7 removes, and what stays
 

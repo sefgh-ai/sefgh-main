@@ -1,9 +1,8 @@
 // Package githubsearch serves GET /api/github/search, a thin proxy in front
 // of GitHub's repository search.
 //
-// Its behaviour is fixed by contracts/github-search/cases.json. The Next.js
-// rollback handler in src/app/api/github/search/route.js is characterized
-// separately through next_expect fields when an approved Go fix differs.
+// Its behaviour is fixed by contracts/github-search/cases.json. P7-02 retired
+// the Next.js implementation; Go keeps running every retained case.
 package githubsearch
 
 import (

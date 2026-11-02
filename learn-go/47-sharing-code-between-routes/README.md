@@ -1,5 +1,13 @@
 # 47. Share code between routes: move it into its own package
 
+P7-02 update (2026-11-02): the public GitHub Next.js handlers are retired.
+JavaScript handler snippets/comparisons below describe the historical port,
+available at parent `f86a160`; the Go code and contract cases remain current.
+Node endpoint tests now check fixture integrity, while Go executes the cases.
+Unconditional rewrites need `SEFGH_GO_API_URL`; removing a switch no longer
+restores a deleted handler. Existing exercises and solutions are unchanged.
+
+
 Real code: `Read` and `Handler` in `backend/internal/publicrepo/publicrepo.go`,
 used by `backend/internal/starred/handler.go` and served by `publicRepoMux` in
 `backend/cmd/api/main.go`.
@@ -55,8 +63,8 @@ both users, which is why it moved out instead of `starred` exporting it.
 `contracts/public-repository-reads` against `publicRepo`. It moved to
 `publicrepo_test.go` and now calls `Read`. A new test,
 `TestRouteAnswersTheContract`, runs the same 15 cases through the HTTP route.
-The JavaScript tests run them against `fetchRepoFromGitHub`, and against the
-page's read through Go. One set of cases pins all of them.
+The JavaScript tests still run them against `fetchRepoFromGitHub` for the
+retained Next starred route (until P7-04), and against the page's mandatory Go read. One set of cases pins all of them.
 
 ## The rule it protects
 

@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-// Keep this artifact aligned with the approved contract snapshot and the
-// Next.js catalog. Both implementations are checked against the same fixtures.
+// Keep this artifact aligned with the approved contract snapshot. P7-02
+// retired the duplicate Next.js catalog; Go tests still check all fixtures.
 // A string is immutable and embedding removes runtime filesystem dependencies.
 //
 //go:embed catalog.json

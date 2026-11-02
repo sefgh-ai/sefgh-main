@@ -1,5 +1,15 @@
 # GitHub repository read contracts
 
+P7-02 (2026-11-02): the Next.js public GitHub handlers and the repository
+page's direct GitHub fallback are retired. This contract keeps all
+148 cases and its existing Go behavior/version. All `next_*` rollback
+expectations have been removed; historical notes below describing those
+fields or the old Node handler runner refer to the pre-retirement snapshot
+at parent `f86a160`. The remaining Node suite checks fixture integrity;
+Go's full suite still executes every case. Rollback requires reverting
+P7-02 and redeploying both projects, not changing a route switch.
+
+
 Version **6** (BUG-047, R-030, 2026-10-30): 148 cases. Repository replies need
 a positive whole-number ID, nonempty name/full_name/html_url and an owner with
 a nonempty login. Unusable JSON or core shapes return a fixed502. Known malformed
@@ -153,18 +163,11 @@ the summary route. Local cache tests are not a production parity claim.
 Commit these fixtures and both implementations together. Additional cases
 preserving existing behavior do not raise the version.
 
-## Optional smoke test
+## Retired smoke test
 
-After an off-switch Next production build and compiling `backend/cmd/api`:
-
-```text
-node scripts/contracts/github-repositories-smoke.mjs <absolute-path-to-api-executable>
-```
-
-It starts a fake GitHub on localhost, the compiled Go server, Next dev with
-the three routes selected, and the off-switch production server. It checks
-forwarding, security headers, an unrelated Next route, and retained Next
-handlers. It stops only processes it spawned. It does not deploy anything.
+P7-02 removed `github-repositories-smoke.mjs`, whose purpose was comparing
+the now-deleted Next handlers with Go. Use the production forwarding probe
+below to verify the origin-required unconditional public rewrites.
 
 ## Optional forwarding probe
 
@@ -182,3 +185,5 @@ ignored `.next-forwarding-probe/` directory. Default mode remains `next dev`.
 The fake identity services verify bearer forwarding and mismatch rejection.
 A Vercel preview still requires its own routing check. See coordination.md
 for actual checks. No production environment values or route switches are changed.
+
+P7-02 scope: `node scripts/contracts/go-forwarding-probe.mjs <api-executable> --production --public-reads` checks the retired public handler URLs without their old switch names. The full probe has known unrelated stale video/share/avatar stand-ins (R-211); scoped success is not full-probe acceptance.
