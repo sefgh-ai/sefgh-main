@@ -186,18 +186,20 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		logger.Error("ai_provider", "error", err)
 		provider = aiprovider.Provider{}
 	} else if provider.Key != "" {
-		logger.Info("ai_provider", "name", provider.Name, "model", provider.Model)
+		logger.Info("ai_provider", "name", provider.Name, "model", provider.Model, "reasoning_effort", provider.Reasoning)
 	}
 	models := &aiprovider.Client{
-		HTTP:     &http.Client{Timeout: aiprovider.Timeout},
-		Endpoint: envOr("SEFGH_AI_MODELS_URL", provider.Endpoint),
-		Token:    provider.Key,
-		Model:    provider.Model,
+		HTTP:      &http.Client{Timeout: aiprovider.Timeout},
+		Endpoint:  envOr("SEFGH_AI_MODELS_URL", provider.Endpoint),
+		Token:     provider.Key,
+		Model:     provider.Model,
+		Reasoning: provider.Reasoning,
 	}
-	// Without a paid key, the query helper asks the same provider as chat.
-	enhanceKey, enhanceURL, enhanceModel := os.Getenv("OPENAI_API_KEY"), envOr("SEFGH_OPENAI_URL", aienhance.DefaultOpenAIURL), ""
+	// Without a paid key, the query helper asks the same provider as chat,
+	// with the same reasoning effort (R-214). A paid key gets neither.
+	enhanceKey, enhanceURL, enhanceModel, enhanceReasoning := os.Getenv("OPENAI_API_KEY"), envOr("SEFGH_OPENAI_URL", aienhance.DefaultOpenAIURL), "", ""
 	if enhanceKey == "" && os.Getenv("ANTHROPIC_API_KEY") == "" && provider.Key != "" {
-		enhanceKey, enhanceURL, enhanceModel = provider.Key, models.Endpoint, provider.Model
+		enhanceKey, enhanceURL, enhanceModel, enhanceReasoning = provider.Key, models.Endpoint, provider.Model, provider.Reasoning
 	}
 	// One allowance per address, shared by the two search-box helpers.
 	searchAllowance := ailimit.New(ailimit.Requests, ailimit.Window)
@@ -209,14 +211,15 @@ func aiMux(logger *slog.Logger, verifier githubaccess.Verifier) *http.ServeMux {
 		Logger:  logger,
 	})
 	mux.Handle("POST /api/ai/enhance-query", &aienhance.Handler{
-		Client:       &http.Client{Timeout: aienhance.Timeout},
-		OpenAIKey:    enhanceKey,
-		AnthropicKey: os.Getenv("ANTHROPIC_API_KEY"),
-		OpenAIURL:    enhanceURL,
-		OpenAIModel:  enhanceModel,
-		AnthropicURL: envOr("SEFGH_ANTHROPIC_URL", aienhance.DefaultAnthropicURL),
-		Limiter:      searchAllowance,
-		Logger:       logger,
+		Client:          &http.Client{Timeout: aienhance.Timeout},
+		OpenAIKey:       enhanceKey,
+		AnthropicKey:    os.Getenv("ANTHROPIC_API_KEY"),
+		OpenAIURL:       enhanceURL,
+		OpenAIModel:     enhanceModel,
+		OpenAIReasoning: enhanceReasoning,
+		AnthropicURL:    envOr("SEFGH_ANTHROPIC_URL", aienhance.DefaultAnthropicURL),
+		Limiter:         searchAllowance,
+		Logger:          logger,
 	})
 	// Chat is for signed-in users only: a Supabase bearer verified online,
 	// and an allowance per user that is separate from the search helpers'.

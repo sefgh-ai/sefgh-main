@@ -45,10 +45,10 @@ go test -tags solution ./01-values-and-functions
 
 ## The lessons
 
-Newest: [49 Choosing a provider](49-choosing-a-provider/README.md) teaches
-passing the environment in as a function, a table of presets, `break` inside
-`switch` and comparing whole structs, using the AI provider choice
-(AI-PROVIDER-001).
+Newest: [50 Leaving a field out](50-leaving-a-field-out/README.md) teaches
+`omitempty` struct tags, a method on a small type and `switch` with a
+statement first, using the reasoning-effort fix for the AI routes
+(BUG-071, R-214).
 
 Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github/search`. By the end you can read every line of it.
 
@@ -105,6 +105,7 @@ Lessons 01 to 08 walk through the first route that moved to Go: `GET /api/github
 | [47 Sharing code between routes](47-sharing-code-between-routes/README.md) | Moving a function into its own package, exported names without stutter, `internal` imports, why Go refuses import cycles, and strict `false` on raw JSON | `Read` and `Handler` in `backend/internal/publicrepo`; `publicRepoMux` in `backend/cmd/api/main.go` |
 | [48 Splitting search ranges](48-splitting-search-ranges/README.md) | Inclusive partitions, safe integer midpoints, UTC calendar days and copying pointer bounds | `Plan` in `backend/internal/discover/slices.go` |
 | [49 Choosing a provider](49-choosing-a-provider/README.md) | Passing `os.Getenv` in as a function, a table of presets, `break` inside `switch`, and `==` on whole structs | `FromEnv` in `backend/internal/aiprovider/config.go`; `aiMux` in `backend/cmd/api/main.go` |
+| [50 Leaving a field out](50-leaving-a-field-out/README.md) | `omitempty` struct tags, building a struct in one method, and `switch` with a short statement and several values per case | `ReasoningEffort` in `backend/internal/aiprovider/config.go`; `request` in `provider.go`; `withOpenAI` in `backend/internal/aienhance/handler.go` |
 
 Two lessons end with a **real task**: a small change to the actual app, guarded by the same tests the rest of the project uses.
 

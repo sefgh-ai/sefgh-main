@@ -21,9 +21,10 @@ can run side by side without touching the real environment.
 
 ## A table of presets
 
-Each provider is one `preset` value in a slice: its name, key name, address
-and default model. The order of the slice is the order of preference. Adding
-a provider is one more line, not another `if`.
+Each provider is one `preset` value in a slice: its name, key name, address,
+default model and reasoning effort (added later by BUG-071; see
+[lesson 50](../50-leaving-a-field-out/README.md)). The order of the slice is
+the order of preference. Adding a provider is one more line, not another `if`.
 
 ## `break` inside `switch`
 

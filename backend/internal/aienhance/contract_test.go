@@ -214,6 +214,32 @@ func TestOversizedBodies(t *testing.T) {
 	}
 }
 
+// R-214: when the helper uses the shared provider, that provider's reasoning
+// effort goes with the request. Without one no field is added, which keeps
+// every contract request as it was.
+func TestReasoningEffortGoesToTheSharedProvider(t *testing.T) {
+	for _, effort := range []string{"none", ""} {
+		var sent map[string]any
+		h := Handler{OpenAIKey: "k", OpenAIURL: "https://router.test/v1", OpenAIModel: "m", OpenAIReasoning: effort,
+			Logger: slog.New(slog.NewTextHandler(io.Discard, nil))}
+		h.Client = &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+			body, _ := io.ReadAll(r.Body)
+			_ = json.Unmarshal(body, &sent)
+			return provider(200, `{"choices":[{"message":{"content":"charts library"}}]}`)(r)
+		})}
+		if rec := post(&h, `{"query":"charts"}`); rec.Code != 200 || !strings.Contains(rec.Body.String(), "ai-powered") {
+			t.Fatalf("effort %q: %d %s", effort, rec.Code, rec.Body)
+		}
+		got, present := sent["reasoning_effort"]
+		if effort == "" && present || effort != "" && got != effort {
+			t.Errorf("effort %q: sent %v", effort, sent)
+		}
+		if sent["max_tokens"] != float64(100) || sent["model"] != "m" {
+			t.Errorf("effort %q changed the rest of the request: %v", effort, sent)
+		}
+	}
+}
+
 // Each key goes only to its own provider, at the address configured for it.
 func TestKeysGoOnlyToTheirOwnProvider(t *testing.T) {
 	for _, tt := range []struct {

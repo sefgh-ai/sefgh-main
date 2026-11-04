@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-03 (Asia/Calcutta), by Git Agent: synchronized P7-10a (commit `5ceb8c4`) on main and go-backend.
+Last updated: 2026-11-04 (Asia/Calcutta), by Claude Code: BUG-071 (R-214) implemented and released in worktree branch `claude/openrouter-nemotron-api-85b4d9`, uncommitted. Previous: Git Agent synchronized P7-10a (commit `5ceb8c4`) on main and go-backend.
 
 ## Start here
 
@@ -13,9 +13,50 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released bounded P7-10a current-boundary documentation (2026-11-03). Review/source/link/diff and normal handoff checks passed; committed fingerprint verification follows. Phase7 stays open behind P7-07/R-038/R-213 and remaining P7-09. image.png is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
+- **Active writer:** none. Claude Code released BUG-071 (R-214) on 2026-11-04 in worktree branch `claude/openrouter-nemotron-api-85b4d9`, base `63bff68`, uncommitted; see its handoff below. Before that Codex released bounded P7-10a current-boundary documentation (2026-11-03). Phase7 stays open behind P7-07/R-038/R-213 and remaining P7-09. image.png (main checkout only) is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: BUG-071 reasoning budget for the AI routes (Claude Code, 2026-11-04)
+
+Status: **implementation complete; local checks passed; no peer review; committed on the worktree branch, not merged; not deployed**. Owner Claude Code; no reviewer ran. Branch `claude/openrouter-nemotron-api-85b4d9` (desktop-app worktree `.claude/worktrees/openrouter-nemotron-api-85b4d9`), base `63bff68`, which equals `main` at claim time. Resulting commit: the BUG-071 commit that contains this record, made on the owner's request (2026-11-04); retrieve its hash from Git history. Merging into `main` is the owner's decision. The Git Agent watches the main checkout, not this worktree, so it will not synchronize this work by itself.
+
+Result: R-214 fixed. `SEFGH_AI_REASONING_EFFORT` (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`, or `default` for no field) is sent as the OpenAI-standard top-level `reasoning_effort` by chat, suggestions, chat titles, and enhance-query when it uses the shared provider. The OpenRouter preset defaults to `none`; GitHub Models, Gemini, Groq and custom send nothing unless it is set, so every contract-recorded request is unchanged. A paid `OPENAI_API_KEY` for enhance-query never gets it. An invalid value is a provider setting error (logged `ai_provider`, routes use their fallbacks). The `ai_provider` start-up log line now includes `reasoning_effort`. R-213 (Gemini, owner-parked) is cross-referenced, not changed: whether Gemini honours the setting is untested. New R-215 (open, Low): chat titles always request model `gpt-4o`, so non-GitHub providers most likely always use the fallback title; found by reading source, not fixed here.
+
+Checks by Claude Code: the new tests failed before the fix (compile errors; `TestOpenRouterAsksForNoReasoning` saw no `reasoning_effort`). After it, uncached `go test -count=1 ./...` passed, `go vet ./...` passed, `gofmt -l .` printed nothing. Local live recheck against OpenRouter's free `nvidia/nemotron-3-ultra-550b-a55b:free` (owner's key from the Windows user environment, never printed or stored in the repo): suggestions `ai-powered` in 2.9 s, enhance-query `ai-powered` in 3.0 s (before: `basic-enhancement`). Signed-in chat was not exercised. The local server was stopped; port 8799 was free afterwards. Normal `npm run handoff` passed: contracts, Go test/vet/gofmt, coordination record; lessons skipped by owner policy, not passed; tree `010ac6db851e` before this sentence was added. The worktree has no `node_modules`, so the run used a temporary junction to the main checkout's (same `package-lock.json` at `63bff68`), removed afterwards with `rmdir`; the main checkout's `node_modules` was left intact. This bookkeeping line changes the fingerprint, so the final handoff verifies again after the owner commits or merges. No lint/build: no JavaScript changed. Lesson checks not run (optional by owner policy); the lesson 50 exercise is unfinished on purpose.
+
+Changed files (all uncommitted):
+
+```text
+backend/README.md
+backend/cmd/api/ai_wiring_test.go
+backend/cmd/api/main.go
+backend/internal/aienhance/contract_test.go
+backend/internal/aienhance/handler.go
+backend/internal/aiprovider/config.go
+backend/internal/aiprovider/config_test.go
+backend/internal/aiprovider/provider.go
+docs/bug-register.md
+docs/coordination.md
+learn-go/49-choosing-a-provider/README.md
+learn-go/README.md
+learn-go/50-leaving-a-field-out/README.md
+learn-go/50-leaving-a-field-out/exercise.go
+learn-go/50-leaving-a-field-out/exercise_test.go
+learn-go/50-leaving-a-field-out/solution.go
+```
+
+Remaining gates: owner commit/merge into `main`; deployment of `sefgh-api` with OpenRouter settings is a separate owner decision (`SEFGH_AI_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `SEFGH_AI_MODEL`); one signed-in chat to confirm in production. R-213 and R-038 still block P7-07; this task does not close them. Writer released: yes. No owned processes. Next bounded task: R-215 (title model per provider).
+
+## Checkpoint: BUG-071 reasoning budget for the AI routes (Claude Code, 2026-11-04)
+
+Status: **in progress / incomplete**. Owner Claude Code; no reviewer assigned. Branch `claude/openrouter-nemotron-api-85b4d9` (desktop-app worktree `.claude/worktrees/openrouter-nemotron-api-85b4d9`), base/current `63bff68`, uncommitted. Previous writer (Codex, P7-10a) released; `agent-handoff.mjs --status` was IDLE_CLEAN with no lease. The main checkout's untracked image.png is not in this worktree.
+
+Objective: the owner asked (2026-11-04) to fix the enhance-query failure found while testing OpenRouter's `nvidia/nemotron-3-ultra-550b-a55b:free` against a local Go API. Evidence: with `SEFGH_AI_PROVIDER=openrouter`, suggestions answered `ai-powered` (7.2 s) but enhance-query answered `basic-enhancement` and logged `provider reply has no text`. Direct OpenRouter calls with enhance-query's real prompt and `max_tokens: 100`: three of three `finish_reason=length`, `content: null`, 100 of 100 tokens spent on reasoning. With `reasoning_effort: "none"` (or `reasoning: {effort: "none"}`): `stop`, text, 0 reasoning tokens. New entry R-214. Related to owner-parked R-213 (Gemini), whose cause stays unestablished.
+
+Plan: a provider-neutral `SEFGH_AI_REASONING_EFFORT`, sent as the OpenAI-standard top-level `reasoning_effort` on the shared provider's calls only (chat, suggestions, and enhance-query when it uses the shared provider). The OpenRouter preset defaults to `none`. Other presets send nothing unless it is set, so GitHub Models requests and contract fixtures stay as they are. Expected files: `backend/internal/aiprovider/{config,provider}.go` and tests, `backend/internal/aienhance/handler.go` and test, `backend/cmd/api/main.go`, `backend/README.md`, `docs/bug-register.md`, a new lesson 50 and the lesson index, this file. No contract fixture, Next.js, deployment or hosted-setting change. Checks planned: uncached Go test/vet/gofmt, contracts, a local re-test against the free model, normal handoff. No owned processes. Next: failing tests first.
+
+Milestone 1: the new tests failed before the fix (compile errors for the new fields; `TestOpenRouterAsksForNoReasoning` saw no `reasoning_effort` on the three OpenRouter calls). Fix written in `aiprovider/config.go` (`Provider.Reasoning`, preset field, `preset.provider`, exported `ReasoningEffort`), `aiprovider/provider.go` (`Client.Reasoning`, `reasoning_effort,omitempty`), `aienhance/handler.go` (`OpenAIReasoning`), `cmd/api/main.go` (wiring, `reasoning_effort` in the `ai_provider` log line). Focused `go test -count=1` of aiprovider, aienhance, aisuggestions, aichat and cmd/api passed. Docs written: R-214 and an R-213 cross-reference, backend README setting row, lesson 50 (new, exercise unfinished on purpose) and index, lesson 49 preset sentence. Remaining: full Go/contract checks, local live re-test, handoff.
 
 ## Handoff: P7-10a current migration boundaries (Codex, 2026-11-03)
 
