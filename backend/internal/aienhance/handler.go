@@ -42,9 +42,12 @@ type Handler struct {
 	AnthropicURL string
 	// OpenAIModel is empty for OpenAI itself, which means gpt-3.5-turbo.
 	OpenAIModel string
-	Limiter     *ailimit.Limiter
-	Now         func() time.Time
-	Logger      *slog.Logger
+	// OpenAIReasoning is sent as reasoning_effort when it is not empty. It is
+	// set only when this helper uses the AI routes' shared provider (R-214).
+	OpenAIReasoning string
+	Limiter         *ailimit.Limiter
+	Now             func() time.Time
+	Logger          *slog.Logger
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -171,7 +174,7 @@ func (h *Handler) withOpenAI(ctx context.Context, query string) (string, error) 
 	if model == "" {
 		model = openAIModel
 	}
-	data, err := h.post(ctx, url, map[string]string{"Authorization": "Bearer " + h.OpenAIKey}, map[string]any{
+	request := map[string]any{
 		"model": model,
 		"messages": []map[string]string{
 			{"role": "system", "content": openAISystemPrompt},
@@ -179,7 +182,12 @@ func (h *Handler) withOpenAI(ctx context.Context, query string) (string, error) 
 		},
 		"max_tokens":  100,
 		"temperature": 0.7,
-	})
+	}
+	// A reasoning model can spend all 100 tokens thinking and answer null.
+	if h.OpenAIReasoning != "" {
+		request["reasoning_effort"] = h.OpenAIReasoning
+	}
+	data, err := h.post(ctx, url, map[string]string{"Authorization": "Bearer " + h.OpenAIKey}, request)
 	if err != nil {
 		return "", err
 	}

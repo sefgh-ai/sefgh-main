@@ -21,13 +21,19 @@ import (
 // GitHub API, and records every request with the credential it carried.
 type aiUpstream struct {
 	mu   sync.Mutex
-	seen []string // "METHOD path|Authorization|x-api-key", plus "|apikey" when one was sent
+	seen []string // "METHOD path|Authorization|x-api-key", plus "|apikey" when one was sent and "|effort=" for a reasoning_effort
 }
 
 func (u *aiUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	call := r.Method + " " + r.URL.Path + "|" + r.Header.Get("Authorization") + "|" + r.Header.Get("X-Api-Key")
 	if key := r.Header.Get("apikey"); key != "" {
 		call += "|" + key
+	}
+	var body struct {
+		Effort *string `json:"reasoning_effort"`
+	}
+	if json.NewDecoder(r.Body).Decode(&body) == nil && body.Effort != nil {
+		call += "|effort=" + *body.Effort
 	}
 	u.mu.Lock()
 	u.seen = append(u.seen, call)
@@ -75,7 +81,8 @@ func aiServer(t *testing.T, env map[string]string) (http.Handler, *aiUpstream) {
 	t.Setenv("NEXT_PUBLIC_SUPABASE_URL", backend.URL)
 	t.Setenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-key")
 	for _, name := range []string{"GITHUB_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GITHUB_PUBLIC_READ_TOKEN",
-		"SEFGH_AI_PROVIDER", "SEFGH_AI_MODEL", "SEFGH_AI_URL", "SEFGH_AI_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY"} {
+		"SEFGH_AI_PROVIDER", "SEFGH_AI_MODEL", "SEFGH_AI_URL", "SEFGH_AI_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY",
+		"SEFGH_AI_REASONING_EFFORT"} {
 		t.Setenv(name, env[name])
 	}
 	return newHandler(slog.New(slog.NewTextHandler(io.Discard, nil))), upstream
@@ -339,6 +346,26 @@ func TestAPaidKeyStillServesTheQueryHelper(t *testing.T) {
 	}
 	if got := upstream.take(); len(got) != 1 || got[0] != "POST /openai|Bearer openai-key|" {
 		t.Errorf("enhance-query reached %q", got)
+	}
+}
+
+// R-214: with OpenRouter, all three AI routes ask for no reasoning, so a
+// reasoning model keeps its answer budget for the answer. A paid OpenAI key
+// that serves the query helper gets no such field.
+func TestOpenRouterAsksForNoReasoning(t *testing.T) {
+	handler, upstream := aiServer(t, map[string]string{"OPENROUTER_API_KEY": "router-key", "SEFGH_AI_MODEL": "nvidia/nemotron-3-ultra-550b-a55b:free"})
+	postJSON(handler, "/api/ai/suggestions", `{"query":"obscure thing"}`, nil)
+	postJSON(handler, "/api/ai/enhance-query", `{"query":"charts"}`, nil)
+	postJSON(handler, "/api/ai/chat", chatBody, map[string]string{"Authorization": "Bearer session-a"})
+	want := []string{"POST /models|Bearer router-key||effort=none", "POST /models|Bearer router-key||effort=none", "GET /auth/v1/user|Bearer session-a||public-key", "POST /models|Bearer router-key||effort=none"}
+	if got := upstream.take(); strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("calls %q, want %q", got, want)
+	}
+
+	handler, upstream = aiServer(t, map[string]string{"OPENROUTER_API_KEY": "router-key", "SEFGH_AI_MODEL": "m", "OPENAI_API_KEY": "openai-key"})
+	postJSON(handler, "/api/ai/enhance-query", `{"query":"charts"}`, nil)
+	if got := upstream.take(); len(got) != 1 || got[0] != "POST /openai|Bearer openai-key|" {
+		t.Errorf("enhance-query with a paid key reached %q", got)
 	}
 }
 

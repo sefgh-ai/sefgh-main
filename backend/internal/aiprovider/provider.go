@@ -40,12 +40,14 @@ type Options struct {
 
 // Client holds what every call needs. Token is the provider's credential; it
 // is sent to Endpoint and nowhere else. Model is used when a call names none;
-// empty means gpt-4o, the GitHub Models default.
+// empty means gpt-4o, the GitHub Models default. Reasoning is the provider's
+// reasoning effort; empty sends none (see Provider.Reasoning).
 type Client struct {
-	HTTP     *http.Client
-	Endpoint string
-	Token    string
-	Model    string
+	HTTP      *http.Client
+	Endpoint  string
+	Token     string
+	Model     string
+	Reasoning string
 }
 
 type request struct {
@@ -53,6 +55,9 @@ type request struct {
 	Messages    []Message `json:"messages"`
 	Temperature float64   `json:"temperature"`
 	MaxTokens   int       `json:"max_tokens"`
+	// omitempty leaves the field out when it is empty, so the request the
+	// chat contract records is unchanged.
+	Reasoning string `json:"reasoning_effort,omitempty"`
 }
 
 // Undefined is what Generate returns when the first choice's message has no
@@ -92,7 +97,7 @@ func (c *Client) Generate(ctx context.Context, messages []Message, options Optio
 	if !hasSystem {
 		messages = append([]Message{{Role: "system", Content: SystemPrompt}}, messages...)
 	}
-	payload, err := json.Marshal(request{Model: options.Model, Messages: messages, Temperature: options.Temperature, MaxTokens: options.MaxTokens})
+	payload, err := json.Marshal(request{Model: options.Model, Messages: messages, Temperature: options.Temperature, MaxTokens: options.MaxTokens, Reasoning: c.Reasoning})
 	if err != nil {
 		return nil, err
 	}
