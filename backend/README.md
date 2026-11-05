@@ -175,7 +175,7 @@ The example is synthetic. Passing it verifies the checker, not a production corp
 
 ## Unwired API-key lifecycle core
 
-`internal/apikey` implements credential generation/verifiers, one-time reveal, explicit lifecycle policy, separate management/accounting capabilities and reservation-before-upstream execution. It has **no production store or HTTP registration**. Tests include a test-only shared atomic memory model and proposed [core fixtures](../contracts/api-key-lifecycle/README.md); those do not establish live RLS, grants or distributed transaction behavior. Production schema/adapter, approved policy, recovery/retention and public-endpoint/UI acceptance remain gated. [Key plan](../docs/plans/playground-keys.md), [lesson40](../learn-go/40-secret-handles-and-capabilities/README.md).
+`internal/apikey` implements credential generation/verifiers, one-time reveal, explicit lifecycle policy, separate management/accounting capabilities and reservation-before-upstream execution. It has **no production store or HTTP registration**. Tests include a test-only shared atomic memory model and proposed [core fixtures](../contracts/api-key-lifecycle/README.md); those do not establish live RLS, grants or distributed transaction behavior. Production schema/adapter, approved policy, recovery/retention and public-endpoint/UI acceptance remain gated. [Key plan](../docs/plans/playground-keys.md).
 
 The current Next playground key route has its own [version2 contract](../contracts/playground-keys/README.md), adding no-store and secret-free error logging while retaining the existing data/status behavior. It has not been ported or enabled in Go.
 
@@ -339,7 +339,6 @@ Everything the contract fixtures cover is identical.
 1. Record its contract under `../contracts/` and make it pass against the Next.js handler.
 2. Add a package under `internal/` and a contract test like `internal/githubsearch/contract_test.go`.
 3. Register it in `cmd/api/main.go` and add its name to `goBackendRoutes` in `../next.config.mjs`.
-4. Add or extend a lesson in `../learn-go/` for whatever Go the route introduces.
 
 Use `internal/jscompat` to read query strings and to percent-encode. Go's `net/url` parses and encodes differently from the JavaScript the contracts were recorded from.
 
@@ -358,8 +357,7 @@ for callers without credentials are built with no token; `wiring_test.go`
 fails if the server's own `GITHUB_TOKEN` ever reaches GitHub.
 
 .github/workflows/backend-verification.yml runs Linux contracts, the race detector,
-vet/formatting and production forwarding. Tutorial solution checks are optional
-through manual `verify_lessons`, following the owner's lesson policy. It has read-only
+vet/formatting and production forwarding. It has read-only
 permissions and no deployment credentials. Its presence is not evidence of a
 successful hosted run.
 
@@ -738,7 +736,7 @@ BUG-069/R-077, 2026-10-31: owner-approved replacement/retirement is observed at 
 
 REPOSYNC-002a/b (2026-11-01): accepted HLD discovery direction now has a pure offline Go search-slice planner. Counts above1000 split inclusive UTC date ranges, then bounded star ranges; incomplete/invalid counts fail, one-day unbounded stars request a verified bound, unsplittable crowded slices block. Enumerate means paging eligibility, never completion. No worker/network/runtime/legacy-contract changes. Metadata-only corpus preflight prepared, not executed.
 
-`internal/discover.Plan` is not registered in the API or worker command. It accepts an observed count and inclusive date/star bounds; query construction, paging, durable state and fencing remain future work. See [readiness sequence](../docs/plans/reposync-discover-readiness.md), [inventory](../supabase/checks/corpus_001_inventory.sql), and [lesson48](../learn-go/48-splitting-search-ranges/README.md). Existing RepoSync v1 characterization stays intact.
+`internal/discover.Plan` is not registered in the API or worker command. It accepts an observed count and inclusive date/star bounds; query construction, paging, durable state and fencing remain future work. See [readiness sequence](../docs/plans/reposync-discover-readiness.md), [inventory](../supabase/checks/corpus_001_inventory.sql). Existing RepoSync v1 characterization stays intact.
 
 
 ## Corpus target update2026-11-01

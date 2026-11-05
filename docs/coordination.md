@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-03 (Asia/Calcutta), by Git Agent: synchronized P7-10a (commit `5ceb8c4`) on main and go-backend.
+Last updated: 2026-11-05 (Asia/Calcutta), by Claude Code: TUTORIAL-REMOVE-001 complete on base `63bff68`, uncommitted.
 
 ## Start here
 
@@ -13,9 +13,25 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released bounded P7-10a current-boundary documentation (2026-11-03). Review/source/link/diff and normal handoff checks passed; committed fingerprint verification follows. Phase7 stays open behind P7-07/R-038/R-213 and remaining P7-09. image.png is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
+- **Active writer:** none. Claude Code released TUTORIAL-REMOVE-001 (2026-11-05): `learn-go/` removed at the owner's request with its lesson checks. Phase 7 stays open behind P7-07/R-038/R-213 and the AI part of P7-09. image.png is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: TUTORIAL-REMOVE-001 remove the learn-go tutorial (Claude Code, 2026-11-05)
+
+Status: **implementation complete; required local checks passed; unreviewed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `63bff68`. Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+
+- **Owner request (2026-11-05):** remove `learn-go/` completely; the owner has a local copy and it does not contribute to the code. This supersedes the tutorial policy in AGENTS.md and the ADR.
+- **Removed:** `learn-go/` (242 tracked files), `scripts/contracts/learn-go-index.test.mjs`, `scripts/contracts/handoff-lessons.test.mjs`.
+- **Code:** `scripts/agent-handoff.mjs` drops `--lessons`, the lesson step and the `learnGo*` signal/status fields (steps renumbered). `.github/workflows/backend-verification.yml` drops the `verify_lessons` input and lesson step.
+- **Docs:** AGENTS.md tutorial section replaced by a removal note; ADR (route recipe step, decisions row, TUTORIAL-REMOVE-001 section, old policy marked superseded); briefing; migration boundaries; backend README (recipe step, CI note, two lesson links); analysis-search-workers plan (lesson link). Historical records mentioning lessons are unchanged.
+- **Checks (Claude Code):** Node contract tests 732/732 (two lesson-only test files removed); `npm run lint` exit 0; `git diff --check` clean. No Go source changed. `npm run handoff` below.
+
+Rollback: revert this commit.
+
+Next: P7-07 remains parked behind R-038/R-213.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: P7-10a current migration boundaries (Codex, 2026-11-03)
 

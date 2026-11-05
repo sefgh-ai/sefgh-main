@@ -111,6 +111,6 @@ internal settings, and later deployments may change the live state.
 
 For documentation-only edits, check changed local links, source pointers, the
 remaining-handler/routing inventory and `git diff --check`. Normal
-`npm run handoff` still checks contracts and uncached Go test/vet/gofmt; lessons
-are skipped under owner policy. App lint/build are required when application
+`npm run handoff` still checks contracts and uncached Go test/vet/gofmt (the
+`learn-go/` tutorial and its optional checks were removed on 2026-11-05). App lint/build are required when application
 source changes; they are not required for this documentation-only task.

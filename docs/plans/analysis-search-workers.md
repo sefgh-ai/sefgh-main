@@ -121,7 +121,7 @@ the caller counts both as duplicates, and the topic loop marks completion
 Completed in this batch: strict model/corpus/preparation/RPC identity checks,
 query/request-set checks, top-k order and numeric score comparison, per-query
 recall and reciprocal rank from baseline-only labels, synthetic examples,
-regression tests and [lesson 39](../../learn-go/39-comparing-frozen-search-runs/README.md).
+regression tests.
 The tool has no network client and is not registered in the API server. It does
 not calculate embeddings or pgvector rankings, certify claimed hashes, measure
 runtime/cost, or approve a relevance threshold. It adds no production route.

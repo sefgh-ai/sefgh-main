@@ -8,12 +8,6 @@ on:
     paths-ignore:
       - LAST_UPDATED.txt
   workflow_dispatch:
-    inputs:
-      verify_lessons:
-        description: 'Run optional tutorial solution checks (owner request only)'
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -75,14 +69,6 @@ jobs:
         run: |
           go test -race -count=1 ./...
           go vet ./...
-          unformatted="$(gofmt -l .)"
-          if [ -n "$unformatted" ]; then printf '%s\n' "$unformatted"; exit 1; fi
-      - name: Lesson solutions (exercises intentionally remain unfinished)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.verify_lessons }}
-        working-directory: learn-go
-        run: |
-          go test -count=1 -tags solution ./...
-          go vet -tags solution ./...
           unformatted="$(gofmt -l .)"
           if [ -n "$unformatted" ]; then printf '%s\n' "$unformatted"; exit 1; fi
       - name: Build Go for the local forwarding probe

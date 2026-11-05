@@ -70,8 +70,7 @@ Keep same-origin routing through Next.js, and test cookies, CSRF protection for 
 2. Mark anything probably wrong as `defect`. The owner decides which defects to fix. A fix changes the fixture and **every** implementation in the same commit and raises `contract_version`.
 3. Write the Go package and a contract test that runs the same fixtures.
 4. Register the route in `backend/cmd/api/main.go` and name it in `goBackendRoutes` in `next.config.mjs`. It stays off until `SEFGH_GO_API_URL` and `SEFGH_GO_ROUTES` enable it at build time.
-5. Add or extend a lesson in `learn-go/` for the Go the route introduces. The owner is learning Go from this codebase.
-6. The other agent reviews. Cut over only when the gate for that phase is met. Roll back by removing the route's name and rebuilding.
+5. The other agent reviews. Cut over only when the gate for that phase is met. Roll back by removing the route's name and rebuilding.
 
 Never dual-write to compare stateful implementations. Compare read fixtures or safe shadow reads.
 
@@ -188,6 +187,7 @@ Anything the fixtures cover is identical. These are deliberate and outside the f
 | Date | Decision |
 |---|---|
 | 2026-11-02 | Owner: release, browser access and signed-in testing "are done". Agent-verified: Decision Pack 2 is on GitHub (`5a2704a`, the Git Agent's rebase of `b034e1f`) and live (a missing repository answers 404 from Go). Not agent-verified: the playground keys hosted acceptance and the signed-in walk-through (no record; the browser tools are not connected to Claude Code), so their register entries are unchanged. The analysis, search and RepoSync worker migration is left as a gap ("we do that later"): their open entries are deferred by the owner. R-028 is closed as resolved by retirement |
+| 2026-11-05 | Owner removed the `learn-go/` tutorial from the repository ("i have copied it locally and doesnot contribute to cod"). Go changes need no lesson; handoff `--lessons`, the signal's lesson fields and CI `verify_lessons` are removed (TUTORIAL-REMOVE-001). |
 | 2026-11-03 | Owner limited P7-09 to trending-topics and playground-keys-v1 route-name switch removal (P7-09a). Keep all three AI switches until P7-07/R-038/R-213. V1 UI flag, Go runtime/accounting/policy gates, legacy keys handler, signing stop and hosted acceptance gates remain; this authorizes local forwarding cleanup only, not activation or deployment |
 | 2026-11-02 | Owner started **Phase 7** ("after done start phase 7") before the Phase 6 gate is fully met: still open are the playground keys (not cut over, so not retired), the domain (R-065, R-066), R-015 (the owner's lesson), R-033's remaining parts and R-038. The rollback observation period is taken as the time every route has run on Go in production, since 2026-10-28. Phase 7 proceeds route by route under `../plans/phase7-retirement.md`; the keys route and anything not on Go stay |
 | 2026-10-30 | Owner requested finishing the remaining route work. Codex resumes local key-route integration under the reviewed design, with default-off runtime/forwarding and no invented production limits. Existing exact signing-replacement approval, hosted acceptance, SQL/runtime/cutover and deployment gates remain. Refresh retirement is prepared for review; Phase 6 still gates applying it unless the owner explicitly approves a narrow exception. Completion packet: `../plans/route-completion-review.md`. Pack census correction: 27 fixes plus two larger choices, not 28 fixes; all-A choices unchanged |
@@ -732,7 +732,7 @@ automatic abandonment, quota reservation, retention or HTTP registration is
 introduced. Recovery startup while admissions are disabled remains a runtime
 design gate; broader credentials are not a substitute. Lesson44 is generated.
 
-Owner's tutorial policy (2026-10-21): continue generating/updating lessons, but
+Owner's tutorial policy (2026-10-21, superseded 2026-11-05 when the owner removed `learn-go/`; see TUTORIAL-REMOVE-001 below): continue generating/updating lessons, but
 make solution test/vet/build optional. Default handoff/CI explicitly skip
 lessons; `--lessons` and manualCI `verify_lessons` opt in. Contract/backend
 verification remains required, and a skip is never recorded as a pass.
@@ -805,3 +805,7 @@ unverified. This is not authorization to begin general Phase 7 retirement.
 ### Avatar crash-lock recovery decision (2026-10-31)
 
 Owner decision 2026-10-31 (CLOSEOUT-001): accept manual crash-lock recovery and defer R-209 automatic recovery until after Phase 7. An operator must verify the owning request/process stopped and remove only the exact user lock after inspecting the current profile. Never remove by age or steal a potentially active lock. Hosted lock permissions, insert atomicity, signed-in replacement and participation by all active upload writers remain rollout gates. This decision authorizes no activation or deployment.
+
+### TUTORIAL-REMOVE-001 (2026-11-05)
+
+The owner removed the `learn-go/` tutorial from the repository; they keep a local copy and it does not contribute to the application. Go changes no longer require a lesson. `npm run handoff` no longer has `--lessons` or writes lesson fields to its signal, and CI no longer has the `verify_lessons` input. Earlier lesson references in history records are left as they were.

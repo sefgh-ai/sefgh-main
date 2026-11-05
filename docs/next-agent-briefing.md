@@ -98,7 +98,7 @@ Written by Claude Code at the end of a long session, for an agent with no contex
 
 SEFGH is a Next.js (App Router, JavaScript) site backed by Supabase, deployed on Vercel. Its API is being migrated, route by route, to a Go backend in `backend/` (standard library only). Of the original 25 API entries, 23 are ported, one is retired, and the playground keys replacement remains gated on hosted acceptance and cutover. Browser data adapters are implemented behind source-default-off switches; this does not establish their current live activation. The old Next.js handlers stay in the code as the rollback path until Phase 7 removes them. The current phase is **Phase 6: fix every recorded bug** (`docs/bug-register.md`), mostly in Go.
 
-The owner (the user) is learning Go from this codebase (`learn-go/`), prefers plain language, wants steady progress, and prefers decisions collected into one pack rather than asked one by one.
+The owner (the user) prefers plain language, wants steady progress, and prefers decisions collected into one pack rather than asked one by one.
 
 ## 2. Read these first, in this order
 
@@ -109,10 +109,10 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 5. `docs/adr/0002-go-backend.md`: the accepted plan (phases and gates) and the decisions log (newest rows dated 2026-10-28 and 2026-10-29).
 6. `docs/cutover.md`: the switches (`SEFGH_GO_ROUTES`, `NEXT_PUBLIC_SEFGH_GO_DATA`, `SEFGH_GO_API_URL`) and what is switched on in production.
 7. `backend/README.md`: how the Go routes are built, switched and tested; each contract's own `contracts/<name>/README.md` explains its fixtures and versions.
-8. `learn-go/README.md`: the rules for the owner's tutorial (you must update lessons when you change Go).
+8. (Removed 2026-11-05: the `learn-go/` tutorial is no longer in the repository; no lessons are needed.)
 9. `docs/verification/handoff-concurrency.md`: the verification lease used by `npm run handoff`.
 10. `docs/database/user-db.md` and `supabase/README.md`: the live database as last read, and how database changes are made.
-11. When you touch a route: its handler in `backend/internal/<package>/`, its contract in `contracts/<name>/` (`cases.json` and `README.md`), its Node test in `scripts/contracts/<name>.test.mjs`, and the lesson that quotes it (`grep -rl "internal/<package>" learn-go`).
+11. When you touch a route: its handler in `backend/internal/<package>/`, its contract in `contracts/<name>/` (`cases.json` and `README.md`), its Node test in `scripts/contracts/<name>.test.mjs`.
 
 ## 3. State on 2026-10-29
 
@@ -195,7 +195,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
    - **Update the Node test.** It compares against `c.next_expect ?? c.expect` and asserts the new version. Add an integrity check that would catch the bug coming back.
    - **Update the Go contract test** to pin the new version.
 5. **Prove the test catches it.** Copy the changed file aside, record its SHA-256, break the fix (for example with `sed`), run the tests and expect failures. Restore, and confirm the hash is identical. Write the failing test names into your handoff record.
-6. **Update a lesson.** Required for any Go change: find the lesson that quotes the code. Explain the new Go idea in plain words with a JavaScript comparison. **Never modify an existing `exercise.go`.** Lesson tests are optional and not part of the handoff.
+6. (No lesson step: `learn-go/` was removed on 2026-11-05.)
 7. **Update the docs:**
    - the contract `README.md` (a "Version N" paragraph at the top);
    - the register row's status ("fixed in Go (BUG-0NN, date): …");
@@ -204,7 +204,7 @@ The owner (the user) is learning Go from this codebase (`learn-go/`), prefers pl
 9. **Write the handoff and run it.**
    - Add a "Handoff: BUG-0NN …" section at the top of the handoff list in `docs/coordination.md`: status, base, the change, checks with real results, changed files, next step, "Writer released: yes".
    - Set the active writer to none.
-   - Run `npm run handoff`. It runs every contract and the Go tests, vet and gofmt; lessons are skipped by policy.
+   - Run `npm run handoff`. It runs every contract and the Go tests, vet and gofmt.
    - The **Git Agent** (an automated process, not you) commits and pushes afterwards. Do not commit yourself unless the owner asks.
 
 ## 6. Rules you must not break
@@ -229,7 +229,7 @@ All from `AGENTS.md` and the owner:
 
 - Prefix commands that pass `/api/...` arguments with `MSYS_NO_PATHCONV=1`, or Git Bash rewrites the paths.
 - **Shell escaping breaks backslashes.** Heredocs and `python -c` turned `\\` into `\` and `\v` into a vertical tab. In `sed` replacements, `\u` means "uppercase". Write Python or Node scripts with the file-writing tool, then run them. Scan changed files for control characters afterwards: `git diff --name-only | xargs grep -l -P '[\x00-\x08\x0b\x0c\x0e-\x1f]'`.
-- **Line endings.** Some files are CRLF, for example `contracts/github-search/*`, `scripts/contracts/github-search.test.mjs` and some lessons. Read them, normalise to LF, edit, and write them back with their original endings.
+- **Line endings.** Some files are CRLF, for example `contracts/github-search/*`, `scripts/contracts/github-search.test.mjs` Read them, normalise to LF, edit, and write them back with their original endings.
 - **Formatting.** Some `cases.json` files are hand-formatted (`github-search`, `activity`). Insert new cases as text; never re-serialise the whole file. Others round-trip exactly through `JSON.stringify(x, null, 2) + '\n'`; check before rewriting.
 
 **The Git Agent and the verification lease:**

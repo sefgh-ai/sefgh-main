@@ -6,8 +6,7 @@
  *
  * Modes:
  * - Default (`npm run handoff`):
- *   1. Runs contract tests and Go backend tests/vet/gofmt. Lessons are optional
- *      with `--lessons`; default skip follows the owner's tutorial policy.
+ *   1. Runs contract tests and Go backend tests/vet/gofmt.
  *   2. Verifies `docs/coordination.md` has `Active writer: none` and that the latest
  *      checkpoint/handoff is NOT marked `paused` or `incomplete`.
  *   3. Holds an exclusive advisory verification lease and compares working-tree
@@ -167,8 +166,6 @@ if (args.has('--status')) {
     const verification = lastVerification.present ? lastVerification : initialVerification;
     const signalMatchesTree = Boolean(
       !verification.present && signal && signal.contractsPassed && signal.goBackendPassed &&
-      (signal.learnGoPassed === true ||
-        (signal.learnGoPassed === null && signal.learnGoSkipped === true && signal.learnGoCheck === 'skipped-owner-policy')) &&
       signal.writerReleased && !signal.isPausedOrIncomplete && signal.treeHash && signal.treeHash === treeHash
     );
     let state = 'IDLE_CLEAN';
@@ -183,7 +180,7 @@ if (args.has('--status')) {
       gitBranch: branch.out.trim(), gitHead: head.out.trim(), workingTreeClean, changedFileCount: porcelain.length,
       activeWriter: coord.activeWriter, writerReleased: coord.writerReleased, latestHeading: coord.latestHeading,
       latestStatus: coord.latestStatus, isPausedOrIncomplete: coord.isPausedOrIncomplete, signalMatchesTree,
-      learnGoCheck: signal?.learnGoCheck || (signal?.learnGoPassed === true ? 'passed' : null), ciRun,
+      ciRun,
     }, null, 2));
   } catch {
     console.log(JSON.stringify({ state: 'STATUS_ERROR', canSynchronize: false, workingTreeClean: null,
@@ -229,22 +226,8 @@ function verifyHandoff() {
   }
   console.log('✅ Go backend passed.');
 
-  // 3. Tutorial checks are opt-in; a skipped lesson is never a test pass.
-  const checkLessons = args.has('--lessons');
-  if (checkLessons) {
-    console.log('\n3. Checking learn-go solutions (explicit --lessons)...');
-    const learnGo = run('go test -count=1 -tags solution ./...', resolve(ROOT, 'learn-go'));
-    if (!learnGo.ok) {
-      console.error('❌ learn-go solution tests failed:\n', [learnGo.out, learnGo.err].filter(Boolean).join('\n'));
-      return false;
-    }
-    console.log('✅ learn-go solutions passed.');
-  } else {
-    console.log('\n3. Lesson checks skipped (owner policy; use --lessons to request them).');
-  }
-
-  // 4. Inspect docs/coordination.md
-  console.log('\n4. Inspecting docs/coordination.md...');
+  // 3. Inspect docs/coordination.md
+  console.log('\n3. Inspecting docs/coordination.md...');
   const coord = parseCoordination();
 
   if (coord.isPausedOrIncomplete) {
@@ -263,7 +246,7 @@ function verifyHandoff() {
 
   console.log('✅ docs/coordination.md records: Active writer is "none" and task is complete.');
 
-  // 5. Compute working-tree hash and emit .agent-signal.json
+  // 4. Compute working-tree hash and emit .agent-signal.json
   const treeHash = computeTreeHash(ROOT);
   if (treeHash !== initialTreeHash) {
     console.error('Source changed during verification; no success signal was emitted.');
@@ -273,9 +256,6 @@ function verifyHandoff() {
     timestamp: new Date().toISOString(),
     contractsPassed: true,
     goBackendPassed: true,
-    learnGoPassed: checkLessons ? true : null,
-    learnGoSkipped: !checkLessons,
-    learnGoCheck: checkLessons ? 'passed' : 'skipped-owner-policy',
     writerReleased: coord.writerReleased,
     isPausedOrIncomplete: coord.isPausedOrIncomplete,
     latestHeading: coord.latestHeading,

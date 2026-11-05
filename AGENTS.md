@@ -34,7 +34,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - Before taking over, confirm the previous writer has released the task and re-read the diff. Do not reset, clean, stash, or overwrite another agent's work.
 - Keep decisions in the ADR and current progress in the coordination file. Avoid separate conflicting plans in private agent memory.
 - Handoffs must state changed files, actual checks/results, unverified dependencies, and the next bounded task. Claim a peer review only when it actually ran.
-- When finishing a bounded task, update `docs/coordination.md` with the handoff record, release the writer role, and run `npm run handoff` to verify contracts and the production Go backend. Lesson checks are optional (see tutorial policy below). The Git Agent will automatically monitor, verify, and synchronize the repository.
+- When finishing a bounded task, update `docs/coordination.md` with the handoff record, release the writer role, and run `npm run handoff` to verify contracts and the production Go backend. The Git Agent will automatically monitor, verify, and synchronize the repository.
 - Before Git Agent synchronization, inspect `node scripts/agent-handoff.mjs --status`. `VERIFICATION_BUSY` or `STATUS_ERROR` blocks checkout mutations and competing checks. Recover an interrupted/unknown lease only after verifying its owner and child processes have stopped; follow `docs/verification/handoff-concurrency.md`. A lease coordinates cooperating agents; it is not a filesystem or Git lock.
 - Before calling a bounded task finished, update `docs/coordination.md` in the same change with the task ID, owner/reviewer, base and resulting commit (or explicitly uncommitted state), changed files, checks and outcomes, remaining gates, next action, and writer release. Distinguish implementation complete, review complete, and deployed; none implies the others. Keep prior results attributed to the agent that ran them.
 - Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
@@ -57,16 +57,9 @@ Check `git status --short` and the current commit before editing. The architectu
 - If the bounded task is incomplete, do **not** run `npm run handoff` merely to signal completion: that script signals the Git Agent to synchronize. Use the documentation checkpoint and tell the owner the task needs pickup. Run the normal handoff only when the bounded task is actually complete and its checks can finish.
 - The incoming agent must read the checkpoint, inspect Git status and the diff, then claim the writer role before continuing. A checkpoint does not notify a running agent; do not claim another agent has received or accepted it without evidence.
 
-## The owner's Go tutorial
+## Go tutorial removed
 
-The owner is learning Go from this codebase. `learn-go/` is their tutorial, and it grows with the backend. Read `learn-go/README.md` before touching it.
-
-- Every task that adds or changes Go in `backend/` adds or updates a lesson in the same branch. Explain the new Go ideas using the real code, add a small exercise with a test, and update the lesson index.
-- When you change backend code that a lesson quotes or points to, update that lesson in the same commit.
-- Generate/update lessons alongside Go changes; keep this work lightweight (owner, 2026-10-21). Lesson tests/vet/build are optional, requested explicitly rather than repeated during development or every handoff/CI run. Default `npm run handoff` records lessons as skipped, never passed; `npm run handoff -- --lessons` explicitly checks solutions. Manual CI has a `verify_lessons` option. Application/backend checks remain required.
-- Exercises ship unfinished on purpose, so `go test ./...` inside `learn-go/` fails until the owner completes them. Do not complete them, and do not report those failures as application regressions. Optional solution checks use `go test -tags solution ./...`.
-- Do not modify an existing `exercise.go`. It may hold the owner's work.
-- Write for a JavaScript developer who is new to Go: plain words, short lessons, a JavaScript comparison where it helps.
+`learn-go/` was removed from the repository at the owner's request (2026-11-05, TUTORIAL-REMOVE-001); the owner keeps a local copy. Go changes no longer need a lesson, and handoff and CI no longer run lesson checks. Older handoff records that mention lessons are history.
 
 ## Migration constraints
 
