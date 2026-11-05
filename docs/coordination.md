@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-05 (Asia/Calcutta), by Claude Code: TUTORIAL-REMOVE-001 complete on base `63bff68`, uncommitted.
+Last updated: 2026-11-05 (Asia/Calcutta), by Git Agent: synchronized TUTORIAL-REMOVE-001 (commit `9f37e27`) on main and go-backend.
 
 ## Start here
 
@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: TUTORIAL-REMOVE-001 remove the learn-go tutorial (Claude Code, 2026-11-05)
 
-Status: **implementation complete; required local checks passed; unreviewed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `63bff68`. Resulting commit: uncommitted; Git Agent commit and synchronization pending.
+Status: **implementation complete; required local checks passed; unreviewed.** Writer Claude Code; reviewer unassigned. Branch `main`, base `63bff68`. Resulting commit: `9f37e27` (synchronized by Git Agent on main and go-backend).
 
 - **Owner request (2026-11-05):** remove `learn-go/` completely; the owner has a local copy and it does not contribute to the code. This supersedes the tutorial policy in AGENTS.md and the ADR.
 - **Removed:** `learn-go/` (242 tracked files), `scripts/contracts/learn-go-index.test.mjs`, `scripts/contracts/handoff-lessons.test.mjs`.
