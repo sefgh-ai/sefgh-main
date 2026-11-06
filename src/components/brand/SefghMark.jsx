@@ -116,8 +116,17 @@ export function SefghLogo({ size = 28, className = "", title = "sefgh" }) {
   );
 }
 
-/** Scout, the mascot: for 32 pixels wide and up. The ground follows the text colour. */
-export function Scout({ width = 160, className, title = "Scout, the SEFGH mole" }) {
+/**
+ * Scout, the mascot: for 32 pixels wide and up. The ground follows the text colour.
+ * `body` overrides the body gradient as [top, bottom] (the landing page uses
+ * GitHub purple); the nose always stays the brand emerald.
+ */
+export function Scout({
+  width = 160,
+  className,
+  title = "Scout, the SEFGH mole",
+  body: bodyColors = ["#3B82F6", "#1D4ED8"],
+}) {
   const body = useGradientId("scout-body");
   const nose = useGradientId("scout-nose");
   return (
@@ -131,8 +140,8 @@ export function Scout({ width = 160, className, title = "Scout, the SEFGH mole" 
     >
       <defs>
         <linearGradient id={body} x1="0" y1="0" x2="0.8" y2="1">
-          <stop offset="0" stopColor="#3B82F6" />
-          <stop offset="1" stopColor="#1D4ED8" />
+          <stop offset="0" stopColor={bodyColors[0]} />
+          <stop offset="1" stopColor={bodyColors[1]} />
         </linearGradient>
         <NoseGradient id={nose} from={[48.6, 36.7]} to={[52.4, 47.6]} />
       </defs>

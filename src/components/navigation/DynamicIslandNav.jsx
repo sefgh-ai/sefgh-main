@@ -30,6 +30,10 @@ const links = [
 export function DynamicIslandNav() {
   const pathname = usePathname();
 
+  // The landing page has its own header and footer links (LANDING-001); the
+  // floating island covered its header there.
+  if (pathname === "/") return null;
+
   return (
     <>
       {/* Desktop floating island */}
