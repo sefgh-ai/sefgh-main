@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { Star } from 'lucide-react'
+import { StarIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -75,14 +75,15 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
             </div>
             <div className="flex gap-0.5 mt-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star
+                <StarIcon
                   key={star}
                   className={cn(
                     "h-5 w-5",
                     star <= Math.round(ratings.average)
-                      ? "fill-yellow-500 text-yellow-500"
+                      ? "text-yellow-500"
                       : "text-muted-foreground"
                   )}
+                  weight={star <= Math.round(ratings.average) ? "fill" : "regular"}
                 />
               ))}
             </div>
@@ -107,13 +108,14 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
                 onClick={() => setMyRating(star)}
                 className="transition-transform hover:scale-110"
               >
-                <Star
+                <StarIcon
                   className={cn(
                     "h-8 w-8 cursor-pointer transition-colors",
                     star <= (hoverRating || myRating)
-                      ? "fill-yellow-500 text-yellow-500"
+                      ? "text-yellow-500"
                       : "text-muted-foreground"
                   )}
+                  weight={star <= (hoverRating || myRating) ? "fill" : "regular"}
                 />
               </button>
             ))}

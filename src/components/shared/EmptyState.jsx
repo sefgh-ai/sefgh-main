@@ -2,26 +2,17 @@
 
 import { Button } from "@/components/ui/button"
 import { memo, useMemo } from "react"
-import { 
-  FileQuestion, 
-  Search, 
-  Database, 
-  Inbox, 
-  AlertCircle,
-  FileX,
-  Users,
-  Settings
-} from "lucide-react"
+import { FileMagnifyingGlassIcon, MagnifyingGlassIcon, DatabaseIcon, TrayIcon, WarningCircleIcon, FileXIcon, UsersIcon, GearIcon } from "@phosphor-icons/react"
 
 const icons = {
-  search: Search,
-  database: Database,
-  inbox: Inbox,
-  alert: AlertCircle,
-  file: FileX,
-  users: Users,
-  settings: Settings,
-  default: FileQuestion
+  search: MagnifyingGlassIcon,
+  database: DatabaseIcon,
+  inbox: TrayIcon,
+  alert: WarningCircleIcon,
+  file: FileXIcon,
+  users: UsersIcon,
+  settings: GearIcon,
+  default: FileMagnifyingGlassIcon
 }
 
 /**

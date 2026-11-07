@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Bookmark, Flame, MessageCircle, Star } from "lucide-react";
+import { ArrowRight, BookmarkSimple, Fire, ChatCircleDots, Star } from "@phosphor-icons/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Scout } from "@/components/brand/SefghMark";
@@ -43,7 +43,7 @@ export function LandingFeatures() {
 
       <div className="grid gap-5 md:grid-cols-[1.35fr_1fr]">
         <div className={`${card} flex flex-col gap-3.5 md:row-span-2`}>
-          <div className={iconTile}><MessageCircle className="h-5 w-5" aria-hidden="true" /></div>
+          <div className={iconTile}><ChatCircleDots className="h-5 w-5" aria-hidden="true" /></div>
           <h3 className={`text-lg font-bold tracking-[-0.02em] ${styles.display}`}>{t("landing.features.askTitle")}</h3>
           <p className="text-[15px] leading-relaxed text-[var(--l-muted)]">{t("landing.features.askBody")}</p>
           <div className="mt-auto overflow-hidden rounded-[var(--l-radius-sm)] border border-[var(--l-line)] bg-[var(--l-bg-deep)]" aria-hidden="true">
@@ -56,7 +56,7 @@ export function LandingFeatures() {
                 <span className="text-sm text-[var(--l-muted)]">{r.about}</span>
                 <span className={`flex items-center gap-4 text-xs text-[var(--l-muted)] ${styles.mono}`}>
                   <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: r.color }} />{r.lang}</span>
-                  <span className="flex items-center gap-1"><Star className="h-3 w-3" />{r.stars}</span>
+                  <span className="flex items-center gap-1"><Star className="h-3 w-3" weight="fill" />{r.stars}</span>
                 </span>
               </div>
             ))}
@@ -64,13 +64,13 @@ export function LandingFeatures() {
         </div>
 
         <Link href="/trending" className={`${card} block transition-colors hover:border-[var(--l-muted)] ${styles.focusRing}`}>
-          <div className={iconTile}><Flame className="h-5 w-5" aria-hidden="true" /></div>
+          <div className={iconTile}><Fire className="h-5 w-5" aria-hidden="true" /></div>
           <h3 className={`mb-2 mt-4 text-lg font-bold tracking-[-0.02em] ${styles.display}`}>{t("landing.features.trendingTitle")}</h3>
           <p className="text-[15px] leading-relaxed text-[var(--l-muted)]">{t("landing.features.trendingBody")}</p>
         </Link>
 
         <Link href="/starred" className={`${card} block transition-colors hover:border-[var(--l-muted)] ${styles.focusRing}`}>
-          <div className={iconTile}><Bookmark className="h-5 w-5" aria-hidden="true" /></div>
+          <div className={iconTile}><BookmarkSimple className="h-5 w-5" aria-hidden="true" /></div>
           <h3 className={`mb-2 mt-4 text-lg font-bold tracking-[-0.02em] ${styles.display}`}>{t("landing.features.saveTitle")}</h3>
           <p className="text-[15px] leading-relaxed text-[var(--l-muted)]">{t("landing.features.saveBody")}</p>
         </Link>

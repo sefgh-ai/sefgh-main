@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Inbox } from "lucide-react";
+import { BellIcon, TrayIcon } from "@phosphor-icons/react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { NotificationItem } from "./NotificationItem";
@@ -107,27 +107,27 @@ export function NotificationList({
     const getEmptyStateContent = () => {
       if (searchQuery) {
         return {
-          icon: <Bell className="h-12 w-12 text-muted-foreground/50" />,
+          icon: <BellIcon className="h-12 w-12 text-muted-foreground/50" />,
           title: "No results found",
           description: "No notifications match your search. Try a different query.",
         };
       }
       if (filter === "saved") {
         return {
-          icon: <Inbox className="h-12 w-12 text-muted-foreground/50" />,
+          icon: <TrayIcon className="h-12 w-12 text-muted-foreground/50" />,
           title: "No saved notifications",
           description: "Save important notifications to access them later.",
         };
       }
       if (filter === "done") {
         return {
-          icon: <Inbox className="h-12 w-12 text-muted-foreground/50" />,
+          icon: <TrayIcon className="h-12 w-12 text-muted-foreground/50" />,
           title: "No completed notifications",
           description: "Mark notifications as done to keep your inbox clean.",
         };
       }
       return {
-        icon: <Inbox className="h-12 w-12 text-muted-foreground/50" />,
+        icon: <TrayIcon className="h-12 w-12 text-muted-foreground/50" />,
         title: "All caught up!",
         description: "You have no new notifications. Check back later for updates.",
       };

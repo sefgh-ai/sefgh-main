@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { MagnifyingGlassIcon, FunnelIcon } from "@phosphor-icons/react";
 
 const SearchComponent = ({ placeholder, onSearch }) => {
   const handleSubmit = (e) => {
@@ -29,11 +29,11 @@ const SearchComponent = ({ placeholder, onSearch }) => {
         />
 
         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground">
-          <Search className="w-6 h-6" />
+          <MagnifyingGlassIcon className="w-6 h-6" />
         </div>
 
         <div className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-          <Filter className="w-5 h-5 text-muted-foreground hover:text-blue-400" />
+          <FunnelIcon className="w-5 h-5 text-muted-foreground hover:text-blue-400" />
         </div>
       </form>
     </div>

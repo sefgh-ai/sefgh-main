@@ -1,4 +1,4 @@
-import { Activity, Key, Settings, LineChart, TestTube } from 'lucide-react'
+import { PulseIcon, KeyIcon, GaugeIcon, ChartLineIcon, TestTubeIcon } from '@phosphor-icons/react/ssr'
 import ApiKeysTab from '@/components/playground/ApiKeysTab'
 import UsageTab from '@/components/playground/UsageTab'
 import LimitsTab from '@/components/playground/LimitsTab'
@@ -9,31 +9,31 @@ export const playgroundTabs = [
   {
     value: 'keys',
     label: 'API Keys',
-    icon: Key,
+    icon: KeyIcon,
     component: ApiKeysTab,
   },
   {
     value: 'usage',
     label: 'Usage',
-    icon: LineChart,
+    icon: ChartLineIcon,
     component: UsageTab,
   },
   {
     value: 'limits',
     label: 'Limits',
-    icon: Settings,
+    icon: GaugeIcon,
     component: LimitsTab,
   },
   {
     value: 'monitoring',
     label: 'Monitor',
-    icon: Activity,
+    icon: PulseIcon,
     component: MonitoringTab,
   },
   {
     value: 'testing',
     label: 'Testing',
-    icon: TestTube,
+    icon: TestTubeIcon,
     component: TestingTab,
   },
 ]

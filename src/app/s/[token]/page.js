@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Copy, ExternalLink, Link2, Share2, Twitter, Facebook, Linkedin, MessageSquare, Loader2 } from 'lucide-react'
+import { LinkSimpleIcon, XLogoIcon, FacebookLogoIcon, LinkedinLogoIcon, ChatIcon, CircleNotchIcon } from '@phosphor-icons/react'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { toast } from 'sonner'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'
@@ -97,7 +97,7 @@ export default function SharedChatPage({ params }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <CircleNotchIcon className="h-6 w-6 animate-spin" />
       </div>
     )
   }
@@ -123,11 +123,11 @@ export default function SharedChatPage({ params }) {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={copyLink}>
-                <Link2 className="h-4 w-4 mr-2" />
+                <LinkSimpleIcon className="h-4 w-4 mr-2" />
                 {copying ? 'Copied' : 'Copy link'}
               </Button>
               <Button size="sm" onClick={continueChat}>
-                <MessageSquare className="h-4 w-4 mr-2" />
+                <ChatIcon className="h-4 w-4 mr-2" />
                 Continue this chat
               </Button>
             </div>
@@ -139,13 +139,13 @@ export default function SharedChatPage({ params }) {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted-foreground">Share to:</span>
             <Button variant="ghost" size="sm" onClick={() => shareTo('twitter')}>
-              <Twitter className="h-4 w-4 mr-2" /> Twitter
+              <XLogoIcon className="h-4 w-4 mr-2" /> Twitter
             </Button>
             <Button variant="ghost" size="sm" onClick={() => shareTo('linkedin')}>
-              <Linkedin className="h-4 w-4 mr-2" /> LinkedIn
+              <LinkedinLogoIcon className="h-4 w-4 mr-2" /> LinkedIn
             </Button>
             <Button variant="ghost" size="sm" onClick={() => shareTo('facebook')}>
-              <Facebook className="h-4 w-4 mr-2" /> Facebook
+              <FacebookLogoIcon className="h-4 w-4 mr-2" /> Facebook
             </Button>
           </div>
 

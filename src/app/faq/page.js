@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { QuestionIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 import FaqAccordion from "./FaqAccordion";
 
@@ -33,7 +33,7 @@ export default function FAQPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
         <header className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
-            <HelpCircle className="w-4 h-4" />
+            <QuestionIcon className="w-4 h-4" />
             FAQ
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">Frequently Asked Questions</h1>

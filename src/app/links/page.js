@@ -11,60 +11,60 @@ import {
 } from "@/components/ui/card";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  Github,
-  Twitter,
-  Linkedin,
-  Mail,
-  FileText,
-  BookOpen,
-  Code,
-  MessageCircle,
-  Rss,
-  Youtube,
-  ArrowLeft,
-  ExternalLink,
-  Heart,
-} from "lucide-react";
+  GithubLogoIcon,
+  XLogoIcon,
+  LinkedinLogoIcon,
+  EnvelopeIcon,
+  FileTextIcon,
+  BookOpenIcon,
+  CodeSimpleIcon,
+  RssIcon,
+  YoutubeLogoIcon,
+  ArrowLeftIcon,
+  ArrowSquareOutIcon,
+  DiscordLogoIcon,
+  ClockCounterClockwiseIcon,
+} from "@phosphor-icons/react";
 
 export default function LinksPage() {
   const socialLinks = [
     {
-      icon: Github,
+      icon: GithubLogoIcon,
       name: "GitHub",
       description: "Check out our open source projects",
       url: "https://github.com/sefgh-ai",
       color: "hover:text-foreground",
     },
     {
-      icon: Twitter,
+      icon: XLogoIcon,
       name: "Twitter / X",
       description: "Follow us for updates and tips",
       url: "https://twitter.com/sefgh_ai",
       color: "hover:text-sky-500",
     },
     {
-      icon: Linkedin,
+      icon: LinkedinLogoIcon,
       name: "LinkedIn",
       description: "Connect with us professionally",
       url: "https://linkedin.com/company/sefgh-ai",
       color: "hover:text-blue-600",
     },
     {
-      icon: Youtube,
+      icon: YoutubeLogoIcon,
       name: "YouTube",
       description: "Watch tutorials and demos",
       url: "https://youtube.com/@sefgh-ai",
       color: "hover:text-red-500",
     },
     {
-      icon: MessageCircle,
+      icon: DiscordLogoIcon,
       name: "Discord",
       description: "Join our community",
       url: "https://discord.gg/sefgh",
       color: "hover:text-indigo-500",
     },
     {
-      icon: Rss,
+      icon: RssIcon,
       name: "Blog RSS",
       description: "Subscribe to our blog feed",
       url: "/blog/rss.xml",
@@ -74,25 +74,25 @@ export default function LinksPage() {
 
   const resourceLinks = [
     {
-      icon: BookOpen,
+      icon: BookOpenIcon,
       name: "Documentation",
       description: "Learn how to use SEFGH effectively",
       url: "/docs",
     },
     {
-      icon: Code,
+      icon: CodeSimpleIcon,
       name: "API Reference",
       description: "Integrate SEFGH into your applications",
       url: "/api-reference",
     },
     {
-      icon: FileText,
+      icon: FileTextIcon,
       name: "Blog",
       description: "Read our latest articles and updates",
       url: "/blog",
     },
     {
-      icon: Heart,
+      icon: ClockCounterClockwiseIcon,
       name: "Changelog",
       description: "See what's new in SEFGH",
       url: "/versions#changelog",
@@ -126,7 +126,7 @@ export default function LinksPage() {
           </Link>
           <Link href="/home">
             <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Back
             </Button>
           </Link>
@@ -169,7 +169,7 @@ export default function LinksPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{link.name}</span>
-                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <ArrowSquareOutIcon className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {link.description}
@@ -259,7 +259,7 @@ export default function LinksPage() {
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2">
-              <Mail className="w-4 h-4" />
+              <EnvelopeIcon className="w-4 h-4" />
               Contact Us
             </Button>
           </Link>

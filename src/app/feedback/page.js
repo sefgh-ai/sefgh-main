@@ -15,15 +15,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  MessageSquare,
-  Bug,
-  Lightbulb,
-  ThumbsUp,
-  Send,
-  ArrowLeft,
-  CheckCircle2,
-  Star,
-} from "lucide-react";
+  ChatIcon,
+  BugIcon,
+  LightbulbIcon,
+  ThumbsUpIcon,
+  PaperPlaneRightIcon,
+  ArrowLeftIcon,
+  CheckCircleIcon,
+  StarIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export default function FeedbackPage() {
@@ -39,15 +39,15 @@ export default function FeedbackPage() {
     {
       id: "suggestion",
       label: "Suggestion",
-      icon: Lightbulb,
+      icon: LightbulbIcon,
       color: "text-yellow-500",
     },
-    { id: "bug", label: "Bug Report", icon: Bug, color: "text-red-500" },
-    { id: "praise", label: "Praise", icon: ThumbsUp, color: "text-green-500" },
+    { id: "bug", label: "Bug Report", icon: BugIcon, color: "text-red-500" },
+    { id: "praise", label: "Praise", icon: ThumbsUpIcon, color: "text-green-500" },
     {
       id: "other",
       label: "Other",
-      icon: MessageSquare,
+      icon: ChatIcon,
       color: "text-primary",
     },
   ];
@@ -74,7 +74,7 @@ export default function FeedbackPage() {
             </Link>
             <Link href="/home">
               <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeftIcon className="w-4 h-4 mr-2" />
                 Back to Home
               </Button>
             </Link>
@@ -83,7 +83,7 @@ export default function FeedbackPage() {
 
         <div className="max-w-2xl mx-auto px-4 py-20 text-center">
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-8 h-8 text-green-500" />
+            <CheckCircleIcon className="w-8 h-8 text-green-500" />
           </div>
           <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
           <p className="text-muted-foreground mb-8">
@@ -110,7 +110,7 @@ export default function FeedbackPage() {
           </Link>
           <Link href="/home">
             <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Back
             </Button>
           </Link>
@@ -121,7 +121,7 @@ export default function FeedbackPage() {
       <section className="py-12 sm:py-16 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <MessageSquare className="w-7 h-7 text-primary" />
+            <ChatIcon className="w-7 h-7 text-primary" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-4">
             Share Your Feedback
@@ -181,10 +181,11 @@ export default function FeedbackPage() {
                         onClick={() => setRating(star)}
                         className="p-1 transition-transform hover:scale-110"
                       >
-                        <Star
+                        <StarIcon
+                          weight={star <= rating ? "fill" : "regular"}
                           className={`w-8 h-8 ${
                             star <= rating
-                              ? "text-yellow-500 fill-yellow-500"
+                              ? "text-yellow-500"
                               : "text-muted-foreground"
                           }`}
                         />
@@ -243,7 +244,7 @@ export default function FeedbackPage() {
                     "Sending..."
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
+                      <PaperPlaneRightIcon className="w-4 h-4 mr-2" />
                       Send Feedback
                     </>
                   )}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, User, Mail, Globe, FileText } from "lucide-react"
+import { CircleNotchIcon, UserIcon, EnvelopeIcon, GlobeIcon, FileTextIcon } from "@phosphor-icons/react"
 
 /**
  * Personal information form component
@@ -35,7 +35,7 @@ const PersonalInfoForm = React.memo(({ formData, onChange, onSubmit, loading }) 
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
             <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="fullName"
                 placeholder="Enter your full name"
@@ -49,7 +49,7 @@ const PersonalInfoForm = React.memo(({ formData, onChange, onSubmit, loading }) 
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <EnvelopeIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -66,7 +66,7 @@ const PersonalInfoForm = React.memo(({ formData, onChange, onSubmit, loading }) 
           <div className="space-y-2">
             <Label htmlFor="bio">Bio</Label>
             <div className="relative">
-              <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <FileTextIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Textarea
                 id="bio"
                 placeholder="Tell us about yourself..."
@@ -84,7 +84,7 @@ const PersonalInfoForm = React.memo(({ formData, onChange, onSubmit, loading }) 
           <div className="space-y-2">
             <Label htmlFor="website">Website</Label>
             <div className="relative">
-              <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <GlobeIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="website"
                 type="url"
@@ -99,7 +99,7 @@ const PersonalInfoForm = React.memo(({ formData, onChange, onSubmit, loading }) 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <CircleNotchIcon className="mr-2 h-4 w-4 animate-spin" />
                 Saving...
               </>
             ) : (

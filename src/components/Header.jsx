@@ -5,9 +5,9 @@ import {
   MoonIcon,
   SunIcon,
   UserIcon,
-  ArrowRightOnRectangleIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
+  SignOutIcon,
+  GearIcon,
+} from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -137,7 +137,7 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
                   </Link>
                   <Link href="/settings">
                     <DropdownMenuItem className="cursor-pointer">
-                      <Cog6ToothIcon className="mr-2 h-4 w-4" />
+                      <GearIcon className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
                   </Link>
@@ -149,7 +149,7 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
                     }}
                     className="text-destructive cursor-pointer"
                   >
-                    <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
+                    <SignOutIcon className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

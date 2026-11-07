@@ -2,13 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  MagnifyingGlassIcon,
-  XMarkIcon,
-  ArrowPathIcon,
-  SparklesIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XIcon, CircleNotchIcon, MagicWandIcon, CaretDownIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { SearchHistoryDropdown } from "./SearchHistoryDropdown";
 import {
@@ -160,7 +154,7 @@ export function SearchBox({
                 >
                   <span className="hidden sm:inline mr-1">Mode:</span>
                   {modeOptions.find((m) => m.value === mode)?.label || "Scout"}
-                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  <CaretDownIcon className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
@@ -242,9 +236,9 @@ export function SearchBox({
                     title="Enhance query with AI"
                   >
                     {enhancing ? (
-                      <ArrowPathIcon className="h-4 w-4 animate-spin text-purple-400" />
+                      <CircleNotchIcon className="h-4 w-4 animate-spin text-purple-400" />
                     ) : (
-                      <SparklesIcon className="h-4 w-4 text-muted-foreground group-hover:text-purple-400 transition-colors" />
+                      <MagicWandIcon className="h-4 w-4 text-muted-foreground group-hover:text-purple-400 transition-colors" />
                     )}
                   </button>
                 )}
@@ -261,7 +255,7 @@ export function SearchBox({
                     }}
                     className="p-1.5 rounded-lg hover:bg-accent transition-all"
                   >
-                    <XMarkIcon className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                    <XIcon className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </button>
                 )}
               </div>
@@ -294,7 +288,7 @@ export function SearchBox({
                     "Suggested Searches"}
                 </span>
                 {loadingSuggestions && (
-                  <ArrowPathIcon className="h-3 w-3 animate-spin text-muted-foreground" />
+                  <CircleNotchIcon className="h-3 w-3 animate-spin text-muted-foreground" />
                 )}
               </div>
 
@@ -327,7 +321,7 @@ export function SearchBox({
           >
             {loading ? (
               <>
-                <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
+                <CircleNotchIcon className="h-4 w-4 mr-2 animate-spin" />
                 Searching...
               </>
             ) : (

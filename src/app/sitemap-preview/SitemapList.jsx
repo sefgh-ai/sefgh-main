@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
+import { WarningIcon, CircleNotchIcon, ArrowsClockwiseIcon } from "@phosphor-icons/react";
 
 async function fetchSitemapUrls() {
   const res = await fetch("/sitemap.xml");
@@ -57,7 +57,7 @@ export default function SitemapList() {
   if (loading) {
     return (
       <div className="flex items-center gap-3 text-muted-foreground">
-        <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin text-primary" />
+        <CircleNotchIcon aria-hidden="true" className="w-5 h-5 animate-spin text-primary" />
         Loading sitemap…
       </div>
     );
@@ -69,7 +69,7 @@ export default function SitemapList() {
         role="alert"
         className="flex items-start gap-3 text-warning bg-warning/10 border border-warning/30 p-4 rounded-xl"
       >
-        <AlertTriangle aria-hidden="true" className="w-5 h-5 mt-0.5" />
+        <WarningIcon aria-hidden="true" className="w-5 h-5 mt-0.5" />
         <div className="space-y-2">
           <div className="font-semibold">Could not load sitemap</div>
           <p className="text-sm text-warning/80">{error}</p>
@@ -78,7 +78,7 @@ export default function SitemapList() {
             onClick={() => load()}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-warning/30 hover:border-warning/60 text-warning"
           >
-            <RefreshCw aria-hidden="true" className="w-4 h-4" /> Try again
+            <ArrowsClockwiseIcon aria-hidden="true" className="w-4 h-4" /> Try again
           </button>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function SitemapList() {
           onClick={() => load()}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card hover:border-border text-foreground"
         >
-          <RefreshCw aria-hidden="true" className="w-4 h-4" /> Refresh
+          <ArrowsClockwiseIcon aria-hidden="true" className="w-4 h-4" /> Refresh
         </button>
       </div>
 

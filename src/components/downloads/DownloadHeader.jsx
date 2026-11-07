@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Sparkles } from "lucide-react"
+import { HourglassIcon } from "@phosphor-icons/react"
 
 /**
  * Download page header component
@@ -10,7 +10,7 @@ const DownloadHeader = React.memo(() => {
   return (
     <div className="text-center mb-10 sm:mb-20">
       <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-gradient-to-r from-soft-cyan/10 to-soft-violet/10 rounded-full border border-soft-cyan/20">
-        <Sparkles className="w-4 h-4 text-soft-cyan" />
+        <HourglassIcon className="w-4 h-4 text-soft-cyan" />
         <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
           Coming Soon
         </span>

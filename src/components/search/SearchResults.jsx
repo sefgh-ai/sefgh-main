@@ -4,16 +4,7 @@ import { formatNumber, formatCompactNumber } from "@/lib/utils/formatters";
 import { GITHUB_SEARCH_RESULT_LIMIT, lastSearchPage } from "@/lib/github/search-pages";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
-import {
-  Star,
-  GitFork,
-  Clock,
-  ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { StarIcon, GitForkIcon, ClockIcon, ArrowSquareOutIcon, CaretLeftIcon, CaretRightIcon, CaretDoubleLeftIcon, CaretDoubleRightIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { ViewToggle } from "@/components/search/ViewToggle";
 
@@ -49,15 +40,15 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            <Star className="h-3 w-3" />
+            <StarIcon className="h-3 w-3" />
             {formatCompactNumber(repo.stargazers_count)}
           </span>
           <span className="flex items-center gap-1">
-            <GitFork className="h-3 w-3" />
+            <GitForkIcon className="h-3 w-3" />
             {formatCompactNumber(repo.forks_count)}
           </span>
           <span className="hidden sm:flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <ClockIcon className="h-3 w-3" />
             {formatDate(repo.updated_at)}
           </span>
         </div>
@@ -84,7 +75,7 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
               window.open(repo.html_url, "_blank");
             }}
           >
-            <ExternalLink className="h-4 w-4" />
+            <ArrowSquareOutIcon className="h-4 w-4" />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
@@ -110,15 +101,15 @@ function RepositoryListItem({ repo, onSelect, compact = false }) {
             </span>
           )}
           <span className="flex items-center gap-1">
-            <Star className="h-3.5 w-3.5" />
+            <StarIcon className="h-3.5 w-3.5" />
             {formatCompactNumber(repo.stargazers_count)}
           </span>
           <span className="flex items-center gap-1">
-            <GitFork className="h-3.5 w-3.5" />
+            <GitForkIcon className="h-3.5 w-3.5" />
             {formatCompactNumber(repo.forks_count)}
           </span>
           <span className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />
+            <ClockIcon className="h-3.5 w-3.5" />
             {formatDate(repo.updated_at)}
           </span>
         </div>
@@ -266,7 +257,7 @@ export function SearchResults({
               disabled={currentPage === 1 || loadingMore}
               className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
-              <ChevronsLeft className="h-4 w-4" />
+              <CaretDoubleLeftIcon className="h-4 w-4" />
             </Button>
 
             {/* Previous Page */}
@@ -277,7 +268,7 @@ export function SearchResults({
               disabled={currentPage === 1 || loadingMore}
               className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <CaretLeftIcon className="h-4 w-4" />
             </Button>
 
             {/* Page Numbers */}
@@ -317,7 +308,7 @@ export function SearchResults({
               disabled={currentPage === totalPages || loadingMore}
               className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
-              <ChevronRight className="h-4 w-4" />
+              <CaretRightIcon className="h-4 w-4" />
             </Button>
 
             {/* Last Page */}
@@ -328,7 +319,7 @@ export function SearchResults({
               disabled={currentPage === totalPages || loadingMore}
               className="h-9 w-9 p-0 rounded-lg glass-premium border-border"
             >
-              <ChevronsRight className="h-4 w-4" />
+              <CaretDoubleRightIcon className="h-4 w-4" />
             </Button>
           </div>
 

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDate } from '@/lib/usageStats'
-import { Flame, TrendingUp } from 'lucide-react'
+import { FireIcon, TrendUpIcon } from '@phosphor-icons/react'
 
 /**
  * Statistics card showing longest and current streaks
@@ -25,7 +25,7 @@ export default function UsageStreaksStats({ longestStreak, currentStreak }) {
     <Card className="glass-premium border-border">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-          <Flame className="h-4 w-4 text-orange-500" />
+          <FireIcon className="h-4 w-4 text-orange-500" />
           Streaks
         </CardTitle>
       </CardHeader>
@@ -57,7 +57,7 @@ export default function UsageStreaksStats({ longestStreak, currentStreak }) {
                 </span>
               </div>
               {currentStreak.length > 0 && (
-                <TrendingUp className="h-4 w-4 text-green-500" />
+                <TrendUpIcon className="h-4 w-4 text-green-500" />
               )}
             </div>
             <div className="text-xs text-muted-foreground mt-1">

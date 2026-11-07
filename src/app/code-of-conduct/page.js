@@ -1,6 +1,6 @@
 import AppFooter from "@/components/ui/app-footer";
 import Link from "next/link";
-import { Shield, HeartHandshake, AlertTriangle } from "lucide-react";
+import { ShieldIcon, WarningIcon } from "@phosphor-icons/react/ssr";
 
 export const metadata = {
   title: "Code of Conduct | SEFGH",
@@ -22,7 +22,7 @@ export default function CodeOfConductPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
         <header className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
-            <Shield className="w-4 h-4" />
+            <ShieldIcon className="w-4 h-4" />
             Code of Conduct
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">Our community pledge</h1>
@@ -39,7 +39,7 @@ export default function CodeOfConductPage() {
 
         <section className="rounded-2xl border border-border bg-card/60 p-6 space-y-3">
           <div className="flex items-center gap-2 text-warning">
-            <AlertTriangle className="w-5 h-5" />
+            <WarningIcon className="w-5 h-5" />
             Reporting
           </div>
           <p className="text-muted-foreground text-sm">

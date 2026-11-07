@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { Play, Plus, Trash2, ExternalLink } from 'lucide-react'
+import { PlayIcon, PlusIcon, TrashIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -144,7 +144,7 @@ export function RepoVideoTab({ repoFullName }) {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="w-full">
-              <Plus className="h-4 w-4 mr-2" />
+              <PlusIcon className="h-4 w-4 mr-2" />
               Add Video
             </Button>
           </DialogTrigger>
@@ -215,7 +215,7 @@ export function RepoVideoTab({ repoFullName }) {
                   rel="noopener noreferrer"
                   className="text-foreground hover:text-primary flex items-center gap-2"
                 >
-                  <ExternalLink className="h-6 w-6" />
+                  <ArrowSquareOutIcon className="h-6 w-6" />
                   Open Video in New Tab
                 </a>
               </div>
@@ -232,7 +232,7 @@ export function RepoVideoTab({ repoFullName }) {
         </Card>
       ) : (
         <Card className="p-8 bg-card/50 text-center">
-          <Play className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <PlayIcon className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
           <p className="text-muted-foreground mb-4">
             No videos available for this repository yet.
           </p>
@@ -284,7 +284,7 @@ export function RepoVideoTab({ repoFullName }) {
                         handleDeleteVideo(video.id)
                       }}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <TrashIcon className="h-4 w-4" />
                     </Button>
                   )}
                 </div>

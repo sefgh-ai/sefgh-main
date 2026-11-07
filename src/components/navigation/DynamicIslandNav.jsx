@@ -3,28 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Search,
-  Sparkles,
-  TrendingUp,
-  Code2,
-  Activity,
-  Download,
-  BookOpen,
-  Code,
-  PenSquare,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  ChatCircleIcon,
+  TrendUpIcon,
+  CodeIcon,
+  PulseIcon,
+  DownloadSimpleIcon,
+  BookOpenIcon,
+  NotePencilIcon,
+  BracketsCurlyIcon,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/search", label: "Search", icon: Search },
-  { href: "/chat", label: "Chat", icon: Sparkles },
-  { href: "/playground", label: "Play", icon: Code2 },
-  { href: "/trending", label: "Trend", icon: TrendingUp },
-  { href: "/download", label: "Downloads", icon: Download },
-  { href: "/docs", label: "Docs", icon: BookOpen },
-  { href: "/api-reference", label: "API", icon: Code },
-  { href: "/blog", label: "Blog", icon: PenSquare },
-  { href: "/status", label: "Status", icon: Activity },
+  { href: "/search", label: "Search", icon: MagnifyingGlassIcon },
+  { href: "/chat", label: "Chat", icon: ChatCircleIcon },
+  { href: "/playground", label: "Play", icon: CodeIcon },
+  { href: "/trending", label: "Trend", icon: TrendUpIcon },
+  { href: "/download", label: "Downloads", icon: DownloadSimpleIcon },
+  { href: "/docs", label: "Docs", icon: BookOpenIcon },
+  { href: "/api-reference", label: "API", icon: BracketsCurlyIcon },
+  { href: "/blog", label: "Blog", icon: NotePencilIcon },
+  { href: "/status", label: "Status", icon: PulseIcon },
 ];
 
 export function DynamicIslandNav() {

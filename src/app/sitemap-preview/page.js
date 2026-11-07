@@ -1,4 +1,4 @@
-import { Link as LinkIcon } from "lucide-react";
+import { LinkIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 import SitemapList from "./SitemapList";
 

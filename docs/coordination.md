@@ -13,8 +13,24 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Merged LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; committed on branch `claude/icon-001-phosphor` and opened as a PR into main (owner request, 2026-11-07); not reviewed; not merged; not deployed.** Owner Claude Code; no independent reviewer (page QA by three read-only subagents is not a code review). Base `2a4db97`. Resumed from the 2026-11-06 checkpoint below.
+
+Result: the app uses `@phosphor-icons/react` 2.1.10 only; `lucide-react` and `@heroicons/react` are removed. Mapping and the reasoning for every former Sparkles site: [`icon-mapping.md`](icon-mapping.md). Page QA (subagents, production build on localhost:3100) found further icons that did not match their labels; fixed here: repo "Issues" Bug, "Claim Project" SealCheck, Security "Sign out of this device" SignOut, "Priority Support" Headset, "Clear Search History" Broom, versions 2.0 PaintBrush, about Code/Heart, careers "Sustainable Pace" Leaf, status Search API MagnifyingGlass / Auth LockKey / Notifications Bell, contact "Response Time" Timer, links Discord DiscordLogo / Changelog ClockCounterClockwise, LogoMarquee Projects Package / Lines of Code Code, sidebar and mobile "Playground" Code, "Sign In" SignIn, sidebar CTA RocketLaunch, header "Submit" UploadSimple, navbar "Trending Projects" TrendUp, island "API" BracketsCurly. `shrink-0` added to squeezed icons (help, research, EditorsChoice, SearchNavGuide). Unused Phosphor imports pruned across `src/`.
+
+Bugs: R-216 (lint scanned `.claude/worktrees/*/.next`) fixed by adding `.claude/**` to `eslint.config.mjs` ignores. R-217 (DynamicIslandNav covers navbar triggers at 800–1440px) recorded, open, not caused by this task.
+
+Checks by Claude Code: `npm run build` exit 0 (run before and after the QA fixes); `npm run lint` exit 0; `npm run test:contracts` 732/732 pass (before QA fixes; they changed only JSX icons). Browser recheck after rebuild: /status, /help, /research, /trending, /search show 0 `.lucide` and no non-square icons. Not verified at runtime: authenticated pages (chat, playground, settings, profile, notifications, onboarding) and repo details; these were checked by reading source only. `/api/search` returned an HTML 404 on the local production server, so search result cards were not seen; not investigated.
+
+Changed files: 126 `src/` files from the migration plus QA fixes, `package.json`, `package-lock.json`, `eslint.config.mjs`, `docs/icon-mapping.md` (new), `docs/bug-register.md`, `docs/coordination.md`. Untracked `.claude/launch.json` (local preview config, not part of the task; do not commit unless the owner wants it). image.png rule unchanged.
+
+Next: PR review and merge; run `npm run handoff` after merge. Rollback: discard the working-tree changes or revert the commit.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: BUG-072, fix synthetic playground probe and ESLint ignore (Git Agent, 2026-11-07)
 

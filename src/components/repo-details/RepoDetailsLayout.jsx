@@ -6,18 +6,17 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { 
-  Star, 
-  GitFork, 
-  Eye, 
-  Users, 
-  ExternalLink, 
-
-  Code2,
-  MessageSquare,
-  Award,
-  ChevronLeft
-} from 'lucide-react'
+import {
+  StarIcon,
+  GitForkIcon,
+  EyeIcon,
+  ArrowSquareOutIcon,
+  CodeIcon,
+  ChatIcon,
+  CaretLeftIcon,
+  BugIcon,
+  SealCheckIcon,
+} from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -60,7 +59,7 @@ export default function RepoDetailsLayout({
           onClick={() => router.back()}
           className="mb-4"
         >
-          <ChevronLeft className="h-4 w-4 mr-2" />
+          <CaretLeftIcon className="h-4 w-4 mr-2" />
           Back to Search
         </Button>
 
@@ -99,7 +98,7 @@ export default function RepoDetailsLayout({
               size="lg"
               onClick={() => window.open(repoData.html_url, '_blank')}
             >
-              <ExternalLink className="h-4 w-4 mr-2" />
+              <ArrowSquareOutIcon className="h-4 w-4 mr-2" />
               Visit on GitHub
             </Button>
 
@@ -108,7 +107,7 @@ export default function RepoDetailsLayout({
               size="lg"
               onClick={() => setCanvasOpen(true)}
             >
-              <Code2 className="h-4 w-4 mr-2" />
+              <CodeIcon className="h-4 w-4 mr-2" />
               View README & Code
             </Button>
 
@@ -129,7 +128,7 @@ export default function RepoDetailsLayout({
                 }
               }}
             >
-              <MessageSquare className="h-4 w-4 mr-2" />
+              <ChatIcon className="h-4 w-4 mr-2" />
               Discuss
             </Button>
 
@@ -142,7 +141,7 @@ export default function RepoDetailsLayout({
               disabled
               title="Coming soon: Claim project ownership"
             >
-              <Award className="h-4 w-4 mr-2" />
+              <SealCheckIcon className="h-4 w-4 mr-2" />
               Claim Project
             </Button>
           </div>
@@ -160,7 +159,7 @@ export default function RepoDetailsLayout({
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
             <Card className="p-4 text-center bg-card/50">
               <div className="flex items-center justify-center mb-2 text-yellow-500">
-                <Star className="h-5 w-5" />
+                <StarIcon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold">{formatCompactNumber(repoData.stargazers_count)}</div>
               <div className="text-sm text-muted-foreground">Stars</div>
@@ -168,7 +167,7 @@ export default function RepoDetailsLayout({
 
             <Card className="p-4 text-center bg-card/50">
               <div className="flex items-center justify-center mb-2 text-blue-500">
-                <GitFork className="h-5 w-5" />
+                <GitForkIcon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold">{formatCompactNumber(repoData.forks_count)}</div>
               <div className="text-sm text-muted-foreground">Forks</div>
@@ -176,7 +175,7 @@ export default function RepoDetailsLayout({
 
             <Card className="p-4 text-center bg-card/50">
               <div className="flex items-center justify-center mb-2 text-green-500">
-                <Eye className="h-5 w-5" />
+                <EyeIcon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold">{formatCompactNumber(repoData.watchers_count)}</div>
               <div className="text-sm text-muted-foreground">Watchers</div>
@@ -184,7 +183,7 @@ export default function RepoDetailsLayout({
 
             <Card className="p-4 text-center bg-card/50">
               <div className="flex items-center justify-center mb-2 text-purple-500">
-                <Code2 className="h-5 w-5" />
+                <CodeIcon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold">{repoData.language || 'N/A'}</div>
               <div className="text-sm text-muted-foreground">Language</div>
@@ -192,7 +191,7 @@ export default function RepoDetailsLayout({
 
             <Card className="p-4 text-center bg-card/50">
               <div className="flex items-center justify-center mb-2 text-orange-500">
-                <Users className="h-5 w-5" />
+                <BugIcon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold">{repoData.open_issues_count || 0}</div>
               <div className="text-sm text-muted-foreground">Issues</div>

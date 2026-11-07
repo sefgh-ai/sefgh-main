@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import {
-  Search,
-  Star,
-  TrendingUp,
-  Bell,
-  Mail,
-  Sparkles,
-  MessageSquare,
-  GitBranch,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  StarIcon,
+  TrendUpIcon,
+  BellIcon,
+  EnvelopeIcon,
+  LightbulbIcon,
+  ChatIcon,
+  GitBranchIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 const notificationSettings = [
@@ -21,7 +21,7 @@ const notificationSettings = [
     title: "Search Alerts",
     description:
       "Get notified when new repositories match your saved searches.",
-    icon: Search,
+    icon: MagnifyingGlassIcon,
     defaultValue: true,
   },
   {
@@ -29,7 +29,7 @@ const notificationSettings = [
     title: "Trending Repositories",
     description:
       "Weekly digest of trending GitHub repos in your preferred languages.",
-    icon: TrendingUp,
+    icon: TrendUpIcon,
     defaultValue: true,
   },
   {
@@ -37,7 +37,7 @@ const notificationSettings = [
     title: "Starred Repository Updates",
     description:
       "Notifications when your starred repos have major releases or updates.",
-    icon: Star,
+    icon: StarIcon,
     defaultValue: false,
   },
   {
@@ -45,14 +45,14 @@ const notificationSettings = [
     title: "AI Insights",
     description:
       "Personalized recommendations based on your search patterns and interests.",
-    icon: Sparkles,
+    icon: LightbulbIcon,
     defaultValue: true,
   },
   {
     id: "communityUpdates",
     title: "Community Updates",
     description: "News about SEFGH features, tips, and community highlights.",
-    icon: MessageSquare,
+    icon: ChatIcon,
     defaultValue: false,
   },
   {
@@ -60,7 +60,7 @@ const notificationSettings = [
     title: "Fork & Clone Activity",
     description:
       "Track when repositories you follow are forked or gain traction.",
-    icon: GitBranch,
+    icon: GitBranchIcon,
     defaultValue: false,
   },
 ];
@@ -70,14 +70,14 @@ const deliveryMethods = [
     id: "pushNotifications",
     title: "Push Notifications",
     description: "Receive real-time notifications in your browser",
-    icon: Bell,
+    icon: BellIcon,
     defaultValue: true,
   },
   {
     id: "emailDigest",
     title: "Email Digest",
     description: "Get a weekly summary of your notifications via email",
-    icon: Mail,
+    icon: EnvelopeIcon,
     defaultValue: true,
   },
 ];

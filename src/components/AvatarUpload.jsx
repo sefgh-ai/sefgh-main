@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Upload, Loader2, Camera, X } from 'lucide-react'
+import { UploadSimpleIcon, CircleNotchIcon, CameraIcon, XIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
@@ -139,7 +139,7 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
             disabled={uploading}
             className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
           >
-            <Camera className="h-8 w-8 text-foreground" />
+            <CameraIcon className="h-8 w-8 text-foreground" />
           </button>
         )}
       </div>
@@ -162,12 +162,12 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
           >
             {uploading ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <CircleNotchIcon className="h-4 w-4 mr-2 animate-spin" />
                 Uploading...
               </>
             ) : (
               <>
-                <Upload className="h-4 w-4 mr-2" />
+                <UploadSimpleIcon className="h-4 w-4 mr-2" />
                 Upload
               </>
             )}
@@ -178,7 +178,7 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
             variant="outline"
             size="sm"
           >
-            <X className="h-4 w-4 mr-2" />
+            <XIcon className="h-4 w-4 mr-2" />
             Cancel
           </Button>
         </div>
@@ -189,7 +189,7 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
           variant="outline"
           size="sm"
         >
-          <Camera className="h-4 w-4 mr-2" />
+          <CameraIcon className="h-4 w-4 mr-2" />
           Change Photo
         </Button>
       )}

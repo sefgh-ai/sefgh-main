@@ -4,13 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  Mail,
-  MapPin,
-  Clock,
-  MessageCircle,
-  Send,
-  ChevronDown,
-} from "lucide-react";
+  EnvelopeIcon,
+  ClockIcon,
+  PaperPlaneRightIcon,
+  CaretDownIcon,
+  TimerIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export default function ContactPage() {
@@ -124,7 +123,7 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
           <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-6 h-6 text-primary" />
+              <EnvelopeIcon className="w-6 h-6 text-primary" />
             </div>
             <h3 className="text-foreground font-semibold mb-2">Email Us</h3>
             <a
@@ -138,7 +137,7 @@ export default function ContactPage() {
 
           <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-teal-600/20 flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-6 h-6 text-teal-400" />
+              <ClockIcon className="w-6 h-6 text-teal-400" />
             </div>
             <h3 className="text-foreground font-semibold mb-2">Support Hours</h3>
             <p className="text-muted-foreground">Monday - Friday</p>
@@ -147,7 +146,7 @@ export default function ContactPage() {
 
           <div className="bg-muted/50 border border-border rounded-xl p-6 text-center">
             <div className="w-12 h-12 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-6 h-6 text-purple-400" />
+              <TimerIcon className="w-6 h-6 text-purple-400" />
             </div>
             <h3 className="text-foreground font-semibold mb-2">Response Time</h3>
             <p className="text-muted-foreground">Within 24-48 hours</p>
@@ -258,7 +257,7 @@ export default function ContactPage() {
                   "Sending..."
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
+                    <PaperPlaneRightIcon className="w-4 h-4" />
                     Send Message
                   </>
                 )}
@@ -286,7 +285,7 @@ export default function ContactPage() {
                     <span className="text-foreground font-medium">
                       {faq.question}
                     </span>
-                    <ChevronDown
+                    <CaretDownIcon
                       className={`w-5 h-5 text-muted-foreground transition-transform ${
                         expandedFaq === index ? "rotate-180" : ""
                       }`}

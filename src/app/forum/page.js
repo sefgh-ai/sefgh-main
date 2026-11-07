@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare, ExternalLink } from "lucide-react";
+import { ChatIcon, ArrowSquareOutIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {
@@ -14,7 +14,7 @@ export default function ForumPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
         <header className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
-            <MessageSquare className="w-4 h-4" />
+            <ChatIcon className="w-4 h-4" />
             Forum
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">Join the discussion</h1>
@@ -30,7 +30,7 @@ export default function ForumPage() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-semibold"
             >
-              Go to r/sefgh <ExternalLink className="w-4 h-4" />
+              Go to r/sefgh <ArrowSquareOutIcon className="w-4 h-4" />
             </Link>
           </div>
           <div className="rounded-2xl border border-dashed border-border bg-card/40 p-6 text-muted-foreground text-sm">

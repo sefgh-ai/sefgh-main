@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
-import { Activity, AlertCircle, CheckCircle, Clock, TrendingUp, TrendingDown } from 'lucide-react';
+import { PulseIcon, WarningCircleIcon, CheckCircleIcon, ClockIcon } from '@phosphor-icons/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function MonitoringTab({ userId }) {
@@ -157,7 +157,7 @@ export default function MonitoringTab({ userId }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Uptime</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircleIcon className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{healthMetrics.uptime}%</div>
@@ -168,7 +168,7 @@ export default function MonitoringTab({ userId }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg Latency</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <ClockIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{healthMetrics.avgLatency}ms</div>
@@ -179,7 +179,7 @@ export default function MonitoringTab({ userId }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
-            <AlertCircle className={`h-4 w-4 ${parseFloat(healthMetrics.errorRate) > 5 ? 'text-red-500' : 'text-green-500'}`} />
+            <WarningCircleIcon className={`h-4 w-4 ${parseFloat(healthMetrics.errorRate) > 5 ? 'text-red-500' : 'text-green-500'}`} />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{healthMetrics.errorRate}%</div>
@@ -190,7 +190,7 @@ export default function MonitoringTab({ userId }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Throughput</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <PulseIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{healthMetrics.requestsPerSecond}</div>
@@ -209,7 +209,7 @@ export default function MonitoringTab({ userId }) {
           <div className="space-y-2">
             {recentLogs.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <PulseIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No recent activity</p>
               </div>
             ) : (
@@ -256,7 +256,7 @@ export default function MonitoringTab({ userId }) {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <CheckCircleIcon className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-2xl font-bold">
                   {recentLogs.filter(log => log.status_code >= 200 && log.status_code < 300).length}
@@ -265,7 +265,7 @@ export default function MonitoringTab({ userId }) {
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <AlertCircle className="h-8 w-8 text-yellow-500" />
+              <WarningCircleIcon className="h-8 w-8 text-yellow-500" />
               <div>
                 <p className="text-2xl font-bold">
                   {recentLogs.filter(log => log.status_code >= 400 && log.status_code < 500).length}
@@ -274,7 +274,7 @@ export default function MonitoringTab({ userId }) {
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <AlertCircle className="h-8 w-8 text-red-500" />
+              <WarningCircleIcon className="h-8 w-8 text-red-500" />
               <div>
                 <p className="text-2xl font-bold">
                   {recentLogs.filter(log => log.status_code >= 500).length}

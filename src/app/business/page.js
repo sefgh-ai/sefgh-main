@@ -11,24 +11,24 @@ import {
 } from "@/components/ui/card";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  Building2,
-  Rocket,
-  Users,
-  BarChart3,
-  Shield,
-  Headphones,
-  ArrowLeft,
-  ArrowRight,
-  Mail,
-  Briefcase,
-  Globe,
-  Zap,
-} from "lucide-react";
+  BuildingsIcon,
+  RocketLaunchIcon,
+  UsersIcon,
+  ChartBarIcon,
+  ShieldIcon,
+  HeadphonesIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  EnvelopeIcon,
+  BriefcaseIcon,
+  GlobeIcon,
+  LightningIcon,
+} from "@phosphor-icons/react";
 
 export default function BusinessPage() {
   const solutions = [
     {
-      icon: Rocket,
+      icon: RocketLaunchIcon,
       title: "Startup Plans",
       description:
         "Perfect for early-stage companies building their tech stack. Get discounted rates and priority support.",
@@ -40,7 +40,7 @@ export default function BusinessPage() {
       ],
     },
     {
-      icon: Building2,
+      icon: BuildingsIcon,
       title: "Enterprise",
       description:
         "For large organizations with complex needs. Custom solutions tailored to your requirements.",
@@ -53,7 +53,7 @@ export default function BusinessPage() {
       ],
     },
     {
-      icon: Users,
+      icon: UsersIcon,
       title: "Team Plans",
       description:
         "Ideal for growing teams who need collaboration features and shared workspaces.",
@@ -69,25 +69,25 @@ export default function BusinessPage() {
 
   const benefits = [
     {
-      icon: BarChart3,
+      icon: ChartBarIcon,
       title: "Advanced Analytics",
       description:
         "Get detailed insights into your team's search patterns and repository discovery metrics.",
     },
     {
-      icon: Shield,
+      icon: ShieldIcon,
       title: "Enterprise Security",
       description:
         "SOC 2 compliant with advanced security features including SSO, audit logs, and data encryption.",
     },
     {
-      icon: Headphones,
+      icon: HeadphonesIcon,
       title: "Dedicated Support",
       description:
         "Get a dedicated account manager and priority support with guaranteed response times.",
     },
     {
-      icon: Globe,
+      icon: GlobeIcon,
       title: "Global Infrastructure",
       description:
         "Lightning-fast searches powered by our globally distributed infrastructure.",
@@ -128,7 +128,7 @@ export default function BusinessPage() {
           <div className="flex items-center gap-4">
             <Link href="/home">
               <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeftIcon className="w-4 h-4 mr-2" />
                 Back
               </Button>
             </Link>
@@ -143,7 +143,7 @@ export default function BusinessPage() {
       <section className="py-16 sm:py-24 border-b bg-gradient-to-b from-primary/5 to-transparent">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Briefcase className="w-4 h-4" />
+            <BriefcaseIcon className="w-4 h-4" />
             For Business
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
@@ -160,7 +160,7 @@ export default function BusinessPage() {
             <Link href="/contact">
               <Button size="lg" className="gap-2">
                 Talk to Sales
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
               </Button>
             </Link>
             <Link href="/pricing">
@@ -201,7 +201,7 @@ export default function BusinessPage() {
                         key={feature}
                         className="flex items-center gap-2 text-sm"
                       >
-                        <Zap className="w-4 h-4 text-primary" />
+                        <LightningIcon className="w-4 h-4 text-primary" />
                         {feature}
                       </li>
                     ))}
@@ -278,7 +278,7 @@ export default function BusinessPage() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/contact">
               <Button size="lg" className="gap-2">
-                <Mail className="w-4 h-4" />
+                <EnvelopeIcon className="w-4 h-4" />
                 Contact Sales
               </Button>
             </Link>

@@ -2,7 +2,7 @@
 
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useEffect, useState, useMemo } from "react";
-import { TrendingUp, Search, Users, Database } from "lucide-react";
+import { TrendUpIcon, MagnifyingGlassIcon, UsersIcon, DatabaseIcon } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 
 export function SearchStats() {
@@ -48,28 +48,28 @@ export function SearchStats() {
 
   const statItems = [
     {
-      icon: Database,
+      icon: DatabaseIcon,
       value: formatNumber(stats.repos_indexed),
       label: "Repos Indexed",
       color: "text-blue-400",
       bgColor: "bg-blue-500/10",
     },
     {
-      icon: Search,
+      icon: MagnifyingGlassIcon,
       value: formatNumber(stats.total_searches),
       label: "Searches",
       color: "text-emerald-400",
       bgColor: "bg-emerald-500/10",
     },
     {
-      icon: Users,
+      icon: UsersIcon,
       value: formatNumber(stats.registered_users),
       label: "Users",
       color: "text-purple-400",
       bgColor: "bg-purple-500/10",
     },
     {
-      icon: TrendingUp,
+      icon: TrendUpIcon,
       value: "99.9%",
       label: "Uptime",
       color: "text-amber-400",

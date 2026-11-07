@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { Bookmark, BookmarkCheck } from 'lucide-react'
+import { BookmarkSimpleIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'
@@ -87,12 +87,12 @@ export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) 
     >
       {saved ? (
         <>
-          <BookmarkCheck className="h-4 w-4 mr-2" />
+          <BookmarkSimpleIcon weight="fill" className="h-4 w-4 mr-2" />
           Saved ({saveCount})
         </>
       ) : (
         <>
-          <Bookmark className="h-4 w-4 mr-2" />
+          <BookmarkSimpleIcon className="h-4 w-4 mr-2" />
           Save ({saveCount})
         </>
       )}

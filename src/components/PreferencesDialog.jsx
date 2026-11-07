@@ -16,14 +16,13 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
-  X,
-  Plus,
-  GripVertical,
-  Loader2,
-  Sparkles,
-  CheckCircle2,
-  Filter,
-} from "lucide-react";
+  XIcon,
+  PlusIcon,
+  DotsSixVerticalIcon,
+  CircleNotchIcon,
+  CheckCircleIcon,
+  FunnelIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/home/useCategories";
 import { useAuth } from "@/contexts/AuthContext";
@@ -187,7 +186,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
         <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b">
           <DialogHeader className="space-y-1">
             <DialogTitle className="text-base sm:text-lg font-semibold flex items-center gap-2">
-              <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-primary" />
+              <FunnelIcon className="w-4 sm:w-5 h-4 sm:h-5 text-primary" />
               Personalize Your Feed
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
@@ -228,7 +227,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                   Available Topics
                 </h3>
                 {loading && (
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  <CircleNotchIcon className="w-4 h-4 animate-spin text-muted-foreground" />
                 )}
               </div>
             </div>
@@ -244,7 +243,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                     disabled={!user}
                     className="w-full border-dashed"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <PlusIcon className="w-4 h-4 mr-2" />
                     Add Custom Category
                     {!user && (
                       <span className="ml-2 text-xs opacity-60">
@@ -293,12 +292,12 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                       >
                         {isAdding ? (
                           <>
-                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                            <CircleNotchIcon className="w-3 h-3 mr-2 animate-spin" />
                             Adding...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-3 h-3 mr-2" />
+                            <PlusIcon className="w-3 h-3 mr-2" />
                             Add
                           </>
                         )}
@@ -322,7 +321,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                 {/* Categories */}
                 {loading && categories.length === 0 ? (
                   <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                    <CircleNotchIcon className="w-6 h-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : (
                   Object.entries(groupedCategories).map(
@@ -427,7 +426,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                 {selectedTags.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
-                      <Plus className="w-5 h-5 text-muted-foreground" />
+                      <PlusIcon className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <p className="text-sm font-medium">No topics selected</p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -447,7 +446,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                           draggedIndex === index ? "opacity-50" : ""
                         }`}
                       >
-                        <GripVertical className="w-3 h-3 text-muted-foreground/50 group-hover:text-muted-foreground shrink-0" />
+                        <DotsSixVerticalIcon className="w-3 h-3 text-muted-foreground/50 group-hover:text-muted-foreground shrink-0" />
                         <span className="text-sm shrink-0">{tag.icon}</span>
                         <span className="text-sm flex-1 truncate">
                           {tag.name}
@@ -459,7 +458,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                           onClick={() => handleRemoveTag(tag.name)}
                           className="w-4 h-4 flex items-center justify-center rounded hover:bg-destructive/10 shrink-0"
                         >
-                          <X className="w-3 h-3 text-muted-foreground hover:text-destructive" />
+                          <XIcon className="w-3 h-3 text-muted-foreground hover:text-destructive" />
                         </button>
                       </div>
                     ))}
@@ -492,7 +491,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
               disabled={selectedTags.length === 0}
               className="flex-1 sm:flex-initial text-sm"
             >
-              <CheckCircle2 className="w-4 h-4 mr-2" />
+              <CheckCircleIcon className="w-4 h-4 mr-2" />
               Save
             </Button>
           </div>

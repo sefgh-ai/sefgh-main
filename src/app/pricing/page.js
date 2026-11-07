@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
-import { Check, Sparkles, Zap, Building2, HelpCircle } from "lucide-react";
+import { CheckIcon, PlantIcon, LightningIcon, BuildingsIcon, QuestionIcon } from "@phosphor-icons/react";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -13,7 +13,7 @@ export default function PricingPage() {
       name: "Free",
       description: "Perfect for trying out SEFGH-AI",
       price: { monthly: 0, annual: 0 },
-      icon: Sparkles,
+      icon: PlantIcon,
       color: "slate",
       features: [
         "100 searches per month",
@@ -35,7 +35,7 @@ export default function PricingPage() {
       name: "Pro",
       description: "For individual developers & power users",
       price: { monthly: 19, annual: 15 },
-      icon: Zap,
+      icon: LightningIcon,
       color: "blue",
       features: [
         "Unlimited searches",
@@ -56,7 +56,7 @@ export default function PricingPage() {
       name: "Team",
       description: "For teams collaborating on projects",
       price: { monthly: 49, annual: 39 },
-      icon: Building2,
+      icon: BuildingsIcon,
       color: "teal",
       features: [
         "Everything in Pro",
@@ -247,7 +247,7 @@ export default function PricingPage() {
               <div className="space-y-3">
                 {plan.features.map((feature, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckIcon className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                     <span className="text-muted-foreground text-sm">{feature}</span>
                   </div>
                 ))}
@@ -299,7 +299,7 @@ export default function PricingPage() {
                 className="bg-muted/50 border border-border rounded-lg p-6"
               >
                 <div className="flex items-start gap-4">
-                  <HelpCircle className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                  <QuestionIcon className="w-6 h-6 text-primary shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-foreground font-semibold mb-2">{faq.q}</h3>
                     <p className="text-muted-foreground">{faq.a}</p>
@@ -315,7 +315,7 @@ export default function PricingPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border/50">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-950/50 border border-emerald-900/50 rounded-full text-emerald-400 text-sm mb-4">
-            <Check className="w-4 h-4" />
+            <CheckIcon className="w-4 h-4" />
             30-Day Money-Back Guarantee
           </div>
           <p className="text-muted-foreground">

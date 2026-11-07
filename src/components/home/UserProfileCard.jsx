@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Users, Code, Activity, LogOut } from "lucide-react";
+import { UsersIcon, CodeSimpleIcon, PulseIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -119,7 +119,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5" />
+                <PulseIcon className="w-3.5 h-3.5" />
                 Contributions
               </span>
               <span className="font-semibold text-green-500">
@@ -133,7 +133,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
             />
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5" />
+                <UsersIcon className="w-3.5 h-3.5" />
                 Followers
               </span>
               <span className="font-semibold text-primary">
@@ -142,7 +142,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground flex items-center gap-1.5">
-                <Code className="w-3.5 h-3.5" />
+                <CodeSimpleIcon className="w-3.5 h-3.5" />
                 Projects
               </span>
               <span className="font-semibold text-primary">
@@ -165,7 +165,7 @@ export function UserProfileCard({ user, loading: authLoading }) {
               className="h-8 px-3"
               onClick={handleSignOut}
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <SignOutIcon className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>

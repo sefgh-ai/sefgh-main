@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Zap, Check, ExternalLink } from "lucide-react";
+import { LightningIcon, CheckIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +41,7 @@ export function UpgradeDialog({ open, onOpenChange }) {
           <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                <Zap className="h-5 w-5 text-foreground" />
+                <LightningIcon className="h-5 w-5 text-foreground" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">
@@ -108,7 +108,7 @@ export function UpgradeDialog({ open, onOpenChange }) {
               {proFeatures.map((feature) => (
                 <li key={feature} className="flex items-center gap-2 text-sm">
                   <div className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    <CheckIcon className="h-3 w-3 text-green-600 dark:text-green-400" />
                   </div>
                   <span>{feature}</span>
                 </li>
@@ -136,7 +136,7 @@ export function UpgradeDialog({ open, onOpenChange }) {
               onClick={() => onOpenChange(false)}
             >
               <span>Compare all plans</span>
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ArrowSquareOutIcon className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>

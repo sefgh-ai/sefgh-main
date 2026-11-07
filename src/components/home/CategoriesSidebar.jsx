@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Code, Settings, Loader2 } from "lucide-react";
+import { CodeSimpleIcon, GearIcon, CircleNotchIcon } from "@phosphor-icons/react";
 import { useCategories } from "@/hooks/home/useCategories";
 
 export function CategoriesSidebar({
@@ -35,10 +35,10 @@ export function CategoriesSidebar({
         {/* Header */}
         <div className="flex items-center justify-between gap-2 mb-2 px-1 shrink-0">
           <div className="flex items-center gap-1.5 text-sm font-semibold">
-            <Code className="w-3.5 h-3.5" />
+            <CodeSimpleIcon className="w-3.5 h-3.5" />
             Topics
             {loading && (
-              <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+              <CircleNotchIcon className="w-3 h-3 animate-spin text-muted-foreground" />
             )}
           </div>
           <Badge variant="outline" className="text-[10px] h-4 px-1.5">
@@ -79,7 +79,7 @@ export function CategoriesSidebar({
           onClick={onOpenPreferences}
           className="w-full flex items-center gap-2 px-2 py-1.5 mt-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors border-t border-border/50 pt-2 shrink-0"
         >
-          <Settings className="w-3.5 h-3.5" />
+          <GearIcon className="w-3.5 h-3.5" />
           Preferences
         </button>
       </CardContent>

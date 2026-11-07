@@ -3,15 +3,15 @@
 import React, { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  User,
-  Bell,
-  Shield,
-  Monitor,
-  Palette,
-  Database,
-  MessageSquare,
-  Sparkles,
-} from "lucide-react";
+  UserIcon,
+  BellIcon,
+  ShieldIcon,
+  MonitorIcon,
+  PaletteIcon,
+  DatabaseIcon,
+  ChatIcon,
+  GearIcon,
+} from "@phosphor-icons/react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
@@ -32,43 +32,43 @@ const settingsTabs = [
   {
     id: "account",
     label: "Account",
-    icon: User,
+    icon: UserIcon,
     description: "Manage your profile & preferences",
   },
   {
     id: "notifications",
     label: "Notifications",
-    icon: Bell,
+    icon: BellIcon,
     description: "Control how we reach you",
   },
   {
     id: "security",
     label: "Security",
-    icon: Shield,
+    icon: ShieldIcon,
     description: "Protect your account",
   },
   {
     id: "sessions",
     label: "Sessions",
-    icon: Monitor,
+    icon: MonitorIcon,
     description: "View active sessions",
   },
   {
     id: "personalize",
     label: "Personalize",
-    icon: Palette,
+    icon: PaletteIcon,
     description: "Customize your experience",
   },
   {
     id: "data",
     label: "Data & Privacy",
-    icon: Database,
+    icon: DatabaseIcon,
     description: "Manage your data",
   },
   {
     id: "feedback",
     label: "Feedback",
-    icon: MessageSquare,
+    icon: ChatIcon,
     description: "Help us improve",
   },
 ];
@@ -152,7 +152,7 @@ function SettingsPageContent() {
                 <div className="mb-6 sm:mb-8">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                      <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
+                      <GearIcon className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
                     </div>
                     <div>
                       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { saveStepGitHub } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { ChevronLeft, Sparkles, Github } from "lucide-react";
+import { CaretLeftIcon, RobotIcon, GithubLogoIcon } from "@phosphor-icons/react";
 
 export function StepGitHub({ userId, onNext, onBack }) {
   const [githubUsername, setGithubUsername] = useState("");
@@ -49,7 +49,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
+            <RobotIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -69,7 +69,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="p-2 sm:p-3 rounded-lg bg-[#21262d] flex-shrink-0">
-            <Github className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
+            <GithubLogoIcon className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-foreground font-semibold text-sm sm:text-base mb-1 sm:mb-2">
@@ -146,7 +146,7 @@ export function StepGitHub({ userId, onNext, onBack }) {
           variant="ghost"
           className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
-          <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
+          <CaretLeftIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
         </Button>
         <div className="text-[10px] sm:text-xs text-[#8b949e] flex items-center">

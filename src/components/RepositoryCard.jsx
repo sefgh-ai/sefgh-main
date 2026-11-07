@@ -3,16 +3,15 @@
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState } from "react";
 import {
-  Star,
-  GitFork,
-  Clock,
-  Scale,
-  Copy,
-  Download,
-  ExternalLink,
-  Bookmark,
-  BookmarkCheck,
-} from "lucide-react";
+  StarIcon,
+  GitForkIcon,
+  ClockIcon,
+  ScalesIcon,
+  CopyIcon,
+  DownloadSimpleIcon,
+  ArrowSquareOutIcon,
+  BookmarkSimpleIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -169,13 +168,13 @@ export function RepositoryCard({ repo, onSelect }) {
       {/* Statistics Row */}
       <div className="flex items-center gap-4 mb-4 text-sm">
         <div className="flex items-center gap-1.5">
-          <Star className="h-4 w-4 text-yellow-500" />
+          <StarIcon className="h-4 w-4 text-yellow-500" />
           <span className="font-medium">
             {formatCompactNumber(repo.stargazers_count)}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <GitFork className="h-4 w-4 text-blue-500" />
+          <GitForkIcon className="h-4 w-4 text-blue-500" />
           <span className="font-medium">{formatCompactNumber(repo.forks_count)}</span>
         </div>
         {repo.language && (
@@ -196,12 +195,12 @@ export function RepositoryCard({ repo, onSelect }) {
       {/* Metadata Row */}
       <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <Clock className="h-3 w-3" />
+          <ClockIcon className="h-3 w-3" />
           <span>Updated {formatDate(repo.updated_at)}</span>
         </div>
         {repo.license && (
           <div className="flex items-center gap-1.5">
-            <Scale className="h-3 w-3" />
+            <ScalesIcon className="h-3 w-3" />
             <span>{repo.license.name}</span>
           </div>
         )}
@@ -221,12 +220,12 @@ export function RepositoryCard({ repo, onSelect }) {
         >
           {isStarred ? (
             <>
-              <BookmarkCheck className="h-3 w-3 mr-1.5" />
+              <BookmarkSimpleIcon weight="fill" className="h-3 w-3 mr-1.5" />
               Starred
             </>
           ) : (
             <>
-              <Bookmark className="h-3 w-3 mr-1.5" />
+              <BookmarkSimpleIcon className="h-3 w-3 mr-1.5" />
               Star
             </>
           )}
@@ -238,7 +237,7 @@ export function RepositoryCard({ repo, onSelect }) {
           onClick={handleCopyUrl}
           title="Copy repository URL"
         >
-          <Copy className="h-3 w-3 mr-1.5" />
+          <CopyIcon className="h-3 w-3 mr-1.5" />
           Copy
         </Button>
         <Button
@@ -248,7 +247,7 @@ export function RepositoryCard({ repo, onSelect }) {
           onClick={handleClone}
           title="Copy clone URL"
         >
-          <Download className="h-3 w-3 mr-1.5" />
+          <DownloadSimpleIcon className="h-3 w-3 mr-1.5" />
           Clone
         </Button>
         <Button
@@ -258,7 +257,7 @@ export function RepositoryCard({ repo, onSelect }) {
           onClick={handleOpenGitHub}
           title="Open on GitHub"
         >
-          <ExternalLink className="h-3 w-3 mr-1.5" />
+          <ArrowSquareOutIcon className="h-3 w-3 mr-1.5" />
           GitHub
         </Button>
       </div>

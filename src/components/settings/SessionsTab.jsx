@@ -2,15 +2,15 @@
 
 import React, { useMemo, useState } from "react";
 import {
-  Monitor,
-  Smartphone,
-  Tablet,
-  Globe,
-  Clock,
-  KeyRound,
-  CheckCircle2,
-  LogOut,
-} from "lucide-react";
+  MonitorIcon,
+  DeviceMobileIcon,
+  DeviceTabletIcon,
+  GlobeIcon,
+  ClockIcon,
+  KeyIcon,
+  CheckCircleIcon,
+  SignOutIcon,
+} from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ import { describeUserAgent } from "@/lib/utils/userAgent";
 
 const PROVIDER_NAMES = { github: "GitHub", google: "Google", email: "Email and password" };
 
-const DEVICE_ICONS = { phone: Smartphone, tablet: Tablet, computer: Monitor };
+const DEVICE_ICONS = { phone: DeviceMobileIcon, tablet: DeviceTabletIcon, computer: MonitorIcon };
 const DEVICE_NAMES = { phone: "Phone", tablet: "Tablet", computer: "Computer" };
 
 function lastSignIn(timestamp) {
@@ -69,7 +69,7 @@ export default function SessionsTab() {
         <div className="flex items-center gap-2 mb-4">
           <h3 className="text-lg font-semibold">This device</h3>
           <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-            <CheckCircle2 className="w-3 h-3 mr-1" />
+            <CheckCircleIcon className="w-3 h-3 mr-1" />
             Signed in
           </Badge>
         </div>
@@ -92,21 +92,21 @@ export default function SessionsTab() {
           <div className="p-6 bg-background/50 backdrop-blur-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
-                <KeyRound className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <KeyIcon className="w-4 h-4 text-muted-foreground mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">Signs in with</p>
                   <p className="text-sm text-muted-foreground">{signInMethod}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <ClockIcon className="w-4 h-4 text-muted-foreground mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">Last sign-in, on any device</p>
                   <p className="text-sm text-muted-foreground">{lastSignIn(user?.last_sign_in_at)}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Globe className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <GlobeIcon className="w-4 h-4 text-muted-foreground mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">Time zone of this device</p>
                   <p className="text-sm text-muted-foreground">{timeZone || "Not known"}</p>
@@ -134,7 +134,7 @@ export default function SessionsTab() {
             </p>
             <div className="flex gap-2">
               <Button variant="destructive" size="sm" onClick={signOutEverywhere} disabled={signingOut}>
-                <LogOut className="w-4 h-4 mr-2" />
+                <SignOutIcon className="w-4 h-4 mr-2" />
                 {signingOut ? "Signing out..." : "Sign out everywhere"}
               </Button>
               <Button variant="ghost" size="sm" onClick={() => setConfirming(false)} disabled={signingOut}>
@@ -148,7 +148,7 @@ export default function SessionsTab() {
             onClick={() => setConfirming(true)}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
           >
-            <LogOut className="w-4 h-4 mr-2" />
+            <SignOutIcon className="w-4 h-4 mr-2" />
             Sign out everywhere
           </Button>
         )}

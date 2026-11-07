@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ArrowUp, Github, Instagram, Search, Twitter } from "lucide-react";
+import { ArrowRight, ArrowUp, GithubLogo, InstagramLogo, MagnifyingGlass, XLogo } from "@phosphor-icons/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { CookieSettingsButton } from "@/components/CookieBar";
@@ -31,9 +31,9 @@ const LINKS = [
 ];
 
 const SOCIAL = [
-  { label: "GitHub", href: "https://github.com/sefgh-ai", Icon: Github },
-  { label: "X (Twitter)", href: "https://twitter.com/sefghai", Icon: Twitter },
-  { label: "Instagram", href: "https://instagram.com/sefgh", Icon: Instagram },
+  { label: "GitHub", href: "https://github.com/sefgh-ai", Icon: GithubLogo },
+  { label: "X (Twitter)", href: "https://twitter.com/sefghai", Icon: XLogo },
+  { label: "Instagram", href: "https://instagram.com/sefgh", Icon: InstagramLogo },
 ];
 
 function Pill({ href, external, className = "", children, ...rest }) {
@@ -162,11 +162,11 @@ export default function LandingFooter() {
         </p>
         <div className="mt-11 flex flex-wrap justify-center gap-3.5">
           <Pill href="/search" className={`${styles.pillGo} px-8 py-[18px] text-base font-semibold`}>
-            <Search className="h-5 w-5" aria-hidden="true" /> {t("landing.footer.start")}
+            <MagnifyingGlass className="h-5 w-5" aria-hidden="true" /> {t("landing.footer.start")}
           </Pill>
           {!user && (
             <Pill href="/login" className="px-8 py-[18px] text-base font-semibold text-[var(--l-ink)]">
-              <Github className="h-5 w-5" aria-hidden="true" /> {t("landing.footer.github")}
+              <GithubLogo className="h-5 w-5" aria-hidden="true" /> {t("landing.footer.github")}
             </Pill>
           )}
         </div>

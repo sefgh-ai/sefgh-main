@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
@@ -141,7 +141,7 @@ export default function LandingHero() {
               }}
               className="relative flex h-14 items-center gap-3 rounded-[var(--l-radius)] bg-[var(--l-surface)] pl-4 pr-2 sm:h-16 sm:pl-[22px]"
             >
-              <Search className="h-5 w-5 shrink-0 text-[var(--l-muted)]" aria-hidden="true" />
+              <MagnifyingGlass className="h-5 w-5 shrink-0 text-[var(--l-muted)]" aria-hidden="true" />
               <input
                 name="q"
                 type="search"

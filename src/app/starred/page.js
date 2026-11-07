@@ -9,7 +9,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Header } from "@/components/Header";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
-import { Star, Trash2 } from "lucide-react";
+import { StarIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { fetchWithSession } from "@/lib/supabase/session-fetch";
@@ -88,7 +88,7 @@ export default function StarredPage() {
               <div className="flex h-14 items-center px-4 gap-3">
                 <SidebarTrigger className="hover:bg-accent rounded-xl transition-smooth" />
                 <div className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-yellow-500" />
+                  <StarIcon className="h-5 w-5 text-yellow-500" />
                   <span className="font-semibold">Starred Repositories</span>
                 </div>
                 <div className="flex-1" />
@@ -118,7 +118,7 @@ export default function StarredPage() {
                 {/* Not Logged In */}
                 {!loading && !user && (
                   <div className="text-center py-16">
-                    <Star className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                    <StarIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                     <h2 className="text-xl font-semibold mb-2">
                       Sign in to see your starred repos
                     </h2>
@@ -135,7 +135,7 @@ export default function StarredPage() {
                 {/* Empty State */}
                 {!loading && user && starredRepos.length === 0 && (
                   <div className="text-center py-16">
-                    <Star className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                    <StarIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                     <h2 className="text-xl font-semibold mb-2">
                       No starred repositories yet
                     </h2>
@@ -192,7 +192,7 @@ export default function StarredPage() {
                           onClick={() => handleRemove(item.repo_full_name)}
                           disabled={removing === item.repo_full_name}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <TrashIcon className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}

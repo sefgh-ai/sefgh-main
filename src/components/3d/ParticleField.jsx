@@ -5,13 +5,13 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Html } from "@react-three/drei";
 import * as THREE from "three";
 import {
-  Github,
-  GitBranch,
-  GitCommit,
-  GitPullRequest,
-  Search,
-  Code,
-} from "lucide-react";
+  GithubLogoIcon,
+  GitBranchIcon,
+  GitCommitIcon,
+  GitPullRequestIcon,
+  MagnifyingGlassIcon,
+  CodeSimpleIcon,
+} from "@phosphor-icons/react";
 
 /**
  * Deterministic PRNG (mulberry32).
@@ -468,9 +468,9 @@ export default function ParticleField() {
                     }}
                   >
                     {textData.text === "Adeel" ? (
-                      <Code size={16} />
+                      <CodeSimpleIcon size={16} />
                     ) : (
-                      <Github size={16} />
+                      <GithubLogoIcon size={16} />
                     )}
                   </div>
                 </Html>
@@ -496,12 +496,12 @@ export default function ParticleField() {
                   filter: `drop-shadow(0 0 6px ${ic.color}aa)`,
                 }}
               >
-                {ic.type === "github" && <Github size={ic.size} />}
-                {ic.type === "branch" && <GitBranch size={ic.size} />}
-                {ic.type === "commit" && <GitCommit size={ic.size} />}
-                {ic.type === "pr" && <GitPullRequest size={ic.size} />}
-                {ic.type === "search" && <Search size={ic.size} />}
-                {ic.type === "code" && <Code size={ic.size} />}
+                {ic.type === "github" && <GithubLogoIcon size={ic.size} />}
+                {ic.type === "branch" && <GitBranchIcon size={ic.size} />}
+                {ic.type === "commit" && <GitCommitIcon size={ic.size} />}
+                {ic.type === "pr" && <GitPullRequestIcon size={ic.size} />}
+                {ic.type === "search" && <MagnifyingGlassIcon size={ic.size} />}
+                {ic.type === "code" && <CodeSimpleIcon size={ic.size} />}
               </div>
             </Html>
           </group>

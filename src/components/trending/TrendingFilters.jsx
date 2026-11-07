@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RefreshCw } from "lucide-react";
+import { ArrowsClockwiseIcon } from "@phosphor-icons/react";
 
 export function TrendingFilters({
   activeTab,
@@ -66,7 +66,7 @@ export function TrendingFilters({
             disabled={isRefreshing}
             className="hover:bg-accent"
           >
-            <RefreshCw
+            <ArrowsClockwiseIcon
               className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
             />
             {isRefreshing ? "Refreshing..." : "Refresh Trending"}

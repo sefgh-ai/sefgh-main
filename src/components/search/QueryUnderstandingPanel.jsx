@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import {
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  Code,
-  Lightbulb,
-  Layers,
-} from "lucide-react";
+import { CaretDownIcon, CaretUpIcon, BrainIcon, CodeSimpleIcon, LightbulbIcon, StackIcon } from "@phosphor-icons/react";
 
 // Common programming languages for detection
 const LANGUAGES = [
@@ -261,16 +254,16 @@ export function QueryUnderstandingPanel({ query, className = "" }) {
           className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors"
         >
           <div className="flex items-center gap-2 text-sm">
-            <Sparkles className="h-4 w-4 text-blue-400" />
+            <BrainIcon className="h-4 w-4 text-blue-400" />
             <span className="text-muted-foreground">
               We understood your query as:
             </span>
           </div>
           <div className="h-6 w-6 flex items-center justify-center">
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+              <CaretUpIcon className="h-4 w-4 text-muted-foreground" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <CaretDownIcon className="h-4 w-4 text-muted-foreground" />
             )}
           </div>
         </button>
@@ -281,7 +274,7 @@ export function QueryUnderstandingPanel({ query, className = "" }) {
             <div className="flex flex-wrap gap-3">
               {analysis.language && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <Code className="h-3.5 w-3.5 text-blue-400" />
+                  <CodeSimpleIcon className="h-3.5 w-3.5 text-blue-400" />
                   <span className="text-xs text-muted-foreground">
                     Language:
                   </span>
@@ -293,7 +286,7 @@ export function QueryUnderstandingPanel({ query, className = "" }) {
 
               {analysis.useCase && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <Lightbulb className="h-3.5 w-3.5 text-emerald-400" />
+                  <LightbulbIcon className="h-3.5 w-3.5 text-emerald-400" />
                   <span className="text-xs text-muted-foreground">
                     Use case:
                   </span>
@@ -305,7 +298,7 @@ export function QueryUnderstandingPanel({ query, className = "" }) {
 
               {analysis.pattern && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                  <Layers className="h-3.5 w-3.5 text-purple-400" />
+                  <StackIcon className="h-3.5 w-3.5 text-purple-400" />
                   <span className="text-xs text-muted-foreground">
                     Pattern:
                   </span>

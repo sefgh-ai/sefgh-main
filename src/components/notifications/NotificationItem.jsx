@@ -13,34 +13,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Check,
-  Bookmark,
-  CheckCircle2,
-  Trash2,
-  ExternalLink,
-  MoreHorizontal,
-  Bell,
-  CheckCircle,
-  AlertTriangle,
-  AlertCircle,
-  Info,
-  GitPullRequest,
-  MessageSquare,
-  Star,
-  Zap,
-} from "lucide-react";
+  CheckIcon,
+  BookmarkSimpleIcon,
+  CheckCircleIcon,
+  TrashIcon,
+  BellIcon,
+  WarningIcon,
+  WarningCircleIcon,
+  InfoIcon,
+  GitPullRequestIcon,
+  ChatIcon,
+  StarIcon,
+  LightningIcon,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 // Icon mapping for notification types
 const typeIcons = {
-  success: CheckCircle,
-  warning: AlertTriangle,
-  error: AlertCircle,
-  info: Info,
-  pr: GitPullRequest,
-  comment: MessageSquare,
-  star: Star,
-  update: Zap,
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: WarningCircleIcon,
+  info: InfoIcon,
+  pr: GitPullRequestIcon,
+  comment: ChatIcon,
+  star: StarIcon,
+  update: LightningIcon,
 };
 
 // Badge styles for different notification types
@@ -70,7 +67,7 @@ export const NotificationItem = React.memo(function NotificationItem({
   const isSelected = selectedIds.includes(notification.id);
   const isSaved = savedIds.includes(notification.id);
   const isDone = doneIds.includes(notification.id);
-  const Icon = typeIcons[notification.type] || Bell;
+  const Icon = typeIcons[notification.type] || BellIcon;
 
   const handleClick = (e) => {
     // Don't navigate if clicking on checkbox or action buttons
@@ -173,13 +170,13 @@ export const NotificationItem = React.memo(function NotificationItem({
         <div className="flex items-center gap-2 pt-1">
           {isSaved && (
             <Badge variant="secondary" className="text-[10px] h-5 px-1.5">
-              <Bookmark className="h-3 w-3 mr-1 fill-current" />
+              <BookmarkSimpleIcon weight="fill" className="h-3 w-3 mr-1" />
               Saved
             </Badge>
           )}
           {isDone && (
             <Badge variant="secondary" className="text-[10px] h-5 px-1.5 bg-green-500/10 text-green-500">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
+              <CheckCircleIcon className="h-3 w-3 mr-1" />
               Done
             </Badge>
           )}
@@ -201,7 +198,7 @@ export const NotificationItem = React.memo(function NotificationItem({
                   }}
                   className="h-8 w-8 p-0 hover:bg-muted"
                 >
-                  <Check className="h-4 w-4" />
+                  <CheckIcon className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Mark as read</TooltipContent>
@@ -219,10 +216,11 @@ export const NotificationItem = React.memo(function NotificationItem({
                 }}
                 className="h-8 w-8 p-0 hover:bg-muted"
               >
-                <Bookmark
+                <BookmarkSimpleIcon
+                  weight={isSaved ? "fill" : "regular"}
                   className={cn(
                     "h-4 w-4",
-                    isSaved && "fill-current text-primary"
+                    isSaved && "text-primary"
                   )}
                 />
               </Button>
@@ -243,10 +241,11 @@ export const NotificationItem = React.memo(function NotificationItem({
                 }}
                 className="h-8 w-8 p-0 hover:bg-muted"
               >
-                <CheckCircle2
+                <CheckCircleIcon
+                  weight={isDone ? "fill" : "regular"}
                   className={cn(
                     "h-4 w-4",
-                    isDone && "fill-current text-green-500"
+                    isDone && "text-green-500"
                   )}
                 />
               </Button>
@@ -267,7 +266,7 @@ export const NotificationItem = React.memo(function NotificationItem({
                 }}
                 className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
               >
-                <Trash2 className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">Delete</TooltipContent>

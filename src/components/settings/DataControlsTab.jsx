@@ -16,15 +16,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import {
-  Download,
-  Trash2,
-  History,
-  Eye,
-  BarChart3,
-  AlertTriangle,
-  FileDown,
-  Shield,
-} from "lucide-react";
+  DownloadSimpleIcon,
+  TrashIcon,
+  ClockCounterClockwiseIcon,
+  ChartBarIcon,
+  WarningIcon,
+  FileArrowDownIcon,
+  ShieldIcon,
+  BroomIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export default function DataControlsTab() {
@@ -58,7 +58,7 @@ export default function DataControlsTab() {
       <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-blue-500/5 to-purple-500/5 p-6">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-xl bg-blue-500/10 flex-shrink-0">
-            <Shield className="w-6 h-6 text-blue-600" />
+            <ShieldIcon className="w-6 h-6 text-blue-600" />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold">Your Privacy Matters</h3>
@@ -83,7 +83,7 @@ export default function DataControlsTab() {
           <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-muted/50 mt-0.5">
-                <History className="w-4 h-4 text-muted-foreground" />
+                <ClockCounterClockwiseIcon className="w-4 h-4 text-muted-foreground" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">Search History</h4>
@@ -102,7 +102,7 @@ export default function DataControlsTab() {
           <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-muted/50 mt-0.5">
-                <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                <ChartBarIcon className="w-4 h-4 text-muted-foreground" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">Usage Analytics</h4>
@@ -134,7 +134,7 @@ export default function DataControlsTab() {
           <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
-                <FileDown className="w-4 h-4 text-primary" />
+                <FileArrowDownIcon className="w-4 h-4 text-primary" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">Export Your Data</h4>
@@ -149,7 +149,7 @@ export default function DataControlsTab() {
               onClick={handleExportRequest}
               disabled={exportPending}
             >
-              <Download className="w-4 h-4 mr-2" />
+              <DownloadSimpleIcon className="w-4 h-4 mr-2" />
               {exportPending ? "Pending..." : "Export"}
             </Button>
           </div>
@@ -158,7 +158,7 @@ export default function DataControlsTab() {
           <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-amber-500/10 mt-0.5">
-                <History className="w-4 h-4 text-amber-600" />
+                <BroomIcon className="w-4 h-4 text-amber-600" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">Clear Search History</h4>
@@ -172,7 +172,7 @@ export default function DataControlsTab() {
               size="sm"
               onClick={() => setShowClearHistoryDialog(true)}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <TrashIcon className="w-4 h-4 mr-2" />
               Clear
             </Button>
           </div>
@@ -183,7 +183,7 @@ export default function DataControlsTab() {
       <div className="rounded-2xl border-2 border-destructive/30 bg-destructive/5 overflow-hidden">
         <div className="p-6 border-b border-destructive/20">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-destructive" />
+            <WarningIcon className="w-5 h-5 text-destructive" />
             <h3 className="text-lg font-semibold text-destructive">
               Danger Zone
             </h3>
@@ -236,7 +236,7 @@ export default function DataControlsTab() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
+              <WarningIcon className="w-5 h-5 text-destructive" />
               Delete Your Account?
             </AlertDialogTitle>
             <AlertDialogDescription asChild>

@@ -12,14 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Search,
-  MessageSquare,
-  Clock,
-  Trash2,
-  Filter,
-  X,
-  History as HistoryIcon,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  ChatIcon,
+  ClockIcon,
+  TrashIcon,
+  FunnelIcon,
+  XIcon,
+  ClockCounterClockwiseIcon,
+} from "@phosphor-icons/react";
 import { formatDistanceToNow } from "date-fns";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -120,7 +120,7 @@ export default function HistoryPage() {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
                     <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-slate-500/20">
-                      <HistoryIcon className="h-6 w-6 text-primary" />
+                      <ClockCounterClockwiseIcon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h1 className="text-2xl font-bold">Search History</h1>
@@ -136,7 +136,7 @@ export default function HistoryPage() {
                       onClick={handleClearAll}
                       className="text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <TrashIcon className="h-4 w-4 mr-2" />
                       Clear All
                     </Button>
                   )}
@@ -160,7 +160,7 @@ export default function HistoryPage() {
                       onClick={() => setActiveFilter("search")}
                       className="h-8"
                     >
-                      <Search className="h-3 w-3 mr-1" />
+                      <MagnifyingGlassIcon className="h-3 w-3 mr-1" />
                       Search ({counts.search})
                     </Button>
                     <Button
@@ -169,14 +169,14 @@ export default function HistoryPage() {
                       onClick={() => setActiveFilter("chat")}
                       className="h-8"
                     >
-                      <MessageSquare className="h-3 w-3 mr-1" />
+                      <ChatIcon className="h-3 w-3 mr-1" />
                       Chat ({counts.chat})
                     </Button>
                   </div>
 
                   {/* Text Search */}
                   <div className="relative flex-1 min-w-[200px]">
-                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <FunnelIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Filter history..."
                       value={searchFilter}
@@ -188,7 +188,7 @@ export default function HistoryPage() {
                         onClick={() => setSearchFilter("")}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       >
-                        <X className="h-4 w-4" />
+                        <XIcon className="h-4 w-4" />
                       </button>
                     )}
                   </div>
@@ -201,7 +201,7 @@ export default function HistoryPage() {
                   </div>
                 ) : filteredHistory.length === 0 ? (
                   <div className="text-center py-12">
-                    <HistoryIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                    <ClockCounterClockwiseIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                     <h3 className="text-lg font-medium mb-2">
                       No history found
                     </h3>
@@ -216,7 +216,7 @@ export default function HistoryPage() {
                     {Object.entries(groupedHistory).map(([date, items]) => (
                       <div key={date}>
                         <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
+                          <ClockIcon className="h-4 w-4" />
                           {date}
                         </h3>
                         <div className="space-y-2">
@@ -234,9 +234,9 @@ export default function HistoryPage() {
                                 }`}
                               >
                                 {item.source === "search" ? (
-                                  <Search className="h-4 w-4" />
+                                  <MagnifyingGlassIcon className="h-4 w-4" />
                                 ) : (
-                                  <MessageSquare className="h-4 w-4" />
+                                  <ChatIcon className="h-4 w-4" />
                                 )}
                               </div>
 
@@ -282,7 +282,7 @@ export default function HistoryPage() {
                                 >
                                   {item.source === "search" ? (
                                     <>
-                                      <Search className="h-3 w-3 mr-1" />
+                                      <MagnifyingGlassIcon className="h-3 w-3 mr-1" />
                                       Search Again
                                     </>
                                   ) : (
@@ -295,7 +295,7 @@ export default function HistoryPage() {
                                   onClick={() => handleDelete(item.id)}
                                   className="h-8 w-8 text-muted-foreground hover:text-destructive"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <TrashIcon className="h-4 w-4" />
                                 </Button>
                               </div>
                             </div>

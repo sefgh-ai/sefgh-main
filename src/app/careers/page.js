@@ -4,51 +4,51 @@ import { useState } from "react";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  MapPin,
-  Briefcase,
-  Clock,
-  DollarSign,
-  Heart,
-  Globe,
-  Users,
-  Sparkles,
-  ChevronRight,
-  Building2,
-  GraduationCap,
-  Coffee,
-} from "lucide-react";
+  MapPinIcon,
+  BriefcaseIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  HeartIcon,
+  GlobeIcon,
+  UsersIcon,
+  TargetIcon,
+  CaretRightIcon,
+  GraduationCapIcon,
+  CoffeeIcon,
+  LeafIcon,
+} from "@phosphor-icons/react";
 
 export default function CareersPage() {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
 
   const benefits = [
     {
-      icon: Globe,
+      icon: GlobeIcon,
       title: "Remote-First",
       description: "Work from anywhere in the world",
     },
     {
-      icon: Heart,
+      icon: HeartIcon,
       title: "Health Insurance",
       description: "Comprehensive medical, dental, vision",
     },
     {
-      icon: DollarSign,
+      icon: CurrencyDollarIcon,
       title: "Competitive Pay",
       description: "Top-tier salary + equity options",
     },
     {
-      icon: Clock,
+      icon: ClockIcon,
       title: "Flexible Hours",
       description: "Async-friendly, work when productive",
     },
     {
-      icon: GraduationCap,
+      icon: GraduationCapIcon,
       title: "Learning Budget",
       description: "$2,000/year for courses & conferences",
     },
     {
-      icon: Coffee,
+      icon: CoffeeIcon,
       title: "Home Office Setup",
       description: "$1,500 stipend for your workspace",
     },
@@ -210,7 +210,7 @@ export default function CareersPage() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all shadow-lg"
           >
             View Open Positions
-            <ChevronRight className="w-5 h-5" />
+            <CaretRightIcon className="w-5 h-5" />
           </a>
         </div>
       </section>
@@ -231,7 +231,7 @@ export default function CareersPage() {
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-primary" />
+                <TargetIcon className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 High Impact
@@ -243,7 +243,7 @@ export default function CareersPage() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-teal-600/20 flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-teal-400" />
+                <UsersIcon className="w-8 h-8 text-teal-400" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 Great Team
@@ -255,7 +255,7 @@ export default function CareersPage() {
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
-                <Building2 className="w-8 h-8 text-purple-400" />
+                <LeafIcon className="w-8 h-8 text-purple-400" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 Sustainable Pace
@@ -344,16 +344,16 @@ export default function CareersPage() {
                     </h3>
                     <div className="flex flex-wrap gap-3 text-sm">
                       <span className="flex items-center gap-1 text-muted-foreground">
-                        <Briefcase className="w-4 h-4" /> {job.department}
+                        <BriefcaseIcon className="w-4 h-4" /> {job.department}
                       </span>
                       <span className="flex items-center gap-1 text-muted-foreground">
-                        <MapPin className="w-4 h-4" /> {job.location}
+                        <MapPinIcon className="w-4 h-4" /> {job.location}
                       </span>
                       <span className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-4 h-4" /> {job.type}
+                        <ClockIcon className="w-4 h-4" /> {job.type}
                       </span>
                       <span className="flex items-center gap-1 text-emerald-400">
-                        <DollarSign className="w-4 h-4" /> {job.salary}
+                        <CurrencyDollarIcon className="w-4 h-4" /> {job.salary}
                       </span>
                     </div>
                   </div>

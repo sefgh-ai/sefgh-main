@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Star, MessageSquare, Clock, Flame } from "lucide-react";
+import { EyeIcon, StarIcon, ChatIcon, ClockIcon, FireIcon } from "@phosphor-icons/react";
 
 /**
  * Extract owner and repo name from GitHub URL
@@ -78,7 +78,7 @@ export function ProjectCard({ project }) {
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-sm font-semibold group-hover:text-primary transition-colors flex items-center gap-1 truncate">
                 {project.trending && (
-                  <Flame className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+                  <FireIcon className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
                 )}
                 <span className="truncate">{project.title}</span>
               </h3>
@@ -107,7 +107,7 @@ export function ProjectCard({ project }) {
                 {project.language}
               </span>
               <span className="flex items-center gap-1">
-                <Clock className="w-2.5 h-2.5" />
+                <ClockIcon className="w-2.5 h-2.5" />
                 {project.daysAgo}d ago
               </span>
             </div>
@@ -136,15 +136,15 @@ export function ProjectCard({ project }) {
 
               <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-shrink-0">
                 <span className="flex items-center gap-0.5">
-                  <Star className="w-3 h-3 text-yellow-500" />
+                  <StarIcon className="w-3 h-3 text-yellow-500" />
                   {project.stars}
                 </span>
                 <span className="flex items-center gap-0.5">
-                  <Eye className="w-3 h-3" />
+                  <EyeIcon className="w-3 h-3" />
                   {formatCompactNumber(project.views)}
                 </span>
                 <span className="flex items-center gap-0.5">
-                  <MessageSquare className="w-3 h-3" />
+                  <ChatIcon className="w-3 h-3" />
                   {project.comments}
                 </span>
               </div>

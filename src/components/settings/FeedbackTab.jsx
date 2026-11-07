@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import {
-  Paperclip,
-  X,
-  Send,
-  Bug,
-  Lightbulb,
-  HelpCircle,
-  Star,
-  MessageSquare,
-} from "lucide-react";
+  PaperclipIcon,
+  XIcon,
+  PaperPlaneRightIcon,
+  BugIcon,
+  LightbulbIcon,
+  QuestionIcon,
+  StarIcon,
+  ChatIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -21,28 +21,28 @@ const feedbackTypes = [
   {
     id: "bug",
     label: "Bug Report",
-    icon: Bug,
+    icon: BugIcon,
     description: "Something is not working correctly",
     color: "text-red-500 bg-red-500/10",
   },
   {
     id: "feature",
     label: "Feature Request",
-    icon: Lightbulb,
+    icon: LightbulbIcon,
     description: "Suggest a new feature or improvement",
     color: "text-amber-500 bg-amber-500/10",
   },
   {
     id: "feedback",
     label: "General Feedback",
-    icon: MessageSquare,
+    icon: ChatIcon,
     description: "Share your thoughts about SEFGH",
     color: "text-blue-500 bg-blue-500/10",
   },
   {
     id: "question",
     label: "Question",
-    icon: HelpCircle,
+    icon: QuestionIcon,
     description: "Ask about how to use SEFGH",
     color: "text-purple-500 bg-purple-500/10",
   },
@@ -207,8 +207,9 @@ export default function FeedbackTab() {
                     : "text-muted-foreground/30 hover:text-muted-foreground/50"
                 }`}
               >
-                <Star
-                  className={`w-8 h-8 ${star <= rating ? "fill-current" : ""}`}
+                <StarIcon
+                  className="w-8 h-8"
+                  weight={star <= rating ? "fill" : "regular"}
                 />
               </button>
             ))}
@@ -288,7 +289,7 @@ export default function FeedbackTab() {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
             <div className="flex flex-col items-center justify-center h-full text-center p-4">
-              <Paperclip className="w-5 h-5 text-muted-foreground mb-2" />
+              <PaperclipIcon className="w-5 h-5 text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">
                 Drag & drop screenshots or click to upload
               </p>
@@ -310,7 +311,7 @@ export default function FeedbackTab() {
                     onClick={() => removeAttachment(index)}
                     className="p-0.5 hover:bg-background rounded-full transition-colors"
                   >
-                    <X className="w-3 h-3" />
+                    <XIcon className="w-3 h-3" />
                   </button>
                 </div>
               ))}
@@ -333,7 +334,7 @@ export default function FeedbackTab() {
             "Sending..."
           ) : (
             <>
-              <Send className="w-4 h-4 mr-2" />
+              <PaperPlaneRightIcon className="w-4 h-4 mr-2" />
               Send Feedback
             </>
           )}

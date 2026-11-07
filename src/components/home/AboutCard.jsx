@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { BookOpenIcon } from "@phosphor-icons/react";
 
 export function AboutCard() {
   return (
     <Card className="border-border backdrop-blur-sm">
       <CardContent className="p-4 space-y-2">
         <div className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
-          <BookOpen className="w-3.5 h-3.5" />
+          <BookOpenIcon className="w-3.5 h-3.5" />
           About
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">

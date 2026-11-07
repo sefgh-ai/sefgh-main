@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, List, Rows3 } from "lucide-react";
+import { SquaresFourIcon, ListBulletsIcon, RowsIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -11,9 +11,9 @@ import {
 
 export function ViewToggle({ view, setView }) {
   const views = [
-    { value: "grid", icon: LayoutGrid, label: "Grid View" },
-    { value: "list", icon: List, label: "List View" },
-    { value: "compact", icon: Rows3, label: "Compact View" },
+    { value: "grid", icon: SquaresFourIcon, label: "Grid View" },
+    { value: "list", icon: ListBulletsIcon, label: "List View" },
+    { value: "compact", icon: RowsIcon, label: "Compact View" },
   ];
 
   return (

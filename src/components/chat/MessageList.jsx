@@ -16,16 +16,17 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
-  Plus,
-  MessageSquare,
-  Sparkles,
-  Loader2,
-  MoreVertical,
-  Copy,
-  Edit2,
-  RefreshCw,
-  Trash2,
-} from "lucide-react";
+  PlusIcon,
+  ChatIcon,
+  ChatsCircleIcon,
+  RobotIcon,
+  CircleNotchIcon,
+  DotsThreeVerticalIcon,
+  CopyIcon,
+  PencilSimpleIcon,
+  ArrowsClockwiseIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { AIMessageRenderer } from "@/components/AIMessageRenderer";
 import { CHAT_WINDOW, messagesSent } from "@/lib/ai/chat-window";
 import { formatNumber } from "@/lib/utils/formatters";
@@ -59,7 +60,7 @@ export function MessageList({
         <ScrollArea className="h-full p-6">
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
             <div className="p-8 rounded-full bg-blue-100 dark:bg-blue-950/30 mb-6">
-              <Sparkles className="h-16 w-16 text-blue-600 dark:text-blue-400" />
+              <ChatsCircleIcon className="h-16 w-16 text-blue-600 dark:text-blue-400" />
             </div>
             <h2 className="text-3xl font-bold mb-3">Welcome to AI Chat</h2>
             <p className="text-muted-foreground mb-8 max-w-md text-base">
@@ -71,7 +72,7 @@ export function MessageList({
               size="lg"
               className="px-8 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-glow-blue"
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <PlusIcon className="h-5 w-5 mr-2" />
               Start New Chat
             </Button>
           </div>
@@ -87,7 +88,7 @@ export function MessageList({
         <ScrollArea className="h-full p-6">
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
             <div className="p-6 rounded-full bg-muted mb-4">
-              <MessageSquare className="h-12 w-12 text-muted-foreground" />
+              <ChatIcon className="h-12 w-12 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-semibold mb-2">No messages yet</h3>
             <p className="text-muted-foreground text-sm">
@@ -125,7 +126,7 @@ export function MessageList({
                 {message.role === "assistant" && (
                   <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarFallback className="bg-gradient-to-br from-slate-700 to-slate-600 dark:from-slate-800 dark:to-slate-700 text-white">
-                      <Sparkles className="h-4 w-4" />
+                      <RobotIcon className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
                 )}
@@ -172,7 +173,7 @@ export function MessageList({
                                 size="icon"
                                 className="h-6 w-6"
                               >
-                                <MoreVertical className="h-3 w-3" />
+                                <DotsThreeVerticalIcon className="h-3 w-3" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-40 p-2">
@@ -185,7 +186,7 @@ export function MessageList({
                                     handleCopyMessage(message.content)
                                   }
                                 >
-                                  <Copy className="h-3 w-3 mr-2" />
+                                  <CopyIcon className="h-3 w-3 mr-2" />
                                   Copy
                                 </Button>
                                 <Button
@@ -194,7 +195,7 @@ export function MessageList({
                                   className="justify-start"
                                   onClick={() => startEditing(message)}
                                 >
-                                  <Edit2 className="h-3 w-3 mr-2" />
+                                  <PencilSimpleIcon className="h-3 w-3 mr-2" />
                                   Edit
                                 </Button>
                                 <Separator className="my-1" />
@@ -204,7 +205,7 @@ export function MessageList({
                                   className="justify-start text-destructive"
                                   onClick={() => handleDeleteMessage(message.id)}
                                 >
-                                  <Trash2 className="h-3 w-3 mr-2" />
+                                  <TrashIcon className="h-3 w-3 mr-2" />
                                   Delete
                                 </Button>
                               </div>
@@ -258,7 +259,7 @@ export function MessageList({
                                 size="icon"
                                 className="h-6 w-6"
                               >
-                                <MoreVertical className="h-3 w-3" />
+                                <DotsThreeVerticalIcon className="h-3 w-3" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-40 p-2">
@@ -271,7 +272,7 @@ export function MessageList({
                                     handleCopyMessage(message.content)
                                   }
                                 >
-                                  <Copy className="h-3 w-3 mr-2" />
+                                  <CopyIcon className="h-3 w-3 mr-2" />
                                   Copy
                                 </Button>
                                 <Button
@@ -283,7 +284,7 @@ export function MessageList({
                                   }
                                   disabled={regeneratingMessageId === message.id}
                                 >
-                                  <RefreshCw
+                                  <ArrowsClockwiseIcon
                                     className={`h-3 w-3 mr-2 ${
                                       regeneratingMessageId === message.id
                                         ? "animate-spin"
@@ -299,7 +300,7 @@ export function MessageList({
                                   className="justify-start text-destructive"
                                   onClick={() => handleDeleteMessage(message.id)}
                                 >
-                                  <Trash2 className="h-3 w-3 mr-2" />
+                                  <TrashIcon className="h-3 w-3 mr-2" />
                                   Delete
                                 </Button>
                               </div>
@@ -338,7 +339,7 @@ export function MessageList({
                 </AvatarFallback>
               </Avatar>
               <div className="px-4 py-3 rounded-lg bg-muted">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <CircleNotchIcon className="h-4 w-4 animate-spin" />
               </div>
             </div>
           )}

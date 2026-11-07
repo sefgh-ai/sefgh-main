@@ -4,32 +4,32 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveStepPreferences } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { ChevronLeft, Sparkles, Bell, BellOff, Globe } from "lucide-react";
+import { CaretLeftIcon, RobotIcon, ConfettiIcon, BellIcon, BellRingingIcon, CalendarCheckIcon, BellSlashIcon, GlobeIcon } from "@phosphor-icons/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const notificationOptions = [
   {
     value: "all",
     label: "All Notifications",
-    icon: Bell,
+    icon: BellRingingIcon,
     description: "Get notified about everything",
   },
   {
     value: "important",
     label: "Important Only",
-    icon: Bell,
+    icon: BellIcon,
     description: "Only critical updates and mentions",
   },
   {
     value: "digest",
     label: "Daily Digest",
-    icon: Bell,
+    icon: CalendarCheckIcon,
     description: "One summary email per day",
   },
   {
     value: "none",
     label: "No Notifications",
-    icon: BellOff,
+    icon: BellSlashIcon,
     description: "Turn off all notifications",
   },
 ];
@@ -61,7 +61,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
+            <RobotIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -152,7 +152,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
                   : "border-[#30363d] bg-[#161b22] hover:border-[#8b949e]"
               }`}
             >
-              <Globe
+              <GlobeIcon
                 className={`h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-0.5 sm:mb-1 ${
                   selectedLanguage === lang.code
                     ? "text-[#58a6ff]"
@@ -178,7 +178,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
         <div className="flex items-start gap-2 sm:gap-3">
           <div className="flex-shrink-0">
             <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-[#238636] flex items-center justify-center">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
+              <ConfettiIcon className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
             </div>
           </div>
           <div className="min-w-0">
@@ -200,7 +200,7 @@ export function StepPreferences({ userId, onComplete, onBack }) {
           variant="ghost"
           className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
-          <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
+          <CaretLeftIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
         </Button>
         <Button

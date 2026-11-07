@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Star, GitFork, Code } from "lucide-react";
+import { StarIcon, GitForkIcon, CodeSimpleIcon } from "@phosphor-icons/react";
 
 /**
  * Repository card component (memoized for performance)
@@ -27,7 +27,7 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
           {/* Repo Icon */}
           <div className="flex-shrink-0">
             <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
-              <Code className="w-4 h-4 text-muted-foreground" />
+              <CodeSimpleIcon className="w-4 h-4 text-muted-foreground" />
             </div>
           </div>
 
@@ -76,13 +76,13 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
 
               {/* Stars */}
               <div className="flex items-center gap-1 text-muted-foreground">
-                <Star className="w-4 h-4" />
+                <StarIcon className="w-4 h-4" />
                 <span>{formatNumber(repo.stars)}</span>
               </div>
 
               {/* Forks */}
               <div className="flex items-center gap-1 text-muted-foreground">
-                <GitFork className="w-4 h-4" />
+                <GitForkIcon className="w-4 h-4" />
                 <span>{formatNumber(repo.forks)}</span>
               </div>
 
@@ -112,7 +112,7 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
               <div className="flex items-center gap-2">
                 <div className="text-right" title="Average since the repository was created">
                   <div className="flex items-center gap-1 text-muted-foreground">
-                    <Star className="w-4 h-4" />
+                    <StarIcon className="w-4 h-4" />
                     <span className="font-semibold">
                       {formatNumber(repo.starsPerDay)}
                     </span>
@@ -132,7 +132,7 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
                   rel="noopener noreferrer"
                   aria-label={`Star ${repo.author}/${repo.name} on GitHub`}
                 >
-                  <Star className="w-4 h-4 mr-1" />
+                  <StarIcon className="w-4 h-4 mr-1" />
                   Star
                 </a>
               </Button>
