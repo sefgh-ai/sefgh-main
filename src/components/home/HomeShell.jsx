@@ -117,7 +117,7 @@ function SideNav({ user }) {
   );
 }
 
-function TopBar({ user, tab, onTabChange }) {
+function TopBar({ user, tab, onTabChange, showSearch = true, title = null }) {
   const router = useRouter();
   const input = useRef(null);
 
@@ -138,7 +138,9 @@ function TopBar({ user, tab, onTabChange }) {
       <Link href="/home" className="md:hidden" aria-label="SEFGH home">
         <SefghGlyph size={24} />
       </Link>
+      {title && <span className={`text-sm font-bold ${styles.display}`}>{title}</span>}
       {/* The wrapper does the hiding: .tabs sets its own display, which would beat `hidden`. */}
+      {onTabChange && (
       <div className="hidden sm:block">
       <div className={styles.tabs} role="tablist" aria-label="Time range">
         {TABS.map((t) => (
@@ -155,6 +157,8 @@ function TopBar({ user, tab, onTabChange }) {
         ))}
       </div>
       </div>
+      )}
+      {showSearch ? (
       <form
         role="search"
         className="ml-auto flex h-10 min-w-0 max-w-[520px] flex-1 items-center gap-2.5 rounded-[var(--l-radius-sm)] border border-[var(--l-line)] bg-[var(--l-surface)] px-3.5 focus-within:border-[var(--l-blue)]"
@@ -176,6 +180,9 @@ function TopBar({ user, tab, onTabChange }) {
         />
         <kbd className={`hidden rounded border border-[var(--l-line)] px-1.5 py-0.5 text-[11px] text-[var(--l-muted)] sm:inline ${styles.mono}`}>⌘K</kbd>
       </form>
+      ) : (
+        <span className="ml-auto" />
+      )}
       {user ? (
         <>
           <NotificationBell />
@@ -201,12 +208,17 @@ function TopBar({ user, tab, onTabChange }) {
   );
 }
 
-export default function HomeShell({ user, tab, onTabChange, children }) {
+/**
+ * The app frame of the redesigned signed-in pages: rail/sidebar and top bar.
+ * Home passes its time tabs; Search passes `showSearch={false}` (it has its
+ * own big search bar) and a title.
+ */
+export default function HomeShell({ user, tab, onTabChange, showSearch = true, title = null, children }) {
   return (
     <div className="flex min-h-screen">
       <SideNav user={user} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar user={user} tab={tab} onTabChange={onTabChange} />
+        <TopBar user={user} tab={tab} onTabChange={onTabChange} showSearch={showSearch} title={title} />
         {children}
       </div>
     </div>

@@ -32,8 +32,8 @@ export function DynamicIslandNav() {
 
   // Redesigned pages carry their own navigation, and the floating island
   // covered their headers: the landing page (LANDING-001) and Home's top bar
-  // and rail (HOME-001).
-  if (pathname === "/" || pathname === "/home") return null;
+  // and rail (HOME-001), and Search, which shares that rail (SEARCH-001).
+  if (pathname === "/" || pathname === "/home" || pathname === "/search") return null;
 
   return (
     <>

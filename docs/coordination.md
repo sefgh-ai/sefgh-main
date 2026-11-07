@@ -13,8 +13,48 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released HOME-001 (Home page redesign, 2026-11-07): committed on worktree branch `claude/home-redesign` and handed off after the owner's review. Earlier: none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Claude Code released SEARCH-001 (Search page redesign, 2026-11-07): committed on worktree branch `claude/home-redesign` (stacked on HOME-001 `81b515d`) and handed off after the owner's review. HOME-001 was committed and handed off earlier the same day. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: SEARCH-001 Search page redesign (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; owner reviewed the layout preview and approved the commit (2026-11-07); committed in one task commit on `claude/home-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/home-redesign`, on top of HOME-001 (`81b515d`, not yet in `main`). It reuses Home's shell and fonts, so the owner's one-worktree rule kept it in this worktree rather than a new one. `npm run handoff` run on the commit. Owner decision (2026-11-07): the old UI is retired only once the redesign is finished, and deployment stays the owner's call; agents do not deploy.
+
+What: `/search` rebuilt on the approved design-system picks (SEFGH Design System, "Search page" cards), inside Home's rail. The search itself is unchanged: `useGitHubSearch` still drives `/api/github/search`, filters, pages, history saving and the 30-minute cache.
+- **Before searching (E2):** "Find a repository", the bar, two platform numbers from `platform_stats` (as the old banner read them; "—" if unavailable), and six "Try a search" cards that run their query.
+- **Bar (B2 + B3):**
+  - The mode is a narrow "Scout ▾" chip inside the bar (same three modes; only UI state, as before), plus the existing AI enhance-query button.
+  - One panel holds AI suggestions (same `/api/ai/suggestions` call, 300 ms debounce) and recent searches (same history source, top 5, filtered by the typed text).
+  - A small switch turns AI suggestions off, remembered as `sefgh.searchSuggestions`; history stays either way.
+  - Keys: "/" focuses the bar, ↑/↓ move through the panel, Enter picks, Esc closes.
+- **Filters (F1):** the old navbar's language, stars, updated (dateRange), license and sort, as chips. Active chips turn blue, with Clear all. Behaviour change: a filter **the user changes** now re-runs the current search; the old navbar only applied filters on the next search. Filters restored from the cache do not trigger a request.
+- **Understood as (Q1):** one line from the existing `analyzeQuery`, now exported from `QueryUnderstandingPanel.jsx`; nothing else in that file changed.
+- **Results (R1/R2/R3):** Rows, Cards or Table behind a switch, remembered as `sefgh.searchView` (default Rows), with the old pagination rules and the "GitHub shows the first 1,000 results" note. No match score is shown: the search API does not return one.
+- **Preview (V2):** a result opens a Sheet drawer (focus trap, Esc, overlay) holding the existing `CodeExplorer`, plus an "Open repository" bar linking to `/repo/owner/name`. This replaces the split pane. Star and Ask AI from the mock-up are not added: the app has no add-star call in use, and chat's acceptance of a starting question is unverified. `CodeExplorer` keeps its own look (theme tokens in the dark scope).
+- **Shell:** `HomeShell` takes `showSearch` and `title`, so Search hides the top-bar search and time tabs; Home is unchanged. `DynamicIslandNav` is also hidden on `/search`. The small site `Footer` is dropped here, as on Home.
+- The old Search components (`SearchBox`, `SearchNavbar`, `SearchResults`, `SearchStats`, `PopularSearches`, `SearchNavGuide`, `SearchHeader`, `ViewToggle`, `SearchFilters`) are no longer used by `/search` but remain in the repo.
+
+Changed files: `docs/coordination.md`, `src/app/search/page.js`, `src/components/home/HomeShell.jsx`, `src/components/navigation/DynamicIslandNav.jsx`, `src/components/search/QueryUnderstandingPanel.jsx` (export only); new `src/components/search-page/` (`SearchView.jsx`, `SearchBar.jsx`, `SearchFilterChips.jsx`, `SearchResultsViews.jsx`, `RepoPreviewDrawer.jsx`).
+
+Checks (Claude Code):
+- `npm run lint` passed. One justified `eslint-disable-next-line react-hooks/exhaustive-deps`, with a comment: the filter re-run must depend on filters only.
+- `npm run test:contracts` 732/732.
+- `npm run build` passed (48/48), with placeholder public Supabase values.
+- Browser (`next start` on 3108, started from this worktree) at 1440px and 375px. The search API and AI suggestions were fed sample responses in the browser only. Verified:
+  - before-search state, with narrow chip and button;
+  - suggestion panel and keyboard pick (one request);
+  - Rows, Cards and Table views, with the choice remembered;
+  - a Language chip change re-runs exactly one request with `language=Rust`;
+  - Clear all appears;
+  - the drawer opens with the Open repository link, Esc closes it, and the Sheet's duplicate close button is hidden;
+  - the suggestions switch off is remembered and shows the history-only note;
+  - no overflow at 375px.
+
+Not verified: real search, suggestions and history data (no `.env.local`); `CodeExplorer` content (GitHub is not reachable from this local preview); `platform_stats` numbers.
+
+Next: Git Agent synchronization of `claude/home-redesign` (HOME-001 + SEARCH-001); then the next page (Repo details suggested). After the last page, a bounded clean-up task removes the old, unused UI components. Rollback: revert the commit.
+
+Writer released: yes. No processes left running (the local preview server was stopped).
 
 ## Handoff: HOME-001 Home page redesign (Claude Code, 2026-11-07)
 

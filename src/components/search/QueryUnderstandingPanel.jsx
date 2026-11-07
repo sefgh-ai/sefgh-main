@@ -181,7 +181,7 @@ const PATTERNS = {
   "ssr/ssg": ["ssr", "ssg", "hydration", "static generation"],
 };
 
-function analyzeQuery(query) {
+export function analyzeQuery(query) {
   if (!query) return null;
 
   const lowerQuery = query.toLowerCase();
