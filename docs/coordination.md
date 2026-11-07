@@ -13,8 +13,23 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released SEARCH-001 (Search page redesign, 2026-11-07): committed on worktree branch `claude/home-redesign` (stacked on HOME-001 `81b515d`) and handed off after the owner's review. HOME-001 was committed and handed off earlier the same day. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Claude Code released DEPLOY-HOLD-001 (2026-11-07): committed on worktree branch `claude/home-redesign` after SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
+- **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled.main: false`, so pushes to `main` no longer create Vercel production deployments while the redesign is in progress. The owner retires the old UI and deploys when the redesign is finished. Agents do not deploy and do not remove this hold; only the owner lifts it. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: DEPLOY-HOLD-001 hold production deploys from main (Claude Code, 2026-11-07)
+
+Status: **complete; committed on `claude/home-redesign` after SEARCH-001; takes effect only once merged into `main`; not verified on Vercel**. Owner Claude Code, at the owner's request.
+
+Why: the new landing page (LANDING-001, merged as PR #3) went live on `sefgh-main.vercel.app` automatically. The Git Agent pushed `main` to GitHub, and the Vercel Git integration deploys every push to `main`. The owner wants the redesign to go live only when it is finished, together with the retirement of the old UI.
+
+What: a new `vercel.json` with `"git": { "deploymentEnabled": { "main": false } }`. Pushes to `main` stop creating Vercel deployments; other branches (previews) still deploy. Vercel reads the file from each commit, so the merge commit that brings this branch (HOME-001, SEARCH-001 and this file) into `main` is itself not deployed. The landing page already live stays live until the owner rolls it back or deploys again.
+
+Lifting the hold, owner only: delete the `main` entry (or the file), merge, and redeploy, or deploy by hand from the Vercel dashboard or CLI.
+
+Checks: `vercel.json` parses as JSON; `npm run handoff` (contracts and Go checks) run on the commit. Not verified: Vercel behaviour. Agents have no Vercel deployment access here, so whether the next push to `main` is skipped is unconfirmed until it happens; confirm in the Vercel dashboard's Deployments list after the next merge.
+
+Writer released: yes.
 
 ## Handoff: SEARCH-001 Search page redesign (Claude Code, 2026-11-07)
 
