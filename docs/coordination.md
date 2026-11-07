@@ -13,9 +13,27 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released DEPLOY-HOLD-001 (2026-11-07): committed on worktree branch `claude/home-redesign` after SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
-- **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled.main: false`, so pushes to `main` no longer create Vercel production deployments while the redesign is in progress. The owner retires the old UI and deploys when the redesign is finished. Agents do not deploy and do not remove this hold; only the owner lifts it. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
+- **Redesign branch (owner, 2026-11-07):** all redesign work collects on `redesign/integration` (cut from `main`), never on `main`, with merge commits so the history stays. See AGENTS.md "Redesign integration branch and deploy hold". `claude/home-redesign` (HOME-001, SEARCH-001, DEPLOY-HOLD-001, REDESIGN-BRANCH-001) is to be merged into `redesign/integration`, not into `main`.
+- **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled` to false for `main` and `redesign/integration`. Neither branch creates Vercel deployments. Agents do not deploy and do not remove this hold; only the owner lifts it, when the redesign is finished and the old UI is retired. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: REDESIGN-BRANCH-001 redesign integration branch (Claude Code, 2026-11-07)
+
+Status: **complete; committed on `claude/home-redesign`; not yet acted on by the Git Agent**. Owner Claude Code, at the owner's request.
+
+Decision (owner): all redesign work goes to a long-lived `redesign/integration` branch with full commit history (merge commits, no squash), tested locally against the real backend and never deployed, until the owner finishes the redesign and merges it into `main` themselves.
+
+Changed:
+- `AGENTS.md`: new section "Redesign integration branch and deploy hold" (base and target branch, `--no-ff` merges, keeping `main` merged in, local backend checks, no deploys, old UI until the end, one worktree at a time).
+- `vercel.json`: `git.deploymentEnabled` now also has `"redesign/integration": false`.
+- `docs/coordination.md`: this record and the state lines.
+
+Needs the Git Agent: create `redesign/integration` from `main`, merge `claude/home-redesign` into it with `--no-ff` (not into `main`), push it, then remove the `home-redesign` worktree. Until that branch exists, the next redesign task cannot start from it.
+
+Checks: `vercel.json` parses as JSON; `npm run handoff` run on the commit. Not verified on Vercel: that neither `main` nor `redesign/integration` deploys; confirm in the Vercel Deployments list after the next push.
+
+Writer released: yes.
 
 ## Handoff: DEPLOY-HOLD-001 hold production deploys from main (Claude Code, 2026-11-07)
 

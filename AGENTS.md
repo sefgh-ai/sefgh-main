@@ -50,6 +50,18 @@ These apply to every agent session: Codex, Claude Code in the terminal, and ever
 4. **Busy means hands off.** On `VERIFICATION_BUSY`, `STATUS_ERROR` or someone else's `WRITER_ACTIVE`: do not edit, commit, synchronize or start checks. Wait for the owner (`Wait-Process -Id <pid>` for a lease), then check `--status` again. Never reset, delete or steal a lease or another writer's flag; an interrupted lease is recovered only as `docs/verification/handoff-concurrency.md` says.
 5. **No waiting while holding.** Do not hold the flag while you wait on the owner, CI, a review or another agent. Release it, or write a paused checkpoint, first. This is what stops two agents, or an agent and the Git Agent, from waiting on each other.
 
+## Redesign integration branch and deploy hold (owner, 2026-11-07)
+
+The UI redesign (the "Commit" direction in the SEFGH Design System artifact: LANDING-001, HOME-001, SEARCH-001 and every page after them) collects on its own long-lived branch, **`redesign/integration`**, until the owner says it is finished.
+
+1. **Base and target.** Start every redesign task from `redesign/integration`, not from `main`. A finished redesign task's branch is merged **into `redesign/integration`**, never into `main`.
+2. **Keep the history.** Merge with a merge commit (`git merge --no-ff`). Do not squash, rebase or force-push `redesign/integration`; every task's commits stay visible.
+3. **Keep it current.** Merge `main` into `redesign/integration` when `main` moves (backend work, bug fixes), so the redesign is always tested against today's backend. Do not merge `redesign/integration` into `main` in the other direction.
+4. **Check the backend connection locally.** Test the integration branch on a developer machine with the real `.env.local` and, where a route runs in Go, the Go backend from `backend/`. Nothing is deployed for these checks. Record what was checked, and against which data, in the handoff.
+5. **No deploys.** `vercel.json` turns off Vercel deployments for `main` and for `redesign/integration` (`git.deploymentEnabled`). Agents never deploy, never lift or edit this hold, and never merge the redesign into `main`. Only the owner does that, together with retiring the old UI, when the redesign is finished.
+6. **Old UI stays until then.** Pages not yet redesigned keep the old components. A final, bounded clean-up task removes the unused old UI on `redesign/integration` before the owner's merge to `main`.
+7. **One worktree at a time.** Keep at most one redesign worktree alive. When its branch is merged into `redesign/integration`, the Git Agent removes the worktree and deletes the task branch.
+
 ## Bugs and broken UI/UX (Phase 6)
 
 - When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one.
