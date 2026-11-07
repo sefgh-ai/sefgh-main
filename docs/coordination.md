@@ -13,10 +13,44 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released REPO-001 (Repo details page redesign, 2026-11-08): committed on worktree branch `claude/repo-redesign` (from `redesign/integration` at `adc64c2`) and handed off after the owner's review. Earlier: none. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
+- **Active writer:** none. Claude Code released TRENDING-001 (Trending page redesign, 2026-11-08): committed on worktree branch `claude/trending-redesign` (from `redesign/integration` at `385fa0b`) and handed off after the owner's review. Earlier: none. Claude Code released REPO-001 (Repo details page redesign, 2026-11-08): committed on worktree branch `claude/repo-redesign` (from `redesign/integration` at `adc64c2`) and handed off after the owner's review. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
 - **Redesign branch (owner, 2026-11-07):** all redesign work collects on `redesign/integration` (cut from `main`), never on `main`, with merge commits so the history stays. See AGENTS.md "Redesign integration branch and deploy hold". `claude/home-redesign` (HOME-001, SEARCH-001, DEPLOY-HOLD-001, REDESIGN-BRANCH-001) is to be merged into `redesign/integration`, not into `main`.
 - **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled` to false for `main` and `redesign/integration`. Neither branch creates Vercel deployments. Agents do not deploy and do not remove this hold; only the owner lifts it, when the redesign is finished and the old UI is retired. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: TRENDING-001 Trending page redesign (Claude Code, 2026-11-08)
+
+Status: **implementation complete; local checks passed; owner reviewed the local page and approved commit and handoff (2026-11-08); committed in one task commit on `claude/trending-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/trending-redesign` (worktree `.claude/worktrees/trending-redesign`), from `redesign/integration` at `385fa0b`; to be merged into `redesign/integration` with `--no-ff`, never into `main`. `npm run handoff` run on the commit.
+
+What: `/trending` rebuilt on the owner's picks (SEFGH Design System, "Trending page" cards), inside the app rail. The data is unchanged: `useTrendingData` (repositories or developers per language, spoken language and period; topic highlights; refresh), the live `/api/github/languages` list with the old fallback, `SORT_OPTIONS`/`sortRepositories`, and the curated `src/data/editorsChoice.js`.
+- **Editors' Choice (E2, collapsible to E3):** a compact spotlight (name, language, stars, the editor's note, View repository, Scout) with two slim picks. A ⌃/⌄ button folds it into a scrollable strip and back; the choice is remembered (`sefgh.trendingEditors`). Spacing tightened per the owner's two tweaks.
+- **Toolbar (F1):** Repositories / Developers, Today / This week / This month, and Language, Spoken and Sort chips (repositories only). Refresh shows "updated … ago" from the topics' `generatedAt`.
+- **Repositories (R2):** a leaderboard (rank with the top three green, repository, language, stars, forks, and a "Stars / day" bar from `starsPerDay`, relative to the highest in the list). Rows open `/repo/author/name`.
+- **Developers (D2):** ranked rows. The name and Follow open the GitHub profile; the popular repository opens `/repo/...` via `popularRepositoryPath`.
+- **Topic highlights (T2):** `topicRepos` grouped by `topic` (the four largest groups, three repos each).
+- Loading skeleton, the existing load-error text, and a new empty state ("Nothing trending here right now") for an empty list with no error. Before, the old page showed nothing.
+- `DynamicIslandNav` is hidden on `/trending`; `PageWrapper` already treated it as an own-layout page. The old Trending components stay until the clean-up task.
+
+Bugs: **R-222** (Medium, developer names linked to `/user/<username>`, which does not exist) is fixed in the new page. **R-223** (Low, Editors' Choice data: `openai/guidance` should be `guidance-ai/guidance`; star counts are typed in) is open with owner options; the curated data was not changed.
+
+Changed files: `src/app/trending/page.js`, `src/components/navigation/DynamicIslandNav.jsx`, new `src/components/trending-page/TrendingView.jsx`, `docs/bug-register.md` (R-222, R-223), `docs/coordination.md`.
+
+Checks (Claude Code):
+- `npm run lint` passed; `npm run test:contracts` 732/732; `npm run build` passed (48/48).
+- Local backend check (AGENTS.md rule 4, nothing deployed): the Go API from `backend/` ran on `127.0.0.1:8787` (placeholder Supabase values, no GitHub token), and the app was built and served with `SEFGH_GO_API_URL` pointing at it.
+  - `/api/github/trending?since=daily&spokenLanguage=english` returned 200 with real repositories, and the page showed six in the leaderboard.
+  - `/api/github/languages` returned 200 with the live list.
+  - `/api/github/trending-developers?since=daily` returned 200 with an **empty list** locally, so developer rows were not seen with data; the empty state was.
+- Browser at 1440px and 375px:
+  - Editors' Choice opens, collapses (table moved from 374px to 234px from the top), and the choice is remembered;
+  - topic highlights render; no island menu and no footer;
+  - no horizontal overflow on a phone.
+
+Not verified: developer rows with real data (empty locally); topic highlights with more than one topic group (one group locally).
+
+Next: the Git Agent merges `claude/trending-redesign` into `redesign/integration` with `--no-ff`, then removes this worktree and deletes the branch. Owner decision pending: R-223 (Editors' Choice data). Next page: Profile (suggested). Rollback: revert the commit.
+
+Writer released: yes. No processes left running: the local Go API and `next start` (3111) were stopped.
 
 ## Handoff: REPO-001 Repo details page redesign (Claude Code, 2026-11-08)
 

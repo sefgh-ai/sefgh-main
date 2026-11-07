@@ -33,8 +33,15 @@ export function DynamicIslandNav() {
   // Redesigned pages carry their own navigation, and the floating island
   // covered their headers: the landing page (LANDING-001) and Home's top bar
   // and rail (HOME-001), and Search and repository pages, which share that
-  // rail (SEARCH-001, REPO-001).
-  if (pathname === "/" || pathname === "/home" || pathname === "/search" || pathname.startsWith("/repo/")) return null;
+  // rail (SEARCH-001, REPO-001), and Trending (TRENDING-001).
+  if (
+    pathname === "/" ||
+    pathname === "/home" ||
+    pathname === "/search" ||
+    pathname === "/trending" ||
+    pathname.startsWith("/repo/")
+  )
+    return null;
 
   return (
     <>
