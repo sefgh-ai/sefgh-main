@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import RepoDetailsLayout from "@/components/repo-details/RepoDetailsLayout";
+import RepoView from "@/components/repo-page/RepoView";
+import { commitFontClassName } from "@/lib/fonts/commit";
 import RecordRepoVisit from "@/components/repo-details/RecordRepoVisit";
 import { fetchRepoForPage } from "@/lib/repo/repoData";
 import { fetchSefghData } from "@/lib/repo/sefghData";
@@ -32,11 +33,13 @@ export default async function RepoDetailsPage({ params }) {
         description={repoData.description || null}
         language={repoData.language || null}
       />
-      <RepoDetailsLayout
+      {/* REPO-001: the redesigned page (the old RepoDetailsLayout stays in the repo until the clean-up). */}
+      <RepoView
         repoData={repoData}
         sefghData={sefghData}
         owner={owner}
         repoName={repoName}
+        fontClassName={commitFontClassName}
       />
     </>
   );

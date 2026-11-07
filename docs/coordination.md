@@ -13,10 +13,49 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
+- **Active writer:** none. Claude Code released REPO-001 (Repo details page redesign, 2026-11-08): committed on worktree branch `claude/repo-redesign` (from `redesign/integration` at `adc64c2`) and handed off after the owner's review. Earlier: none. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
 - **Redesign branch (owner, 2026-11-07):** all redesign work collects on `redesign/integration` (cut from `main`), never on `main`, with merge commits so the history stays. See AGENTS.md "Redesign integration branch and deploy hold". `claude/home-redesign` (HOME-001, SEARCH-001, DEPLOY-HOLD-001, REDESIGN-BRANCH-001) is to be merged into `redesign/integration`, not into `main`.
 - **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled` to false for `main` and `redesign/integration`. Neither branch creates Vercel deployments. Agents do not deploy and do not remove this hold; only the owner lifts it, when the redesign is finished and the old UI is retired. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: REPO-001 Repo details page redesign (Claude Code, 2026-11-08)
+
+Status: **implementation complete; local checks passed; owner reviewed the local page and approved commit and handoff (2026-11-08); committed in one task commit on `claude/repo-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/repo-redesign` (worktree `.claude/worktrees/repo-redesign`), from `redesign/integration` at `adc64c2`; to be merged into `redesign/integration` with `--no-ff`, never into `main`. `npm run handoff` run on the commit.
+
+What: `/repo/[owner]/[repo-name]` rebuilt on the owner's picks (SEFGH Design System, "Repo details page" cards). The server data is unchanged: `fetchRepoForPage` through Go, and `fetchSefghData` for votes, ratings, comments and saves. `RecordRepoVisit` stays.
+- **Header (H3, with H2's rain and Scout):** the app rail and top bar (`HomeShell`, title "Repository"), a "← Search" link, owner avatar, `owner / name`, description, a stats line (language, stars, forks, watching, updated) and underline tabs README · Video · Comments (with the comment count), over a faint `ContributionRain`.
+- **Two columns (L2 with S3):**
+  - Left: the README, the Video tab (existing `RepoVideoTab`), or Comments (existing `RepoCommentsSection`).
+  - Right: About (description, topics, license, default branch, created, updated, open issues) with Scout flipped and standing on its top edge, then the existing `RepoRatingSection` in a new `compact` layout.
+- **README (new on this page):** loaded from `GET /api/github/repo/{owner}/{repo}` (`readme`), the endpoint `CodeExplorer` already uses, and rendered with `MarkdownRenderer`. A skeleton shows while loading; "No README found · Open on GitHub" shows otherwise.
+- **Floating action bar (A3):** fixed at the bottom (above the mobile bottom nav), holding:
+  - Open code (the existing `RepoDrawer` with `CodeExplorer`);
+  - Collect (existing `RepoCollectButton`, new `compact` icon mode, same `/api/repo/collect` calls);
+  - Open on GitHub, and Discuss (discussions if enabled, otherwise issues, as before);
+  - QR (existing `RepoQRCode`) and the vote (existing `RepoVoteSection`);
+  - Claim (disabled, "coming soon", as before).
+- **C2 difference:** the rating data has only `total` and `average`, so the star-breakdown bars from the mock-up were not built. No numbers were invented.
+- `PageWrapper` treats `/repo/*` as an own-layout page (no small site footer, like Home and Search); `DynamicIslandNav` is hidden on `/repo/*`. `RepoDetailsLayout` is no longer used, but it remains until the clean-up task.
+- **Correction:** HOME-001 and SEARCH-001 said the app had no way to star a repo. It has one: Collect (`/api/repo/collect`), which `/api/repo/starred` lists. Collect/Star buttons could be added to Home's table and Search's drawer later with `RepoCollectButton compact`.
+
+Changed files: `src/app/repo/[owner]/[repo-name]/page.js`, `src/components/PageWrapper.jsx`, `src/components/navigation/DynamicIslandNav.jsx`, `src/components/repo-details/RepoCollectButton.jsx` (optional `compact`/`className`), `src/components/repo-details/RepoRatingSection.jsx` (optional `compact`), new `src/components/repo-page/RepoView.jsx`, `docs/coordination.md`.
+
+Checks (Claude Code):
+- `npm run lint` passed; `npm run test:contracts` 732/732.
+- `npm run build` passed (48/48). The very first build failed once inside `next/font/google`; it passed on retry with no code change, so that was a font download hiccup.
+- Backend connection, checked locally per AGENTS.md rule 4 (nothing deployed): the Go API ran from `backend/` on `127.0.0.1:8787` (`go run ./cmd/api`, placeholder Supabase values, no GitHub token), and the app was built and served with `SEFGH_GO_API_URL` pointing at it. `GET /api/github/public-repo/bevyengine/bevy` answered 200 with real GitHub data, and the page rendered it. `GET /api/github/repo/bevyengine/bevy` (rewritten to Go) returned the README, which rendered.
+- Browser at 1440 and 375px:
+  - tabs, Video empty state, and the drawer opening and closing (Esc);
+  - floating bar buttons present, no site footer;
+  - no horizontal overflow at 375px, and the bar sits above the bottom nav.
+
+Not verified:
+- Signed-in Supabase data (votes, ratings, comments, saves read their defaults with placeholder Supabase values), so posting a comment, rating, voting and saving were not exercised.
+- GitHub's unauthenticated limit of 60 requests per hour applies to these local checks.
+
+Next: the Git Agent merges `claude/repo-redesign` into `redesign/integration` with `--no-ff`, then removes this worktree and deletes the branch. Next page: Trending (suggested). Rollback: revert the commit.
+
+Writer released: yes. No processes left running: the local Go API and every `next start` (3108–3110) were stopped.
 
 ## Handoff: REDESIGN-BRANCH-001 redesign integration branch (Claude Code, 2026-11-07)
 
