@@ -68,5 +68,65 @@
       "twitter": "Twitter",
       "github": "GitHub"
     }
+  },
+  "landing": {
+    "nav": {
+      "login": "Log in",
+      "signup": "Sign up"
+    },
+    "badgeNew": "New",
+    "badge": "Natural-language search",
+    "headlineLead": "Every repo has a story.",
+    "headlineEmphasis": "Find yours.",
+    "searchLabel": "Describe the project you are looking for",
+    "searchButton": "Search",
+    "examples": "Try an example",
+    "features": {
+      "eyebrow": "Why SEFGH",
+      "titleLead": "Search the way you",
+      "titleEmphasis": "think.",
+      "askTitle": "Ask in plain language",
+      "askBody": "Describe the project, the stack and the constraints. SEFGH understands intent, not just keywords.",
+      "askQuery": "a lightweight mobile OS in Swift",
+      "trendingTitle": "See what's trending",
+      "trendingBody": "Rising repositories by language and topic, refreshed through the day.",
+      "saveTitle": "Save and share",
+      "saveBody": "Star results, keep your search history, send a link to the team.",
+      "languagesTitle": "Every language you work in",
+      "languagesBody": "Filter by language, topic, licence and activity."
+    },
+    "cta": {
+      "titleLead": "Ready to find your",
+      "titleEmphasis": "next project?",
+      "subtitle": "Stop scrolling, start building. Free to start.",
+      "start": "Start searching",
+      "getStarted": "Get started free",
+      "docs": "Read the docs",
+      "comment": "# what are you building?",
+      "query": "your next project"
+    },
+    "footer": {
+      "newsletter": "Newsletter",
+      "insiderLead": "Subscribe to The",
+      "insiderEmphasis": "SEFGH Insider",
+      "insiderBody": "A newsletter for developers: techniques, technical guides and the latest product news from SEFGH.",
+      "email": "Email address",
+      "subscribe": "Subscribe",
+      "consent": "I agree to receive product updates and news from SEFGH.",
+      "privacyStatement": "Privacy statement",
+      "marquee": [
+        "Natural-language search",
+        "Trending repositories",
+        "Every language",
+        "Save and share",
+        "Open source first"
+      ],
+      "title": "Ready to dig in?",
+      "start": "Start searching",
+      "github": "Sign in with GitHub",
+      "rights": "All rights reserved",
+      "dugUpBy": "Dug up by",
+      "backToTop": "Back to top"
+    }
   }
 }
