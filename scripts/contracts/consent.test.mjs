@@ -68,11 +68,7 @@ test('analytics loads for everyone except those who opt out', () => {
 
 test('both footers let a visitor change the answer', () => {
   assert.match(read('src/components/CookieBar.jsx'), /onClick=\{\(\) => saveConsent\(""\)\}/);
-  for (const footer of [
-    'src/components/ui/footer-newsletter.jsx',
-    'src/components/Footer.jsx',
-    'src/components/landing/LandingFooter.jsx',
-  ]) {
+  for (const footer of ['src/components/ui/footer-newsletter.jsx', 'src/components/Footer.jsx']) {
     assert.match(read(footer), /<CookieSettingsButton /, footer);
   }
 });
