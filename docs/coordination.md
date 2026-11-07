@@ -13,8 +13,120 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Claude Code released REDESIGN-BRANCH-001 (2026-11-07), committed on worktree branch `claude/home-redesign` after DEPLOY-HOLD-001 (`6fb2208`), SEARCH-001 (`92cfeb1`) and HOME-001 (`81b515d`), and handed off.
+- **Redesign branch (owner, 2026-11-07):** all redesign work collects on `redesign/integration` (cut from `main`), never on `main`, with merge commits so the history stays. See AGENTS.md "Redesign integration branch and deploy hold". `claude/home-redesign` (HOME-001, SEARCH-001, DEPLOY-HOLD-001, REDESIGN-BRANCH-001) is to be merged into `redesign/integration`, not into `main`.
+- **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled` to false for `main` and `redesign/integration`. Neither branch creates Vercel deployments. Agents do not deploy and do not remove this hold; only the owner lifts it, when the redesign is finished and the old UI is retired. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: REDESIGN-BRANCH-001 redesign integration branch (Claude Code, 2026-11-07)
+
+Status: **complete; committed on `claude/home-redesign`; not yet acted on by the Git Agent**. Owner Claude Code, at the owner's request.
+
+Decision (owner): all redesign work goes to a long-lived `redesign/integration` branch with full commit history (merge commits, no squash), tested locally against the real backend and never deployed, until the owner finishes the redesign and merges it into `main` themselves.
+
+Changed:
+- `AGENTS.md`: new section "Redesign integration branch and deploy hold" (base and target branch, `--no-ff` merges, keeping `main` merged in, local backend checks, no deploys, old UI until the end, one worktree at a time).
+- `vercel.json`: `git.deploymentEnabled` now also has `"redesign/integration": false`.
+- `docs/coordination.md`: this record and the state lines.
+
+Needs the Git Agent: create `redesign/integration` from `main`, merge `claude/home-redesign` into it with `--no-ff` (not into `main`), push it, then remove the `home-redesign` worktree. Until that branch exists, the next redesign task cannot start from it.
+
+Checks: `vercel.json` parses as JSON; `npm run handoff` run on the commit. Not verified on Vercel: that neither `main` nor `redesign/integration` deploys; confirm in the Vercel Deployments list after the next push.
+
+Writer released: yes.
+
+## Handoff: DEPLOY-HOLD-001 hold production deploys from main (Claude Code, 2026-11-07)
+
+Status: **complete; committed on `claude/home-redesign` after SEARCH-001; takes effect only once merged into `main`; not verified on Vercel**. Owner Claude Code, at the owner's request.
+
+Why: the new landing page (LANDING-001, merged as PR #3) went live on `sefgh-main.vercel.app` automatically. The Git Agent pushed `main` to GitHub, and the Vercel Git integration deploys every push to `main`. The owner wants the redesign to go live only when it is finished, together with the retirement of the old UI.
+
+What: a new `vercel.json` with `"git": { "deploymentEnabled": { "main": false } }`. Pushes to `main` stop creating Vercel deployments; other branches (previews) still deploy. Vercel reads the file from each commit, so the merge commit that brings this branch (HOME-001, SEARCH-001 and this file) into `main` is itself not deployed. The landing page already live stays live until the owner rolls it back or deploys again.
+
+Lifting the hold, owner only: delete the `main` entry (or the file), merge, and redeploy, or deploy by hand from the Vercel dashboard or CLI.
+
+Checks: `vercel.json` parses as JSON; `npm run handoff` (contracts and Go checks) run on the commit. Not verified: Vercel behaviour. Agents have no Vercel deployment access here, so whether the next push to `main` is skipped is unconfirmed until it happens; confirm in the Vercel dashboard's Deployments list after the next merge.
+
+Writer released: yes.
+
+## Handoff: SEARCH-001 Search page redesign (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; owner reviewed the layout preview and approved the commit (2026-11-07); committed in one task commit on `claude/home-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/home-redesign`, on top of HOME-001 (`81b515d`, not yet in `main`). It reuses Home's shell and fonts, so the owner's one-worktree rule kept it in this worktree rather than a new one. `npm run handoff` run on the commit. Owner decision (2026-11-07): the old UI is retired only once the redesign is finished, and deployment stays the owner's call; agents do not deploy.
+
+What: `/search` rebuilt on the approved design-system picks (SEFGH Design System, "Search page" cards), inside Home's rail. The search itself is unchanged: `useGitHubSearch` still drives `/api/github/search`, filters, pages, history saving and the 30-minute cache.
+- **Before searching (E2):** "Find a repository", the bar, two platform numbers from `platform_stats` (as the old banner read them; "—" if unavailable), and six "Try a search" cards that run their query.
+- **Bar (B2 + B3):**
+  - The mode is a narrow "Scout ▾" chip inside the bar (same three modes; only UI state, as before), plus the existing AI enhance-query button.
+  - One panel holds AI suggestions (same `/api/ai/suggestions` call, 300 ms debounce) and recent searches (same history source, top 5, filtered by the typed text).
+  - A small switch turns AI suggestions off, remembered as `sefgh.searchSuggestions`; history stays either way.
+  - Keys: "/" focuses the bar, ↑/↓ move through the panel, Enter picks, Esc closes.
+- **Filters (F1):** the old navbar's language, stars, updated (dateRange), license and sort, as chips. Active chips turn blue, with Clear all. Behaviour change: a filter **the user changes** now re-runs the current search; the old navbar only applied filters on the next search. Filters restored from the cache do not trigger a request.
+- **Understood as (Q1):** one line from the existing `analyzeQuery`, now exported from `QueryUnderstandingPanel.jsx`; nothing else in that file changed.
+- **Results (R1/R2/R3):** Rows, Cards or Table behind a switch, remembered as `sefgh.searchView` (default Rows), with the old pagination rules and the "GitHub shows the first 1,000 results" note. No match score is shown: the search API does not return one.
+- **Preview (V2):** a result opens a Sheet drawer (focus trap, Esc, overlay) holding the existing `CodeExplorer`, plus an "Open repository" bar linking to `/repo/owner/name`. This replaces the split pane. Star and Ask AI from the mock-up are not added: the app has no add-star call in use, and chat's acceptance of a starting question is unverified. `CodeExplorer` keeps its own look (theme tokens in the dark scope).
+- **Shell:** `HomeShell` takes `showSearch` and `title`, so Search hides the top-bar search and time tabs; Home is unchanged. `DynamicIslandNav` is also hidden on `/search`. The small site `Footer` is dropped here, as on Home.
+- The old Search components (`SearchBox`, `SearchNavbar`, `SearchResults`, `SearchStats`, `PopularSearches`, `SearchNavGuide`, `SearchHeader`, `ViewToggle`, `SearchFilters`) are no longer used by `/search` but remain in the repo.
+
+Changed files: `docs/coordination.md`, `src/app/search/page.js`, `src/components/home/HomeShell.jsx`, `src/components/navigation/DynamicIslandNav.jsx`, `src/components/search/QueryUnderstandingPanel.jsx` (export only); new `src/components/search-page/` (`SearchView.jsx`, `SearchBar.jsx`, `SearchFilterChips.jsx`, `SearchResultsViews.jsx`, `RepoPreviewDrawer.jsx`).
+
+Checks (Claude Code):
+- `npm run lint` passed. One justified `eslint-disable-next-line react-hooks/exhaustive-deps`, with a comment: the filter re-run must depend on filters only.
+- `npm run test:contracts` 732/732.
+- `npm run build` passed (48/48), with placeholder public Supabase values.
+- Browser (`next start` on 3108, started from this worktree) at 1440px and 375px. The search API and AI suggestions were fed sample responses in the browser only. Verified:
+  - before-search state, with narrow chip and button;
+  - suggestion panel and keyboard pick (one request);
+  - Rows, Cards and Table views, with the choice remembered;
+  - a Language chip change re-runs exactly one request with `language=Rust`;
+  - Clear all appears;
+  - the drawer opens with the Open repository link, Esc closes it, and the Sheet's duplicate close button is hidden;
+  - the suggestions switch off is remembered and shows the history-only note;
+  - no overflow at 375px.
+
+Not verified: real search, suggestions and history data (no `.env.local`); `CodeExplorer` content (GitHub is not reachable from this local preview); `platform_stats` numbers.
+
+Next: Git Agent synchronization of `claude/home-redesign` (HOME-001 + SEARCH-001); then the next page (Repo details suggested). After the last page, a bounded clean-up task removes the old, unused UI components. Rollback: revert the commit.
+
+Writer released: yes. No processes left running (the local preview server was stopped).
+
+## Handoff: HOME-001 Home page redesign (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; owner reviewed the running page and approved commit and handoff (2026-11-07); committed in one task commit on `claude/home-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/home-redesign` (worktree `.claude/worktrees/home-redesign`, created from `main` at `423a8d4` because the app would not merge `main` into the old LANDING-001 worktree: a protected `.claude/settings.json` change needed an origin confirmation that did not take). The old worktree `design-system-extraction-805583` was unregistered and its merged branch deleted; Windows refused to delete its folder (files in use), so `.claude/worktrees/design-system-extraction-805583` is a leftover folder to remove. `idea-planning-d33343` has uncommitted ADR-0003 work and was left alone. Resulting commit: the HOME-001 commit on `claude/home-redesign`; `npm run handoff` run on it.
+
+What: `/home` rebuilt on the approved design-system direction (SEFGH Design System artifact, "Home page" cards), always dark like the landing page:
+- **Shell:** a 72px icon rail by default that expands to a 232px labelled sidebar with a Submit nudge, remembered in `localStorage` (`sefgh.homeSidebar`). Top bar: time tabs, search with ⌘K/Ctrl+K, `NotificationBell`, avatar or Sign in. `DynamicIslandNav` is now also hidden on `/home`. Starred and History show only when signed in, as before.
+- **Header:** "Welcome back, <first name>." (signed out: "Discover projects."), with three numbers: new projects this week matching the user's preferences, starred count (`/api/repo/starred`), and total searches (search-history count). Any failed value shows "—".
+- **One card with a two-way switch** (clock / sliders): "Continue where you left off" shows opened repositories and recent searches; "Sharpen your feed" shows topics followed out of 5, with Add topics (opens the existing PreferencesDialog) and Later. Default is Sharpen until this browser has opened any repository, then Continue. A manual choice is remembered (`sefgh.homePanel`) and wins.
+- **Opened repositories:** SEFGH stores no repository visits, so the owner chose browser-only storage. The repo page renders `RecordRepoVisit`, which keeps the last 10 in `localStorage` (`sefgh.recentRepos`). It is per device and cleared with site data. No database change.
+- **Topics:** a column (chips on small screens) from preferences or live categories with counts, plus "+ edit preferences".
+- **Feed:** the existing projects query per time tab, the same filtering and Load more, as a dense table (project, language, stars, views, age). Clicking Stars, Views or Age sorts the rows loaded so far (descending, then ascending, then off). Rows open `/repo/owner/name`, or the GitHub URL in a new tab, as the old cards did. There is no per-row save button: the app has no add-star API in use, and none was invented.
+- **Right rail:** the profile card shows a GitHub-style graph of **searches per day** over 18 weeks (owner's choice; built from the newest 1000 saved searches), level and title, the contributions bar, followers, projects, View profile and Log out. About keeps Feedback · Business · Links. Signed out, a Sign in card shows instead.
+- **Fonts:** the shared Commit font module is now `src/lib/fonts/commit.js`, used by both `/` and `/home`.
+- Kept: AutoOnboarding, PreferencesDialog, MobileBottomNav.
+- Dropped from `/home`: the small site `Footer` on md+ (not in the approved design). `TopicsNav`, `ProjectsFeed`, `ProjectCard`, `UserProfileCard`, `AboutCard` and `CategoriesSidebar` are no longer used by `/home` but remain in the repo.
+
+Changed files: `docs/coordination.md`, `src/app/page.js`, `src/app/home/page.js`, `src/app/repo/[owner]/[repo-name]/page.js`, `src/components/navigation/DynamicIslandNav.jsx`; new `src/lib/fonts/commit.js`, `src/lib/home/recentRepos.js`, `src/hooks/home/useHomeActivity.js`, `src/hooks/home/useStoredChoice.js`, `src/components/repo-details/RecordRepoVisit.jsx`, and in `src/components/home/`: `HomeView.jsx`, `HomeShell.jsx`, `HomeWelcome.jsx`, `HomeTopics.jsx`, `HomeProjectTable.jsx`, `HomeProfile.jsx`, `home.module.css`. Not for commit: `.claude/launch.json` (local preview config).
+
+Checks (Claude Code):
+- `npm run lint` passed.
+- `npm run test:contracts` 732/732. The first run failed `date-format` (a tooltip used a non-en-IN date); fixed by using the shared `formatDate`/`formatRelativeTime`.
+- `npm run build` passed (48/48), with placeholder public Supabase values because the worktree has no `.env.local`.
+- Browser (`next start`), checked at 1440, 1280 and 375px:
+  - shell, rail/sidebar toggle and persistence;
+  - the Continue default with stored repositories, and Sharpen for a new visitor;
+  - signed-out profile card;
+  - no horizontal overflow at 375px.
+- Fixed during the check:
+  - the island covered the top bar;
+  - the top-bar tabs did not hide on phones (a module `display` beat `hidden`), so Sign in overflowed;
+  - the table squeezed to 426px at 1280px with the sidebar open (the profile column now waits for 2xl then).
+- The table, topics, sorting and topic filtering were checked by feeding sample `projects`/`categories` rows to the page's `fetch` in the browser only; no live data was read.
+
+Not verified: real data (no `.env.local`; signed-in numbers, real search graph, real feed), PreferencesDialog in the dark scope, and keyboard-only use beyond the focus rings.
+
+Next: Git Agent synchronization; then check the page with real data (signed-in numbers, search graph, feed); the next page through the design-system flow. Optional: remove the now-unused old Home components; delete the leftover `design-system-extraction-805583` folder. Rollback: revert the commit.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-07)
 
