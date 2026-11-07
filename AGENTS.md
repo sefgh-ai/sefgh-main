@@ -40,6 +40,16 @@ Check `git status --short` and the current commit before editing. The architectu
 - Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
 - Keep the reviewer read-only unless the user or the current task explicitly assigns implementation. Do not recursively launch more agents by default.
 
+## Writer flag and verification lease (every session, every checkout)
+
+These apply to every agent session: Codex, Claude Code in the terminal, and every Claude Code desktop session, including those in `.claude/worktrees/*`. Each checkout has its own `docs/coordination.md` flag and its own lease file, and the Git Agent reads both, so follow this in whichever checkout you edit. In Claude Code, the SessionStart hook in `.claude/settings.json` (`scripts/session-start-status.mjs`) prints the current state at the start of each session. It only reads the state and never takes a flag.
+
+1. **Check first.** Run `node scripts/agent-handoff.mjs --status` before your first edit. Edit only when it reports `IDLE_CLEAN`, `READY_VERIFIED` or `READY_NEEDS_VERIFY` with `writerReleased: true`.
+2. **Take the flag before editing.** Set `- **Active writer:**` in `docs/coordination.md` to you, the task ID, branch, base commit and files, and confirm `--status` now reports `WRITER_ACTIVE`. The Git Agent does not synchronize a checkout with an active writer.
+3. **Release it when you stop.** Write the handoff record, set `Active writer: none`, commit if the task calls for it, then run `npm run handoff`. That script takes the verification lease, runs the checks and drops the lease itself; do not take the lease by hand. Paused work gets a paused/incomplete checkpoint and no handoff run (see "Low-capacity checkpoint").
+4. **Busy means hands off.** On `VERIFICATION_BUSY`, `STATUS_ERROR` or someone else's `WRITER_ACTIVE`: do not edit, commit, synchronize or start checks. Wait for the owner (`Wait-Process -Id <pid>` for a lease), then check `--status` again. Never reset, delete or steal a lease or another writer's flag; an interrupted lease is recovered only as `docs/verification/handoff-concurrency.md` says.
+5. **No waiting while holding.** Do not hold the flag while you wait on the owner, CI, a review or another agent. Release it, or write a paused checkpoint, first. This is what stops two agents, or an agent and the Git Agent, from waiting on each other.
+
 ## Bugs and broken UI/UX (Phase 6)
 
 - When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one.

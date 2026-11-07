@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/session-start-status.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Checking SEFGH writer flag and verification lease"
+          }
+        ]
+      }
+    ]
+  }
+}
