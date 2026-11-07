@@ -18,7 +18,10 @@ const PageWrapper = memo(function PageWrapper({ children }) {
     pathname === "/chat" ||
     pathname === "/trending" ||
     pathname === "/playground" ||
-    pathname === "/submissions";
+    pathname === "/submissions" ||
+    // REPO-001: the redesigned repository page has the app rail and its own
+    // floating action bar, like Home and Search.
+    pathname?.startsWith("/repo/");
 
   // Pages that use AppFooter (big main site footer) - don't add small Footer
   const hasAppFooter =

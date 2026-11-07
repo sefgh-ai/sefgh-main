@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'
 
-export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) {
+// `compact` (REPO-001): an icon-only button for the floating action bar, with
+// the label and count in its tooltip; `className` styles it there.
+export function RepoCollectButton({ repoFullName, initialSaved, initialCount, compact = false, className }) {
   const { user } = useAuth()
   const [saved, setSaved] = useState(initialSaved || false)
   const [saveCount, setSaveCount] = useState(initialCount || 0)
@@ -72,6 +74,23 @@ export function RepoCollectButton({ repoFullName, initialSaved, initialCount }) 
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (compact) {
+    const label = `${saved ? 'Saved' : 'Save'} (${saveCount})`
+    return (
+      <button
+        type="button"
+        onClick={handleToggleSave}
+        disabled={isLoading}
+        aria-pressed={saved}
+        aria-label={label}
+        title={label}
+        className={className}
+      >
+        <BookmarkSimpleIcon weight={saved ? 'fill' : 'regular'} className="h-4 w-4" aria-hidden="true" />
+      </button>
+    )
   }
 
   return (
