@@ -1,0 +1,143 @@
+/*
+ * Home (/home, HOME-001) on the approved "Commit" direction. The palette and
+ * fonts are the landing page's (composed from landing.module.css), scoped to
+ * this page; pages not yet redesigned keep the zinc tokens in globals.css.
+ */
+.root {
+  composes: root from "../landing/landing.module.css";
+}
+
+.display {
+  font-family: var(--font-landing-display), ui-monospace, monospace;
+}
+.mono {
+  font-family: var(--font-landing-mono), ui-monospace, monospace;
+}
+.gradientText {
+  background: linear-gradient(90deg, #58a6ff, #a371f7 55%, #3fb950);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.focusRing:focus-visible {
+  outline: 2px solid var(--l-blue);
+  outline-offset: 2px;
+}
+
+.card {
+  background: var(--l-surface);
+  border: 1px solid var(--l-line);
+  border-radius: var(--l-radius);
+}
+
+/* Sidebar / rail */
+.side {
+  background: var(--l-bg-deep);
+  border-right: 1px solid var(--l-line);
+  transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  border-radius: var(--l-radius-sm);
+  color: var(--l-muted);
+  font-size: 14px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navItem:hover {
+  color: var(--l-ink);
+  background: rgba(230, 237, 243, 0.04);
+}
+.navActive {
+  background: rgba(56, 139, 253, 0.1);
+  color: var(--l-ink);
+  box-shadow: inset 2px 0 0 var(--l-green);
+}
+
+/* Segmented controls: time tabs and the Continue / Sharpen switch */
+.tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--l-line);
+  border-radius: var(--l-radius-sm);
+  background: var(--l-bg-deep);
+}
+.tab {
+  padding: 7px 14px;
+  border-radius: 5px;
+  font: 500 13px/1 var(--font-landing-mono), ui-monospace, monospace;
+  color: var(--l-muted);
+}
+.tabOn {
+  background: var(--l-surface);
+  color: var(--l-ink);
+  box-shadow: 0 0 0 1px var(--l-line);
+}
+.seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--l-line);
+  border-radius: 999px;
+  background: var(--l-bg-deep);
+}
+.segBtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 24px;
+  border-radius: 999px;
+  color: var(--l-muted);
+}
+.segOn {
+  background: var(--l-surface);
+  color: var(--l-green);
+  box-shadow: 0 0 0 1px var(--l-line);
+}
+
+.eyebrow {
+  font: 500 11px/1 var(--font-landing-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--l-green);
+}
+
+.bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #161b22;
+  overflow: hidden;
+}
+.bar > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #26a641, #39d353);
+}
+
+.hot {
+  font: 600 10px/1 var(--font-landing-mono), ui-monospace, monospace;
+  color: #ffa657;
+  border: 1px solid rgba(255, 166, 87, 0.35);
+  border-radius: 999px;
+  padding: 3px 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.row {
+  transition: background 0.15s ease;
+}
+.row:hover {
+  background: rgba(230, 237, 243, 0.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side,
+  .navItem,
+  .row {
+    transition: none;
+  }
+}

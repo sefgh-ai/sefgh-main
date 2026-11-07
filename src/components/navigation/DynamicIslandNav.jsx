@@ -30,9 +30,10 @@ const links = [
 export function DynamicIslandNav() {
   const pathname = usePathname();
 
-  // The landing page has its own header and footer links (LANDING-001); the
-  // floating island covered its header there.
-  if (pathname === "/") return null;
+  // Redesigned pages carry their own navigation, and the floating island
+  // covered their headers: the landing page (LANDING-001) and Home's top bar
+  // and rail (HOME-001).
+  if (pathname === "/" || pathname === "/home") return null;
 
   return (
     <>

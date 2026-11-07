@@ -13,8 +13,47 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. Claude Code released HOME-001 (Home page redesign, 2026-11-07): committed on worktree branch `claude/home-redesign` and handed off after the owner's review. Earlier: none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: HOME-001 Home page redesign (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; owner reviewed the running page and approved commit and handoff (2026-11-07); committed in one task commit on `claude/home-redesign`; unreviewed by another agent; not deployed**. Owner Claude Code. Branch `claude/home-redesign` (worktree `.claude/worktrees/home-redesign`, created from `main` at `423a8d4` because the app would not merge `main` into the old LANDING-001 worktree: a protected `.claude/settings.json` change needed an origin confirmation that did not take). The old worktree `design-system-extraction-805583` was unregistered and its merged branch deleted; Windows refused to delete its folder (files in use), so `.claude/worktrees/design-system-extraction-805583` is a leftover folder to remove. `idea-planning-d33343` has uncommitted ADR-0003 work and was left alone. Resulting commit: the HOME-001 commit on `claude/home-redesign`; `npm run handoff` run on it.
+
+What: `/home` rebuilt on the approved design-system direction (SEFGH Design System artifact, "Home page" cards), always dark like the landing page:
+- **Shell:** a 72px icon rail by default that expands to a 232px labelled sidebar with a Submit nudge, remembered in `localStorage` (`sefgh.homeSidebar`). Top bar: time tabs, search with ⌘K/Ctrl+K, `NotificationBell`, avatar or Sign in. `DynamicIslandNav` is now also hidden on `/home`. Starred and History show only when signed in, as before.
+- **Header:** "Welcome back, <first name>." (signed out: "Discover projects."), with three numbers: new projects this week matching the user's preferences, starred count (`/api/repo/starred`), and total searches (search-history count). Any failed value shows "—".
+- **One card with a two-way switch** (clock / sliders): "Continue where you left off" shows opened repositories and recent searches; "Sharpen your feed" shows topics followed out of 5, with Add topics (opens the existing PreferencesDialog) and Later. Default is Sharpen until this browser has opened any repository, then Continue. A manual choice is remembered (`sefgh.homePanel`) and wins.
+- **Opened repositories:** SEFGH stores no repository visits, so the owner chose browser-only storage. The repo page renders `RecordRepoVisit`, which keeps the last 10 in `localStorage` (`sefgh.recentRepos`). It is per device and cleared with site data. No database change.
+- **Topics:** a column (chips on small screens) from preferences or live categories with counts, plus "+ edit preferences".
+- **Feed:** the existing projects query per time tab, the same filtering and Load more, as a dense table (project, language, stars, views, age). Clicking Stars, Views or Age sorts the rows loaded so far (descending, then ascending, then off). Rows open `/repo/owner/name`, or the GitHub URL in a new tab, as the old cards did. There is no per-row save button: the app has no add-star API in use, and none was invented.
+- **Right rail:** the profile card shows a GitHub-style graph of **searches per day** over 18 weeks (owner's choice; built from the newest 1000 saved searches), level and title, the contributions bar, followers, projects, View profile and Log out. About keeps Feedback · Business · Links. Signed out, a Sign in card shows instead.
+- **Fonts:** the shared Commit font module is now `src/lib/fonts/commit.js`, used by both `/` and `/home`.
+- Kept: AutoOnboarding, PreferencesDialog, MobileBottomNav.
+- Dropped from `/home`: the small site `Footer` on md+ (not in the approved design). `TopicsNav`, `ProjectsFeed`, `ProjectCard`, `UserProfileCard`, `AboutCard` and `CategoriesSidebar` are no longer used by `/home` but remain in the repo.
+
+Changed files: `docs/coordination.md`, `src/app/page.js`, `src/app/home/page.js`, `src/app/repo/[owner]/[repo-name]/page.js`, `src/components/navigation/DynamicIslandNav.jsx`; new `src/lib/fonts/commit.js`, `src/lib/home/recentRepos.js`, `src/hooks/home/useHomeActivity.js`, `src/hooks/home/useStoredChoice.js`, `src/components/repo-details/RecordRepoVisit.jsx`, and in `src/components/home/`: `HomeView.jsx`, `HomeShell.jsx`, `HomeWelcome.jsx`, `HomeTopics.jsx`, `HomeProjectTable.jsx`, `HomeProfile.jsx`, `home.module.css`. Not for commit: `.claude/launch.json` (local preview config).
+
+Checks (Claude Code):
+- `npm run lint` passed.
+- `npm run test:contracts` 732/732. The first run failed `date-format` (a tooltip used a non-en-IN date); fixed by using the shared `formatDate`/`formatRelativeTime`.
+- `npm run build` passed (48/48), with placeholder public Supabase values because the worktree has no `.env.local`.
+- Browser (`next start`), checked at 1440, 1280 and 375px:
+  - shell, rail/sidebar toggle and persistence;
+  - the Continue default with stored repositories, and Sharpen for a new visitor;
+  - signed-out profile card;
+  - no horizontal overflow at 375px.
+- Fixed during the check:
+  - the island covered the top bar;
+  - the top-bar tabs did not hide on phones (a module `display` beat `hidden`), so Sign in overflowed;
+  - the table squeezed to 426px at 1280px with the sidebar open (the profile column now waits for 2xl then).
+- The table, topics, sorting and topic filtering were checked by feeding sample `projects`/`categories` rows to the page's `fetch` in the browser only; no live data was read.
+
+Not verified: real data (no `.env.local`; signed-in numbers, real search graph, real feed), PreferencesDialog in the dark scope, and keyboard-only use beyond the focus rings.
+
+Next: Git Agent synchronization; then check the page with real data (signed-in numbers, search graph, feed); the next page through the design-system flow. Optional: remove the now-unused old Home components; delete the leftover `design-system-extraction-805583` folder. Rollback: revert the commit.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-07)
 

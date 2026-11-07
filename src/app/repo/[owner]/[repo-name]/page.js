@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import RepoDetailsLayout from "@/components/repo-details/RepoDetailsLayout";
+import RecordRepoVisit from "@/components/repo-details/RecordRepoVisit";
 import { fetchRepoForPage } from "@/lib/repo/repoData";
 import { fetchSefghData } from "@/lib/repo/sefghData";
 
@@ -24,12 +25,20 @@ export default async function RepoDetailsPage({ params }) {
   const sefghData = await fetchSefghData(supabase, `${owner}/${repoName}`);
 
   return (
-    <RepoDetailsLayout
-      repoData={repoData}
-      sefghData={sefghData}
-      owner={owner}
-      repoName={repoName}
-    />
+    <>
+      {/* HOME-001: remember the visit in this browser for Home's "Continue where you left off". */}
+      <RecordRepoVisit
+        name={`${owner}/${repoName}`}
+        description={repoData.description || null}
+        language={repoData.language || null}
+      />
+      <RepoDetailsLayout
+        repoData={repoData}
+        sefghData={sefghData}
+        owner={owner}
+        repoName={repoName}
+      />
+    </>
   );
 }
 
