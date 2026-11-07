@@ -13,8 +13,20 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Merged SESSION-HOOK-001 (PR #6) and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. BUG-072 (Git Agent) complete; merged SESSION-HOOK-001 (PR #6) and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: BUG-072, fix synthetic playground probe and ESLint ignore (Git Agent, 2026-11-07)
+
+Status: **implementation complete; local checks passed; committed to main; not deployed.** Writer Git Agent. Base commit `77f4d5a`.
+
+Resolves R-221:
+- `scripts/keys-browser-probe.mjs`: added proxy intercept for `location.origin` with `/api/data/(notifications|profiles)/` returning `Response.json([])`. Verified all three viewport checks (desktop, phone, zoom200) pass cleanly.
+- `eslint.config.mjs`: added `.claude/**` to `globalIgnores` so agent worktree artifacts do not trigger false lint failures. Verified `npm run lint` passes with 0 errors / 0 warnings.
+- `npm run test:contracts`: 732/732 passed.
+- Go backend: 39 test suites, vet, and gofmt all passed.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: GIT-PR-002, CI failure on pull requests 4 and 5 (Claude Code, 2026-11-07)
 

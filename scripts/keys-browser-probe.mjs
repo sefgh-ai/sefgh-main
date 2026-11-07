@@ -68,6 +68,7 @@ function installFixture(config){
    if(!config.enabled&&['/rest/v1/api_keys','/rest/v1/api_logs','/rest/v1/api_limits'].includes(url.pathname)){state.calls.push({path:url.pathname,method});return Response.json([]);}
    state.unexpected.push(url.pathname);throw Error('Unexpected synthetic data request');
   }
+  if(url.origin===location.origin&&(/^\/api\/data\/(?:notifications|profiles)\//.test(url.pathname)))return Response.json([]);
   if(url.origin===location.origin&&(!url.pathname.startsWith('/api/')||url.pathname.startsWith('/api/auth/')))return original(input,init);
   state.unexpected.push(url.pathname);throw Error('Unexpected browser request');
  };

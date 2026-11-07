@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Quarantined dead code, pending deletion.
     ".deadcode/**",
+    // Agent worktrees and local metadata.
+    ".claude/**",
   ]),
 ]);
 
