@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { CaretDownIcon } from "@phosphor-icons/react";
 
 export default function FaqAccordion({ items }) {
   const [openIndex, setOpenIndex] = useState(null);
@@ -20,7 +20,7 @@ export default function FaqAccordion({ items }) {
               onClick={() => setOpenIndex(open ? null : index)}
             >
               <span className="font-medium text-foreground">{item.q}</span>
-              <ChevronDown
+              <CaretDownIcon
                 aria-hidden="true"
                 className={`w-5 h-5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
               />

@@ -11,22 +11,16 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import {
-  Bell,
-  CheckCircle,
-  AlertTriangle,
-  AlertCircle,
-  Info,
-} from "lucide-react";
+import { BellIcon, CheckCircleIcon, WarningIcon, WarningCircleIcon, InfoIcon } from "@phosphor-icons/react";
 
 const NotificationContext = createContext(null);
 
 // Icon mapping for notification types
 const notificationIcons = {
-  success: CheckCircle,
-  warning: AlertTriangle,
-  error: AlertCircle,
-  info: Info,
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: WarningCircleIcon,
+  info: InfoIcon,
 };
 
 // Color mapping for notification types
@@ -77,7 +71,7 @@ export function NotificationProvider({ children }) {
 
   // Show toast notification for new notifications
   const showNotificationToast = useCallback((notification) => {
-    const Icon = notificationIcons[notification.type] || Bell;
+    const Icon = notificationIcons[notification.type] || BellIcon;
     const colorClass = notificationColors[notification.type] || "text-blue-500";
 
     toast(notification.title, {

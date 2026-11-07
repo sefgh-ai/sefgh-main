@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Paperclip, X } from 'lucide-react';
+import { PaperclipIcon, XIcon } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -173,7 +173,7 @@ export default function ReportIssueTab() {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
-            <Paperclip className="w-6 h-6 text-muted-foreground mb-2" />
+            <PaperclipIcon className="w-6 h-6 text-muted-foreground mb-2" />
             <p className="text-sm font-medium text-foreground">
               📎 Drag and drop files here
             </p>
@@ -193,7 +193,7 @@ export default function ReportIssueTab() {
                 className="flex items-center justify-between p-3 bg-muted rounded-lg"
               >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <Paperclip className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <PaperclipIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-sm font-medium truncate">{file.name}</span>
                   <span className="text-xs text-muted-foreground flex-shrink-0">
                     ({(file.size / 1024).toFixed(1)} KB)
@@ -203,7 +203,7 @@ export default function ReportIssueTab() {
                   onClick={() => removeAttachment(index)}
                   className="ml-2 p-1 hover:bg-background rounded transition-colors flex-shrink-0"
                 >
-                  <X className="w-4 h-4" />
+                  <XIcon className="w-4 h-4" />
                 </button>
               </div>
             ))}

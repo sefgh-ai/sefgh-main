@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Trash2, Calendar, ExternalLink } from "lucide-react";
+import { TrashIcon, CalendarBlankIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { formatSubmissionDate } from "@/lib/utils/submissions/submissionHelpers";
 
@@ -24,7 +24,7 @@ const SubmissionCard = React.memo(({ submission, onDelete }) => {
           className="ml-2 p-2 rounded-lg hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
           title="Remove from view"
         >
-          <Trash2 className="h-4 w-4" />
+          <TrashIcon className="h-4 w-4" />
         </button>
       </div>
 
@@ -54,7 +54,7 @@ const SubmissionCard = React.memo(({ submission, onDelete }) => {
 
       {/* Submitted Date */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-        <Calendar className="h-3 w-3" />
+        <CalendarBlankIcon className="h-3 w-3" />
         <span>Submitted {formatSubmissionDate(submission.submitted_at)}</span>
       </div>
 
@@ -66,7 +66,7 @@ const SubmissionCard = React.memo(({ submission, onDelete }) => {
           className="flex-1"
           onClick={() => window.open(submission.url, "_blank")}
         >
-          <ExternalLink className="h-3 w-3 mr-1.5" />
+          <ArrowSquareOutIcon className="h-3 w-3 mr-1.5" />
           View on GitHub
         </Button>
       </div>

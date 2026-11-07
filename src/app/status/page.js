@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, CheckCircle2, Clock, Server, Wifi } from "lucide-react";
+import { WarningIcon, CheckCircleIcon, ClockIcon, HardDrivesIcon, MagnifyingGlassIcon, LockKeyIcon, BellIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 
 const services = [
@@ -8,7 +8,7 @@ const services = [
     uptime: "99.97%",
     lastIncident: "2026-03-10",
     description: "Core API powering semantic and keyword search requests.",
-    icon: Activity,
+    icon: MagnifyingGlassIcon,
   },
   {
     name: "Auth & Identity",
@@ -16,7 +16,7 @@ const services = [
     uptime: "99.99%",
     lastIncident: "2026-02-21",
     description: "Login, signup, SSO, and token refresh flows.",
-    icon: CheckCircle2,
+    icon: LockKeyIcon,
   },
   {
     name: "Vector Indexing",
@@ -24,7 +24,7 @@ const services = [
     uptime: "99.61%",
     lastIncident: "2026-03-28",
     description: "Embedding updates and background refresh jobs.",
-    icon: Server,
+    icon: HardDrivesIcon,
   },
   {
     name: "Notifications",
@@ -32,7 +32,7 @@ const services = [
     uptime: "99.80%",
     lastIncident: "Scheduled",
     description: "Email and in-app notifications for saved searches.",
-    icon: Wifi,
+    icon: BellIcon,
   },
 ];
 
@@ -93,7 +93,7 @@ export default function StatusPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         <header className="space-y-4 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 text-sm font-medium">
-            <CheckCircle2 className="h-4 w-4" />
+            <CheckCircleIcon className="h-4 w-4" />
             All systems monitored
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">SEFGH Status</h1>
@@ -127,7 +127,7 @@ export default function StatusPage() {
               </p>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
+              <ClockIcon className="h-4 w-4" />
               Last updated just now
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function StatusPage() {
 
         <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-300" />
+            <WarningIcon className="h-5 w-5 text-amber-300" />
             <h2 className="text-2xl font-semibold">Recent incidents</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

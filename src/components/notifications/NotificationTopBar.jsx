@@ -12,17 +12,16 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  Check,
-  CheckCheck,
-  Trash2,
-  Search,
-  CheckCircle2,
-  X,
-  ChevronDown,
-  Bookmark,
-  MoreHorizontal,
-  SlidersHorizontal,
-} from "lucide-react";
+  CheckIcon,
+  ChecksIcon,
+  TrashIcon,
+  MagnifyingGlassIcon,
+  CheckCircleIcon,
+  XIcon,
+  CaretDownIcon,
+  BookmarkSimpleIcon,
+  DotsThreeIcon,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export function NotificationTopBar({
@@ -68,7 +67,7 @@ export function NotificationTopBar({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="text-muted-foreground">
               Group by: <span className="text-foreground ml-1 capitalize">{groupBy || "Date"}</span>
-              <ChevronDown className="h-4 w-4 ml-1" />
+              <CaretDownIcon className="h-4 w-4 ml-1" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -89,7 +88,7 @@ export function NotificationTopBar({
       <div className="flex items-center gap-3 px-4 pb-3">
         {/* Search */}
         <div className="relative flex-1 max-w-lg">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search notifications"
             value={searchQuery}
@@ -111,7 +110,7 @@ export function NotificationTopBar({
                 onClick={() => handleBulkAction("read")}
                 className="h-8"
               >
-                <Check className="h-4 w-4 mr-1.5" />
+                <CheckIcon className="h-4 w-4 mr-1.5" />
                 Mark read
               </Button>
               <Button
@@ -120,7 +119,7 @@ export function NotificationTopBar({
                 onClick={() => handleBulkAction("save")}
                 className="h-8"
               >
-                <Bookmark className="h-4 w-4 mr-1.5" />
+                <BookmarkSimpleIcon className="h-4 w-4 mr-1.5" />
                 Save
               </Button>
               <Button
@@ -129,7 +128,7 @@ export function NotificationTopBar({
                 onClick={() => handleBulkAction("done")}
                 className="h-8"
               >
-                <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                <CheckCircleIcon className="h-4 w-4 mr-1.5" />
                 Done
               </Button>
               <Button
@@ -138,7 +137,7 @@ export function NotificationTopBar({
                 onClick={() => handleBulkAction("delete")}
                 className="h-8 text-destructive hover:text-destructive"
               >
-                <Trash2 className="h-4 w-4 mr-1.5" />
+                <TrashIcon className="h-4 w-4 mr-1.5" />
                 Delete
               </Button>
               <Button
@@ -147,7 +146,7 @@ export function NotificationTopBar({
                 onClick={() => setSelectedIds([])}
                 className="h-8"
               >
-                <X className="h-4 w-4" />
+                <XIcon className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -160,14 +159,14 @@ export function NotificationTopBar({
                 onClick={markAllAsRead}
                 className="h-8"
               >
-                <CheckCheck className="h-4 w-4 mr-1.5" />
+                <ChecksIcon className="h-4 w-4 mr-1.5" />
                 Mark all read
               </Button>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
+                  <DotsThreeIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
-import { Copy, Check, Maximize2 } from 'lucide-react'
+import { CopyIcon, CheckIcon, ArrowsOutIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import 'highlight.js/styles/github-dark.css'
@@ -52,7 +52,7 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
             className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
             onClick={handleCopy}
           >
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
           </Button>
           {onOpenInCanvas && (
             <Button
@@ -62,7 +62,7 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
               onClick={handleOpenInCanvas}
               title="Open in Canvas"
             >
-              <Maximize2 className="h-3.5 w-3.5" />
+              <ArrowsOutIcon className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>

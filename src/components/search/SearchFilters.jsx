@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { XIcon, CaretDownIcon } from "@phosphor-icons/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +40,7 @@ export function SearchFilters({
             >
               {filterOptions.find((f) => f.value === (sort || "all"))?.label ||
                 "All"}
-              <ChevronDownIcon className="ml-2 h-3 w-3" />
+              <CaretDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
@@ -66,7 +66,7 @@ export function SearchFilters({
               className="rounded-xl glass-premium hover:glow-border-grey transition-smooth shadow-soft"
             >
               Language: {language || "All"}
-              <ChevronDownIcon className="ml-2 h-3 w-3" />
+              <CaretDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
@@ -131,7 +131,7 @@ export function SearchFilters({
               className="rounded-xl glass-premium hover:glow-border-cyan transition-smooth shadow-soft"
             >
               Stars: {stars ? `>${stars}` : "Any"}
-              <ChevronDownIcon className="ml-2 h-3 w-3" />
+              <CaretDownIcon className="ml-2 h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="rounded-xl glass-premium border-border shadow-premium">
@@ -172,7 +172,7 @@ export function SearchFilters({
 
         {(language || stars || sort !== "all") && (
           <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-            <XMarkIcon className="h-3 w-3 mr-1.5" />
+            <XIcon className="h-3 w-3 mr-1.5" />
             Clear Filters
           </Button>
         )}

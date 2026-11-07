@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Download } from "lucide-react"
+import { DownloadSimpleIcon } from "@phosphor-icons/react"
 
 /**
  * Platform download card component
@@ -42,7 +42,7 @@ const PlatformCard = React.memo(({ name, icon, gradient, hoverGradient, iconBg, 
               className={`flex items-center justify-between w-full px-6 py-4 bg-gradient-to-r from-background to-muted dark:from-card dark:to-muted hover:${hoverGradient} text-muted-foreground dark:text-foreground hover:text-foreground rounded-2xl transition-all duration-300 group/btn shadow-md hover:shadow-xl transform hover:-translate-y-1`}
             >
               <span className="text-sm font-semibold">{download.label}</span>
-              <Download className="w-5 h-5 group-hover/btn:translate-y-1 group-hover/btn:scale-110 transition-all duration-300" />
+              <DownloadSimpleIcon className="w-5 h-5 group-hover/btn:translate-y-1 group-hover/btn:scale-110 transition-all duration-300" />
             </a>
           ))}
         </div>

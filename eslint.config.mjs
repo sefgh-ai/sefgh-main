@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Desktop-app worktrees carry their own .next output (R-216).
+    ".claude/**",
     // Quarantined dead code, pending deletion.
     ".deadcode/**",
   ]),

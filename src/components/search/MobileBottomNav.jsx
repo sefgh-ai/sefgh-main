@@ -3,22 +3,7 @@
 import { useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import {
-  Home,
-  Search,
-  Send,
-  ChartNoAxesCombined,
-  Star,
-  Clock,
-  Settings,
-  Upload,
-  Key,
-  MoreHorizontal,
-  X,
-  Lock,
-  User,
-  LogOut,
-} from "lucide-react";
+import { HouseIcon, MagnifyingGlassIcon, ChatCircleIcon, ChartLineUpIcon, StarIcon, ClockIcon, GearIcon, UploadSimpleIcon, DotsThreeIcon, XIcon, SignOutIcon, CodeIcon, SignInIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -71,20 +56,20 @@ export function MobileBottomNav({ user }) {
 
   // Primary nav items (always visible)
   const primaryItems = [
-    { href: "/home", icon: Home, label: "Home" },
-    { href: "/search", icon: Search, label: "Search" },
-    { href: "/chat", icon: Send, label: "Chat" },
-    { href: "/trending", icon: ChartNoAxesCombined, label: "Trending" },
+    { href: "/home", icon: HouseIcon, label: "Home" },
+    { href: "/search", icon: MagnifyingGlassIcon, label: "Search" },
+    { href: "/chat", icon: ChatCircleIcon, label: "Chat" },
+    { href: "/trending", icon: ChartLineUpIcon, label: "Trending" },
   ];
 
   // Secondary items (in dropdown) - only for logged in users
   const secondaryItems = user
     ? [
-        { href: "/starred", icon: Star, label: "Starred" },
-        { href: "/history", icon: Clock, label: "History" },
-        { href: "/playground", icon: Key, label: "Playground" },
-        { href: "/submissions", icon: Upload, label: "Submissions" },
-        { href: "/settings", icon: Settings, label: "Settings" },
+        { href: "/starred", icon: StarIcon, label: "Starred" },
+        { href: "/history", icon: ClockIcon, label: "History" },
+        { href: "/playground", icon: CodeIcon, label: "Playground" },
+        { href: "/submissions", icon: UploadSimpleIcon, label: "Submissions" },
+        { href: "/settings", icon: GearIcon, label: "Settings" },
       ]
     : [];
 
@@ -128,9 +113,9 @@ export function MobileBottomNav({ user }) {
               )}
             >
               {open ? (
-                <X className="h-5 w-5" />
+                <XIcon className="h-5 w-5" />
               ) : (
-                <MoreHorizontal className="h-5 w-5" />
+                <DotsThreeIcon className="h-5 w-5" />
               )}
               <span className="text-[10px] font-medium">More</span>
             </button>
@@ -179,7 +164,7 @@ export function MobileBottomNav({ user }) {
                   className="flex items-center gap-3 cursor-pointer"
                   onClick={() => setOpen(false)}
                 >
-                  <Lock className="h-4 w-4" />
+                  <SignInIcon className="h-4 w-4" />
                   <span>Sign In</span>
                 </Link>
               </DropdownMenuItem>
@@ -210,7 +195,7 @@ export function MobileBottomNav({ user }) {
                   onClick={handleSignOut}
                   className="text-destructive cursor-pointer focus:text-destructive"
                 >
-                  <LogOut className="h-4 w-4 mr-3" />
+                  <SignOutIcon className="h-4 w-4 mr-3" />
                   <span>Log out</span>
                 </DropdownMenuItem>
               </>

@@ -14,17 +14,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  Plus,
-  MessageSquare,
-  Pin,
-  Trash2,
-  Trash,
-  Settings,
-  User,
-  LogOut,
-  Sparkles,
-  ChevronDown,
-} from "lucide-react";
+  PlusIcon,
+  ChatIcon,
+  PushPinIcon,
+  TrashIcon,
+  GearIcon,
+  UserIcon,
+  SignOutIcon,
+  CpuIcon,
+  CaretDownIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,10 +39,10 @@ function ModelSelectorDropdown({ model, onModelChange, onClose }) {
           className="flex-1 justify-between h-9 hover:shadow-glow-blue"
         >
           <span className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+            <CpuIcon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
             <span className="font-medium text-sm">{model}</span>
           </span>
-          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+          <CaretDownIcon className="h-3.5 w-3.5 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -58,7 +57,7 @@ function ModelSelectorDropdown({ model, onModelChange, onClose }) {
             onClose?.();
           }}
         >
-          <Sparkles className="mr-2 h-4 w-4 text-blue-600" />
+          <CpuIcon className="mr-2 h-4 w-4 text-blue-600" />
           <span>SEFGH V1</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -67,7 +66,7 @@ function ModelSelectorDropdown({ model, onModelChange, onClose }) {
             onClose?.();
           }}
         >
-          <Sparkles className="mr-2 h-4 w-4 text-teal-600" />
+          <CpuIcon className="mr-2 h-4 w-4 text-teal-600" />
           <span>SEFGH V2</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -76,7 +75,7 @@ function ModelSelectorDropdown({ model, onModelChange, onClose }) {
             onClose?.();
           }}
         >
-          <Sparkles className="mr-2 h-4 w-4 text-cyan-600" />
+          <CpuIcon className="mr-2 h-4 w-4 text-cyan-600" />
           <span>SEFGH V3</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -95,7 +94,7 @@ function ConversationsListSection({
     <ScrollArea className="flex-1 p-3">
       {conversations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center px-4">
-          <MessageSquare className="h-12 w-12 text-muted-foreground mb-3 opacity-50" />
+          <ChatIcon className="h-12 w-12 text-muted-foreground mb-3 opacity-50" />
           <p className="text-sm text-muted-foreground">No conversations yet</p>
           <p className="text-xs text-muted-foreground mt-1">
             Start a new chat to begin
@@ -120,7 +119,7 @@ function ConversationsListSection({
                       {conv.title}
                     </h3>
                     {conv.is_pinned && (
-                      <Pin className="h-3 w-3 text-blue-600 dark:text-blue-400 fill-blue-600 dark:fill-blue-400 flex-shrink-0" />
+                      <PushPinIcon weight="fill" className="h-3 w-3 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
@@ -137,7 +136,7 @@ function ConversationsListSection({
                       onPin(conv.id, conv.is_pinned);
                     }}
                   >
-                    <Pin className="h-3.5 w-3.5" />
+                    <PushPinIcon className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -148,7 +147,7 @@ function ConversationsListSection({
                       onDelete(conv.id);
                     }}
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <TrashIcon className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -193,7 +192,7 @@ function UserProfileDropdown({ userProfile, user, onSignOut }) {
                   {user?.email}
                 </p>
               </div>
-              <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
+              <CaretDownIcon className="h-4 w-4 opacity-50 flex-shrink-0" />
             </div>
           </Button>
         </DropdownMenuTrigger>
@@ -211,13 +210,13 @@ function UserProfileDropdown({ userProfile, user, onSignOut }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href="/profile" className="cursor-pointer">
-              <User className="mr-2 h-4 w-4" />
+              <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings" className="cursor-pointer">
-              <Settings className="mr-2 h-4 w-4" />
+              <GearIcon className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </Link>
           </DropdownMenuItem>
@@ -226,7 +225,7 @@ function UserProfileDropdown({ userProfile, user, onSignOut }) {
             onClick={onSignOut}
             className="text-destructive cursor-pointer"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <SignOutIcon className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -287,7 +286,7 @@ function SidebarContentLayout({
             }}
             className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-glow-blue"
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <PlusIcon className="h-4 w-4 mr-2" />
             New Chat
           </Button>
         </div>
@@ -325,7 +324,7 @@ function SidebarContentLayout({
                   onClose?.();
                 }}
               >
-                <Trash className="h-4 w-4 mr-2" />
+                <TrashIcon className="h-4 w-4 mr-2" />
                 Clear All Conversations
               </Button>
             </div>

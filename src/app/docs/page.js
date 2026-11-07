@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BookOpenIcon, CodeIcon, ArrowRightIcon, CheckCircleIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {
@@ -41,7 +41,7 @@ export default function DocsPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
         <header className="space-y-4 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
-            <BookOpen className="w-4 h-4" />
+            <BookOpenIcon className="w-4 h-4" />
             Documentation
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">SEFGH Docs</h1>
@@ -49,7 +49,7 @@ export default function DocsPage() {
             Quick links to guides and API references. Replace this stub content with your real docs source when ready.
           </p>
           <div className="flex items-center justify-center gap-3 text-sm text-primary">
-            <CheckCircle2 className="w-4 h-4" /> Updated for 2026 release
+            <CheckCircleIcon className="w-4 h-4" /> Updated for 2026 release
           </div>
         </header>
 
@@ -67,7 +67,7 @@ export default function DocsPage() {
                       href={item.href}
                       className="inline-flex items-center gap-2 hover:text-primary"
                     >
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRightIcon className="w-3.5 h-3.5" />
                       {item.label}
                     </Link>
                   </li>
@@ -79,7 +79,7 @@ export default function DocsPage() {
 
         <section className="rounded-2xl border border-border bg-card/60 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-3 text-foreground">
-            <Sparkles className="w-5 h-5 text-primary" />
+            <CodeIcon className="w-5 h-5 text-primary" />
             <div>
               <div className="font-semibold">Prefer API examples?</div>
               <p className="text-muted-foreground text-sm">Jump to the API reference with curl and JavaScript snippets.</p>
@@ -89,7 +89,7 @@ export default function DocsPage() {
             href="/api-reference"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-primary text-white text-sm font-medium"
           >
-            View API Reference <ArrowRight className="w-4 h-4" />
+            View API Reference <ArrowRightIcon className="w-4 h-4" />
           </Link>
         </section>
       </div>

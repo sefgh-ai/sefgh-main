@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  ArrowLeft,
-  Home,
-  ArrowRight,
-  Book,
-  BookOpen,
-  MessageCircle,
-} from "lucide-react";
+  ArrowLeftIcon,
+  HouseIcon,
+  ArrowRightIcon,
+  BookIcon,
+  BookOpenIcon,
+  ChatCircleIcon,
+} from "@phosphor-icons/react";
 import Link from "next/link";
 import { Scout } from "@/components/brand/SefghMark";
 
@@ -16,19 +16,19 @@ const demoLinks = [
   {
     title: "Documentation",
     subtitle: "Dive in to learn all about our project",
-    icon: BookOpen,
+    icon: BookOpenIcon,
     href: "/about",
   },
   {
     title: "Our blog",
     subtitle: "Read the latest post on our blog",
-    icon: Book,
+    icon: BookIcon,
     href: "/trending",
   },
   {
     title: "Chat to us",
     subtitle: "Can't find what you're looking for?",
-    icon: MessageCircle,
+    icon: ChatCircleIcon,
     href: "/chat",
   },
 ];
@@ -65,7 +65,7 @@ export default function NotFoundPage() {
                     variant="outline"
                     className="w-full sm:w-auto"
                   >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    <ArrowLeftIcon className="mr-2 h-4 w-4" />
                     Go back
                   </Button>
                 </Link>
@@ -74,7 +74,7 @@ export default function NotFoundPage() {
                     variant="default"
                     className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
                   >
-                    <Home className="mr-2 h-4 w-4" />
+                    <HouseIcon className="mr-2 h-4 w-4" />
                     Go to Home
                   </Button>
                 </Link>
@@ -100,7 +100,7 @@ export default function NotFoundPage() {
                       <div className="flex flex-col gap-0.5">
                         <div className="text-sm font-semibold text-foreground flex items-center justify-center gap-2">
                           {link.title}
-                          <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <ArrowRightIcon className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {link.subtitle}

@@ -5,15 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "./button";
-import {
-  AtSign,
-  ChevronLeft,
-  Grid2X2Plus,
-  Eye,
-  EyeOff,
-  Lock,
-  User,
-} from "lucide-react";
+import { AtIcon, CaretLeftIcon, SquaresFourIcon, EyeIcon, EyeSlashIcon, LockIcon, UserIcon } from "@phosphor-icons/react";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +49,7 @@ export function AuthPage({
       <div className="bg-muted/60 relative hidden h-full flex-col border-r p-8 xl:p-10 lg:flex">
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
         <div className="z-10 flex items-center gap-2">
-          <Grid2X2Plus className="size-6" />
+          <SquaresFourIcon className="size-6" />
           <p className="text-xl font-semibold">{brandName}</p>
         </div>
         <div className="z-10 mt-auto">
@@ -90,13 +82,13 @@ export function AuthPage({
           asChild
         >
           <Link href={homeLink}>
-            <ChevronLeft className="size-4 me-2" />
+            <CaretLeftIcon className="size-4 me-2" />
             Home
           </Link>
         </Button>
         <div className="mx-auto w-full max-w-sm space-y-4 lg:max-w-md">
           <div className="flex items-center justify-center gap-2 lg:hidden mb-2">
-            <Grid2X2Plus className="size-6" />
+            <SquaresFourIcon className="size-6" />
             <p className="text-xl font-semibold">{brandName}</p>
           </div>
           <div className="flex flex-col space-y-1 text-center lg:text-left">
@@ -185,7 +177,7 @@ export function AuthPage({
                     disabled={loading}
                   />
                   <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                    <User className="size-4" aria-hidden="true" />
+                    <UserIcon className="size-4" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -206,7 +198,7 @@ export function AuthPage({
                   disabled={loading}
                 />
                 <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                  <AtSign className="size-4" aria-hidden="true" />
+                  <AtIcon className="size-4" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -226,7 +218,7 @@ export function AuthPage({
                   disabled={loading}
                 />
                 <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                  <Lock className="size-4" aria-hidden="true" />
+                  <LockIcon className="size-4" aria-hidden="true" />
                 </div>
                 <button
                   type="button"
@@ -235,9 +227,9 @@ export function AuthPage({
                   disabled={loading}
                 >
                   {showPassword ? (
-                    <EyeOff className="size-4" aria-hidden="true" />
+                    <EyeSlashIcon className="size-4" aria-hidden="true" />
                   ) : (
-                    <Eye className="size-4" aria-hidden="true" />
+                    <EyeIcon className="size-4" aria-hidden="true" />
                   )}
                 </button>
               </div>
@@ -259,7 +251,7 @@ export function AuthPage({
                     disabled={loading}
                   />
                   <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                    <Lock className="size-4" aria-hidden="true" />
+                    <LockIcon className="size-4" aria-hidden="true" />
                   </div>
                   <button
                     type="button"
@@ -268,9 +260,9 @@ export function AuthPage({
                     disabled={loading}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="size-4" aria-hidden="true" />
+                      <EyeSlashIcon className="size-4" aria-hidden="true" />
                     ) : (
-                      <Eye className="size-4" aria-hidden="true" />
+                      <EyeIcon className="size-4" aria-hidden="true" />
                     )}
                   </button>
                 </div>

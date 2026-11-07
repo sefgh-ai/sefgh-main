@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Settings, Loader2, Sparkles } from "lucide-react";
+import { GearIcon, CircleNotchIcon, HashIcon } from "@phosphor-icons/react";
 import { useCategories } from "@/hooks/home/useCategories";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +47,7 @@ export function TopicsNav({
         <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
           {loading ? (
             <div className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <CircleNotchIcon className="h-4 w-4 animate-spin" />
               <span>Loading...</span>
             </div>
           ) : (
@@ -90,7 +90,7 @@ export function TopicsNav({
           onClick={onOpenPreferences}
           className="h-7 sm:h-8 gap-1.5 rounded-full text-xs px-2 sm:px-3"
         >
-          <Settings className="h-3.5 w-3.5" />
+          <GearIcon className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Personalize Feed</span>
         </Button>
       </div>
@@ -98,7 +98,7 @@ export function TopicsNav({
       {/* Active preferences indicator - only when has preferences */}
       {mounted && userPreferences?.tags?.length > 0 && (
         <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-          <Sparkles className="h-3 w-3 text-primary" />
+          <HashIcon className="h-3 w-3 text-primary" />
           <span>
             Your personalized feed: showing {userPreferences.tags.length}{" "}
             selected topic{userPreferences.tags.length > 1 ? "s" : ""}

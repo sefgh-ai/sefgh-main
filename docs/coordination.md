@@ -13,9 +13,45 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Claude Code released TUTORIAL-REMOVE-001 (2026-11-05): `learn-go/` removed at the owner's request with its lesson checks. BUG-071 merged into `main` (2026-11-05). Phase 7 stays open behind P7-07/R-038/R-213 and the AI part of P7-09. image.png is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
+- **Active writer:** none. ICON-001 (Claude Code) implementation complete on branch `claude/icon-001-phosphor`, PR into main for review; see its handoff below. Claude Code released TUTORIAL-REMOVE-001 (2026-11-05): `learn-go/` removed at the owner's request with its lesson checks. BUG-071 merged into `main` (2026-11-05). Phase 7 stays open behind P7-07/R-038/R-213 and the AI part of P7-09. image.png is pre-existing/unowned: exclude from commit/synchronization. Signing stopped.
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-07)
+
+Status: **implementation complete; local checks passed; committed on branch `claude/icon-001-phosphor` and opened as a PR into main (owner request, 2026-11-07); not reviewed; not merged; not deployed.** Owner Claude Code; no independent reviewer (page QA by three read-only subagents is not a code review). Base `2a4db97`. Resumed from the 2026-11-06 checkpoint below.
+
+Result: the app uses `@phosphor-icons/react` 2.1.10 only; `lucide-react` and `@heroicons/react` are removed. Mapping and the reasoning for every former Sparkles site: [`icon-mapping.md`](icon-mapping.md). Page QA (subagents, production build on localhost:3100) found further icons that did not match their labels; fixed here: repo "Issues" Bug, "Claim Project" SealCheck, Security "Sign out of this device" SignOut, "Priority Support" Headset, "Clear Search History" Broom, versions 2.0 PaintBrush, about Code/Heart, careers "Sustainable Pace" Leaf, status Search API MagnifyingGlass / Auth LockKey / Notifications Bell, contact "Response Time" Timer, links Discord DiscordLogo / Changelog ClockCounterClockwise, LogoMarquee Projects Package / Lines of Code Code, sidebar and mobile "Playground" Code, "Sign In" SignIn, sidebar CTA RocketLaunch, header "Submit" UploadSimple, navbar "Trending Projects" TrendUp, island "API" BracketsCurly. `shrink-0` added to squeezed icons (help, research, EditorsChoice, SearchNavGuide). Unused Phosphor imports pruned across `src/`.
+
+Bugs: R-216 (lint scanned `.claude/worktrees/*/.next`) fixed by adding `.claude/**` to `eslint.config.mjs` ignores. R-217 (DynamicIslandNav covers navbar triggers at 800–1440px) recorded, open, not caused by this task.
+
+Checks by Claude Code: `npm run build` exit 0 (run before and after the QA fixes); `npm run lint` exit 0; `npm run test:contracts` 732/732 pass (before QA fixes; they changed only JSX icons). Browser recheck after rebuild: /status, /help, /research, /trending, /search show 0 `.lucide` and no non-square icons. Not verified at runtime: authenticated pages (chat, playground, settings, profile, notifications, onboarding) and repo details; these were checked by reading source only. `/api/search` returned an HTML 404 on the local production server, so search result cards were not seen; not investigated.
+
+Changed files: 126 `src/` files from the migration plus QA fixes, `package.json`, `package-lock.json`, `eslint.config.mjs`, `docs/icon-mapping.md` (new), `docs/bug-register.md`, `docs/coordination.md`. Untracked `.claude/launch.json` (local preview config, not part of the task; do not commit unless the owner wants it). image.png rule unchanged.
+
+Next: PR review and merge; run `npm run handoff` after merge. Rollback: discard the working-tree changes or revert the commit.
+
+Writer released: yes. No processes left running.
+
+## Checkpoint: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-06)
+
+Status: **paused / incomplete, stopped at owner request.** Owner Claude Code; no reviewer. Branch `main`, base/current commit `2a4db97`; all work is **uncommitted** in this checkout. Do not run `npm run handoff` until the task is finished.
+
+Objective (owner request): use Phosphor (`@phosphor-icons/react` 2.1.10) only; remove `lucide-react` and `@heroicons/react`. Owner rule: every icon must mean what it labels (no sparkle for chat). Decisions and the full mapping, including every former Sparkles site, are in [`icon-mapping.md`](icon-mapping.md).
+
+Done:
+- 126 files under `src/` migrated by four parallel subagents over disjoint file lists, plus owner-lead fixes: `AnimatedNavbar.jsx` Submit Your Project → UploadSimple, About SEFGH → Info; `StepPreferences.jsx` notification options → BellRinging / Bell / CalendarCheck / BellSlash. Subagent meaning fixes: chat nav items ChatCircle (not PaperPlane), "Refine results" SlidersHorizontal, playground "Limits" tab Gauge.
+- Server/plain modules (no "use client") import from `@phosphor-icons/react/ssr`. Filled icons converted from `fill-*` classes to `weight="fill"` (stars, votes, bookmarks, pins, radio/dropdown dots). Spinners → CircleNotch.
+- `lucide-react` and `@heroicons/react` uninstalled; `package.json`/`package-lock.json` changed.
+- Working tree: 126 `src/` files modified, `package.json`, `package-lock.json`, `docs/coordination.md` modified, `docs/icon-mapping.md` new.
+
+Checks run: grep finds no `lucide`/`@heroicons` in `src/`; every imported Phosphor name has its `dist/csr` file; per-group `npx eslint` clean. Full `npm run lint` exits 1, **only** because ESLint scans `.next` build output inside `.claude/worktrees/design-system-extraction-805583` (pre-existing, not this task); `npx eslint . --max-warnings 0 --ignore-pattern ".claude/**"` exits 0. That worktree lint problem should be recorded in bug-register.md if it persists.
+
+Not run: `npm run build`, `npm run test:contracts`, any browser/visual check of icon sizes (Lucide default 24px vs Phosphor 1em; agents found every icon sized by class, none needed `size={24}`).
+
+Open notes: some already-unused icon imports were mapped, not removed (about, chat, page.js, OnboardingModal, RepoDrawer, LimitsTab, MonitoringTab, TestingTab). A separate worktree `D:/SEFGH/sefgh-hugeicons` on branch `feat/hugeicons-migration` exists from earlier work; it is unrelated to this task and was not touched.
+
+Next concrete step: `npm run build`; fix any import errors; visually spot-check /, /chat, /search, /settings, onboarding; record the worktree lint issue; then commit (owner approval) and normal handoff.
 
 ## Handoff: BUG-071 reasoning budget for the AI routes (Claude Code, 2026-11-04)
 

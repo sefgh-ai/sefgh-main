@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AppFooter from "@/components/ui/app-footer";
-import { Users, Target, Zap, Globe, Award, TrendingUp } from "lucide-react";
+import { UsersIcon, LightningIcon, CodeIcon, HeartIcon } from "@phosphor-icons/react";
 
 export default function AboutPage() {
   const milestones = [
@@ -37,25 +37,25 @@ export default function AboutPage() {
 
   const values = [
     {
-      icon: Target,
+      icon: CodeIcon,
       title: "Developer-First",
       description:
         "Every feature is designed with developers in mind. We build tools we want to use ourselves.",
     },
     {
-      icon: Zap,
+      icon: LightningIcon,
       title: "Speed & Efficiency",
       description:
         "Find the right repository in seconds, not hours. Your time is valuable.",
     },
     {
-      icon: Globe,
+      icon: HeartIcon,
       title: "Open Source Love",
       description:
         "We champion open source and help surface hidden gems that deserve recognition.",
     },
     {
-      icon: Users,
+      icon: UsersIcon,
       title: "Community Driven",
       description:
         "Our roadmap is shaped by user feedback. We build what you need.",

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CodeBracketIcon } from "@heroicons/react/24/outline";
-import { Filter, Languages, Star, SortAsc, Check } from "lucide-react";
+import { FunnelIcon, TranslateIcon, StarIcon, SortAscendingIcon, CheckIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -113,7 +112,7 @@ export function SearchNavbar({
                   onClick={handleTriggerClick}
                   className="h-8 rounded-xl glass-premium hover:glow-border-slate transition-smooth shadow-soft data-[state=open]:glow-border-blue"
                 >
-                  <Filter className="h-4 w-4 mr-2" />
+                  <FunnelIcon className="h-4 w-4 mr-2" />
                   Filters
                   {totalActiveFilters > 0 && (
                     <span className="ml-2 px-1.5 py-0.5 text-xs bg-blue-500/20 text-blue-400 rounded-full">
@@ -126,7 +125,7 @@ export function SearchNavbar({
                     {/* Sort Column */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-muted-foreground">
-                        <SortAsc className="h-4 w-4" />
+                        <SortAscendingIcon className="h-4 w-4" />
                         Sort By
                       </div>
                       <div className="space-y-1">
@@ -143,7 +142,7 @@ export function SearchNavbar({
                             <div className="flex items-center justify-between">
                               <span>{option.label}</span>
                               {sort === option.value && (
-                                <Check className="h-4 w-4 text-blue-400" />
+                                <CheckIcon className="h-4 w-4 text-blue-400" />
                               )}
                             </div>
                           </NavigationMenuLink>
@@ -154,7 +153,7 @@ export function SearchNavbar({
                     {/* Language Column */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-muted-foreground">
-                        <Languages className="h-4 w-4" />
+                        <TranslateIcon className="h-4 w-4" />
                         Language
                       </div>
                       <div className="space-y-1 max-h-[200px] overflow-y-auto">
@@ -171,7 +170,7 @@ export function SearchNavbar({
                             <div className="flex items-center justify-between">
                               <span>{option.label}</span>
                               {language === option.value && (
-                                <Check className="h-4 w-4 text-blue-400" />
+                                <CheckIcon className="h-4 w-4 text-blue-400" />
                               )}
                             </div>
                           </NavigationMenuLink>
@@ -182,7 +181,7 @@ export function SearchNavbar({
                     {/* Stars Column */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-muted-foreground">
-                        <Star className="h-4 w-4" />
+                        <StarIcon className="h-4 w-4" />
                         Minimum Stars
                       </div>
                       <div className="space-y-1">
@@ -199,7 +198,7 @@ export function SearchNavbar({
                             <div className="flex items-center justify-between">
                               <span>{option.label}</span>
                               {stars === option.value && (
-                                <Check className="h-4 w-4 text-blue-400" />
+                                <CheckIcon className="h-4 w-4 text-blue-400" />
                               )}
                             </div>
                           </NavigationMenuLink>
@@ -211,7 +210,7 @@ export function SearchNavbar({
                   {/* Advanced Filters Row */}
                   <div className="border-t border-border p-4">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-muted-foreground mb-2">
-                      <Filter className="h-4 w-4" />
+                      <FunnelIcon className="h-4 w-4" />
                       Advanced Filters
                       {activeFilterCount > 0 && (
                         <span className="px-1.5 py-0.5 text-xs bg-purple-500/20 text-purple-400 rounded-full">
@@ -365,7 +364,7 @@ export function SearchNavbar({
               size="sm"
               className="glass-premium border border-border rounded-xl hover:glow-border-blue transition-smooth shadow-soft hover:shadow-soft-lg h-8 px-2 sm:px-3"
             >
-              <CodeBracketIcon className="h-4 w-4 sm:mr-2" />
+              <UploadSimpleIcon className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Submit</span>
             </Button>
           </SubmitProjectDialog>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Users, Code2, Boxes } from "lucide-react";
+import { BuildingsIcon, UsersIcon, CodeIcon, PackageIcon } from "@phosphor-icons/react";
 
 // Featured organizations/companies data
 const FEATURED_ORGS = [
@@ -179,25 +179,25 @@ export default function LogoMarquee() {
       {/* Stats Row */}
       <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mt-10 sm:mt-12 px-4">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Building2 className="w-4 h-4 text-primary" />
+          <BuildingsIcon className="w-4 h-4 text-primary" />
           <span className="text-sm">
             <span className="text-foreground font-semibold">500+</span> Organizations
           </span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Code2 className="w-4 h-4 text-green-400" />
+          <PackageIcon className="w-4 h-4 text-green-400" />
           <span className="text-sm">
             <span className="text-foreground font-semibold">50K+</span> Projects
           </span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Users className="w-4 h-4 text-purple-400" />
+          <UsersIcon className="w-4 h-4 text-purple-400" />
           <span className="text-sm">
             <span className="text-foreground font-semibold">1M+</span> Developers
           </span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Boxes className="w-4 h-4 text-orange-400" />
+          <CodeIcon className="w-4 h-4 text-orange-400" />
           <span className="text-sm">
             <span className="text-foreground font-semibold">10B+</span> Lines of Code
           </span>

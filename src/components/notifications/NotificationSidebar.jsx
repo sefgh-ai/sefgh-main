@@ -6,26 +6,26 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Inbox,
-  Bookmark,
-  CheckCircle2,
-  Bell,
-  AtSign,
-  MessageSquare,
-  Users,
-  Eye,
-  Filter,
-  Plus,
-  ChevronLeft,
-} from "lucide-react";
+  TrayIcon,
+  BookmarkSimpleIcon,
+  CheckCircleIcon,
+  BellIcon,
+  AtIcon,
+  ChatIcon,
+  UsersIcon,
+  EyeIcon,
+  FunnelIcon,
+  PlusIcon,
+  CaretLeftIcon,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const filterItems = [
-  { id: "assigned", label: "Assigned", icon: AtSign, color: "text-orange-500" },
-  { id: "participating", label: "Participating", icon: MessageSquare, color: "text-blue-500" },
-  { id: "mentioned", label: "Mentioned", icon: AtSign, color: "text-purple-500" },
-  { id: "team", label: "Team mentioned", icon: Users, color: "text-green-500" },
-  { id: "review", label: "Review requested", icon: Eye, color: "text-yellow-500" },
+  { id: "assigned", label: "Assigned", icon: AtIcon, color: "text-orange-500" },
+  { id: "participating", label: "Participating", icon: ChatIcon, color: "text-blue-500" },
+  { id: "mentioned", label: "Mentioned", icon: AtIcon, color: "text-purple-500" },
+  { id: "team", label: "Team mentioned", icon: UsersIcon, color: "text-green-500" },
+  { id: "review", label: "Review requested", icon: EyeIcon, color: "text-yellow-500" },
 ];
 
 export function NotificationSidebar({
@@ -51,34 +51,34 @@ export function NotificationSidebar({
             onClick={() => router.back()}
             className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
           >
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <CaretLeftIcon className="h-4 w-4 mr-1" />
             Back
           </Button>
 
           {/* Header */}
           <div className="flex items-center gap-2 px-2 py-3">
-            <Bell className="h-5 w-5 text-primary" />
+            <BellIcon className="h-5 w-5 text-primary" />
             <h1 className="text-lg font-semibold">Notifications</h1>
           </div>
 
           {/* Main Filters */}
           <nav className="space-y-1">
             <SidebarItem
-              icon={Inbox}
+              icon={TrayIcon}
               label="Inbox"
               count={inboxCount}
               active={filter === "inbox"}
               onClick={() => setFilter("inbox")}
             />
             <SidebarItem
-              icon={Bookmark}
+              icon={BookmarkSimpleIcon}
               label="Saved"
               count={savedCount}
               active={filter === "saved"}
               onClick={() => setFilter("saved")}
             />
             <SidebarItem
-              icon={CheckCircle2}
+              icon={CheckCircleIcon}
               label="Done"
               count={doneCount}
               active={filter === "done"}
@@ -95,7 +95,7 @@ export function NotificationSidebar({
                 Filters
               </span>
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <Plus className="h-3 w-3" />
+                <PlusIcon className="h-3 w-3" />
               </Button>
             </div>
             <nav className="space-y-1">
@@ -157,7 +157,7 @@ export function NotificationSidebar({
       {/* Footer */}
       <div className="p-4 border-t border-border">
         <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground">
-          <Filter className="h-4 w-4 mr-2" />
+          <FunnelIcon className="h-4 w-4 mr-2" />
           Manage notifications
         </Button>
       </div>

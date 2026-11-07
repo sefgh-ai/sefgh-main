@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RepositoryCard } from "@/components/RepositoryCard";
-import { Search, Github, Loader2 } from "lucide-react";
+import { MagnifyingGlassIcon, GithubLogoIcon, CircleNotchIcon } from "@phosphor-icons/react";
 
 export function GitHubSearchDialog({
   open,
@@ -39,7 +39,7 @@ export function GitHubSearchDialog({
           {/* Search Input */}
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search repositories..."
                 value={githubSearchQuery}
@@ -55,12 +55,12 @@ export function GitHubSearchDialog({
             >
               {searchingGithub ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <CircleNotchIcon className="h-4 w-4 mr-2 animate-spin" />
                   Searching...
                 </>
               ) : (
                 <>
-                  <Search className="h-4 w-4 mr-2" />
+                  <MagnifyingGlassIcon className="h-4 w-4 mr-2" />
                   Search
                 </>
               )}
@@ -98,13 +98,13 @@ export function GitHubSearchDialog({
               </div>
             ) : githubSearchQuery && !searchingGithub ? (
               <div className="text-center py-12 text-muted-foreground">
-                <Github className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <GithubLogoIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>No repositories found</p>
                 <p className="text-sm mt-1">Try a different search query</p>
               </div>
             ) : (
               <div className="text-center py-12 text-muted-foreground">
-                <Github className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <GithubLogoIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>Search for GitHub repositories</p>
                 <p className="text-sm mt-1">Enter a query above to get started</p>
               </div>

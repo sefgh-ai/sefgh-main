@@ -2,7 +2,7 @@
 
 import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState, useEffect, useCallback } from "react"
-import { ArrowLeft, Star, GitFork, Eye, ExternalLink, Copy, FileText, BarChart3, Info } from "lucide-react"
+import { ArrowLeftIcon, StarIcon, GitForkIcon, EyeIcon, ArrowSquareOutIcon, CopyIcon, FileTextIcon, ChartBarIcon, InfoIcon } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -63,7 +63,7 @@ export function CodeExplorer({ repository, onClose }) {
             onClick={onClose}
             className="flex-shrink-0"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeftIcon className="h-4 w-4" />
           </Button>
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold truncate">{repository.full_name}</h2>
@@ -76,19 +76,19 @@ export function CodeExplorer({ repository, onClose }) {
         {/* Action Buttons */}
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm">
-            <Star className="h-3 w-3 mr-1.5" />
+            <StarIcon className="h-3 w-3 mr-1.5" />
             Star
           </Button>
           <Button variant="outline" size="sm">
-            <GitFork className="h-3 w-3 mr-1.5" />
+            <GitForkIcon className="h-3 w-3 mr-1.5" />
             Fork
           </Button>
           <Button variant="outline" size="sm">
-            <Eye className="h-3 w-3 mr-1.5" />
+            <EyeIcon className="h-3 w-3 mr-1.5" />
             Watch
           </Button>
           <Button variant="outline" size="sm" onClick={handleCopyUrl}>
-            <Copy className="h-3 w-3 mr-1.5" />
+            <CopyIcon className="h-3 w-3 mr-1.5" />
             Copy URL
           </Button>
           <Button
@@ -96,7 +96,7 @@ export function CodeExplorer({ repository, onClose }) {
             size="sm"
             onClick={() => window.open(repository.html_url, '_blank')}
           >
-            <ExternalLink className="h-3 w-3 mr-1.5" />
+            <ArrowSquareOutIcon className="h-3 w-3 mr-1.5" />
             GitHub
           </Button>
         </div>
@@ -118,15 +118,15 @@ export function CodeExplorer({ repository, onClose }) {
         <div className="border-b px-4 flex-shrink-0">
           <TabsList className="w-full justify-start h-12 bg-transparent">
             <TabsTrigger value="readme" className="gap-2">
-              <FileText className="h-4 w-4" />
+              <FileTextIcon className="h-4 w-4" />
               README
             </TabsTrigger>
             <TabsTrigger value="insights" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
+              <ChartBarIcon className="h-4 w-4" />
               Insights
             </TabsTrigger>
             <TabsTrigger value="details" className="gap-2">
-              <Info className="h-4 w-4" />
+              <InfoIcon className="h-4 w-4" />
               Details
             </TabsTrigger>
           </TabsList>
@@ -148,7 +148,7 @@ export function CodeExplorer({ repository, onClose }) {
                     </div>
                   ) : (
                     <div className="text-center py-12 text-muted-foreground">
-                      <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <FileTextIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
                       <p>No README found</p>
                     </div>
                   )}
@@ -266,7 +266,7 @@ export function CodeExplorer({ repository, onClose }) {
                           className="flex items-center gap-2 text-sm text-primary hover:underline"
                         >
                           🌐 Homepage
-                          <ExternalLink className="h-3 w-3" />
+                          <ArrowSquareOutIcon className="h-3 w-3" />
                         </a>
                       )}
                       <a
@@ -276,7 +276,7 @@ export function CodeExplorer({ repository, onClose }) {
                         className="flex items-center gap-2 text-sm text-primary hover:underline"
                       >
                         🐛 Issues
-                        <ExternalLink className="h-3 w-3" />
+                        <ArrowSquareOutIcon className="h-3 w-3" />
                       </a>
                       <a
                         href={`${repository.html_url}/pulls`}
@@ -285,7 +285,7 @@ export function CodeExplorer({ repository, onClose }) {
                         className="flex items-center gap-2 text-sm text-primary hover:underline"
                       >
                         🔀 Pull Requests
-                        <ExternalLink className="h-3 w-3" />
+                        <ArrowSquareOutIcon className="h-3 w-3" />
                       </a>
                     </div>
                   </div>

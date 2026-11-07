@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Star, GitFork, Eye } from "lucide-react"
+import { ArrowSquareOutIcon, StarIcon, GitForkIcon } from "@phosphor-icons/react"
 import { memo } from "react"
 
 /**
@@ -48,7 +48,7 @@ export const RepoCard = memo(function RepoCard({
           {href && (
             <Button variant="ghost" size="icon" asChild>
               <a href={href} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4" />
+                <ArrowSquareOutIcon className="h-4 w-4" />
               </a>
             </Button>
           )}
@@ -75,13 +75,13 @@ export const RepoCard = memo(function RepoCard({
           )}
           {stars !== undefined && (
             <span className="flex items-center gap-1">
-              <Star className="h-4 w-4" />
+              <StarIcon className="h-4 w-4" />
               {formatNumber(stars)}
             </span>
           )}
           {forks !== undefined && (
             <span className="flex items-center gap-1">
-              <GitFork className="h-4 w-4" />
+              <GitForkIcon className="h-4 w-4" />
               {formatNumber(forks)}
             </span>
           )}

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/lib/supabase/client';
-import { Send, Copy, CheckCircle2, Code, FileJson } from 'lucide-react';
+import { PaperPlaneRightIcon, CopyIcon, CheckCircleIcon } from '@phosphor-icons/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -246,7 +246,7 @@ export default function TestingTab({ userId }) {
               className="flex-1"
             />
             <Button onClick={sendRequest} disabled={loading || !endpoint}>
-              <Send className="h-4 w-4 mr-2" />
+              <PaperPlaneRightIcon className="h-4 w-4 mr-2" />
               {loading ? 'Sending...' : 'Send'}
             </Button>
           </div>
@@ -352,7 +352,7 @@ export default function TestingTab({ userId }) {
                   className="absolute top-2 right-2"
                   onClick={() => copyCode(generateCurlCommand())}
                 >
-                  {copiedCode ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? <CheckCircleIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                 </Button>
               </div>
             </TabsContent>
@@ -367,7 +367,7 @@ export default function TestingTab({ userId }) {
                   className="absolute top-2 right-2"
                   onClick={() => copyCode(generateJavaScriptCode())}
                 >
-                  {copiedCode ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? <CheckCircleIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                 </Button>
               </div>
             </TabsContent>
@@ -382,7 +382,7 @@ export default function TestingTab({ userId }) {
                   className="absolute top-2 right-2"
                   onClick={() => copyCode(generatePythonCode())}
                 >
-                  {copiedCode ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? <CheckCircleIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                 </Button>
               </div>
             </TabsContent>

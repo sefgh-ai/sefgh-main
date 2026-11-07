@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { ListIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,7 +117,7 @@ const SidebarTrigger = React.forwardRef(
         }}
         {...props}
       >
-        <Bars3Icon />
+        <ListIcon />
         <span className="sr-only">Toggle Sidebar</span>
       </Button>
     );

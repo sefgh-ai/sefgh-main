@@ -4,31 +4,31 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveStepRole } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
-import { GraduationCap, Briefcase, FlaskConical, Sparkles } from "lucide-react";
+import { GraduationCapIcon, BriefcaseIcon, FlaskIcon, RobotIcon, PuzzlePieceIcon } from "@phosphor-icons/react";
 
 const roles = [
   {
     value: "student",
     label: "Student",
-    icon: GraduationCap,
+    icon: GraduationCapIcon,
     description: "Learning to code and exploring new technologies",
   },
   {
     value: "professional",
     label: "Professional",
-    icon: Briefcase,
+    icon: BriefcaseIcon,
     description: "Working as a developer or engineer",
   },
   {
     value: "researcher",
     label: "Researcher",
-    icon: FlaskConical,
+    icon: FlaskIcon,
     description: "Academic research or studying technologies",
   },
   {
     value: "hobbyist",
     label: "Hobbyist",
-    icon: Sparkles,
+    icon: PuzzlePieceIcon,
     description: "Coding for fun and personal projects",
   },
 ];
@@ -68,7 +68,7 @@ export function StepRole({ userId, onNext }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
+            <RobotIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">

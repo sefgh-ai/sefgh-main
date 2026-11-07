@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import {
-  LogOut,
-  Shield,
-  Key,
-  Smartphone,
-  Globe,
-  AlertTriangle,
-} from "lucide-react";
+  SignOutIcon,
+  ShieldIcon,
+  KeyIcon,
+  DeviceMobileIcon,
+  GlobeIcon,
+  WarningIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +58,7 @@ export default function SecurityTab() {
       <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-green-500/5 to-emerald-500/5 p-6">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-xl bg-green-500/10 flex-shrink-0">
-            <Shield className="w-6 h-6 text-green-600" />
+            <ShieldIcon className="w-6 h-6 text-green-600" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export default function SecurityTab() {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                <Key className="w-5 h-5 text-primary" />
+                <KeyIcon className="w-5 h-5 text-primary" />
               </div>
               <div>
                 <h3 className="text-base font-semibold mb-1">
@@ -104,7 +104,7 @@ export default function SecurityTab() {
         {mfaEnabled && (
           <div className="px-6 py-4 bg-muted/30">
             <div className="flex items-center gap-2 text-sm">
-              <Smartphone className="w-4 h-4 text-muted-foreground" />
+              <DeviceMobileIcon className="w-4 h-4 text-muted-foreground" />
               <span className="text-muted-foreground">
                 Authenticator app configured
               </span>
@@ -129,7 +129,7 @@ export default function SecurityTab() {
         <div className="flex items-center justify-between p-6 border-b border-border/30 hover:bg-muted/20 transition-colors">
           <div className="flex items-center gap-4">
             <div className="p-2 rounded-lg bg-muted/50">
-              <Globe className="w-5 h-5 text-muted-foreground" />
+              <SignOutIcon className="w-5 h-5 text-muted-foreground" />
             </div>
             <div>
               <h4 className="text-sm font-medium">Sign out of this device</h4>
@@ -140,7 +140,7 @@ export default function SecurityTab() {
           </div>
           <Button variant="outline" size="sm" onClick={handleLogout}>
             Sign out
-            <LogOut className="w-4 h-4 ml-2" />
+            <SignOutIcon className="w-4 h-4 ml-2" />
           </Button>
         </div>
 
@@ -149,7 +149,7 @@ export default function SecurityTab() {
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-destructive/10">
-                <AlertTriangle className="w-5 h-5 text-destructive" />
+                <WarningIcon className="w-5 h-5 text-destructive" />
               </div>
               <div>
                 <h4 className="text-sm font-medium">Sign out everywhere</h4>
@@ -165,7 +165,7 @@ export default function SecurityTab() {
               onClick={() => setShowLogoutAllDialog(true)}
             >
               Sign out all
-              <LogOut className="w-4 h-4 ml-2" />
+              <SignOutIcon className="w-4 h-4 ml-2" />
             </Button>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function SecurityTab() {
         </p>
 
         <div className="p-8 bg-muted/30 border border-dashed border-border/50 rounded-xl text-center">
-          <Globe className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+          <GlobeIcon className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
           <p className="text-sm text-muted-foreground max-w-sm mx-auto">
             No third-party applications are connected to your account. When you
             authorize apps, they&apos;ll appear here.
@@ -195,7 +195,7 @@ export default function SecurityTab() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
+              <WarningIcon className="w-5 h-5 text-destructive" />
               Sign out of all devices?
             </AlertDialogTitle>
             <AlertDialogDescription>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { ArrowLeft, FileText, Code, Paintbrush, Download, Copy, Play, Settings, X } from "lucide-react"
+import { FileTextIcon, CodeSimpleIcon, PaintBrushIcon, DownloadSimpleIcon, CopyIcon, XIcon } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -148,7 +148,7 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
               onClick={onClose}
               className="flex-shrink-0 text-muted-foreground hover:text-foreground"
             >
-              <X className="h-5 w-5" />
+              <XIcon className="h-5 w-5" />
             </Button>
             <div>
               <h2 className="text-xl font-bold text-foreground">Canvas</h2>
@@ -183,11 +183,11 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm" onClick={handleCopy} className="bg-muted border-border text-foreground hover:bg-muted">
-              <Copy className="h-3 w-3 mr-1.5" />
+              <CopyIcon className="h-3 w-3 mr-1.5" />
               Copy
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownload} className="bg-muted border-border text-foreground hover:bg-muted">
-              <Download className="h-3 w-3 mr-1.5" />
+              <DownloadSimpleIcon className="h-3 w-3 mr-1.5" />
               Download
             </Button>
           </div>
@@ -199,15 +199,15 @@ export function Canvas({ content, onChange, onClose, initialLanguage = 'javascri
         <div className="border-b border-border px-4">
           <TabsList className="w-full justify-start h-12 bg-transparent">
             <TabsTrigger value="code" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
-              <Code className="h-4 w-4" />
+              <CodeSimpleIcon className="h-4 w-4" />
               Editor
             </TabsTrigger>
             <TabsTrigger value="preview" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
-              <Paintbrush className="h-4 w-4" />
+              <PaintBrushIcon className="h-4 w-4" />
               Preview
             </TabsTrigger>
             <TabsTrigger value="notes" className="gap-2 data-[state=active]:bg-muted data-[state=active]:text-foreground text-muted-foreground">
-              <FileText className="h-4 w-4" />
+              <FileTextIcon className="h-4 w-4" />
               Notes
             </TabsTrigger>
           </TabsList>

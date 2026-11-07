@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AppFooter from "@/components/ui/app-footer";
-import { Download, Copy, Check, Shield } from "lucide-react";
+import { DownloadSimpleIcon, CopyIcon, CheckIcon, ShieldIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 
 export default function BrandPage() {
@@ -171,9 +171,9 @@ export default function BrandPage() {
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/30">
                     {copiedColor === color.name ? (
-                      <Check className="w-6 h-6 text-foreground" />
+                      <CheckIcon className="w-6 h-6 text-foreground" />
                     ) : (
-                      <Copy className="w-6 h-6 text-foreground" />
+                      <CopyIcon className="w-6 h-6 text-foreground" />
                     )}
                   </div>
                 </div>
@@ -272,7 +272,7 @@ export default function BrandPage() {
                   download
                   className="inline-flex items-center gap-2 text-primary hover:text-primary text-sm transition-colors"
                 >
-                  <Download className="w-4 h-4" />
+                  <DownloadSimpleIcon className="w-4 h-4" />
                   Download
                 </a>
               </div>
@@ -325,7 +325,7 @@ export default function BrandPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-muted/50 border border-border rounded-xl p-6">
               <h3 className="text-green-400 font-semibold mb-4 flex items-center gap-2">
-                <Check className="w-5 h-5" />
+                <CheckIcon className="w-5 h-5" />
                 Do
               </h3>
               <ul className="space-y-3 text-muted-foreground text-sm">
@@ -339,7 +339,7 @@ export default function BrandPage() {
 
             <div className="bg-muted/50 border border-border rounded-xl p-6">
               <h3 className="text-red-400 font-semibold mb-4 flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+                <ShieldIcon className="w-5 h-5" />
                 Don&apos;t
               </h3>
               <ul className="space-y-3 text-muted-foreground text-sm">

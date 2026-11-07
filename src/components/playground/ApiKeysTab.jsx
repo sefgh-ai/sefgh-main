@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
-import { Copy, Plus, Trash2, Eye, EyeOff, CheckCircle2, Key } from 'lucide-react';
+import { CopyIcon, PlusIcon, TrashIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, KeyIcon } from '@phosphor-icons/react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification';
@@ -142,7 +142,7 @@ export default function ApiKeysTab({ userId }) {
             </div>
             {!showCreateForm && (
               <Button onClick={() => setShowCreateForm(true)}>
-                <Plus className="h-4 w-4 mr-2" />
+                <PlusIcon className="h-4 w-4 mr-2" />
                 Create New Key
               </Button>
             )}
@@ -183,7 +183,7 @@ export default function ApiKeysTab({ userId }) {
           <div className="space-y-4">
             {apiKeys.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                <Key className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <KeyIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No API keys yet. Create your first key to get started.</p>
               </div>
             ) : (
@@ -208,9 +208,9 @@ export default function ApiKeysTab({ userId }) {
                             onClick={() => toggleKeyVisibility(key.id)}
                           >
                             {visibleKeys[key.id] ? (
-                              <EyeOff className="h-4 w-4" />
+                              <EyeSlashIcon className="h-4 w-4" />
                             ) : (
-                              <Eye className="h-4 w-4" />
+                              <EyeIcon className="h-4 w-4" />
                             )}
                           </Button>
                           <Button
@@ -219,9 +219,9 @@ export default function ApiKeysTab({ userId }) {
                             onClick={() => copyToClipboard(key.key, key.id)}
                           >
                             {copiedKey === key.id ? (
-                              <CheckCircle2 className="h-4 w-4 text-green-500" />
+                              <CheckCircleIcon className="h-4 w-4 text-green-500" />
                             ) : (
-                              <Copy className="h-4 w-4" />
+                              <CopyIcon className="h-4 w-4" />
                             )}
                           </Button>
                         </div>
@@ -232,7 +232,7 @@ export default function ApiKeysTab({ userId }) {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="sm" className="text-destructive">
-                            <Trash2 className="h-4 w-4" />
+                            <TrashIcon className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>

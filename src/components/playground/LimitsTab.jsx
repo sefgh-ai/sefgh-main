@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
-import { Settings, Save, AlertCircle } from 'lucide-react';
+import { FloppyDiskIcon } from '@phosphor-icons/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
@@ -348,7 +348,7 @@ export default function LimitsTab({ userId }) {
 
       <div className="flex justify-end">
         <Button onClick={saveLimits} disabled={saving} size="lg">
-          <Save className="h-4 w-4 mr-2" />
+          <FloppyDiskIcon className="h-4 w-4 mr-2" />
           {saving ? 'Saving...' : 'Save Configuration'}
         </Button>
       </div>

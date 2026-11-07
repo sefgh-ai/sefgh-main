@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { saveStepTechStack } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Sparkles } from "lucide-react";
+import { CaretLeftIcon, RobotIcon } from "@phosphor-icons/react";
 
 const techCategories = {
   frontend: {
@@ -107,7 +107,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
+            <RobotIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -190,7 +190,7 @@ export function StepTechStack({ userId, onNext, onBack }) {
           variant="ghost"
           className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
-          <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
+          <CaretLeftIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
         </Button>
         <Button

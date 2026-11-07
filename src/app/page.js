@@ -11,17 +11,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
 import { useTheme } from "next-themes";
 import {
-  Search,
-  Sparkles,
-  Code,
-  Gem,
-  Brain,
-  Twitter,
-  Sun,
-  Moon,
-  User,
-  Home as HomeIcon,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  RocketLaunchIcon,
+  HouseIcon,
+} from "@phosphor-icons/react";
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 import AppFooter from "@/components/ui/app-footer";
 import { AnimatedNavbar } from "@/components/AnimatedNavbar";
@@ -196,7 +189,7 @@ export default function Home() {
                 onClick={() => router.push("/signup")}
                 className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base sm:text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg transform hover:scale-105"
               >
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
+                <RocketLaunchIcon className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
                 Get Started Free
               </button>
             ) : (
@@ -206,14 +199,14 @@ export default function Home() {
                   onClick={() => router.push("/home")}
                   className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-foreground font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
-                  <HomeIcon className="w-4 h-4 inline-block mr-2" />
+                  <HouseIcon className="w-4 h-4 inline-block mr-2" />
                   Home
                 </button>
                 <button
                   onClick={() => router.push("/search")}
                   className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-foreground font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
-                  <Search className="w-4 h-4 inline-block mr-2" />
+                  <MagnifyingGlassIcon className="w-4 h-4 inline-block mr-2" />
                   Explore Search
                 </button>
               </>

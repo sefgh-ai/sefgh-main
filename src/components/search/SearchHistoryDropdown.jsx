@@ -2,7 +2,7 @@
 
 import { formatNumber } from "@/lib/utils/formatters";
 import { useState, useEffect, useRef } from "react";
-import { Clock, Trash2, Search, TrendingUp } from "lucide-react";
+import { ClockIcon, TrashIcon, MagnifyingGlassIcon, TrendUpIcon } from "@phosphor-icons/react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getSearchHistory,
@@ -86,7 +86,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-medium">
-          <Clock className="h-4 w-4 text-muted-foreground" />
+          <ClockIcon className="h-4 w-4 text-muted-foreground" />
           Recent Searches
         </div>
         {history.length > 0 && (
@@ -104,7 +104,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
         </div>
       ) : history.length === 0 ? (
         <div className="px-4 py-6 text-center">
-          <Search className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+          <MagnifyingGlassIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
           <p className="text-sm text-muted-foreground">No recent searches</p>
           <p className="text-xs text-muted-foreground/70 mt-1">
             Your search history will appear here
@@ -119,7 +119,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
               className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-accent cursor-pointer group transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <MagnifyingGlassIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate group-hover:text-blue-400 transition-colors">
                     {item.query}
@@ -141,7 +141,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
                 onClick={(e) => handleDelete(e, item.id)}
                 className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-all"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <TrashIcon className="h-3.5 w-3.5" />
               </button>
             </div>
           ))}
@@ -152,7 +152,7 @@ export function SearchHistoryDropdown({ isOpen, onSelect, onClose, inputRef }) {
       {history.length > 0 && (
         <div className="px-4 py-2 border-t border-border bg-accent/60">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <TrendingUp className="h-3 w-3" />
+            <TrendUpIcon className="h-3 w-3" />
             <span>Tip: Press ↑↓ to navigate, Enter to select</span>
           </div>
         </div>

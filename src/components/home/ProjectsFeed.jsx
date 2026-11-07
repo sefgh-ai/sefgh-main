@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Code, Loader2 } from "lucide-react";
+import { CodeSimpleIcon, CircleNotchIcon } from "@phosphor-icons/react";
 import { ProjectCard, ProjectCardSkeleton } from "./ProjectCard";
 
 export function ProjectsFeed({
@@ -54,7 +54,7 @@ export function ProjectsFeed({
             <Card className="glass-premium border-border backdrop-blur-sm">
               <CardContent className="p-8 sm:p-12 text-center">
                 <div className="flex flex-col items-center gap-4">
-                  <Code className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
+                  <CodeSimpleIcon className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold mb-2">
                       No projects found
@@ -79,7 +79,7 @@ export function ProjectsFeed({
               <div ref={loadMoreRef} className="py-4 flex justify-center">
                 {loadingMore ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <CircleNotchIcon className="w-4 h-4 animate-spin" />
                     <span className="text-sm">Loading more...</span>
                   </div>
                 ) : hasMore ? (

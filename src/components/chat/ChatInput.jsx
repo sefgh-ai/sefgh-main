@@ -15,20 +15,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Plus,
-  Upload,
-  Sparkles,
-  Brain,
-  SearchCheck,
-  Github,
-  Zap,
-  Palette,
-  Globe,
-  Mic,
-  MicOff,
-  Send,
-  Loader2,
-} from "lucide-react";
+  PlusIcon,
+  UploadSimpleIcon,
+  MagicWandIcon,
+  BrainIcon,
+  MagnifyingGlassIcon,
+  GithubLogoIcon,
+  LightningIcon,
+  PaletteIcon,
+  GlobeIcon,
+  MicrophoneIcon,
+  MicrophoneSlashIcon,
+  PaperPlaneRightIcon,
+  CircleNotchIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export function ChatInput({
@@ -55,7 +55,7 @@ export function ChatInput({
               className="h-11 w-11 flex-shrink-0 hover:shadow-glow-blue"
               aria-label="Open quick actions"
             >
-              <Plus className="h-5 w-5" />
+              <PlusIcon className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -67,7 +67,7 @@ export function ChatInput({
                 toast.info("Upload repo", { description: "Coming soon" })
               }
             >
-              <Upload className="mr-2 h-4 w-4" />
+              <UploadSimpleIcon className="mr-2 h-4 w-4" />
               <span>Upload repo</span>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -75,7 +75,7 @@ export function ChatInput({
                 toast.info("Enhance", { description: "Coming soon" })
               }
             >
-              <Sparkles className="mr-2 h-4 w-4" />
+              <MagicWandIcon className="mr-2 h-4 w-4" />
               <span>Enhance</span>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -83,7 +83,7 @@ export function ChatInput({
                 toast.info("Think longer", { description: "Coming soon" })
               }
             >
-              <Brain className="mr-2 h-4 w-4" />
+              <BrainIcon className="mr-2 h-4 w-4" />
               <span>Think longer</span>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -93,11 +93,11 @@ export function ChatInput({
                 })
               }
             >
-              <SearchCheck className="mr-2 h-4 w-4" />
+              <MagnifyingGlassIcon className="mr-2 h-4 w-4" />
               <span>Deep research</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowGithubSearch(true)}>
-              <Github className="mr-2 h-4 w-4" />
+              <GithubLogoIcon className="mr-2 h-4 w-4" />
               <span>GitHub search</span>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -105,11 +105,11 @@ export function ChatInput({
                 toast.info("Quick answer", { description: "Coming soon" })
               }
             >
-              <Zap className="mr-2 h-4 w-4" />
+              <LightningIcon className="mr-2 h-4 w-4" />
               <span>Quick answer</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowCanvas(!showCanvas)}>
-              <Palette className="mr-2 h-4 w-4" />
+              <PaletteIcon className="mr-2 h-4 w-4" />
               <span>{showCanvas ? "Close Canvas" : "Open Canvas"}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -117,7 +117,7 @@ export function ChatInput({
                 toast.info("Web search", { description: "Coming soon" })
               }
             >
-              <Globe className="mr-2 h-4 w-4" />
+              <GlobeIcon className="mr-2 h-4 w-4" />
               <span>Web search</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -152,9 +152,9 @@ export function ChatInput({
                   disabled={isSending}
                 >
                   {isRecording ? (
-                    <MicOff className="h-4 w-4" />
+                    <MicrophoneSlashIcon className="h-4 w-4" />
                   ) : (
-                    <Mic className="h-4 w-4" />
+                    <MicrophoneIcon className="h-4 w-4" />
                   )}
                 </Button>
               </TooltipTrigger>
@@ -173,9 +173,9 @@ export function ChatInput({
           className="h-11 w-11 flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-glow-blue"
         >
           {isSending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <CircleNotchIcon className="h-4 w-4 animate-spin" />
           ) : (
-            <Send className="h-4 w-4" />
+            <PaperPlaneRightIcon className="h-4 w-4" />
           )}
         </Button>
       </div>

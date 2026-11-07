@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { RepositoryCard } from '@/components/RepositoryCard'
-import { Github, ChevronDown, ChevronUp } from 'lucide-react'
+import { GithubLogoIcon, CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -23,7 +23,7 @@ export function RepoSuggestions({ repos, onSelect }) {
       >
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-blue-600 dark:bg-blue-500">
-            <Github className="h-4 w-4 text-foreground" />
+            <GithubLogoIcon className="h-4 w-4 text-foreground" />
           </div>
           <div>
             <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
@@ -39,7 +39,7 @@ export function RepoSuggestions({ repos, onSelect }) {
           size="icon"
           className="h-8 w-8 text-blue-700 dark:text-blue-300 hover:bg-blue-200/50 dark:hover:bg-blue-800/30"
         >
-          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          {expanded ? <CaretUpIcon className="h-4 w-4" /> : <CaretDownIcon className="h-4 w-4" />}
         </Button>
       </div>
 

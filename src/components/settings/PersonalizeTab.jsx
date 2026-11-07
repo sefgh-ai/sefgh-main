@@ -14,15 +14,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Palette,
-  Globe,
-  Code,
-  Sparkles,
-  Moon,
-  Sun,
-  Monitor,
-  Check,
-} from "lucide-react";
+  PaletteIcon,
+  GlobeIcon,
+  CodeSimpleIcon,
+  BrainIcon,
+  MoonIcon,
+  SunIcon,
+  MonitorIcon,
+  CheckIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
 
@@ -80,7 +80,7 @@ export default function PersonalizeTab() {
       <div className="rounded-2xl border border-border/50 bg-card p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
-            <Palette className="w-5 h-5 text-primary" />
+            <PaletteIcon className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h3 className="text-lg font-semibold">Appearance</h3>
@@ -92,9 +92,9 @@ export default function PersonalizeTab() {
 
         <div className="grid grid-cols-3 gap-3">
           {[
-            { id: "light", label: "Light", icon: Sun },
-            { id: "dark", label: "Dark", icon: Moon },
-            { id: "system", label: "System", icon: Monitor },
+            { id: "light", label: "Light", icon: SunIcon },
+            { id: "dark", label: "Dark", icon: MoonIcon },
+            { id: "system", label: "System", icon: MonitorIcon },
           ].map((t) => (
             <button
               key={t.id}
@@ -107,7 +107,7 @@ export default function PersonalizeTab() {
             >
               {theme === t.id && (
                 <div className="absolute top-2 right-2">
-                  <Check className="w-4 h-4 text-primary" />
+                  <CheckIcon className="w-4 h-4 text-primary" />
                 </div>
               )}
               <t.icon
@@ -131,7 +131,7 @@ export default function PersonalizeTab() {
       <div className="rounded-2xl border border-border/50 bg-card p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
-            <Globe className="w-5 h-5 text-primary" />
+            <GlobeIcon className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h3 className="text-lg font-semibold">Language</h3>
@@ -162,7 +162,7 @@ export default function PersonalizeTab() {
       <div className="rounded-2xl border border-border/50 bg-card p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
-            <Code className="w-5 h-5 text-primary" />
+            <CodeSimpleIcon className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h3 className="text-lg font-semibold">Preferred Languages</h3>
@@ -186,7 +186,7 @@ export default function PersonalizeTab() {
                 }`}
                 onClick={() => toggleProgrammingLanguage(lang)}
               >
-                {isSelected && <Check className="w-3 h-3 mr-1" />}
+                {isSelected && <CheckIcon className="w-3 h-3 mr-1" />}
                 {lang}
               </Badge>
             );
@@ -199,7 +199,7 @@ export default function PersonalizeTab() {
         <div className="p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20">
-              <Sparkles className="w-5 h-5 text-purple-500" />
+              <BrainIcon className="w-5 h-5 text-purple-500" />
             </div>
             <div>
               <h3 className="text-lg font-semibold">AI Features</h3>

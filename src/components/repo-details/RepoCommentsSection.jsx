@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { MessageSquare, ArrowBigUp, ArrowBigDown, Reply, MoreVertical } from 'lucide-react'
+import { ChatIcon, ArrowFatUpIcon, ArrowFatDownIcon, ArrowBendUpLeftIcon, DotsThreeVerticalIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -101,7 +101,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <MoreVertical className="h-4 w-4" />
+                  <DotsThreeVerticalIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -123,7 +123,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
               className="h-6 w-6"
               onClick={() => onVote(comment.id, 'upvote')}
             >
-              <ArrowBigUp className="h-4 w-4" />
+              <ArrowFatUpIcon className="h-4 w-4" />
             </Button>
             <span className={cn(
               "font-medium min-w-[30px] text-center",
@@ -138,7 +138,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
               className="h-6 w-6"
               onClick={() => onVote(comment.id, 'downvote')}
             >
-              <ArrowBigDown className="h-4 w-4" />
+              <ArrowFatDownIcon className="h-4 w-4" />
             </Button>
           </div>
 
@@ -150,7 +150,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
               onClick={() => setShowReplyForm(!showReplyForm)}
               className="h-6 px-2"
             >
-              <Reply className="h-3 w-3 mr-1" />
+              <ArrowBendUpLeftIcon className="h-3 w-3 mr-1" />
               Reply
             </Button>
           )}
@@ -363,7 +363,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
-          <MessageSquare className="h-6 w-6" />
+          <ChatIcon className="h-6 w-6" />
           Comments ({comments.length})
         </h2>
         
@@ -414,7 +414,7 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
       <div className="space-y-4">
         {comments.length === 0 ? (
           <Card className="p-8 bg-card/50 text-center">
-            <MessageSquare className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+            <ChatIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
             <p className="text-muted-foreground">
               No comments yet. Be the first to share your thoughts!
             </p>

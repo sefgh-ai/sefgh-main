@@ -3,7 +3,7 @@
 import { formatNumber } from "@/lib/utils/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Sparkles, Flame } from "lucide-react";
+import { StarIcon, SealCheckIcon, FireIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export function EditorsChoice({ items, onNavigate }) {
@@ -14,7 +14,7 @@ export function EditorsChoice({ items, onNavigate }) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
+            <SealCheckIcon className="w-3.5 h-3.5" />
             Editors&apos; Choice
           </div>
           <p className="text-sm text-muted-foreground mt-2">
@@ -64,13 +64,13 @@ export function EditorsChoice({ items, onNavigate }) {
                   </div>
                 </div>
                 <Badge className="bg-warning/10 text-warning border-warning/30 flex items-center gap-1">
-                  <Flame className="w-3.5 h-3.5" /> {repo.highlight || "Staff pick"}
+                  <FireIcon className="shrink-0 w-3.5 h-3.5" /> {repo.highlight || "Staff pick"}
                 </Badge>
               </div>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-300" />
+                  <StarIcon className="w-4 h-4 text-yellow-300" />
                   <span className="font-semibold">{formatNumber(repo.stars)}</span>
                   <span className="text-xs text-muted-foreground">stars</span>
                 </div>

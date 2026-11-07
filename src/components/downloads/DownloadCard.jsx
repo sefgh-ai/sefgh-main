@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { DownloadSimpleIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 
 export default function DownloadCard({
@@ -49,7 +49,7 @@ export default function DownloadCard({
               <span className="text-xs sm:text-sm font-semibold">
                 {download.label}
               </span>
-              <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-y-1 group-hover/btn:scale-110 transition-all duration-300 flex-shrink-0" />
+              <DownloadSimpleIcon className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-y-1 group-hover/btn:scale-110 transition-all duration-300 flex-shrink-0" />
             </a>
           ))}
         </div>

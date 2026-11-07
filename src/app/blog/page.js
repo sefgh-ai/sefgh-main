@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ArrowRight, PenLine } from "lucide-react";
+import { CalendarDotsIcon, ArrowRightIcon, PencilLineIcon } from "@phosphor-icons/react/ssr";
 import AppFooter from "@/components/ui/app-footer";
 
 export const metadata = {
@@ -35,7 +35,7 @@ export default function BlogPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
         <header className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
-            <PenLine className="w-4 h-4" />
+            <PencilLineIcon className="w-4 h-4" />
             Blog
           </div>
           <h1 className="text-4xl md:text-5xl font-bold">SEFGH Blog</h1>
@@ -49,7 +49,7 @@ export default function BlogPage() {
               className="rounded-2xl border border-border bg-card/60 p-6 flex flex-col gap-2"
             >
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <CalendarDays className="w-4 h-4" /> {post.date}
+                <CalendarDotsIcon className="w-4 h-4" /> {post.date}
               </div>
               <h2 className="text-xl font-semibold">{post.title}</h2>
               <p className="text-muted-foreground text-sm">{post.excerpt}</p>
@@ -57,7 +57,7 @@ export default function BlogPage() {
                 href={post.href}
                 className="inline-flex items-center gap-2 text-primary hover:text-primary text-sm font-medium"
               >
-                Read more <ArrowRight className="w-4 h-4" />
+                Read more <ArrowRightIcon className="w-4 h-4" />
               </Link>
             </article>
           ))}

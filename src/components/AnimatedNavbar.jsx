@@ -13,18 +13,18 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
-  Search,
-  Sparkles,
-  Code,
-  BookOpen,
-  Zap,
-  TrendingUp,
-  GitBranch,
-  Layers,
-  Box,
-  Activity,
-  Download,
-} from "lucide-react";
+  MagnifyingGlassIcon,
+  ChatCircleIcon,
+  CodeSimpleIcon,
+  BookOpenIcon,
+  InfoIcon,
+  TrendUpIcon,
+  StackIcon,
+  UploadSimpleIcon,
+  PulseIcon,
+  DownloadSimpleIcon,
+  UserPlusIcon,
+} from "@phosphor-icons/react";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, icon: Icon, ...props }, ref) => {
@@ -100,22 +100,22 @@ export function AnimatedNavbar({ className }) {
                 <ListItem
                   href="/search"
                   title="Repository Search"
-                  icon={Search}
+                  icon={MagnifyingGlassIcon}
                 />
                 <ListItem
                   href="/chat"
                   title="AI Code Assistant"
-                  icon={Sparkles}
+                  icon={ChatCircleIcon}
                 />
                 <ListItem
                   href="/playground"
                   title="API Playground"
-                  icon={Code}
+                  icon={CodeSimpleIcon}
                 />
                 <ListItem
                   href="/trending"
                   title="Trending Projects"
-                  icon={TrendingUp}
+                  icon={TrendUpIcon}
                 />
               </ul>
             </NavigationMenuContent>
@@ -166,19 +166,19 @@ export function AnimatedNavbar({ className }) {
                 <ListItem
                   href="/trending"
                   title="Trending Projects"
-                  icon={GitBranch}
+                  icon={TrendUpIcon}
                 />
                 <ListItem
                   href="/submissions"
                   title="Submit Your Project"
-                  icon={Box}
+                  icon={UploadSimpleIcon}
                 />
                 <ListItem
                   href="/search"
                   title="Explore Repositories"
-                  icon={Layers}
+                  icon={StackIcon}
                 />
-                <ListItem href="/about" title="Documentation" icon={BookOpen} />
+                <ListItem href="/about" title="Documentation" icon={BookOpenIcon} />
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -190,24 +190,24 @@ export function AnimatedNavbar({ className }) {
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[220px] gap-1 p-2 bg-card/95 backdrop-blur-xl border border-border rounded-lg">
-                <ListItem href="/search" title="GitHub Search" icon={Search} />
+                <ListItem href="/search" title="GitHub Search" icon={MagnifyingGlassIcon} />
                 <ListItem
                   href="/chat"
                   title="AI Chat Assistant"
-                  icon={Sparkles}
+                  icon={ChatCircleIcon}
                 />
                 <ListItem
                   href="/playground"
                   title="API Playground"
-                  icon={Code}
+                  icon={CodeSimpleIcon}
                 />
                 <ListItem
                   href="/trending"
                   title="Trending Repos"
-                  icon={TrendingUp}
+                  icon={TrendUpIcon}
                 />
-                <ListItem href="/download" title="Downloads" icon={Download} />
-                <ListItem href="/status" title="Status" icon={Activity} />
+                <ListItem href="/download" title="Downloads" icon={DownloadSimpleIcon} />
+                <ListItem href="/status" title="Status" icon={PulseIcon} />
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -269,14 +269,14 @@ export function AnimatedNavbar({ className }) {
                 <ListItem
                   href="/submissions"
                   title="Submit Your Project"
-                  icon={BookOpen}
+                  icon={UploadSimpleIcon}
                 />
-                <ListItem href="/about" title="About SEFGH" icon={Zap} />
+                <ListItem href="/about" title="About SEFGH" icon={InfoIcon} />
                 {!user && (
                   <ListItem
                     href="/signup"
                     title="Join Community"
-                    icon={Sparkles}
+                    icon={UserPlusIcon}
                   />
                 )}
               </ul>

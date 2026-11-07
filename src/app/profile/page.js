@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { Header } from "@/components/Header";
 import { ActivityLogger } from "@/lib/activity-logger";
 import UsageContributionsCard from "@/components/usage-contributions/UsageContributionsCard";
@@ -54,7 +54,7 @@ export default function ProfilePage() {
 
       <div className="container max-w-4xl mx-auto py-8 px-4">
         <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeftIcon className="h-4 w-4 mr-2" />
           Back
         </Button>
 

@@ -5,7 +5,7 @@ import { popularRepositoryPath } from "@/lib/utils/trending/feedback";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Flame, Code } from "lucide-react";
+import { FireIcon, CodeSimpleIcon } from "@phosphor-icons/react";
 
 /**
  * Developer card component (memoized for performance)
@@ -41,13 +41,13 @@ export const TrendingDeveloperCard = React.memo(function TrendingDeveloperCard({
             {/* Popular Repo */}
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-primary" />
+                <FireIcon className="w-4 h-4 text-primary" />
                 <span className="text-xs text-muted-foreground uppercase tracking-wide">
                   Popular Repo
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-muted-foreground" />
+                <CodeSimpleIcon className="w-4 h-4 text-muted-foreground" />
                   {repositoryPath ? (
                     <button type="button" className="text-sm text-primary hover:text-primary/80 cursor-pointer font-medium" onClick={() => onNavigate(repositoryPath)}>
                       {dev.popularRepo.name}

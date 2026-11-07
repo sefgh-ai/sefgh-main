@@ -4,22 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SefghTile } from "@/components/brand/SefghMark";
-import {
-  Home,
-  Search,
-  Send,
-  ChartNoAxesCombined,
-  Star,
-  Clock,
-  Settings,
-  Lock,
-  Upload,
-  Key,
-  Sparkles,
-  ChevronRight,
-  Zap,
-  Telescope,
-} from "lucide-react";
+import { HouseIcon, MagnifyingGlassIcon, ChatCircleIcon, ChartLineUpIcon, StarIcon, ClockIcon, UploadSimpleIcon, CaretRightIcon, LightningIcon, CodeIcon, RocketLaunchIcon, SignInIcon } from "@phosphor-icons/react";
 import {
   Sidebar,
   SidebarContent,
@@ -65,7 +50,7 @@ function NavItem({ href, icon: Icon, label, isActive, badge }) {
             {badge}
           </span>
         )}
-        {isActive && <ChevronRight className="h-4 w-4 opacity-50" />}
+        {isActive && <CaretRightIcon className="h-4 w-4 opacity-50" />}
       </Link>
     </SidebarMenuButton>
   </SidebarMenuItem>
@@ -111,26 +96,26 @@ export function SearchSidebar({ user }) {
             <SidebarMenu className="space-y-1">
               <NavItem
                 href="/home"
-                icon={Home}
+                icon={HouseIcon}
                 label="Home"
                 isActive={pathname === "/home"}
               />
               <NavItem
                 href="/search"
-                icon={Search}
+                icon={MagnifyingGlassIcon}
                 label="Search"
                 isActive={pathname === "/search"}
               />
               <NavItem
                 href="/chat"
-                icon={Send}
+                icon={ChatCircleIcon}
                 label="AI Chat"
                 isActive={pathname === "/chat"}
                 badge="AI"
               />
               <NavItem
                 href="/trending"
-                icon={ChartNoAxesCombined}
+                icon={ChartLineUpIcon}
                 label="Trending"
                 isActive={pathname === "/trending"}
               />
@@ -149,25 +134,25 @@ export function SearchSidebar({ user }) {
                 <SidebarMenu className="space-y-1">
                   <NavItem
                     href="/starred"
-                    icon={Star}
+                    icon={StarIcon}
                     label="Starred"
                     isActive={pathname === "/starred"}
                   />
                   <NavItem
                     href="/history"
-                    icon={Clock}
+                    icon={ClockIcon}
                     label="History"
                     isActive={pathname === "/history"}
                   />
                   <NavItem
                     href="/playground"
-                    icon={Key}
+                    icon={CodeIcon}
                     label="Playground"
                     isActive={pathname === "/playground"}
                   />
                   <NavItem
                     href="/submissions"
-                    icon={Upload}
+                    icon={UploadSimpleIcon}
                     label="Submissions"
                     isActive={pathname === "/submissions"}
                   />
@@ -180,7 +165,7 @@ export function SearchSidebar({ user }) {
           <SidebarGroup className="mt-4">
             <div className="mx-1 p-4 rounded-2xl bg-primary/5 border border-primary/10">
               <div className="flex items-center gap-2 mb-2">
-                <Telescope className="h-4 w-4 text-primary" />
+                <RocketLaunchIcon className="h-4 w-4 text-primary" />
                 <span className="font-semibold text-sm text-foreground">
                   Get Started
                 </span>
@@ -194,7 +179,7 @@ export function SearchSidebar({ user }) {
                 className="w-full justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md"
               >
                 <Link href="/login" className="flex items-center gap-2">
-                  <Lock className="h-4 w-4" />
+                  <SignInIcon className="h-4 w-4" />
                   <span className="font-medium">Sign In</span>
                 </Link>
               </SidebarMenuButton>
@@ -208,7 +193,7 @@ export function SearchSidebar({ user }) {
             <div className="mx-1 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                  <Zap className="h-3.5 w-3.5 text-foreground" />
+                  <LightningIcon className="h-3.5 w-3.5 text-foreground" />
                 </div>
                 <span className="font-semibold text-sm text-foreground">
                   Upgrade to Pro

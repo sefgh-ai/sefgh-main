@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import { QrCode, Download } from 'lucide-react'
+import { QrCodeIcon, DownloadSimpleIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -37,7 +37,7 @@ export function RepoQRCode({ repoFullName }) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon" title="Show QR Code">
-          <QrCode className="h-4 w-4" />
+          <QrCodeIcon className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -62,7 +62,7 @@ export function RepoQRCode({ repoFullName }) {
                 Scan to visit {repoFullName} on GitHub
               </p>
               <Button onClick={handleDownload} className="w-full">
-                <Download className="h-4 w-4 mr-2" />
+                <DownloadSimpleIcon className="h-4 w-4 mr-2" />
                 Download QR Code
               </Button>
             </>

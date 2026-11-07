@@ -3,15 +3,14 @@
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";
 import {
-  Check,
-  Clock,
-  Sparkles,
-  Zap,
-  Shield,
-  Globe,
-  Code,
-  Rocket,
-} from "lucide-react";
+  CheckIcon,
+  ClockIcon,
+  RocketLaunchIcon,
+  LightningIcon,
+  GlobeIcon,
+  CodeSimpleIcon,
+  PaintBrushIcon,
+} from "@phosphor-icons/react";
 
 export default function VersionsPage() {
   const versions = [
@@ -26,7 +25,7 @@ export default function VersionsPage() {
         "Multi-language code understanding",
         "Advanced filtering with natural language queries",
       ],
-      icon: Sparkles,
+      icon: RocketLaunchIcon,
     },
     {
       version: "2.5.0",
@@ -39,7 +38,7 @@ export default function VersionsPage() {
         "Enhanced trending algorithms",
         "Dark mode improvements",
       ],
-      icon: Zap,
+      icon: LightningIcon,
     },
     {
       version: "2.0.0",
@@ -52,7 +51,7 @@ export default function VersionsPage() {
         "User authentication system",
         "Search history and starred repos",
       ],
-      icon: Rocket,
+      icon: PaintBrushIcon,
     },
     {
       version: "1.5.0",
@@ -65,7 +64,7 @@ export default function VersionsPage() {
         "Star count sorting",
         "Pagination improvements",
       ],
-      icon: Code,
+      icon: CodeSimpleIcon,
     },
     {
       version: "1.0.0",
@@ -78,7 +77,7 @@ export default function VersionsPage() {
         "Repository cards with key metrics",
         "Simple sorting options",
       ],
-      icon: Globe,
+      icon: GlobeIcon,
     },
   ];
 
@@ -172,7 +171,7 @@ export default function VersionsPage() {
           <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-primary/20 rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-foreground" />
+                <RocketLaunchIcon className="w-6 h-6 text-foreground" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground">
@@ -256,7 +255,7 @@ export default function VersionsPage() {
                       key={i}
                       className="flex items-start gap-2 text-muted-foreground text-sm"
                     >
-                      <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <CheckIcon className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                       {highlight}
                     </li>
                   ))}
@@ -285,7 +284,7 @@ export default function VersionsPage() {
                 className="bg-muted/50 border border-border rounded-xl p-6"
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock className="w-5 h-5 text-primary" />
+                  <ClockIcon className="w-5 h-5 text-primary" />
                   <h3 className="text-lg font-semibold text-foreground">
                     {quarter.quarter}
                   </h3>

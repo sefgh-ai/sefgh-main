@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Shield } from "lucide-react";
+import { CalendarBlankIcon, ShieldIcon } from "@phosphor-icons/react";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { formatDate } from "@/lib/utils/profile/profileHelpers";
 
@@ -32,11 +32,11 @@ const ProfileHeader = React.memo(
               <p className="text-muted-foreground">{user?.email}</p>
               <div className="flex flex-wrap gap-4 mt-4 justify-center md:justify-start">
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <CalendarBlankIcon className="h-4 w-4 text-muted-foreground" />
                   <span>Joined {formatDate(user?.created_at)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <ShieldIcon className="h-4 w-4 text-muted-foreground" />
                   <span className="capitalize">{user?.role || "user"}</span>
                 </div>
               </div>

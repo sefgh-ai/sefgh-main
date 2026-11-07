@@ -4,7 +4,7 @@ import { formatCompactNumber } from "@/lib/utils/formatters";
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
-import { ArrowBigUp, ArrowBigDown } from 'lucide-react'
+import { ArrowFatUpIcon, ArrowFatDownIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'
@@ -119,11 +119,9 @@ export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
             : "text-muted-foreground hover:text-orange-500"
         )}
       >
-        <ArrowBigUp 
-          className={cn(
-            "h-6 w-6",
-            currentVote === 'upvote' && "fill-current"
-          )} 
+        <ArrowFatUpIcon 
+          className="h-6 w-6"
+          weight={currentVote === 'upvote' ? "fill" : "regular"}
         />
       </Button>
 
@@ -149,11 +147,9 @@ export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
             : "text-muted-foreground hover:text-blue-500"
         )}
       >
-        <ArrowBigDown 
-          className={cn(
-            "h-6 w-6",
-            currentVote === 'downvote' && "fill-current"
-          )} 
+        <ArrowFatDownIcon 
+          className="h-6 w-6"
+          weight={currentVote === 'downvote' ? "fill" : "regular"}
         />
       </Button>
 

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { Link2, Copy, Check, Globe, Lock, Twitter, Facebook, Linkedin, Trash2 } from 'lucide-react'
+import { LinkSimpleIcon, CopyIcon, CheckIcon, GlobeIcon, LockIcon, XLogoIcon, FacebookLogoIcon, LinkedinLogoIcon, TrashIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
 import { fetchWithSession } from '@/lib/supabase/session-fetch'
@@ -103,10 +103,10 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
         {/* Visibility */}
         <div className="flex items-center gap-2">
           <Button variant={isPublic ? 'default' : 'outline'} size="sm" onClick={() => setIsPublic(true)}>
-            <Globe className="h-4 w-4 mr-2" /> Public
+            <GlobeIcon className="h-4 w-4 mr-2" /> Public
           </Button>
           <Button variant={!isPublic ? 'default' : 'outline'} size="sm" onClick={() => setIsPublic(false)}>
-            <Lock className="h-4 w-4 mr-2" /> Private
+            <LockIcon className="h-4 w-4 mr-2" /> Private
           </Button>
           <Badge variant="secondary" className="ml-auto">
             {snapshot?.length || 0} messages
@@ -128,7 +128,7 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
         {/* Create / Link */}
         {!shareUrl ? (
           <Button onClick={doShare} disabled={!canShare || creating}>
-            <Link2 className="h-4 w-4 mr-2" />
+            <LinkSimpleIcon className="h-4 w-4 mr-2" />
             {creating ? 'Creating...' : 'Create share link'}
           </Button>
         ) : (
@@ -136,22 +136,22 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
             <div className="flex items-center gap-2">
               <Input readOnly value={shareUrl} />
               <Button variant="outline" onClick={copyLink}>
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
               </Button>
               <Button variant="ghost" className="text-destructive" onClick={deleteShare}>
-                <Trash2 className="h-4 w-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm text-muted-foreground">Post it on socials:</span>
               <Button variant="ghost" size="sm" onClick={() => shareTo('twitter')}>
-                <Twitter className="h-4 w-4 mr-2" /> Twitter
+                <XLogoIcon className="h-4 w-4 mr-2" /> Twitter
               </Button>
               <Button variant="ghost" size="sm" onClick={() => shareTo('linkedin')}>
-                <Linkedin className="h-4 w-4 mr-2" /> LinkedIn
+                <LinkedinLogoIcon className="h-4 w-4 mr-2" /> LinkedIn
               </Button>
               <Button variant="ghost" size="sm" onClick={() => shareTo('facebook')}>
-                <Facebook className="h-4 w-4 mr-2" /> Facebook
+                <FacebookLogoIcon className="h-4 w-4 mr-2" /> Facebook
               </Button>
             </div>
             <div className="rounded-md bg-muted p-3 text-xs text-muted-foreground">

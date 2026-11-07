@@ -11,13 +11,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  Inbox,
-  Bookmark,
-  CheckCircle2,
-  Bell,
-  Menu,
-  ChevronLeft,
-} from "lucide-react";
+  TrayIcon,
+  BookmarkSimpleIcon,
+  CheckCircleIcon,
+  BellIcon,
+  ListIcon,
+  CaretLeftIcon,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export function NotificationMobileHeader({
@@ -45,12 +45,12 @@ export function NotificationMobileHeader({
           onClick={() => router.back()}
           className="-ml-2"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <CaretLeftIcon className="h-5 w-5" />
         </Button>
 
         {/* Title */}
         <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-primary" />
+          <BellIcon className="h-5 w-5 text-primary" />
           <h1 className="text-lg font-semibold">{filterLabels[filter]}</h1>
           {filter === "inbox" && inboxCount > 0 && (
             <Badge variant="secondary" className="h-5 px-1.5 text-xs">
@@ -63,33 +63,33 @@ export function NotificationMobileHeader({
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="sm" className="-mr-2">
-              <Menu className="h-5 w-5" />
+              <ListIcon className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-72">
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5 text-primary" />
+                <BellIcon className="h-5 w-5 text-primary" />
                 Notifications
               </SheetTitle>
             </SheetHeader>
             <div className="mt-6 space-y-1">
               <MobileFilterButton
-                icon={Inbox}
+                icon={TrayIcon}
                 label="Inbox"
                 count={inboxCount}
                 active={filter === "inbox"}
                 onClick={() => setFilter("inbox")}
               />
               <MobileFilterButton
-                icon={Bookmark}
+                icon={BookmarkSimpleIcon}
                 label="Saved"
                 count={savedCount}
                 active={filter === "saved"}
                 onClick={() => setFilter("saved")}
               />
               <MobileFilterButton
-                icon={CheckCircle2}
+                icon={CheckCircleIcon}
                 label="Done"
                 count={doneCount}
                 active={filter === "done"}

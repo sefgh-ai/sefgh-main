@@ -5,37 +5,37 @@ import { Button } from "@/components/ui/button";
 import { saveStepGoals } from "@/lib/supabase/onboarding";
 import { toast } from "sonner";
 import {
-  ChevronLeft,
-  Sparkles,
-  BookOpen,
-  Search,
-  GitPullRequest,
-  FlaskConical,
-} from "lucide-react";
+  CaretLeftIcon,
+  RobotIcon,
+  BookOpenIcon,
+  MagnifyingGlassIcon,
+  GitPullRequestIcon,
+  FlaskIcon,
+} from "@phosphor-icons/react";
 
 const goalOptions = [
   {
     value: "learning",
     label: "Learning & Education",
-    icon: BookOpen,
+    icon: BookOpenIcon,
     description: "Discover repositories to learn new skills and technologies",
   },
   {
     value: "finding-tools",
     label: "Finding Tools & Libraries",
-    icon: Search,
+    icon: MagnifyingGlassIcon,
     description: "Find the right packages and tools for my projects",
   },
   {
     value: "contributing",
     label: "Contributing to Open Source",
-    icon: GitPullRequest,
+    icon: GitPullRequestIcon,
     description: "Find projects to contribute to and collaborate on",
   },
   {
     value: "research",
     label: "Research & Exploration",
-    icon: FlaskConical,
+    icon: FlaskIcon,
     description: "Explore cutting-edge projects and research repositories",
   },
 ];
@@ -74,7 +74,7 @@ export function StepGoals({ userId, onNext, onBack }) {
       <div className="flex gap-2 sm:gap-3">
         <div className="flex-shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#238636] flex items-center justify-center">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
+            <RobotIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-foreground" />
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -169,7 +169,7 @@ export function StepGoals({ userId, onNext, onBack }) {
           variant="ghost"
           className="text-[#8b949e] hover:text-foreground hover:bg-[#21262d] text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
         >
-          <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
+          <CaretLeftIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
           Back
         </Button>
         <Button

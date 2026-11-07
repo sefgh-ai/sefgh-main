@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CookieSettingsButton } from "@/components/CookieBar";
 import { SefghLogo } from "@/components/brand/SefghMark";
 import Image from "next/image";
-import { Instagram, Twitter } from "lucide-react";
+import { InstagramLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 
 export default function FooterNewsletter() {
   return (
@@ -225,7 +225,7 @@ export default function FooterNewsletter() {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-primary hover:bg-pink-600 hover:text-foreground transition-all duration-300"
               >
-                <Instagram className="w-5 h-5" />
+                <InstagramLogoIcon className="w-5 h-5" />
               </Link>
               <Link
                 href="https://twitter.com/sefghai"
@@ -233,7 +233,7 @@ export default function FooterNewsletter() {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-primary hover:bg-blue-600 hover:text-foreground transition-all duration-300"
               >
-                <Twitter className="w-5 h-5" />
+                <XLogoIcon className="w-5 h-5" />
               </Link>
               <Link
                 href="https://github.com/sefgh-ai"

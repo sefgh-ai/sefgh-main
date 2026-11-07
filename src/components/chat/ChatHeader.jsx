@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowLeft,
-  Menu,
-  Sparkles,
-  Palette,
-  Github,
-  X,
-  Share2,
-} from "lucide-react";
+  ArrowLeftIcon,
+  ListIcon,
+  ChatCircleIcon,
+  PaletteIcon,
+  GithubLogoIcon,
+  XIcon,
+  ShareNetworkIcon,
+} from "@phosphor-icons/react";
 import ShareDialog from "@/components/ShareDialog";
 
 export function ChatHeader({
@@ -37,7 +37,7 @@ export function ChatHeader({
           aria-label="Back to search"
           onClick={() => router.push("/search")}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeftIcon className="h-5 w-5" />
         </Button>
 
         {/* Sidebar Toggle Button */}
@@ -51,12 +51,12 @@ export function ChatHeader({
           }}
           className="md:flex"
         >
-          <Menu className="h-5 w-5" />
+          <ListIcon className="h-5 w-5" />
         </Button>
 
         {/* Title Section */}
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <ChatCircleIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           <h1 className="text-lg font-semibold">
             {currentConversation?.title || "AI Chat"}
           </h1>
@@ -65,7 +65,7 @@ export function ChatHeader({
               variant="secondary"
               className="ml-2 bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800"
             >
-              <Palette className="h-3 w-3 mr-1" />
+              <PaletteIcon className="h-3 w-3 mr-1" />
               Canvas
             </Badge>
           )}
@@ -74,7 +74,7 @@ export function ChatHeader({
               variant="secondary"
               className="ml-2 bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800"
             >
-              <Github className="h-3 w-3 mr-1" />
+              <GithubLogoIcon className="h-3 w-3 mr-1" />
               Repository
             </Badge>
           )}
@@ -90,7 +90,7 @@ export function ChatHeader({
             size="sm"
             onClick={() => setShowCanvas(false)}
           >
-            <X className="h-4 w-4 mr-2" />
+            <XIcon className="h-4 w-4 mr-2" />
             Close Canvas
           </Button>
         )}
@@ -102,7 +102,7 @@ export function ChatHeader({
             size="sm"
             onClick={() => setSelectedRepo(null)}
           >
-            <X className="h-4 w-4 mr-2" />
+            <XIcon className="h-4 w-4 mr-2" />
             Close Repository
           </Button>
         )}
@@ -115,7 +115,7 @@ export function ChatHeader({
               size="sm"
               onClick={() => setShareDialogOpen(true)}
             >
-              <Share2 className="h-4 w-4" />
+              <ShareNetworkIcon className="h-4 w-4" />
               <span className="ml-2 hidden sm:inline">Share</span>
             </Button>
             <ShareDialog
