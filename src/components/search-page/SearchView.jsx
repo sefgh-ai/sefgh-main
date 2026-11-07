@@ -147,6 +147,7 @@ export default function SearchView({ fontClassName = "" }) {
                 view={view}
                 repos={s.searchResults}
                 loading={s.loading}
+                pagePending={s.loadingMore}
                 totalCount={s.totalCount}
                 currentPage={s.currentPage}
                 onPageChange={s.handlePageChange}

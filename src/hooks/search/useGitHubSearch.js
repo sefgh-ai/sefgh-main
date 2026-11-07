@@ -6,6 +6,7 @@ import { logError } from "@/lib/error-tracking";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
 import { lastSearchPage } from "@/lib/github/search-pages";
 import { appendAdvancedFilters } from "@/lib/search/advanced-filters";
+import { mountSearchAction } from "@/lib/search/restore";
 
 const CACHE_KEY = "sefgh_search_cache";
 const CACHE_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
@@ -77,34 +78,8 @@ export function useGitHubSearch(userId) {
   const [view, setView] = useState("grid");
   const [searchTime, setSearchTime] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-  const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Restore cached results on mount
-  useEffect(() => {
-    if (hasRestoredCache.current) return;
-    hasRestoredCache.current = true;
-
-    const cached = getCachedResults();
-    if (cached && cached.results?.length > 0) {
-      // Only restore if no URL query or URL query matches cached query
-      if (!initialQuery || initialQuery === cached.query) {
-        setSearchQuery(cached.query || "");
-        setSearchResults(cached.results || []);
-        setTotalCount(cached.totalCount || 0);
-        setSearchTime(cached.searchTime || null);
-        setCurrentPage(cached.currentPage || 1);
-        setLanguage(cached.language || "");
-        setSort(cached.sort || "all");
-        setStars(cached.stars || "");
-        setView(cached.view || "grid");
-        // Mark as auto-searched to prevent duplicate search
-        if (initialQuery === cached.query) {
-          setHasAutoSearched(true);
-        }
-      }
-    }
-  }, [initialQuery]);
   const [advancedFilters, setAdvancedFilters] = useState({
     license: "",
     dateRange: "",
@@ -190,13 +165,30 @@ export function useGitHubSearch(userId) {
     [searchQuery, sort, language, stars, advancedFilters, view, userId]
   );
 
-  // Auto-search when there's an initial query from URL params
+  // On mount, either restore the cached search or run the URL query, never
+  // both: running both in one commit searched with the default filters under
+  // the restored ones (R-230). The first render's handleSearch uses the URL
+  // query and default filters, which is what a fresh URL search means.
   useEffect(() => {
-    if (initialQuery && !hasAutoSearched) {
-      setHasAutoSearched(true);
+    if (hasRestoredCache.current) return;
+    hasRestoredCache.current = true;
+
+    const cached = getCachedResults();
+    const action = mountSearchAction(cached, initialQuery);
+    if (action === "restore") {
+      setSearchQuery(cached.query || "");
+      setSearchResults(cached.results || []);
+      setTotalCount(cached.totalCount || 0);
+      setSearchTime(cached.searchTime || null);
+      setCurrentPage(cached.currentPage || 1);
+      setLanguage(cached.language || "");
+      setSort(cached.sort || "all");
+      setStars(cached.stars || "");
+      setView(cached.view || "grid");
+    } else if (action === "search") {
       handleSearch();
     }
-  }, [initialQuery, hasAutoSearched, handleSearch]);
+  }, [initialQuery, handleSearch]);
 
   const handleClearFilters = useCallback(() => {
     setLanguage("");

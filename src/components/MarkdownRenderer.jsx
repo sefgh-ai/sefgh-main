@@ -78,10 +78,11 @@ function CodeBlock({ inline, className, children, language, onOpenInCanvas, ...p
   )
 }
 
-export function MarkdownRenderer({ content, className = '', onOpenInCanvas }) {
+export function MarkdownRenderer({ content, className = '', onOpenInCanvas, urlTransform }) {
   return (
     <div className={`prose prose-sm dark:prose-invert max-w-none ${className}`}>
       <ReactMarkdown
+        urlTransform={urlTransform}
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{

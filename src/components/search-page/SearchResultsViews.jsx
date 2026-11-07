@@ -176,12 +176,12 @@ function pageNumbers(current, total) {
   return [1, ...(start > 2 ? ["…"] : []), ...Array.from({ length: end - start + 1 }, (_, i) => start + i), ...(end < total - 1 ? ["…"] : []), total];
 }
 
-function Pagination({ currentPage, totalCount, onPageChange }) {
+function Pagination({ currentPage, totalCount, onPageChange, pending = false }) {
   const total = lastSearchPage(totalCount, PER_PAGE);
   if (total <= 1) return null;
   const btn = `grid h-9 min-w-9 place-items-center rounded-[var(--l-radius-sm)] px-2 text-[13px] ${styles.mono} ${styles.focusRing}`;
   return (
-    <nav aria-label="Pages" className="mt-6 flex flex-col items-center gap-2">
+    <nav aria-label="Pages" aria-busy={pending} className="mt-6 flex flex-col items-center gap-2">
       <div className="flex items-center gap-1">
         <button type="button" className={`${btn} text-[var(--l-muted)] hover:text-[var(--l-ink)] disabled:opacity-40`} disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)} aria-label="Previous page">
           <CaretLeftIcon className="h-4 w-4" />
@@ -205,6 +205,11 @@ function Pagination({ currentPage, totalCount, onPageChange }) {
           <CaretRightIcon className="h-4 w-4" />
         </button>
       </div>
+      {/* A page change shows that it is loading; before, a slow page looked
+          like a click that did nothing (R-227, not reproduced locally). */}
+      <p className={`text-xs text-[var(--l-muted)] ${styles.mono}`} aria-live="polite">
+        {pending ? "Loading page…" : ""}
+      </p>
       {totalCount > GITHUB_SEARCH_RESULT_LIMIT && (
         <p className={`text-xs text-[var(--l-muted)] ${styles.mono}`}>GitHub shows the first 1,000 results</p>
       )}
@@ -213,7 +218,7 @@ function Pagination({ currentPage, totalCount, onPageChange }) {
 }
 
 /** R1 rows, R2 cards, R3 table behind one switch, then pagination (as before). */
-export default function SearchResultsViews({ view, repos, loading, totalCount, currentPage, onPageChange, onOpen }) {
+export default function SearchResultsViews({ view, repos, loading, pagePending = false, totalCount, currentPage, onPageChange, onOpen }) {
   if (loading) {
     return (
       <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading results">
@@ -234,7 +239,7 @@ export default function SearchResultsViews({ view, repos, loading, totalCount, c
   return (
     <>
       <View repos={repos} onOpen={onOpen} />
-      <Pagination currentPage={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
+      <Pagination currentPage={currentPage} totalCount={totalCount} onPageChange={onPageChange} pending={pagePending} />
     </>
   );
 }

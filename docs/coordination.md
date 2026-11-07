@@ -106,10 +106,29 @@ Page status: `/` NOT CHECKED; `/home` NOT CHECKED; `/search` NOT CHECKED; `/repo
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Codex released REDESIGN-CHECK-001 final check record; docs only, target redesign/integration never main. Owner servers remain running and untouched.
+- **Active writer:** none. Claude Code released BUG-073 (redesign findings) on `claude/redesign-bugfix-001`; target `redesign/integration`, never `main`.
 - **Redesign branch (owner, 2026-11-07):** all redesign work collects on `redesign/integration` (cut from `main`), never on `main`, with merge commits so the history stays. See AGENTS.md "Redesign integration branch and deploy hold". `claude/home-redesign` (HOME-001, SEARCH-001, DEPLOY-HOLD-001, REDESIGN-BRANCH-001) is to be merged into `redesign/integration`, not into `main`.
 - **Deploys on hold (owner, 2026-11-07):** `vercel.json` sets `git.deploymentEnabled` to false for `main` and `redesign/integration`. Neither branch creates Vercel deployments. Agents do not deploy and do not remove this hold; only the owner lifts it, when the redesign is finished and the old UI is retired. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: BUG-073 redesign findings from REDESIGN-CHECK-001 (Claude Code, 2026-11-08)
+
+- **Owner:** Claude Code, writer released. Reviewer: the redesign checker on "just check" (not run yet).
+- **Branch and base:** `claude/redesign-bugfix-001` from `codex/redesign-check-2026-11-07` at `e7b823a` (on `redesign/integration` `05e6f4b`). Resulting commit: the BUG-073 commit on this branch. Merge both into `redesign/integration` with `--no-ff`, check branch first. Never into `main`.
+- **Fixed:**
+  - R-228: relative README links went to the SEFGH origin. Added `src/lib/github/readme-links.js` (links → `github.com/{repo}/blob/HEAD/…`, images → `raw.githubusercontent.com/{repo}/HEAD/…`, unsafe schemes dropped via react-markdown's default). `MarkdownRenderer` takes `urlTransform`; `repo-page/RepoView.jsx` and `CodeExplorer.jsx` pass it.
+  - R-230: reproduced. The cache restore and URL auto-search effects ran in one commit, so the search saw default filters. Merged into one mount decision (`src/lib/search/restore.js`, `useGitHubSearch.js`; `hasAutoSearched` removed).
+  - R-231: `useProjects` kept the old rows when a tab returned none. The first page now always replaces them (`src/lib/home/projectPage.js`).
+- **Not reproduced:** R-227. With Go and real data in next dev, signed out at 1440px, page 2 worked: with and without TypeScript, in Table view, and after a cache restore. Added a visible pending state (`aria-busy` and "Loading page…") to Search pagination, because a slow page looked like a dead click. It stays open for the checker (signed in, production build).
+- R-232 (owner decision 2026-11-08: keep the pill): the Landing footer Status pill now opens the local `/status` page instead of the discontinued `status.sefgh.org`.
+- **Guards:** `scripts/contracts/redesign-bugfix.test.mjs`, 7 tests, including a real react-markdown render.
+- **Checks (Claude Code):** `npm run lint` clean; `npm run test:contracts` 739/739 (after R-232); `npm run build` passed with placeholder public Supabase values.
+- **Browser:** next dev on :3120 with Go on :8787 and the local `.env.local`, signed out.
+  - Search: R-230 before and after; R-227 not reproduced.
+  - Home: R-231 after the fix.
+  - Repo: the README browser check was blocked because GitHub rate-limited the Go API (details 429 → public-repo 404 → page 404, as in R-229). R-228 is covered by the render test only.
+- **Not run:** a production-build browser pass; signed-in checks; a 375px check.
+- **Next:** the Git Agent merges `codex/redesign-check-2026-11-07`, then this branch, into `redesign/integration` (`--no-ff`); the checker runs "just check", including R-227 signed in on a production build.
 
 ## Handoff: TRENDING-001 Trending page redesign (Claude Code, 2026-11-08)
 

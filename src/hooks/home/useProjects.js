@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { logError } from "@/lib/error-tracking";
+import { firstProjectPage } from "@/lib/home/projectPage";
 
 const PAGE_SIZE = 10;
 
@@ -100,12 +101,11 @@ export function useProjects(selectedTab) {
         if (error) {
           console.error("Error fetching projects:", error);
           logError("projects_fetch_failed", error, { selectedTab });
-        } else if (data && data.length > 0) {
-          setAllProjects(data);
-          setOffset(data.length);
-          setHasMore(data.length >= PAGE_SIZE);
         } else {
-          setHasMore(false);
+          const page = firstProjectPage(data, PAGE_SIZE);
+          setAllProjects(page.projects);
+          setOffset(page.offset);
+          setHasMore(page.hasMore);
         }
       } catch (error) {
         if (!isMountedRef.current) return;

@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatCompactNumber, formatDate, formatRelativeTime } from "@/lib/utils/formatters";
 import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { readmeUrlTransform } from "@/lib/github/readme-links";
 import { Scout } from "@/components/brand/SefghMark";
 import HomeShell from "@/components/home/HomeShell";
 import ContributionRain from "@/components/landing/ContributionRain";
@@ -177,7 +178,7 @@ export default function RepoView({ repoData, sefghData, owner, repoName, fontCla
                     <div className="h-24 w-full animate-pulse rounded bg-[#161b22]" />
                   </div>
                 ) : readme ? (
-                  <MarkdownRenderer content={readme} />
+                  <MarkdownRenderer content={readme} urlTransform={readmeUrlTransform(full)} />
                 ) : (
                   <p className="py-10 text-center text-sm text-[var(--l-muted)]">
                     No README found.{" "}
