@@ -19,7 +19,7 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 
 ## Handoff: GIT-PR-001, pull requests for unmerged branches (Claude Code, 2026-11-07)
 
-Status: **complete (Git maintenance and documentation only); unreviewed; nothing merged or deployed.** Writer Claude Code; reviewer unassigned. Branch `claude/arch-002-research-001-on-main`, base `2a4db97` (`origin/main`). Resulting commit: the commit on this branch that adds this record; opened as a pull request, not merged into `main`.
+Status: **complete (Git maintenance and documentation only); unreviewed; nothing merged or deployed.** Writer Claude Code; reviewer unassigned. Branch `claude/arch-002-research-001-on-main`, base `2a4db97` (`origin/main`). Resulting commit: `aedbf83` and this record update, on pull request 4 (https://github.com/sefgh-ai/sefgh-main/pull/4); not merged into `main`. Hugeicons: pull request 5 (https://github.com/sefgh-ai/sefgh-main/pull/5).
 
 The owner asked for pull requests for the work that has not reached `main`. Local branches compared with `origin/main` (`git cherry`, `git merge-tree`):
 
