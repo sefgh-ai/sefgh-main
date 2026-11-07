@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 import { MarkdownRenderer } from "@/components/MarkdownRenderer"
+import { readmeUrlTransform } from "@/lib/github/readme-links"
 
 export function CodeExplorer({ repository, onClose }) {
   const [activeTab, setActiveTab] = useState('readme')
@@ -144,7 +145,7 @@ export function CodeExplorer({ repository, onClose }) {
                 <TabsContent value="readme" className="mt-0">
                   {repoDetails?.readme ? (
                     <div className="prose dark:prose-invert max-w-none">
-                      <MarkdownRenderer content={repoDetails.readme} />
+                      <MarkdownRenderer content={repoDetails.readme} urlTransform={readmeUrlTransform(repository.full_name)} />
                     </div>
                   ) : (
                     <div className="text-center py-12 text-muted-foreground">

@@ -176,7 +176,7 @@ export default function LandingFooter() {
               {label}
             </Pill>
           ))}
-          <Pill href="https://status.sefgh.org" external className="px-[22px] py-3 text-sm">
+          <Pill href="/status" className="px-[22px] py-3 text-sm">
             Status
           </Pill>
           <CookieSettingsButton className={`${styles.pill} ${styles.focusRing} px-[22px] py-3 text-sm`} />
