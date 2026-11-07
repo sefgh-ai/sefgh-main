@@ -17,6 +17,61 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 - **Reviewer:** Claude Code reviewed GO-002a/b (`REVIEW-002`), GO-003/GO-004 (`REVIEW-003`), GO-007b, lesson 18, AI-001a with parts of GO-006b (`REVIEW-005`), and AUTH-001 and AUTH-002 (`REVIEW-006`). Codex reviewed GO-005a/b, FIX-003/004, VERIFY-001 and OPS-001a (`REVIEW-004`), and SHARE-002 (`REVIEW-008`, 2026-10-18; acceptable with switches off). Independent reviewers Euclid and Bacon reviewed Phase 2 Go ports, wiring, R-098/R-099 fixes and acceptance probe (`PHASE2-001`). Codex reviewed DATA-001b, DATA-002 and DATA-PROXY-001 (REVIEW-010); independent reviewer James accepted Codex BUG-011 safety fixes with switches off. Codex reviewed TREND-001a/b and independent reviewer Mill reviewed BUG-010 and all BUG-012 fixes (REVIEW-011), acceptable with switches off. Claude Code recorded REVIEW-012 on PHASE5-001; actual independent Mill review required R124/R125 corrections. Mill accepted the final PHASE5-002 / BUG-013 corrections (REVIEW-013), offline foundation only, no live route or worker replaced. Sartre accepted KEYS-CORE-001 / BUG-014 including final conformance/scaffold deltas (REVIEW-014), unwired core and bounded legacy privacy correction only. Sartre accepted the unregistered KEYS-HTTP-001 adapters/fixtures/lesson41 after corrections (REVIEW-015). Details in `claude-review.md`.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
 
+## Handoff: GIT-PR-001, pull requests for unmerged branches (Claude Code, 2026-11-07)
+
+Status: **complete (Git maintenance and documentation only); unreviewed; nothing merged or deployed.** Writer Claude Code; reviewer unassigned. Branch `claude/arch-002-research-001-on-main`, base `2a4db97` (`origin/main`). Resulting commit: the commit on this branch that adds this record; opened as a pull request, not merged into `main`.
+
+The owner asked for pull requests for the work that has not reached `main`. Local branches compared with `origin/main` (`git cherry`, `git merge-tree`):
+
+- `claude/app-architecture-docs-e15497` (ARCH-002 `1c0c496`, RESEARCH-001 `08e6c83`): 122 commits behind, conflicts in `docs/bug-register.md` and `docs/coordination.md`, and its register IDs R-202 to R-206 were taken on `main` meanwhile. Rebuilt here on `main` instead of merging: the research folder copied unchanged except the ID in `report.md`; the five rows renumbered to the next free IDs, R-202→R-216, R-203→R-217, R-204→R-218, R-205→R-219, R-206→R-220, each saying so; the two handoff records below copied with the same renumbering. R-220 notes that AI-PROVIDER-001 has since made the provider selectable while the default endpoint is still GitHub Models. The original branch and worktree are left untouched.
+- `feat/hugeicons-migration` (`e050fe3`, `b289714`, worktree `D:/SEFGH/sefgh-hugeicons`): 173 behind, merges with `main` without conflicts; pushed and opened as its own pull request unchanged.
+- `claude/design-system-extraction-805583`: already pull request 3 (LANDING-001); nothing done.
+- `claude/frontend-redesign-ae522b`: its two commits are already on `main` as the Git Agent's rebase (`git cherry` marks both `-`); no pull request. Its worktree has uncommitted changes (`docs/coordination.md`, `design-system/`) owned by another session; not touched.
+
+Checks (Claude Code): `git diff --check` clean; the five new rows have six cells each; register IDs unique (no other row uses R-216 to R-220). Not run: `npm run lint`, `npm run build`, `npm run handoff` (no code changed on this branch; the hugeicons branch is code and was not built locally, its CI on the pull request is the first check).
+
+Next: the owner or a reviewer reviews and merges the two pull requests; the hugeicons one needs `npm run lint` and `npm run build` on its merge result before merging.
+
+Writer released: yes. No processes left running.
+
+## Handoff: RESEARCH-001, technology research for the pipeline (Claude Code, 2026-10-26)
+
+Status: **complete, research and documentation only; a recommendation, not a decision; unreviewed.** Writer Claude Code. Branch `claude/app-architecture-docs-e15497`, base `1c0c496`. Resulting commit: the commit on this branch that adds this record, R-220 and `docs/research/pipeline-technology-2026/`, made by Claude Code at the owner's request; not merged into `main`. Interrupted once by a PC shutdown and resumed from the research agents' saved transcripts.
+
+The owner asked for deep research on new technology to improve RepoSync, the RepoAnalysers and the architecture: open-weight models, "repomix but better", Vercel eve (if free) and evals for decisions D1 to D8, and other launches. Owner's answers: research both eve and evals; models free first, with $300 of Google Cloud credits and a small physical server later; "build it for easy switch and smooth CI/CD".
+
+Done:
+
+- **Notes:** [`research/pipeline-technology-2026/notes/`](research/pipeline-technology-2026/notes/): `open_models_and_inference`, `repo_packing`, `agents_and_eve`, `evals`, `embeddings_and_search`, `data_and_product`, `hosting_and_cicd`, and `verification_platform_changes` (five platform claims checked against GitHub's and Vercel's own pages).
+- **Report:** [`research/pipeline-technology-2026/report.md`](research/pipeline-technology-2026/report.md), sent to the owner as "New technologies for SEFGH pipeline". The notes and the report were moved there from the working directory on the owner's request. Recommendations, in order: a standard-library Go model gateway on the OpenAI-compatible API, configured per role, using Apache-licensed open-weight models served by several hosts (Gemma 4, gpt-oss, Qwen3.5/3.8, Granite 4.2); a deterministic Go "digest d1" from GitHub GraphQL/REST replacing `npx repomix@latest` (pin 1.18.1 only as a stopgap for R-199); a Go retrieval-evaluation harness (graded labels, nDCG@10, paired t-test, cross-family LLM judge calibrated on owner labels) gating D3 and D4 in CI, rather than eve, whose evals test agents; Qwen3-Embedding-0.6B first on the D3 shortlist at 768-dim `halfvec`; no reranker until measured; a stateless, read-only MCP server (spec 2026-07-28), OpenAPI and `llms.txt`; one distroless image per Go command, `SEFGH_<ROLE>_*` settings, leases ticked by pg_cron, Workload Identity Federation to Google Cloud; activate the 90-day $300 credit only after the eval tooling exists. eve fits only as an optional TypeScript analyst agent.
+- **Verified platform changes:** GitHub Models retired 2026-07-30 (both implementations still call the Azure host, which no longer resolves); stargazer listing limited to admins and collaborators in July 2026; `GET /repos/{o}/{r}/stargazers/history` added 2026-09-04 (net daily counts); synchronous SBOM export removed 2026-11-13; Go 1.27.3 is a security release (`backend/go.mod` pins 1.27.2); Vercel's Go runtime still beta.
+- **Register:** R-220 (High): AI chat and chat titles fail because GitHub Models is retired; suggestions fall back to built-in terms; enhance-query unaffected. Needs the owner's provider choice and a contract change in both implementations. 206 entries.
+
+Checks (Claude Code): `git diff --check` clean; R-220 parses with six cells, 206 rows; `node --test` on `internal-paths`, `profile-columns`, `docs-claims`, `handoff-state`: 15/15 pass. Not run: `npm run handoff` (this worktree has no `node_modules`; no code changed). R-220 was not reproduced on the deployed site.
+
+Noticed, not changed: the report writer found that `src/lib/github-api.js` is imported by a client component, where `GITHUB_TOKEN` is undefined, while R-048 says the token is never sent; only `src/app/api/trending/refresh/route.js` still sends it. Worth a look when R-220 is fixed.
+
+Next: the owner chooses a replacement for GitHub Models (R-220), and answers D1 to D8 with the report in hand. Then the first bounded tasks would be the model gateway with the R-220 contract change, and digest d1 with a 50-query pilot label set.
+
+Writer released: yes. No processes left running.
+
+## Handoff: ARCH-002, architecture atlas and four register entries (Claude Code, 2026-10-24)
+
+Status: **complete, documentation only; unreviewed.** Writer Claude Code. Branch `claude/app-architecture-docs-e15497` (a worktree), base `942c30b`, clean before claim. Resulting commit: uncommitted.
+
+The owner asked for a complete breakdown of the app: what it is, HLD and LLD, every folder and roughly every file, every built or planned feature, every service, with diagrams.
+
+Done:
+
+- **Atlas, outside the repository.** A private claude.ai page, `https://claude.ai/artifact/FFU6jfyWptWawdMUjiZop2`, built from this repository's documents and source at `942c30b`: what SEFGH is; promised versus real; a system diagram of today; every deployable unit, worker and vendor; the Go switch (routes and data areas) as a diagram; sign-in, signed-in Go write and chat as sequence diagrams; the folder map; every API route with its Go package, switch, case count and state; the Go packages; the User-DB model; every feature with its state and open entries; the search pipeline today against the HLD target; phases and cutover steps; the whole register, filterable; decisions D1 to D8 and owner actions; a fix order. It restates existing documents and proposes nothing new; `hld.md`, `lld.md`, `backend-map.md` and this file stay the source of truth. Its source HTML is in the session scratchpad, not committed.
+- **Register:** R-216 (High: `/status` shows invented service health), R-217 (High: `/about` shows invented users, index size and milestones), R-218 (Medium: page metadata, `manifest.json` and `llms.txt` promise semantic, natural-language search that is not connected), R-219 (Medium: the chat microphone button against `Permissions-Policy: microphone=()`; **not tried in a browser**). All four need the owner. 205 entries.
+
+Checks (Claude Code): `git diff --check`; the four new rows have six cells each and parse with the rest of the register (205 rows: 95 open, 108 fixed, 1 deferred, 1 in progress); no links added. The atlas's script passed `node --check`; its tags balance. `node --test` on `internal-paths`, `profile-columns`, `docs-claims` and `handoff-state`: 15/15 pass. **Not run:** `npm run handoff` and the full contracts, because this worktree has no `node_modules` (the route harnesses need Next.js installed) and no code changed; the Go backend, since no Go changed. **Not checked:** the atlas rendered in a browser (local files cannot be screenshotted here; Mermaid renders only on claude.ai).
+
+Next: the owner answers R-216 to R-219 with the decision pack (removing the invented figures is a React change); confirm R-219 in Chrome first. The atlas can be committed as `docs/architecture/atlas.html` if the owner wants it beside the HLD.
+
+Writer released: yes. No processes left running.
+
 ## Handoff: BUG-071 reasoning budget for the AI routes (Claude Code, 2026-11-04)
 
 Status: **implementation complete; local checks passed; merged into main (2026-11-05); not deployed**. Owner Claude Code; no reviewer ran. Branch `claude/openrouter-nemotron-api-85b4d9` (desktop-app worktree `.claude/worktrees/openrouter-nemotron-api-85b4d9`), base `63bff68`. Merged into `main` with `learn-go/` excluded per TUTORIAL-REMOVE-001 policy.
