@@ -1,6 +1,6 @@
 # Codex and Claude Code coordination
 
-Last updated: 2026-11-05 (Asia/Calcutta), by Git Agent: merged BUG-071 (branch `claude/openrouter-nemotron-api-85b4d9`) into main.
+Last updated: 2026-11-14 (Asia/Calcutta), by Claude Code: AGENT-AUDIT-001 on branch `claude/audit-ai-agents-skills-6ba292`.
 
 ## Start here
 
@@ -13,8 +13,34 @@ If you last saw this project when the plan was Rust, read `../AGENTS.md`, then t
 ## Current state
 
 - **Branch:** `main` (active default branch). Work from `go-backend` was merged into `main` at `030d875` and pushed to `origin/main`. Future branches/worktrees can branch off `main` or `go-backend` (which is kept fast-forwarded and in sync).
-- **Active writer:** none. Merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
+- **Active writer:** none. AGENT-AUDIT-001 handed off uncommitted on `claude/audit-ai-agents-skills-6ba292` (2026-11-14). Earlier: merged ICON-001, LANDING-001 (PR #3), SESSION-HOOK-001 (PR #6), and GIT-PR-001/002 (PR #4) into main.
 - **Stage:** Phase7 remains open. P7-01 through P7-06 and P7-08 are implemented; P7-09a completed the non-AI switch cleanup. P7-10a is documenting the current boundary before final closure. P7-07 and the AI part of P7-09 stay parked behind R-038/R-213. Exactly4Next API handlers remain:3AI and legacy keys, plus retained auth callback/session proxy outside the API count. Eleven migrated data areas have no direct fallback; legacy playground business-data calls and managed Auth/Postgres/Storage/Realtime remain. Keys hosted acceptance, avatar R-095, worker/corpus and signing gates are unchanged. Source progress is separate from deployment/live acceptance. Read [current boundary inventory](migration-boundaries.md) and the newest handoff; older dated progress/route-count records below are historical.
+
+## Handoff: AGENT-AUDIT-001 audit and fix agent context files, hook and skills (Claude Code, 2026-11-14)
+
+Status: **implementation complete; local checks passed except lint and build, which were not run; not reviewed; not merged; not deployed.** Owner Claude Code; no reviewer. Branch `claude/audit-ai-agents-skills-6ba292`, base `84fbddc`. Resulting commit: uncommitted at handoff.
+
+Asked by the owner: audit and fix the agents, skills and context files to make agentic coding and QA cheaper. Findings and fixes:
+
+- **R-234, required reading too large.** `AGENTS.md` told every agent to read about 1.2 MB before working (this file alone is 846 KB). `AGENTS.md` now lists what to read per kind of task, and `npm run brief` (`scripts/coordination-brief.mjs`, new, read-only) prints "Current state" and the newest records: about 6 KB. `npm run brief -- <task ID>` prints one record, `-- --list` the headings. No record was moved or removed from this file.
+- **R-233, SessionStart hook read the wrong checkout.** In a desktop worktree session it reported the main checkout. `scripts/session-start-status.mjs` now uses the `cwd` from the hook input, names the checkout path it read, and no longer repeats the five rules that `AGENTS.md` already loads into every session. It takes effect in a checkout once that checkout's branch has the change: the hook command runs the main checkout's copy of the script.
+- **R-235, register IDs collide across branches** (R-216 and R-217 are each used twice on `main`). `AGENTS.md` now says to take the ID above the highest on any branch, with the command. The existing duplicates need the owner. New entries here start at R-233 because `redesign/integration` holds R-222 to R-232.
+- **`AGENTS.md` duplicates.** Three "Cooperation" bullets that the "Writer flag" section states again were folded into it; no rule was dropped. The file is 13,123 characters (was 11,922) because of the reading table.
+- **New for Claude Code:** `.claude/agents/page-qa.md` (read-only page-QA subagent on a cheaper model) and `.claude/skills/qa-pages/` and `.claude/skills/bug-fix/`, which point at the existing recipe in `next-agent-briefing.md` sections 5 and 7 and add no rules.
+
+Not done, and why:
+
+- A permission allowlist for the check commands in `.claude/settings.json` (status, brief, lint, build, contract tests, `go test`/`vet`, `gofmt -l`): the automatic permission check refused the edit, so the file is unchanged. The owner can add it.
+- Moving old records out of this file: `redesign/integration`, `claude/frontend-redesign-ae522b` and `claude/app-architecture-docs-e15497` insert lines into old records, so a move would conflict when they merge. Owner decision.
+- Settings outside the repository (the owner's global plugins, skills and connectors): reported to the owner in chat, not changed.
+
+Checks by Claude Code, 2026-11-14, in this worktree: `npm run test:contracts` 736/736 pass (732 before, plus 4 in the new `scripts/contracts/agent-context.test.mjs`); in `backend/`, `go test -count=1 ./...` exit 0, `go vet ./...` clean, `gofmt -l .` prints nothing. Break test: with the hook restored from `84fbddc` the two hook tests fail ("SessionStart hook reports the checkout named by the hook input…" and "…falls back to CLAUDE_PROJECT_DIR…"); the new file was restored with an identical SHA-256. **Not run: `npm run lint` and `npm run build`** (this worktree has no `node_modules`; the change touches no `src/` file, but two new `.mjs` files under `scripts/` have not been linted). The hook was run by hand and by the tests, not by a real session start. The new skills and subagent have not been used in a session yet.
+
+Changed files: `AGENTS.md`, `package.json`, `scripts/session-start-status.mjs`, `scripts/coordination-brief.mjs` (new), `scripts/contracts/agent-context.test.mjs` (new), `.claude/agents/page-qa.md` (new), `.claude/skills/qa-pages/SKILL.md` (new), `.claude/skills/bug-fix/SKILL.md` (new), `docs/bug-register.md`, `docs/coordination.md`.
+
+Next: run `npm ci`, `npm run lint` and `npm run build` here or in CI; owner review; merge to `main` and to `redesign/integration` so the main checkout's hook is the fixed one. Rollback: revert the commit, or discard the working-tree changes.
+
+Writer released: yes. No processes left running.
 
 ## Handoff: ICON-001 replace Lucide/Heroicons with Phosphor (Claude Code, 2026-11-07)
 
