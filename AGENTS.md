@@ -4,15 +4,28 @@ These instructions are shared by Codex and Claude Code. User instructions take p
 
 ## Read before working
 
-1. `docs/coordination.md` for current scope, ownership, and handoff.
-2. `docs/backend-map.md` for observed architecture and source pointers.
-3. `docs/adr/0002-go-backend.md` for the accepted Go migration, how a route moves, and the gates.
-4. `docs/claude-review.md` for review findings and reconciled differences.
-5. `docs/bug-register.md` for known bugs and broken UI/UX (Phase 6).
+The project's documents are far larger than a session can hold (`docs/coordination.md` alone is over 800 KB). Do not read them whole. Read what the task needs:
+
+**Every task**
+
+1. `node scripts/agent-handoff.mjs --status`, `git status --short` and the current commit.
+2. `npm run brief`: prints "Current state" and the two newest records of `docs/coordination.md`. `npm run brief -- <task ID>` prints one record, `npm run brief -- --list` the headings. Older records are history; search them (`rg -n "<task ID>" docs/coordination.md`), do not load them.
+
+**Then by task, searching for the section you need rather than reading the file**
+
+| Task | Read |
+|---|---|
+| A bug or UI fix | The entry's row in `docs/bug-register.md` (`rg -n "^| R-123 " docs/bug-register.md`); `docs/next-agent-briefing.md` sections 5 (the fix recipe) and 7 (traps) |
+| A Go route, a port or a contract | `docs/adr/0002-go-backend.md` (the phase and gate you are in, and the decisions log); `backend/README.md`; the route's `contracts/<name>/README.md`; the route's part of `docs/backend-map.md` |
+| Retiring old logic (Phase 7) | `docs/migration-boundaries.md`, `docs/plans/phase7-retirement.md` |
+| Database or Supabase | `docs/database/user-db.md`, `supabase/README.md` |
+| Cutover or deployment | `docs/cutover.md` |
+| Reviewing another agent's work | Its record (`npm run brief -- <task ID>`) and the matching part of `docs/claude-review.md` |
+| Page QA | `.claude/skills/qa-pages/SKILL.md` (plain Markdown; any agent can follow it) |
 
 `docs/adr/0001-rust-backend.md` is superseded and kept only as a record. Do not implement it.
 
-Check `git status --short` and the current commit before editing. The architecture snapshot is based on commit `42759dd`; recheck affected source when it changes. The accepted ADR authorizes its staged plan. It does not authorize skipping a phase gate, cutting a route over, or deploying.
+The architecture snapshot is based on commit `42759dd`; recheck affected source when it changes. The accepted ADR authorizes its staged plan. It does not authorize skipping a phase gate, cutting a route over, or deploying.
 
 ## Project facts
 
@@ -25,6 +38,8 @@ Check `git status --short` and the current commit before editing. The architectu
 - Checks for Go, run inside `backend/`: `go test ./...`, `go vet ./...`, and `gofmt -l .`, which must print nothing.
 - After fixture changes, use `go test -count=1 ./...`: `contracts/` is outside the Go module, so cached results are not verification of changed fixtures.
 - Go is installed for the owner's Windows user at `%LOCALAPPDATA%\Programs\Go\bin`. A shell started before the install may not find `go`; add that folder to `PATH` for the command.
+- A new worktree has no `node_modules`: run `npm ci` in it before `npm run lint`, `npm run build` or `npm run test:contracts`.
+- Claude Code only: `.claude/agents/page-qa.md` is a read-only page-QA subagent; `.claude/skills/` holds `qa-pages` and `bug-fix`. They point at the documents above and add no rules of their own.
 - Local secrets live outside shared documentation. Never copy `.env.local`, tokens, cookie values, or private agent transcripts into handoffs.
 
 ## Cooperation
@@ -33,10 +48,7 @@ Check `git status --short` and the current commit before editing. The architectu
 - For concurrent implementation, use separate branches/worktrees and assign non-overlapping tasks first. Create worktrees from the branch named in `docs/coordination.md`, so they inherit these documents. A Markdown ownership record is a coordination convention, not a filesystem lock.
 - Before taking over, confirm the previous writer has released the task and re-read the diff. Do not reset, clean, stash, or overwrite another agent's work.
 - Keep decisions in the ADR and current progress in the coordination file. Avoid separate conflicting plans in private agent memory.
-- Handoffs must state changed files, actual checks/results, unverified dependencies, and the next bounded task. Claim a peer review only when it actually ran.
-- When finishing a bounded task, update `docs/coordination.md` with the handoff record, release the writer role, and run `npm run handoff` to verify contracts and the production Go backend. The Git Agent will automatically monitor, verify, and synchronize the repository.
-- Before Git Agent synchronization, inspect `node scripts/agent-handoff.mjs --status`. `VERIFICATION_BUSY` or `STATUS_ERROR` blocks checkout mutations and competing checks. Recover an interrupted/unknown lease only after verifying its owner and child processes have stopped; follow `docs/verification/handoff-concurrency.md`. A lease coordinates cooperating agents; it is not a filesystem or Git lock.
-- Before calling a bounded task finished, update `docs/coordination.md` in the same change with the task ID, owner/reviewer, base and resulting commit (or explicitly uncommitted state), changed files, checks and outcomes, remaining gates, next action, and writer release. Distinguish implementation complete, review complete, and deployed; none implies the others. Keep prior results attributed to the agent that ran them.
+- Before calling a bounded task finished, update `docs/coordination.md` in the same change with the task ID, owner/reviewer, base and resulting commit (or explicitly uncommitted state), changed files, checks and outcomes, unverified dependencies, remaining gates, the next bounded task, and writer release. Put the record directly under "Current state", newest first. Claim a peer review only when it actually ran. Distinguish implementation complete, review complete, and deployed; none implies the others. Keep prior results attributed to the agent that ran them.
 - Record new decisions or disagreements in the active ADR or `docs/claude-review.md`, and update `docs/backend-map.md` when architecture changes. Log outcomes and evidence, never secrets or private transcripts. The incoming agent must read the handoff; writing it does not notify or synchronize an already-running session.
 - Keep the reviewer read-only unless the user or the current task explicitly assigns implementation. Do not recursively launch more agents by default.
 
@@ -46,13 +58,13 @@ These apply to every agent session: Codex, Claude Code in the terminal, and ever
 
 1. **Check first.** Run `node scripts/agent-handoff.mjs --status` before your first edit. Edit only when it reports `IDLE_CLEAN`, `READY_VERIFIED` or `READY_NEEDS_VERIFY` with `writerReleased: true`.
 2. **Take the flag before editing.** Set `- **Active writer:**` in `docs/coordination.md` to you, the task ID, branch, base commit and files, and confirm `--status` now reports `WRITER_ACTIVE`. The Git Agent does not synchronize a checkout with an active writer.
-3. **Release it when you stop.** Write the handoff record, set `Active writer: none`, commit if the task calls for it, then run `npm run handoff`. That script takes the verification lease, runs the checks and drops the lease itself; do not take the lease by hand. Paused work gets a paused/incomplete checkpoint and no handoff run (see "Low-capacity checkpoint").
-4. **Busy means hands off.** On `VERIFICATION_BUSY`, `STATUS_ERROR` or someone else's `WRITER_ACTIVE`: do not edit, commit, synchronize or start checks. Wait for the owner (`Wait-Process -Id <pid>` for a lease), then check `--status` again. Never reset, delete or steal a lease or another writer's flag; an interrupted lease is recovered only as `docs/verification/handoff-concurrency.md` says.
+3. **Release it when you stop.** Write the handoff record, set `Active writer: none`, commit if the task calls for it, then run `npm run handoff`. That script takes the verification lease, runs the checks and drops the lease itself; do not take the lease by hand. The Git Agent then monitors, verifies and synchronizes the repository. Paused work gets a paused/incomplete checkpoint and no handoff run (see "Low-capacity checkpoint").
+4. **Busy means hands off.** On `VERIFICATION_BUSY`, `STATUS_ERROR` or someone else's `WRITER_ACTIVE`: do not edit, commit, synchronize or start checks. Wait for the owner (`Wait-Process -Id <pid>` for a lease), then check `--status` again. Never reset, delete or steal a lease or another writer's flag; an interrupted or unknown lease is recovered only after verifying that its owner and child processes have stopped, as `docs/verification/handoff-concurrency.md` says. A lease coordinates cooperating agents; it is not a filesystem or Git lock.
 5. **No waiting while holding.** Do not hold the flag while you wait on the owner, CI, a review or another agent. Release it, or write a paused checkpoint, first. This is what stops two agents, or an agent and the Git Agent, from waiting on each other.
 
 ## Bugs and broken UI/UX (Phase 6)
 
-- When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one.
+- When you find a bug or a broken UI/UX path, add it to `docs/bug-register.md` in the same change, even if you do not fix it. Take the next free ID; never renumber or reuse one. Branches and worktrees each carry their own copy of the register, so the next free ID is one above the highest on any of them, not only yours: `git grep -ohE "R-[0-9]{3}|BUG-[0-9]{3}" $(git for-each-ref --format="%(refname)" refs/heads) -- docs/bug-register.md | sort -u | tail`.
 - Fix entries in bounded `BUG-0NN` tasks. Fixing recorded bugs is approved. If an entry's Needs column says `owner`, write the options and ask before fixing. Only the owner defers an entry.
 - A fix to contract-pinned behaviour follows "Change a contract" below. Every fix ships with something that would catch the bug again, and updates the entry's status with the task and commit.
 - Fix each bug once (owner, 2026-10-14). Browser code stays in React, so UI bugs are fixed there. A backend bug is fixed in Go, after its route is cut over and the Next.js handler retired. A port first reproduces the Next.js behaviour, defects included, so the two can be compared before cutover; it does not fix them on the way. Do not fix a backend bug in a Next.js handler and then again in Go. The exception is a security, privacy or data-loss bug in live Next.js code, which is fixed where it is live, at once.
